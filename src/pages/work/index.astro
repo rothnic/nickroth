@@ -16,14 +16,14 @@ const sortedWork = workEntries
   <main class="py-20">
     <div class="container mx-auto px-4">
       <div class="text-center mb-16">
-        <h1 class="text-5xl font-bold mb-6">My Work</h1>
-        <p class="text-xl opacity-75 max-w-2xl mx-auto">
-          A collection of projects, roles, and experiences that showcase my journey 
-          as a Product Manager and AI Engineer.
+        <h1 class="text-5xl font-bold mb-6">Featured Work</h1>
+        <p class="text-xl opacity-75 max-w-3xl mx-auto">
+          Systematic solutions to complex product and engineering challenges. Each project demonstrates 
+          objective-first discovery, measurable outcomes, and sustainable implementation.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
         {sortedWork.map((work) => (
           <WorkCard
             title={work.data.title}

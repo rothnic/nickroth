@@ -4,18 +4,48 @@ import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
 
 <div class="hero min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10">
   <div class="hero-content text-center">
-    <div class="max-w-md">
+    <div class="max-w-4xl">
       <div class="avatar mb-8">
         <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
           <img src={avatarPlaceholder.src} width={128} height={128} alt="Nick Roth" loading="lazy" />
         </div>
       </div>
-      <h1 class="text-5xl font-bold">Nick Roth</h1>
-      <p class="py-6 text-xl">Product Manager & AI Engineer</p>
-      <p class="pb-6">Building innovative products at the intersection of technology and user experience.</p>
-      <div class="flex gap-4 justify-center">
-        <a href="/work" class="btn btn-primary">View My Work</a>
-        <a href="/contact" class="btn btn-outline">Get In Touch</a>
+      <h1 class="text-5xl font-bold mb-2">Nick Roth</h1>
+      <p class="text-2xl mb-4 text-base-content/80">Product & Systems Director</p>
+      <p class="text-lg mb-8 max-w-3xl mx-auto leading-relaxed">
+        Transforming complex requirements into systematic solutions through objective-first discovery and automation-driven execution.
+      </p>
+      
+      <!-- Key Metrics -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 max-w-4xl mx-auto">
+        <div class="stat bg-base-200/50 rounded-lg p-4">
+          <div class="stat-value text-2xl text-primary">400%</div>
+          <div class="stat-desc text-sm">YoY blog revenue increase</div>
+        </div>
+        <div class="stat bg-base-200/50 rounded-lg p-4">
+          <div class="stat-value text-2xl text-primary">$35k</div>
+          <div class="stat-desc text-sm">monthly cost savings</div>
+        </div>
+        <div class="stat bg-base-200/50 rounded-lg p-4">
+          <div class="stat-value text-2xl text-primary">150%</div>
+          <div class="stat-desc text-sm">organic user growth</div>
+        </div>
+        <div class="stat bg-base-200/50 rounded-lg p-4">
+          <div class="stat-value text-2xl text-primary">125%</div>
+          <div class="stat-desc text-sm">mobile revenue growth</div>
+        </div>
+      </div>
+
+      <div class="flex gap-4 justify-center flex-wrap">
+        <a href="/work" class="btn btn-primary btn-lg">View My Work</a>
+        <a href="/contact" class="btn btn-outline btn-lg">Get In Touch</a>
+      </div>
+      
+      <div class="mt-8">
+        <p class="text-sm text-base-content/60">
+          <span class="inline-block mr-4">📍 Huntsville, AL</span>
+          <span class="inline-block">✅ Open to consulting and fractional roles</span>
+        </p>
       </div>
     </div>
   </div>

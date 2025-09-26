@@ -1,6 +1,6 @@
 ---
-title: "Product Management"
-description: "Strategic product planning, roadmap development, and cross-functional team leadership to deliver user-centered solutions."
-icon: "🎯"
+title: "Headless CMSs & Content Architecture"
+description: "Modern content architectures with DatoCMS, Sanity, Strapi; structured content modeling; multi-channel publishing strategies."
+icon: "🗂️"
 order: 1
 ---
