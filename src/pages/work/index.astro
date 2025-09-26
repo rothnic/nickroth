@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import { getCollection } from 'astro:content';
+
+const workEntries = await getCollection('work');
+const sortedWork = workEntries
+  .sort((a, b) => {
+    const aDate = a.data.endDate || new Date();
+    const bDate = b.data.endDate || new Date();
+    return bDate.getTime() - aDate.getTime();
+  });
+---
+
+<BaseLayout title="Work - Nick Roth" description="Professional work and projects by Nick Roth">
+  <main class="py-20">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h1 class="text-5xl font-bold mb-6">My Work</h1>
+        <p class="text-xl opacity-75 max-w-2xl mx-auto">
+          A collection of projects, roles, and experiences that showcase my journey 
+          as a Product Manager and AI Engineer.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        {sortedWork.map((work) => (
+          <WorkCard
+            title={work.data.title}
+            description={work.data.description}
+            company={work.data.company}
+            role={work.data.role}
+            slug={work.slug}
+            tags={work.data.tags}
+            image={work.data.image}
+          />
+        ))}
+      </div>
+      
+      {sortedWork.length === 0 && (
+        <div class="text-center">
+          <p class="text-lg opacity-75">No work entries yet. Check back soon!</p>
+        </div>
+      )}
+    </div>
+  </main>
+</BaseLayout>

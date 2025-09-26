@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import CapabilityCard from '../components/CapabilityCard.astro';
+import { getCollection } from 'astro:content';
+
+const capabilities = await getCollection('capabilities');
+const sortedCapabilities = capabilities
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout>
+  <Hero />
+  
+  <!-- Capabilities Section -->
+  <section class="py-20 bg-base-200">
+    <div class="container mx-auto px-4">
+      <h2 class="text-4xl font-bold text-center mb-12">Core Capabilities</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        {sortedCapabilities.map((capability) => (
+          <CapabilityCard
+            title={capability.data.title}
+            description={capability.data.description}
+            icon={capability.data.icon}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Work Section -->
+  <section class="py-20">
+    <div class="container mx-auto px-4">
+      <h2 class="text-4xl font-bold text-center mb-12">Featured Work</h2>
+      <div class="text-center">
+        <a href="/work" class="btn btn-primary btn-lg">View All Work</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

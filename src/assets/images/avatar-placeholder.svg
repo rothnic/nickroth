@@ -1,0 +1,15 @@
+<svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Placeholder image</title>
+  <desc id="desc">Abstract gradient background with circle avatar silhouette</desc>
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1d4ed8" />
+      <stop offset="50%" stop-color="#9333ea" />
+      <stop offset="100%" stop-color="#f97316" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="400" fill="url(#gradient)" rx="32" ry="32" />
+  <circle cx="300" cy="170" r="90" fill="rgba(255,255,255,0.18)" />
+  <path d="M300 150c33 0 60-27 60-60s-27-60-60-60-60 27-60 60 27 60 60 60z" fill="rgba(255,255,255,0.9)" />
+  <path d="M180 360c0-66.27 53.73-120 120-120s120 53.73 120 120" fill="rgba(255,255,255,0.85)" />
+</svg>

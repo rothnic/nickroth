@@ -1,0 +1,36 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  company: string;
+  role: string;
+  slug: string;
+  tags?: string[] | undefined;
+  image?: string | undefined;
+}
+
+const { title, description, company, role, slug, tags = [], image } = Astro.props;
+const PLACEHOLDER_IMAGE = 'https://placehold.co/600x400';
+const imageSrc = image?.trim() ? image : PLACEHOLDER_IMAGE;
+---
+
+<div transition:name={`work-container-${slug}`} class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+  <figure>
+    <img transition:name={`work-img-${slug}`} src={imageSrc} alt={title} class="h-48 w-full object-cover" loading="lazy" />
+  </figure>
+  <div class="card-body">
+    <h2 transition:name={`work-title-${slug}`} class="card-title">{title}</h2>
+    <p class="text-sm opacity-75">{company} • {role}</p>
+    <p>{description}</p>
+    {tags.length > 0 && (
+      <div class="card-actions justify-start">
+        {tags.map((tag) => (
+          <div class="badge badge-outline">{tag}</div>
+        ))}
+      </div>
+    )}
+    <div class="card-actions justify-end">
+      <a href={`/work/${slug}`} class="btn btn-primary">View Details</a>
+    </div>
+  </div>
+</div>
