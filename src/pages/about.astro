@@ -1,17 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Navbar from '../components/Navbar.astro';
+import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
 ---
 
 <BaseLayout title="About - Nick Roth" description="Learn more about Nick Roth - Product Manager and AI Engineer">
-  <Navbar />
-  
   <main class="py-20">
     <div class="container mx-auto px-4 max-w-4xl">
       <div class="text-center mb-16">
         <div class="avatar mb-8">
           <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-            <img src="/headshot.jpg" alt="Nick Roth" />
+            <img src={avatarPlaceholder.src} width={128} height={128} alt="Nick Roth" loading="lazy" />
           </div>
         </div>
         <h1 class="text-5xl font-bold mb-6">About Me</h1>

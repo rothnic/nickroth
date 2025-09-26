@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Navbar from '../../components/Navbar.astro';
 import WorkCard from '../../components/WorkCard.astro';
 import { getCollection } from 'astro:content';
 
@@ -14,8 +13,6 @@ const sortedWork = workEntries
 ---
 
 <BaseLayout title="Work - Nick Roth" description="Professional work and projects by Nick Roth">
-  <Navbar />
-  
   <main class="py-20">
     <div class="container mx-auto px-4">
       <div class="text-center mb-16">

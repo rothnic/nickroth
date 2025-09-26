@@ -1,4 +1,5 @@
 ---
+import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
 ---
 
 <div class="hero min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10">
@@ -6,7 +7,7 @@
     <div class="max-w-md">
       <div class="avatar mb-8">
         <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img src="/headshot.jpg" alt="Nick Roth" />
+          <img src={avatarPlaceholder.src} width={128} height={128} alt="Nick Roth" loading="lazy" />
         </div>
       </div>
       <h1 class="text-5xl font-bold">Nick Roth</h1>

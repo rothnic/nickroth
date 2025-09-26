@@ -6,6 +6,7 @@ node_modules/
 # Build outputs
 dist/
 .astro/
+lighthouse-report.json
 
 # Environment files
 .env

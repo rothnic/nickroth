@@ -1,12 +1,20 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from "astro:transitions";
+import Navbar from '../components/Navbar.astro';
 
 export interface Props {
   title?: string;
   description?: string;
+  showNavbar?: boolean;
 }
 
-const { title = "Nick Roth - Product Manager & AI Engineer", description = "Personal site for Nick Roth" } = Astro.props;
+const {
+  title = "Nick Roth - Product Manager & AI Engineer",
+  description = "Personal site for Nick Roth",
+  showNavbar = true
+} = Astro.props;
+
+const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -17,10 +25,22 @@ const { title = "Nick Roth - Product Manager & AI Engineer", description = "Pers
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
-    <ViewTransitions />
+    <ClientRouter />
   </head>
+  <style>
+    @keyframes scale-up {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes scale-down {
+      from { transform: scale(1); opacity: 1; }
+      to { transform: scale(0.8); opacity: 0; }
+    }
+  </style>
   <body>
-    <div class="min-h-screen bg-base-100">
+    <div class="min-h-screen bg-base-100 flex flex-col">
+      {showNavbar && <Navbar currentPath={currentPath} />}
       <slot />
     </div>
   </body>

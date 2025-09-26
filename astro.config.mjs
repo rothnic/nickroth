@@ -9,7 +9,7 @@ export default defineConfig({
     tailwind()
   ],
   output: 'static',
-  site: 'https://nickroth.pages.dev', // Update with your Cloudflare Pages URL
+  site: 'https://www.nickroth.com', // Update with your Cloudflare Pages URL
   build: {
     format: 'directory'
   }
