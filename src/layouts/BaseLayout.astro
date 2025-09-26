@@ -1,0 +1,27 @@
+---
+import { ViewTransitions } from 'astro:transitions';
+
+export interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = "Nick Roth - Product Manager & AI Engineer", description = "Personal site for Nick Roth" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <ViewTransitions />
+  </head>
+  <body>
+    <div class="min-h-screen bg-base-100">
+      <slot />
+    </div>
+  </body>
+</html>

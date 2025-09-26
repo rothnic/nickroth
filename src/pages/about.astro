@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+---
+
+<BaseLayout title="About - Nick Roth" description="Learn more about Nick Roth - Product Manager and AI Engineer">
+  <Navbar />
+  
+  <main class="py-20">
+    <div class="container mx-auto px-4 max-w-4xl">
+      <div class="text-center mb-16">
+        <div class="avatar mb-8">
+          <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+            <img src="/headshot.jpg" alt="Nick Roth" />
+          </div>
+        </div>
+        <h1 class="text-5xl font-bold mb-6">About Me</h1>
+        <p class="text-xl opacity-75 max-w-2xl mx-auto">
+          Product Manager and AI Engineer passionate about building innovative solutions 
+          at the intersection of technology and user experience.
+        </p>
+      </div>
+
+      <div class="prose prose-lg max-w-none">
+        <p>
+          I'm a seasoned product manager and AI engineer with a passion for creating 
+          products that make a real difference in people's lives. My career has been 
+          focused on bridging the gap between cutting-edge technology and practical, 
+          user-centered design.
+        </p>
+        
+        <h2>Experience</h2>
+        <p>
+          Throughout my career, I've had the opportunity to work on diverse projects 
+          ranging from early-stage startups to enterprise-level solutions. I specialize 
+          in translating complex technical concepts into actionable product strategies 
+          and user-friendly interfaces.
+        </p>
+        
+        <h2>Skills & Expertise</h2>
+        <ul>
+          <li>Product Strategy & Roadmap Development</li>
+          <li>AI/ML Product Integration</li>
+          <li>User Experience Design</li>
+          <li>Agile Development Methodologies</li>
+          <li>Data-Driven Decision Making</li>
+          <li>Cross-Functional Team Leadership</li>
+        </ul>
+        
+        <h2>Philosophy</h2>
+        <p>
+          I believe that the best products are born from a deep understanding of user 
+          needs combined with thoughtful application of technology. My approach centers 
+          on empathy, iteration, and continuous learning.
+        </p>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

@@ -1,0 +1,36 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  company: string;
+  role: string;
+  slug: string;
+  tags?: string[] | undefined;
+  image?: string | undefined;
+}
+
+const { title, description, company, role, slug, tags = [], image } = Astro.props;
+---
+
+<div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+  {image && (
+    <figure>
+      <img src={image} alt={title} class="h-48 w-full object-cover" />
+    </figure>
+  )}
+  <div class="card-body">
+    <h2 class="card-title">{title}</h2>
+    <p class="text-sm opacity-75">{company} • {role}</p>
+    <p>{description}</p>
+    {tags.length > 0 && (
+      <div class="card-actions justify-start">
+        {tags.map((tag) => (
+          <div class="badge badge-outline">{tag}</div>
+        ))}
+      </div>
+    )}
+    <div class="card-actions justify-end">
+      <a href={`/work/${slug}`} class="btn btn-primary" transition:name={`work-${slug}`}>View Details</a>
+    </div>
+  </div>
+</div>
