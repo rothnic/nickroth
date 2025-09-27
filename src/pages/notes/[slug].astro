@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const noteEntries = await getCollection('notes');
+  return noteEntries.map((entry: CollectionEntry<'notes'>) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'notes'>;
+}
+
+const { entry } = Astro.props as Props;
+const { Content } = await entry.render();
+---
+
+<BaseLayout title={`${entry.data.title} – Field Notes`} description={entry.data.description}>
+  <article class="py-24">
+    <div class="max-w-3xl mx-auto px-6 space-y-12">
+      <header class="space-y-4">
+        <a href="/notes" class="inline-flex items-center gap-2 text-sm text-base-content/70 hover:text-primary">
+          <span aria-hidden="true">←</span>
+          Back to field notes
+        </a>
+        <p class="text-xs uppercase tracking-[0.4em] text-base-content/60">
+          {new Date(entry.data.publishDate).toLocaleDateString()}
+        </p>
+        <h1 class="text-4xl font-semibold tracking-tight text-base-content">{entry.data.title}</h1>
+        <div class="flex flex-wrap gap-2 text-xs text-base-content/70">
+          {entry.data.tags?.map((tag) => (
+            <span class="badge badge-ghost badge-sm uppercase tracking-wide">{tag}</span>
+          ))}
+        </div>
+      </header>
+
+      <div class="space-y-6 text-base-content/80 leading-relaxed [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h3]:mt-8 [&_h3]:text-xl [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_strong]:text-base-content">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>

@@ -16,9 +16,11 @@ type Props = {
 };
 
 const { entry } = Astro.props as Props;
-const { Content } = await entry.render();
 const PLACEHOLDER_IMAGE = 'https://placehold.co/600x400';
 const coverImage = entry.data.image?.trim() ? entry.data.image : PLACEHOLDER_IMAGE;
+
+const projectMeta = [entry.data.company, entry.data.role].filter(Boolean);
+const timelineLabel = `${entry.data.startDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} – ${entry.data.endDate ? entry.data.endDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Present'}`;
 
 // Get color schemes for different categories
 const getCategoryColor = (cat: string | undefined) => {
@@ -45,203 +47,171 @@ const getStackColor = (tech: string) => {
 ---
 
 <BaseLayout title={`${entry.data.title} - Nick Roth`} description={entry.data.description}>
-  <main class="py-20">
-    <div class="container mx-auto px-4 max-w-6xl">
+  <main class="pt-12 pb-28 sm:pt-16">
+    <div class="container mx-auto max-w-6xl px-4">
       <!-- Navigation -->
-      <div class="mb-8">
-        <a href="/work" class="btn btn-ghost">← Back to Work Portfolio</a>
+      <div class="mb-10 flex flex-wrap items-center justify-between gap-4 text-xs uppercase tracking-[0.32em] text-base-content/60">
+        <a href="/work" class="inline-flex items-center gap-2 rounded-full border border-base-300/60 bg-base-100/80 px-4 py-2 font-semibold shadow-sm transition-colors duration-200 hover:border-primary hover:text-primary">
+          ← Back to all work
+        </a>
+        <span class="inline-flex items-center gap-2 rounded-full border border-base-300/60 bg-base-100/70 px-4 py-2">
+          {timelineLabel}
+        </span>
       </div>
 
       <!-- Hero Section -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-        <!-- Project Image -->
-        <div>
-          <figure transition:name={`work-img-${entry.slug}`} class="rounded-lg overflow-hidden shadow-xl">
-            <img src={coverImage} alt={entry.data.title} class="w-full h-80 object-cover" />
-          </figure>
-        </div>
-        
-        <!-- Project Header -->
-        <div class="flex flex-col justify-center">
-          <h1 transition:name={`work-title-${entry.slug}`} class="text-4xl md:text-5xl font-bold mb-4 leading-tight">
-            {entry.data.title}
-          </h1>
-          
-          <!-- Impact Statement -->
-          {entry.data.impact && (
-            <div class="mb-6">
-              <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">Impact Statement</h2>
-              <p class="text-xl font-bold text-primary uppercase leading-tight">
-                {entry.data.impact}
-              </p>
-            </div>
-          )}
-          
-          <!-- Role Category -->
-          {entry.data.roleCategory && (
-            <div class="mb-6">
-              <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">Role</h2>
-              <span class="inline-block bg-accent/10 text-accent px-4 py-2 rounded font-bold text-sm uppercase tracking-wider">
+      <section transition:name={`work-shell-${entry.slug}`} class="mb-16 grid grid-cols-1 items-start gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,420px)]">
+        <div class="space-y-8">
+          <div class="flex flex-wrap items-center gap-3 text-[0.65rem] font-semibold uppercase tracking-[0.32em] text-base-content/60">
+            {entry.data.category && (
+              <span class="inline-flex items-center gap-2 rounded-full border border-base-300/70 bg-base-100/80 px-3 py-1">
+                {entry.data.category}
+              </span>
+            )}
+            {entry.data.roleCategory && (
+              <span class="inline-flex items-center gap-2 rounded-full border border-dashed border-base-300/70 bg-base-100/70 px-3 py-1">
                 {entry.data.roleCategory}
               </span>
+            )}
+          </div>
+
+          <h1 transition:name={`work-title-${entry.slug}`} class="text-4xl font-black leading-tight tracking-tight text-base-content sm:text-5xl">
+            {entry.data.title}
+          </h1>
+
+          <p class="max-w-2xl text-base leading-relaxed text-base-content/75 sm:text-lg">
+            {entry.data.description}
+          </p>
+
+          {entry.data.impact && (
+            <p class="text-xs font-semibold uppercase tracking-[0.38em] text-primary">
+              {entry.data.impact}
+            </p>
+          )}
+
+          {projectMeta.length > 0 && (
+            <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.28em] text-base-content/60">
+              {projectMeta.join(' • ')}
             </div>
           )}
-          
-          <!-- Project Timeline -->
-          <div class="mb-6">
-            <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">Timeline</h2>
-            <p class="text-base-content/80">
-              {entry.data.startDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} - 
-              {entry.data.endDate ? entry.data.endDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Present'}
-            </p>
-          </div>
+
+          {entry.data.tags && entry.data.tags.length > 0 && (
+            <ul class="flex flex-wrap gap-2 text-xs text-base-content/65">
+              {entry.data.tags.map((tag) => (
+                <li class="inline-flex items-center rounded-full border border-base-300/60 bg-base-100/80 px-3 py-1 uppercase tracking-[0.18em]">
+                  {tag}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-      </div>
+
+        <figure transition:name={`work-img-${entry.slug}`} class="relative overflow-hidden rounded-[32px] border-2 border-base-300/70 bg-base-100/85 shadow-brutal">
+          <img src={coverImage} alt={entry.data.title} class="h-full w-full object-cover transition-transform duration-500 ease-out hover:scale-[1.04] hover:rotate-1" />
+          <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/18 via-transparent to-accent/18 mix-blend-screen"></div>
+          <div class="pointer-events-none absolute inset-5 rounded-[26px] border border-dashed border-base-content/10"></div>
+        </figure>
+      </section>
 
       <!-- Structured Content Sections -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div class="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(300px,360px)]">
         <!-- Main Content Column -->
-        <div class="lg:col-span-2 space-y-12">
-          <!-- Overview Section -->
-          <section class="bg-base-100 p-8 rounded-lg shadow-lg border-2 border-base-300">
-            <h2 class="text-2xl font-bold mb-4 text-primary">CHALLENGE & OVERVIEW</h2>
-            <div class="prose prose-lg max-w-none">
-              <p class="text-base-content/80 leading-relaxed">
-                {entry.data.description}
-              </p>
+        <div class="space-y-10">
+          <section class="rounded-[28px] border border-base-300/60 bg-base-100/85 p-8 shadow-[0_18px_36px_rgba(24,24,37,0.1)]">
+            <h2 class="text-xs font-semibold uppercase tracking-[0.32em] text-base-content/60">Challenge & Overview</h2>
+            <div class="prose prose-sm max-w-none text-base-content/80 sm:prose-base">
+              <p>{entry.data.description}</p>
             </div>
           </section>
 
-          <!-- Systematic Approach -->
-          <section class="bg-base-100 p-8 rounded-lg shadow-lg border-2 border-base-300">
-            <h2 class="text-2xl font-bold mb-6 text-primary">SYSTEMATIC APPROACH</h2>
-            <div class="space-y-6">
-              <div class="flex items-start gap-4">
-                <div class="flex-shrink-0 w-10 h-10 bg-primary text-primary-content rounded-full flex items-center justify-center font-bold">
-                  1
-                </div>
+          <section class="rounded-[28px] border border-base-300/60 bg-base-100/85 p-8 shadow-[0_18px_36px_rgba(24,24,37,0.1)]">
+            <h2 class="text-xs font-semibold uppercase tracking-[0.32em] text-base-content/60">Systematic Approach</h2>
+            <ol class="mt-6 space-y-5">
+              <li class="group flex items-start gap-4 rounded-2xl border border-base-300/50 bg-base-100/70 px-5 py-4">
+                <span class="mt-1 inline-flex h-8 w-8 flex-none items-center justify-center rounded-full bg-primary/90 text-xs font-bold text-primary-content shadow-sm">1</span>
                 <div>
-                  <h3 class="font-bold text-lg mb-2">DISCOVER</h3>
-                  <p class="text-base-content/80">Comprehensive analysis of existing systems, workflows, and performance baselines</p>
+                  <h3 class="text-sm font-semibold uppercase tracking-[0.28em] text-base-content/70">Discover</h3>
+                  <p class="mt-2 text-sm text-base-content/75">Comprehensive analysis of existing systems, workflows, and performance baselines.</p>
                 </div>
-              </div>
-              
-              <div class="flex items-start gap-4">
-                <div class="flex-shrink-0 w-10 h-10 bg-primary text-primary-content rounded-full flex items-center justify-center font-bold">
-                  2
-                </div>
+              </li>
+              <li class="group flex items-start gap-4 rounded-2xl border border-base-300/50 bg-base-100/70 px-5 py-4">
+                <span class="mt-1 inline-flex h-8 w-8 flex-none items-center justify-center rounded-full bg-primary/90 text-xs font-bold text-primary-content shadow-sm">2</span>
                 <div>
-                  <h3 class="font-bold text-lg mb-2">MODEL</h3>
-                  <p class="text-base-content/80">Architecture design and technology selection with structured content modeling</p>
+                  <h3 class="text-sm font-semibold uppercase tracking-[0.28em] text-base-content/70">Model</h3>
+                  <p class="mt-2 text-sm text-base-content/75">Architecture design and technology selection with structured content modeling.</p>
                 </div>
-              </div>
-              
-              <div class="flex items-start gap-4">
-                <div class="flex-shrink-0 w-10 h-10 bg-primary text-primary-content rounded-full flex items-center justify-center font-bold">
-                  3
-                </div>
+              </li>
+              <li class="group flex items-start gap-4 rounded-2xl border border-base-300/50 bg-base-100/70 px-5 py-4">
+                <span class="mt-1 inline-flex h-8 w-8 flex-none items-center justify-center rounded-full bg-primary/90 text-xs font-bold text-primary-content shadow-sm">3</span>
                 <div>
-                  <h3 class="font-bold text-lg mb-2">SPECIFY</h3>
-                  <p class="text-base-content/80">Detailed implementation planning with migration strategy and testing framework</p>
+                  <h3 class="text-sm font-semibold uppercase tracking-[0.28em] text-base-content/70">Specify</h3>
+                  <p class="mt-2 text-sm text-base-content/75">Detailed implementation planning with migration strategy and testing framework.</p>
                 </div>
-              </div>
-              
-              <div class="flex items-start gap-4">
-                <div class="flex-shrink-0 w-10 h-10 bg-primary text-primary-content rounded-full flex items-center justify-center font-bold">
-                  4
-                </div>
+              </li>
+              <li class="group flex items-start gap-4 rounded-2xl border border-base-300/50 bg-base-100/70 px-5 py-4">
+                <span class="mt-1 inline-flex h-8 w-8 flex-none items-center justify-center rounded-full bg-primary/90 text-xs font-bold text-primary-content shadow-sm">4</span>
                 <div>
-                  <h3 class="font-bold text-lg mb-2">BUILD</h3>
-                  <p class="text-base-content/80">Incremental implementation with continuous validation and performance optimization</p>
+                  <h3 class="text-sm font-semibold uppercase tracking-[0.28em] text-base-content/70">Build</h3>
+                  <p class="mt-2 text-sm text-base-content/75">Incremental implementation with continuous validation and performance optimization.</p>
                 </div>
-              </div>
-              
-              <div class="flex items-start gap-4">
-                <div class="flex-shrink-0 w-10 h-10 bg-primary text-primary-content rounded-full flex items-center justify-center font-bold">
-                  5
-                </div>
+              </li>
+              <li class="group flex items-start gap-4 rounded-2xl border border-base-300/50 bg-base-100/70 px-5 py-4">
+                <span class="mt-1 inline-flex h-8 w-8 flex-none items-center justify-center rounded-full bg-primary/90 text-xs font-bold text-primary-content shadow-sm">5</span>
                 <div>
-                  <h3 class="font-bold text-lg mb-2">PROVE</h3>
-                  <p class="text-base-content/80">Impact measurement, optimization, and long-term maintenance planning</p>
+                  <h3 class="text-sm font-semibold uppercase tracking-[0.28em] text-base-content/70">Prove</h3>
+                  <p class="mt-2 text-sm text-base-content/75">Impact measurement, optimization, and long-term maintenance planning.</p>
                 </div>
-              </div>
-            </div>
+              </li>
+            </ol>
           </section>
 
-          <!-- Business Impact -->
-          <section class="bg-accent/5 p-8 rounded-lg shadow-lg border-2 border-accent/20">
-            <h2 class="text-2xl font-bold mb-4 text-accent">BUSINESS IMPACT</h2>
-            <p class="text-base-content/80 leading-relaxed">
-              Successfully modernized platform serving 2M+ monthly users with significant improvements in performance, 
-              authoring experience, and technical maintainability. Editorial team now focuses on content strategy 
-              rather than technical workarounds, enabling higher content quality and publication velocity.
+          <section class="rounded-[28px] border border-accent/25 bg-accent/10 p-8 shadow-[0_18px_36px_rgba(24,24,37,0.1)]">
+            <h2 class="text-xs font-semibold uppercase tracking-[0.32em] text-accent-content/80">Business Impact</h2>
+            <p class="mt-4 text-base leading-relaxed text-base-content/80">
+              Successfully modernized a platform serving 2M+ monthly users with significant improvements in performance,
+              authoring experience, and technical maintainability. Editorial teams now focus on content strategy
+              rather than technical workarounds, enabling higher quality and faster publication velocity.
             </p>
           </section>
         </div>
 
         <!-- Sidebar -->
-        <div class="space-y-8">
-          <!-- Technology Stack -->
-          {entry.data.stack && entry.data.stack.length > 0 && (
-            <section class="bg-base-100 p-6 rounded-lg shadow-lg border-2 border-base-300">
-              <h3 class="text-lg font-bold mb-4 text-primary">TECHNOLOGY STACK</h3>
-              <div class="flex flex-wrap gap-2">
-                {entry.data.stack.map((tech) => (
-                  <div class={`badge ${getStackColor(tech)} badge-sm font-medium text-xs`}>
-                    {tech}
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          <!-- Project Category -->
-          {entry.data.category && (
-            <section class="bg-base-100 p-6 rounded-lg shadow-lg border-2 border-base-300">
-              <h3 class="text-lg font-bold mb-4 text-primary">PROJECT CATEGORY</h3>
-              <div class={`badge ${getCategoryColor(entry.data.category)} badge-lg font-semibold`}>
-                {entry.data.category}
-              </div>
-            </section>
-          )}
-
-          <!-- Key Outcomes -->
-          <section class="bg-success/5 p-6 rounded-lg shadow-lg border-2 border-success/20">
-            <h3 class="text-lg font-bold mb-4 text-success">KEY OUTCOMES</h3>
-            <div class="space-y-3">
-              <div class="flex items-center gap-2">
-                <div class="w-2 h-2 bg-success rounded-full"></div>
-                <span class="text-sm font-semibold">40% improvement in Core Web Vitals</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <div class="w-2 h-2 bg-success rounded-full"></div>
-                <span class="text-sm font-semibold">60% reduction in publishing time</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <div class="w-2 h-2 bg-success rounded-full"></div>
-                <span class="text-sm font-semibold">25% increase in organic traffic</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <div class="w-2 h-2 bg-success rounded-full"></div>
-                <span class="text-sm font-semibold">90% reduction in deployment time</span>
-              </div>
-            </div>
+        <aside class="space-y-6">
+          <section class="rounded-[24px] border border-base-300/60 bg-base-100/85 p-6 shadow-sm">
+            <h3 class="text-xs font-semibold uppercase tracking-[0.32em] text-base-content/60">Timeline</h3>
+            <p class="mt-3 text-sm text-base-content/75">{timelineLabel}</p>
           </section>
 
-          <!-- Project Tags -->
-          {entry.data.tags && entry.data.tags.length > 0 && (
-            <section class="bg-base-100 p-6 rounded-lg shadow-lg border-2 border-base-300">
-              <h3 class="text-lg font-bold mb-4 text-primary">PROJECT TAGS</h3>
-              <div class="flex flex-wrap gap-2">
-                {entry.data.tags.map((tag) => (
-                  <div class="badge badge-outline badge-sm">
-                    {tag}
-                  </div>
+          {entry.data.stack && entry.data.stack.length > 0 && (
+            <section class="rounded-[24px] border border-base-300/60 bg-base-100/85 p-6 shadow-sm">
+              <h3 class="text-xs font-semibold uppercase tracking-[0.32em] text-base-content/60">Technology Stack</h3>
+              <div class="mt-3 flex flex-wrap gap-2">
+                {entry.data.stack.map((tech) => (
+                  <span class={`badge ${getStackColor(tech)} badge-sm font-medium text-xs`}>{tech}</span>
                 ))}
               </div>
             </section>
           )}
-        </div>
+
+          {entry.data.category && (
+            <section class="rounded-[24px] border border-base-300/60 bg-base-100/85 p-6 shadow-sm">
+              <h3 class="text-xs font-semibold uppercase tracking-[0.32em] text-base-content/60">Project Category</h3>
+              <span class={`badge mt-3 inline-flex items-center gap-2 border-base-300/60 bg-base-100 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] ${getCategoryColor(entry.data.category)}`}>
+                {entry.data.category}
+              </span>
+            </section>
+          )}
+
+          <section class="rounded-[24px] border border-success/25 bg-success/10 p-6 shadow-sm">
+            <h3 class="text-xs font-semibold uppercase tracking-[0.32em] text-success/80">Key Outcomes</h3>
+            <ul class="mt-4 space-y-3 text-sm text-base-content/80">
+              <li class="flex items-center gap-2"><span class="inline-flex h-2 w-2 rounded-full bg-success"></span>40% improvement in Core Web Vitals</li>
+              <li class="flex items-center gap-2"><span class="inline-flex h-2 w-2 rounded-full bg-success"></span>60% reduction in publishing time</li>
+              <li class="flex items-center gap-2"><span class="inline-flex h-2 w-2 rounded-full bg-success"></span>25% increase in organic traffic</li>
+              <li class="flex items-center gap-2"><span class="inline-flex h-2 w-2 rounded-full bg-success"></span>90% reduction in deployment time</li>
+            </ul>
+          </section>
+        </aside>
       </div>
 
       <!-- Navigation Footer -->

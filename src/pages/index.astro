@@ -6,12 +6,11 @@ import WorkCard from '../components/WorkCard.astro';
 import { getCollection } from 'astro:content';
 
 const capabilities = await getCollection('capabilities');
-const sortedCapabilities = capabilities
-  .sort((a, b) => a.data.order - b.data.order);
+const sortedCapabilities = capabilities.sort((a, b) => a.data.order - b.data.order);
 
 const work = await getCollection('work');
 const featuredWork = work
-  .filter(w => w.data.featured)
+  .filter((w) => w.data.featured)
   .sort((a, b) => {
     const aDate = a.data.endDate || new Date();
     const bDate = b.data.endDate || new Date();
@@ -27,12 +26,24 @@ const recentNotes = notes
 
 <BaseLayout>
   <Hero />
-  
-  <!-- Capabilities Section -->
-  <section class="py-20 bg-base-200">
-    <div class="container mx-auto px-4">
-      <h2 class="text-4xl font-bold text-center mb-12">Core Capabilities</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+
+  <section class="py-24">
+    <div class="max-w-6xl mx-auto px-6 space-y-14">
+      <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div class="space-y-4">
+          <p class="text-xs uppercase tracking-[0.4em] text-base-content/60">Services</p>
+          <h2 class="text-3xl sm:text-4xl font-semibold tracking-tight">Core capabilities</h2>
+          <p class="max-w-2xl text-sm text-base-content/80 leading-relaxed">
+            Product, engineering, and operations move faster when they share the same playbook.
+            These are the programs I stand up and tune for clients who need measurable leverage.
+          </p>
+        </div>
+        <a href="/approach" class="btn btn-outline border-2 border-base-300/80 hover:border-primary/60">
+          View the delivery approach
+        </a>
+      </div>
+
+      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {sortedCapabilities.map((capability) => (
           <CapabilityCard
             title={capability.data.title}
@@ -44,15 +55,22 @@ const recentNotes = notes
     </div>
   </section>
 
-  <!-- Featured Work Section -->
-  <section class="py-20">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-12">
-        <h2 class="text-4xl font-bold mb-4">RECENT WORK</h2>
-        <p class="text-lg text-base-content/70">CASE STUDIES SHOWCASING THE SYSTEMATIC APPROACH FROM DISCOVERY THROUGH DELIVERY.</p>
+  <section class="bg-base-200/60 py-24">
+    <div class="max-w-6xl mx-auto px-6 space-y-14">
+      <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div class="space-y-4 max-w-3xl">
+          <p class="text-xs uppercase tracking-[0.4em] text-base-content/60">Case Studies</p>
+          <h2 class="text-3xl sm:text-4xl font-semibold tracking-tight">Recent work</h2>
+          <p class="text-sm text-base-content/80 leading-relaxed">
+            High-signal snapshots of AI-enabled systems, content platforms, and marketing automation work.
+            Each card covers the objectives, systems work, and deltas in performance.
+          </p>
+        </div>
+        <a href="/work" class="btn btn-primary">View portfolio</a>
       </div>
-      {featuredWork.length > 0 ? (
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12">
+
+      {featuredWork.length > 0 && (
+        <div class="grid gap-8 lg:grid-cols-2">
           {featuredWork.map((project) => (
             <WorkCard
               title={project.data.title}
@@ -69,35 +87,60 @@ const recentNotes = notes
             />
           ))}
         </div>
-      ) : null}
-      
-      <div class="text-center">
-        <a href="/work" class="btn btn-primary btn-lg">VIEW ALL WORK →</a>
+      )}
+
+      <div class="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-base-300/70 bg-base-100/80 px-6 py-5">
+        <div>
+          <p class="text-xs uppercase tracking-[0.4em] text-base-content/60">Want more depth?</p>
+          <p class="text-sm text-base-content/80">Browse the full archive of platform rebuilds, automations, and experiments.</p>
+        </div>
+        <a href="/work" class="btn btn-ghost border-2 border-base-300/80 hover:border-primary/60">
+          Explore all work
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- Recent Updates Section -->
   {recentNotes.length > 0 && (
-    <section class="py-20 bg-base-200">
-      <div class="container mx-auto px-4">
-        <h2 class="text-4xl font-bold text-center mb-12">Recent Updates</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+    <section class="py-24">
+      <div class="max-w-6xl mx-auto px-6 space-y-14">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div class="space-y-3">
+            <p class="text-xs uppercase tracking-[0.4em] text-base-content/60">Signals</p>
+            <h2 class="text-3xl sm:text-4xl font-semibold tracking-tight">Recent updates</h2>
+            <p class="max-w-xl text-sm text-base-content/80">
+              Field notes on automation experiments, AI-assisted delivery, and the tooling that keeps teams aligned.
+            </p>
+          </div>
+          <a href="/background" class="btn btn-outline border-2 border-base-300/80 hover:border-primary/60">More about my work</a>
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-3">
           {recentNotes.map((note) => (
-            <div class="card bg-base-100 shadow-lg">
-              <div class="card-body">
-                <h3 class="card-title text-lg">{note.data.title}</h3>
-                <p class="text-sm opacity-75 mb-2">
+            <a
+              href={`/notes/${note.slug}`}
+              class="group flex h-full flex-col justify-between rounded-3xl border border-base-300/80 bg-base-100/80 px-6 py-6 text-left shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-brutal focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/40"
+            >
+              <div class="space-y-3">
+                <p class="text-xs uppercase tracking-[0.4em] text-base-content/60">
                   {new Date(note.data.publishDate).toLocaleDateString()}
                 </p>
-                <p class="text-sm mb-3">{note.data.description}</p>
-                <div class="flex flex-wrap gap-1">
-                  {note.data.tags.slice(0, 3).map((tag: string) => (
-                    <div class="badge badge-outline badge-xs">{tag}</div>
-                  ))}
-                </div>
+                <h3 class="text-lg font-semibold leading-snug tracking-tight text-base-content group-hover:text-primary">
+                  {note.data.title}
+                </h3>
+                <p class="text-sm leading-relaxed text-base-content/80">{note.data.description}</p>
               </div>
-            </div>
+              <div class="mt-6 flex flex-wrap gap-2 text-xs text-base-content/70">
+                {note.data.tags.slice(0, 3).map((tag: string) => (
+                  <span class="badge badge-ghost badge-sm uppercase tracking-wide">{tag}</span>
+                ))}
+                {note.data.tags.length > 3 && (
+                  <span class="badge badge-outline badge-sm uppercase tracking-wide">
+                    +{note.data.tags.length - 3}
+                  </span>
+                )}
+              </div>
+            </a>
           ))}
         </div>
       </div>

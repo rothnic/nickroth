@@ -16,33 +16,37 @@ const categories = ['ALL WORK', ...new Set(workEntries.map(work => work.data.cat
 ---
 
 <BaseLayout title="Work Portfolio - Nick Roth" description="Case studies demonstrating systematic approach to product development from discovery through delivery">
-  <main class="py-20">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-16">
-        <h1 class="text-6xl font-bold mb-6">
-          WORK
-          <br />
-          <span class="text-primary">PORTFOLIO</span>
-        </h1>
-        <p class="text-xl opacity-75 max-w-4xl mx-auto">
-          CASE STUDIES DEMONSTRATING SYSTEMATIC APPROACH TO PRODUCT DEVELOPMENT, FROM DISCOVERY THROUGH DELIVERY WITH MEASURABLE OUTCOMES.
-        </p>
-      </div>
+  <main class="pt-14 pb-28 sm:pt-16">
+    <div class="container mx-auto max-w-6xl px-5 sm:px-6">
+      <header class="mb-12 flex flex-col gap-6 text-center sm:mb-16">
+        <div class="mx-auto inline-flex items-center gap-3 rounded-full border border-base-300/70 bg-base-100/80 px-6 py-2 text-xs font-semibold uppercase tracking-[0.32em] text-base-content/65 shadow-brutal-pop">
+          <span class="inline-flex h-2.5 w-2.5 rounded-full bg-primary"></span>
+          Case Study Archive
+        </div>
+        <div class="space-y-6">
+          <h1 class="text-4xl font-black tracking-tight text-base-content sm:text-5xl">
+            Automations, platforms, and playbooks with measurable lift.
+          </h1>
+          <p class="mx-auto max-w-3xl text-sm leading-relaxed text-base-content/75 sm:text-base">
+            Click any card to expand the highlights, stack, and impact before diving into the full build. Filters animate with view transitions, so hopping between focuses keeps the page feeling alive.
+          </p>
+        </div>
+      </header>
 
-      <!-- Category Filter Tabs -->
-      <div class="flex flex-wrap justify-center gap-2 mb-12">
+      <section class="mb-12 flex flex-wrap items-center justify-center gap-3" aria-label="Filter work by category">
         {categories.map((category, index) => (
-          <button 
-            class={`btn btn-sm ${index === 0 ? 'btn-accent' : 'btn-outline'} font-semibold text-xs uppercase tracking-wider`}
+          <button
+            class={`filter-chip ${index === 0 ? 'is-active' : ''}`}
+            data-filter-button
             data-category={category}
+            type="button"
           >
-            {category}
+            <span class="filter-chip__label">{category}</span>
           </button>
         ))}
-      </div>
+      </section>
 
-      <!-- Work Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-2" data-work-grid>
         {sortedWork.map((work) => (
           <WorkCard
             title={work.data.title}
@@ -56,51 +60,192 @@ const categories = ['ALL WORK', ...new Set(workEntries.map(work => work.data.cat
             impact={work.data.impact}
             stack={work.data.stack}
             roleCategory={work.data.roleCategory}
+            variant="interactive"
           />
         ))}
       </div>
-      
+
       {sortedWork.length === 0 && (
-        <div class="text-center">
-          <p class="text-lg opacity-75">No work entries yet. Check back soon!</p>
+        <div class="mt-24 text-center text-base-content/70">
+          <p class="text-lg">No work entries yet. Check back soon!</p>
         </div>
       )}
     </div>
   </main>
 
-  <!-- Category filtering script -->
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const categoryButtons = document.querySelectorAll('[data-category]') as NodeListOf<HTMLElement>;
-      const workCards = document.querySelectorAll('[data-work-card]') as NodeListOf<HTMLElement>;
-      
-      categoryButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          const category = button.getAttribute('data-category');
-          
-          // Update button states
-          categoryButtons.forEach(btn => {
-            btn.classList.remove('btn-accent');
-            btn.classList.add('btn-outline');
-          });
-          button.classList.remove('btn-outline');
-          button.classList.add('btn-accent');
-          
-          // Filter work cards
-          workCards.forEach(card => {
-            if (category === 'ALL WORK') {
-              card.style.display = 'block';
-            } else {
-              const cardCategory = card.getAttribute('data-category');
-              if (cardCategory === category) {
-                card.style.display = 'block';
-              } else {
-                card.style.display = 'none';
-              }
-            }
-          });
+    const setupFilters = () => {
+      const categoryButtons = Array.from(document.querySelectorAll('[data-filter-button]')) as HTMLButtonElement[];
+      const workCards = Array.from(document.querySelectorAll('[data-work-card]')) as HTMLElement[];
+
+      if (!categoryButtons.length || !workCards.length) return;
+
+      const activateButton = (active: HTMLButtonElement | null) => {
+        categoryButtons.forEach((button) => {
+          button.classList.toggle('is-active', button === active);
+        });
+      };
+
+      workCards.forEach((card) => {
+        card.addEventListener('animationend', () => {
+          card.classList.remove('is-filtering');
+          card.style.removeProperty('--filter-delay');
         });
       });
-    });
+
+      const runFilter = (category: string | null) => {
+        workCards.forEach((card) => {
+          const matches = !category || category === 'ALL WORK' || card.getAttribute('data-category') === category;
+          card.toggleAttribute('hidden', !matches);
+        });
+      };
+
+      const animateVisible = () => {
+        const visibleCards = workCards.filter((card) => !card.hasAttribute('hidden'));
+        requestAnimationFrame(() => {
+          visibleCards.forEach((card, index) => {
+            card.classList.remove('is-filtering');
+            void card.offsetWidth;
+            card.style.setProperty('--filter-delay', `${index * 45}ms`);
+            card.classList.add('is-filtering');
+          });
+        });
+      };
+
+      const filterCards = (category: string | null, { skipTransition = false } = {}) => {
+        if (skipTransition || !document.startViewTransition) {
+          runFilter(category);
+          animateVisible();
+          return;
+        }
+
+        const transition = document.startViewTransition(() => {
+          runFilter(category);
+        });
+
+        transition.ready
+          .then(() => {
+            animateVisible();
+          })
+          .catch(() => {
+            animateVisible();
+          });
+      };
+
+      categoryButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const category = button.getAttribute('data-category');
+          activateButton(button);
+          filterCards(category);
+        });
+      });
+
+      const initialButton = categoryButtons[0] ?? null;
+      activateButton(initialButton);
+      filterCards(initialButton?.getAttribute('data-category') ?? null, { skipTransition: true });
+    };
+
+    const bootstrap = () => {
+      const grid = document.querySelector('[data-work-grid]') as HTMLElement | null;
+      if (!grid || grid.dataset.filterBound === 'true') return;
+
+      grid.dataset.filterBound = 'true';
+      setupFilters();
+    };
+
+    document.addEventListener('astro:page-load', bootstrap);
+    document.addEventListener('DOMContentLoaded', bootstrap);
   </script>
+
+  <style>
+    [data-work-grid] {
+      container-type: inline-size;
+      container-name: work-grid;
+    }
+
+    .filter-chip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border-radius: 9999px;
+      border: 1.5px solid rgba(31, 26, 44, 0.18);
+      background: rgba(253, 251, 255, 0.75);
+      padding: 0.55rem 1.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.28em;
+      font-size: 0.66rem;
+      font-weight: 700;
+      color: hsl(var(--nc) / 0.68);
+      transition: transform 220ms ease, box-shadow 240ms ease, color 200ms ease, border-color 200ms ease;
+      backdrop-filter: blur(8px);
+      isolation: isolate;
+    }
+
+    .filter-chip::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(120deg, rgba(255, 77, 154, 0.22), rgba(72, 242, 255, 0.2));
+      opacity: 0;
+      transition: opacity 220ms ease;
+      z-index: -1;
+    }
+
+    .filter-chip:hover,
+    .filter-chip:focus-visible {
+      color: hsl(var(--p));
+      border-color: rgba(255, 77, 154, 0.48);
+      transform: translateY(-3px);
+    }
+
+    .filter-chip:hover::before,
+    .filter-chip:focus-visible::before {
+      opacity: 1;
+    }
+
+    .filter-chip.is-active {
+      color: hsl(var(--p));
+      border-color: rgba(255, 77, 154, 0.6);
+      box-shadow: 0 12px 28px rgba(24, 24, 37, 0.16);
+      transform: translateY(-3px);
+    }
+
+    .filter-chip.is-active::before {
+      opacity: 1;
+    }
+
+    .filter-chip__label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    [data-work-card][hidden] {
+      display: none !important;
+    }
+
+    .is-filtering {
+      animation: filter-pop 480ms cubic-bezier(0.19, 1, 0.22, 1);
+      animation-delay: var(--filter-delay, 0ms);
+      will-change: transform, opacity;
+    }
+
+    @keyframes filter-pop {
+      0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.92);
+      }
+      60% {
+        opacity: 1;
+        transform: translateY(-6px) scale(1.02);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+  </style>
 </BaseLayout>

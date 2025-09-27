@@ -9,7 +9,7 @@ export interface Props {
 }
 
 const {
-  title = "Nick Roth - Product Manager & AI Engineer",
+  title = "Nick Roth – Product Director & Systems Strategist",
   description = "Personal site for Nick Roth",
   showNavbar = true
 } = Astro.props;
@@ -18,31 +18,130 @@ const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="nick-light">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <title>{title}</title>
     <ClientRouter />
-    <script src="/src/scripts/theme.js"></script>
-  </head>
-  <style>
-    @keyframes scale-up {
-      from { transform: scale(0.8); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
+    <script type="module" is:inline>
+      import '/src/scripts/theme.js';
+    </script>
+    <style is:global>
+      :root[data-theme='nick-light'] {
+        color-scheme: light;
+      }
 
-    @keyframes scale-down {
-      from { transform: scale(1); opacity: 1; }
-      to { transform: scale(0.8); opacity: 0; }
-    }
-  </style>
-  <body>
-    <div class="min-h-screen bg-base-100 flex flex-col">
+      :root[data-theme='nick-dark'] {
+        color-scheme: dark;
+      }
+
+      html,
+      body {
+        font-family: 'Space Grotesk', var(--font-sans), system-ui, sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        position: relative;
+        transition: background 260ms ease, color 260ms ease;
+      }
+
+      body::before,
+      body::after,
+      body::backdrop {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      body::before {
+        background-size: 40px 40px;
+        opacity: 0.42;
+        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.16) 0%, rgba(0, 0, 0, 0.92) 80%);
+        -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.16) 0%, rgba(0, 0, 0, 0.92) 80%);
+      }
+
+      body::after {
+        mix-blend-mode: soft-light;
+        background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="220" height="220" filter="url(%23n)" opacity="0.18"/%3E%3C/svg%3E');
+        opacity: 0.5;
+      }
+
+      html[data-theme='nick-light'] body {
+        background-color: var(--fallback-b1, #fdfbff);
+        background-image:
+          radial-gradient(circle at 12% -10%, rgba(255, 77, 154, 0.28), transparent 62%),
+          radial-gradient(circle at 92% 8%, rgba(72, 242, 255, 0.25), transparent 58%),
+          radial-gradient(circle at 58% 88%, rgba(255, 255, 255, 0.7), transparent 72%),
+          linear-gradient(180deg, rgba(253, 251, 255, 1) 0%, rgba(240, 236, 255, 0.9) 48%, rgba(250, 247, 255, 0.88) 100%);
+      }
+
+      html[data-theme='nick-light'] body::before {
+        background-image:
+          linear-gradient(135deg, rgba(72, 242, 255, 0.18), transparent 55%),
+          linear-gradient(90deg, rgba(31, 26, 44, 0.06) 1px, transparent 1px),
+          linear-gradient(rgba(31, 26, 44, 0.05) 1px, transparent 1px);
+      }
+
+      html[data-theme='nick-dark'] body {
+        background-color: var(--fallback-b1, #0b0c18);
+        background-image:
+          radial-gradient(circle at 10% -12%, rgba(255, 123, 191, 0.22), transparent 58%),
+          radial-gradient(circle at 86% 10%, rgba(101, 247, 255, 0.18), transparent 55%),
+          radial-gradient(circle at 52% 80%, rgba(39, 38, 68, 0.85), transparent 72%),
+          linear-gradient(180deg, rgba(11, 12, 24, 1) 0%, rgba(22, 23, 45, 0.96) 55%, rgba(25, 26, 48, 0.92) 100%);
+      }
+
+      html[data-theme='nick-dark'] body::before {
+        background-image:
+          linear-gradient(90deg, rgba(245, 244, 255, 0.08) 1px, transparent 1px),
+          linear-gradient(rgba(245, 244, 255, 0.06) 1px, transparent 1px);
+        opacity: 0.32;
+      }
+
+      main {
+        view-transition-name: page;
+      }
+
+      ::view-transition-group(page) {
+        animation-duration: 320ms;
+        animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+      }
+
+      ::view-transition-old(page),
+      ::view-transition-new(page) {
+        mix-blend-mode: normal;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        ::view-transition-group(page) {
+          animation-duration: 1ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="font-sans text-base-content">
+    <div class="min-h-screen flex flex-col">
       {showNavbar && <Navbar currentPath={currentPath} />}
-      <slot />
+      <main class="flex-1">
+        <slot />
+      </main>
+      <footer class="border-t border-base-300 bg-base-100/80 backdrop-blur-sm">
+        <div class="max-w-6xl mx-auto px-6 py-10 text-sm text-base-content/70">
+          <p>© {new Date().getFullYear()} Nick Roth. Built with intent, iteration, and automation.</p>
+        </div>
+      </footer>
     </div>
   </body>
 </html>

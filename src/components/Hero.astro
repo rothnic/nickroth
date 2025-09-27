@@ -1,52 +1,101 @@
 ---
 import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
+
+const metrics = [
+  { label: 'YoY revenue lift', value: '400%' },
+  { label: 'Ops cost removed', value: '$35k/mo' },
+  { label: 'Manual effort saved', value: '94%' },
+  { label: 'Launch cadence', value: '2-3/mo' },
+];
+
+const highlights = [
+  'Systems design for AI-assisted platforms',
+  'Content operations automation',
+  'Fractional product leadership',
+];
 ---
 
-<div class="hero min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10">
-  <div class="hero-content text-center">
-    <div class="max-w-4xl">
-      <div class="avatar mb-8">
-        <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img src={avatarPlaceholder.src} width={128} height={128} alt="Nick Roth" loading="lazy" />
+<section class="relative overflow-hidden py-28">
+  <div class="pointer-events-none absolute inset-0 -z-10">
+    <div class="absolute -top-24 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-gradient-to-br from-primary/25 via-transparent to-accent/20 blur-3xl"></div>
+    <div class="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-t from-base-100/70 via-base-100/40 to-transparent"></div>
+  </div>
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="grid items-start gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(320px,380px)]">
+      <div class="space-y-12">
+        <div class="space-y-7">
+          <div class="inline-flex items-center gap-3 rounded-full border border-base-300/70 bg-base-100/80 px-5 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-base-content/70 shadow-brutal-pop">
+            <span class="inline-flex h-2.5 w-2.5 rounded-full bg-accent"></span>
+            Product & Systems Direction
+          </div>
+          <h1 transition:name="hero-title" class="text-5xl sm:text-6xl font-black leading-[1.05] tracking-tight">
+            <span class="bg-gradient-to-r from-base-content via-base-content to-primary bg-clip-text text-transparent">
+              Nick Roth
+            </span>
+            <span class="block text-3xl sm:text-[2.8rem] font-semibold leading-tight tracking-tight text-base-content/90">
+              builds bright, automated customer journeys.
+            </span>
+          </h1>
+          <p class="max-w-2xl text-base sm:text-lg leading-relaxed text-base-content/75">
+            From AI-assisted production lines to measurable growth loops, I pair playful experimentation with disciplined delivery.
+            Every engagement lands with instrumentation, retros, and a vivid story teams can rally around.
+          </p>
         </div>
-      </div>
-      <h1 class="text-5xl font-bold mb-2">Nick Roth</h1>
-      <p class="text-2xl mb-4 text-base-content/80">Product & Systems Director</p>
-      <p class="text-lg mb-8 max-w-3xl mx-auto leading-relaxed">
-        Transforming complex requirements into systematic solutions through objective-first discovery and automation-driven execution.
-      </p>
-      
-      <!-- Key Metrics -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 max-w-4xl mx-auto">
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">400%</div>
-          <div class="stat-desc text-sm">YoY blog revenue increase</div>
+
+        <div class="flex flex-wrap items-center gap-4">
+          <a
+            href="/work"
+            class="btn btn-primary btn-lg shadow-brutal hover:-translate-y-1 hover:shadow-brutal-dark transition-transform duration-200"
+          >
+            View recent work
+          </a>
+          <a href="/contact" class="btn btn-ghost btn-lg border-2 border-base-300/70 hover:border-primary/60">
+            Connect for a build sprint
+          </a>
         </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">$35k</div>
-          <div class="stat-desc text-sm">monthly cost savings</div>
-        </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">150%</div>
-          <div class="stat-desc text-sm">organic user growth</div>
-        </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">125%</div>
-          <div class="stat-desc text-sm">mobile revenue growth</div>
-        </div>
+
+        <ul class="grid gap-3 sm:grid-cols-2" role="list">
+          {highlights.map((item) => (
+            <li class="flex items-start gap-3 rounded-2xl border border-base-300/60 bg-base-100/70 px-4 py-3 text-sm text-base-content/80 shadow-sm backdrop-blur">
+              <span class="mt-1 inline-flex h-2.5 w-2.5 rounded-full bg-gradient-to-br from-primary to-accent"></span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
       </div>
 
-      <div class="flex gap-4 justify-center flex-wrap">
-        <a href="/work" class="btn btn-primary btn-lg">View My Work</a>
-        <a href="/contact" class="btn btn-outline btn-lg">Get In Touch</a>
-      </div>
-      
-      <div class="mt-8">
-        <p class="text-sm text-base-content/60">
-          <span class="inline-block mr-4">📍 Huntsville, AL</span>
-          <span class="inline-block">✅ Open to consulting and fractional roles</span>
-        </p>
+      <div class="relative">
+        <div class="absolute -top-8 -right-5 h-24 w-24 rounded-2xl border-2 border-dashed border-base-300/70" aria-hidden="true"></div>
+        <div class="absolute -bottom-12 -left-14 h-32 w-32 rounded-full bg-accent/30 blur-3xl" aria-hidden="true"></div>
+        <div class="group relative rounded-[32px] border-4 border-neutral/90 bg-base-100/90 shadow-brutal transition-all duration-300 hover:-translate-y-2 hover:shadow-brutal-dark">
+          <div class="absolute inset-5 rounded-3xl opacity-60 mix-blend-multiply bg-noisy-grid [background-size:22px_22px]" aria-hidden="true"></div>
+          <div class="relative m-4 overflow-hidden rounded-[24px] bg-secondary text-secondary-content">
+            <img
+              src={avatarPlaceholder.src}
+              width={480}
+              height={480}
+              alt="Nick Roth portrait"
+              loading="lazy"
+              class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.08] group-hover:rotate-1"
+            />
+            <div class="absolute inset-0 bg-gradient-to-br from-primary/25 via-transparent to-accent/20 mix-blend-screen"></div>
+          </div>
+          <div class="relative border-t border-dashed border-neutral/40 px-6 py-5">
+            <p class="text-xs uppercase tracking-[0.35em] text-base-content/60">Currently</p>
+            <p class="text-base font-semibold tracking-tight">Designing resilient systems with AI-first teams.</p>
+          </div>
+        </div>
       </div>
     </div>
+
+    <div class="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {metrics.map((metric) => (
+        <div class="group relative overflow-hidden rounded-2xl border border-base-300/60 bg-base-100/80 px-6 py-5 shadow-sm backdrop-blur">
+          <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+          <p class="relative text-xs uppercase tracking-[0.35em] text-base-content/60">{metric.label}</p>
+          <p class="relative mt-3 text-2xl font-semibold text-primary">{metric.value}</p>
+        </div>
+      ))}
+    </div>
   </div>
-</div>
+</section>

@@ -11,35 +11,53 @@ export interface Props {
   impact?: string | undefined;
   stack?: string[] | undefined;
   roleCategory?: string | undefined;
+  variant?: 'compact' | 'interactive';
 }
 
-const { 
-  title, 
-  description, 
-  slug, 
-  tags = [], 
-  image, 
+const {
+  title,
+  description,
+  company,
+  role,
+  slug,
+  tags = [],
+  image,
   category,
   impact,
   stack = [],
-  roleCategory
+  roleCategory,
+  variant = 'compact',
 } = Astro.props;
 
 const PLACEHOLDER_IMAGE = 'https://placehold.co/600x400';
 const imageSrc = image?.trim() ? image : PLACEHOLDER_IMAGE;
 
-// Define color schemes for different categories
-const getCategoryColor = (cat: string | undefined) => {
-  switch (cat) {
-    case 'HEADLESS CMS': return 'badge-primary';
-    case 'WEB PLATFORMS': return 'badge-secondary';  
-    case 'MARKETING AUTOMATION': return 'badge-accent';
-    case 'AUTOMATION & AI': return 'badge-warning';
-    case 'CHROME EXTENSIONS': return 'badge-info';
-    case 'SYSTEMS': return 'badge-success';
-    default: return 'badge-outline';
-  }
-};
+const tagPreviewLength = variant === 'interactive' ? 4 : 3;
+const visibleTags = tags.slice(0, tagPreviewLength);
+const extraTagCount = Math.max(tags.length - visibleTags.length, 0);
+
+const stackPreviewLength = variant === 'interactive' ? 6 : 4;
+const visibleStack = stack.slice(0, stackPreviewLength);
+const extraStackCount = Math.max(stack.length - visibleStack.length, 0);
+
+const shellTransition = `work-shell-${slug}`;
+const imageTransition = `work-img-${slug}`;
+const titleTransition = `work-title-${slug}`;
+
+const metaInfo = [company, role].filter(Boolean).join(' • ');
+
+const cardClasses = [
+  'work-card group',
+  variant === 'interactive' ? 'work-card--interactive' : 'work-card--compact',
+].join(' ');
+
+const mediaClass = ['work-card__media', variant === 'interactive' ? 'work-card__media--feature' : '']
+  .filter(Boolean)
+  .join(' ');
+
+const contentClass = ['work-card__content', variant === 'interactive' ? 'work-card__content--feature' : '']
+  .filter(Boolean)
+  .join(' ');
 
 const getStackColor = (tech: string) => {
   const lowerTech = tech.toLowerCase();
@@ -50,81 +68,316 @@ const getStackColor = (tech: string) => {
   if (tech.includes('+')) return 'badge-success';
   return 'badge-outline';
 };
-
-const getTagColor = (tag: string) => {
-  const lowerTag = tag.toLowerCase();
-  if (lowerTag.includes('headless') || lowerTag.includes('cms')) return 'badge-primary';
-  if (lowerTag.includes('web') || lowerTag.includes('platform')) return 'badge-secondary';
-  if (lowerTag.includes('marketing') || lowerTag.includes('automation')) return 'badge-accent';
-  if (lowerTag.includes('systems')) return 'badge-success';
-  return 'badge-outline';
-};
 ---
 
-<div transition:name={`work-container-${slug}`} class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] border-2 border-base-300 h-full" data-work-card data-category={category}>
-  <!-- Hero Image -->
-  <figure class="relative h-48">
-    <img transition:name={`work-img-${slug}`} src={imageSrc} alt={title} class="w-full h-full object-cover" loading="lazy" />
-  </figure>
-  
-  <div class="card-body p-6 flex flex-col h-full">
-    <!-- Project Title -->
-    <h2 transition:name={`work-title-${slug}`} class="text-xl font-bold mb-3 leading-tight">
-      {title}
-    </h2>
-    
-    <!-- Impact Statement - Prominent Display -->
-    {impact && (
-      <div class="mb-4">
-        <p class="text-sm font-bold text-primary uppercase leading-snug tracking-wide">
-          {impact}
-        </p>
-      </div>
-    )}
-    
-    <!-- Role Category -->
-    {roleCategory && (
-      <div class="mb-4">
-        <span class="text-xs font-bold text-accent uppercase tracking-widest bg-accent/10 px-2 py-1 rounded">
-          {roleCategory}
-        </span>
-      </div>
-    )}
-    
-    <!-- Category Tags Section -->
-    {tags.length > 0 && (
-      <div class="mb-4">
-        <div class="flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <div class={`badge ${getTagColor(tag)} badge-sm font-semibold text-xs uppercase`}>
-              {tag}
-            </div>
-          ))}
-        </div>
-      </div>
-    )}
-    
-    <!-- Technology Stack Section -->
-    {stack.length > 0 && (
-      <div class="mb-4">
-        <div class="flex flex-wrap gap-2">
-          {stack.map((tech) => (
-            <div class={`badge ${getStackColor(tech)} badge-sm font-medium text-xs`}>
-              {tech}
-            </div>
-          ))}
-        </div>
-      </div>
-    )}
-    
-    <!-- Spacer to push action to bottom -->
-    <div class="flex-grow"></div>
-    
-    <!-- Action Button -->
-    <div class="card-actions justify-end mt-4">
-      <a href={`/work/${slug}`} class="btn btn-primary btn-sm">
-        View Details
-      </a>
-    </div>
+<a
+  href={`/work/${slug}`}
+  class={cardClasses}
+  data-work-card
+  data-category={category}
+  aria-label={`View case study: ${title}`}
+  transition:name={shellTransition}
+>
+  <span class="work-card__halo" aria-hidden="true"></span>
+
+  <div class={mediaClass}>
+    <img
+      src={imageSrc}
+      alt={title}
+      loading="lazy"
+      class="work-card__image"
+      transition:name={imageTransition}
+    />
+    <span class="work-card__frame" aria-hidden="true"></span>
   </div>
-</div>
+
+  <div class={contentClass}>
+    <div class="work-card__meta">
+      {category && <span class="work-card__chip">{category}</span>}
+      {roleCategory && <span class="work-card__chip work-card__chip--outline">{roleCategory}</span>}
+    </div>
+
+    <h3 class="work-card__title" transition:name={titleTransition}>
+      {title}
+    </h3>
+
+    <p class="work-card__description">{description}</p>
+
+    {impact && <p class="work-card__impact">{impact}</p>}
+
+    {variant === 'interactive' && metaInfo && (
+      <p class="work-card__meta-info">{metaInfo}</p>
+    )}
+
+    {visibleTags.length > 0 && (
+      <ul class="work-card__tags" role="list">
+        {visibleTags.map((tag) => (
+          <li class="work-card__tag">{tag}</li>
+        ))}
+        {extraTagCount > 0 && <li class="work-card__tag work-card__tag--ghost">+{extraTagCount}</li>}
+      </ul>
+    )}
+
+    {visibleStack.length > 0 && (
+      <ul class="work-card__stack" role="list">
+        {visibleStack.map((tech) => (
+          <li class={`badge work-card__stack-chip ${getStackColor(tech)}`}>{tech}</li>
+        ))}
+        {extraStackCount > 0 && <li class="badge work-card__stack-chip badge-outline">+{extraStackCount}</li>}
+      </ul>
+    )}
+  </div>
+
+  <div class="work-card__footer">
+    <span class="work-card__footer-label">View case study</span>
+    <span class="work-card__footer-icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h9.19l-3.22-3.22a.75.75 0 1 1 1.06-1.06l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06l3.22-3.22H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd" />
+      </svg>
+    </span>
+  </div>
+</a>
+
+<style>
+  .work-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 32px;
+    border: 2px solid hsl(var(--b3) / 0.75);
+    background: hsl(var(--b1) / 0.9);
+    box-shadow: var(--tw-shadow, 0 0 #0000), 0 18px 0 0 rgba(24, 24, 37, 0.1), 0 0 0 1px rgba(24, 24, 37, 0.08);
+    transition: transform 260ms cubic-bezier(0.19, 1, 0.22, 1), box-shadow 260ms ease;
+  }
+
+  .work-card:hover,
+  .work-card:focus-visible {
+    transform: translateY(-8px);
+    box-shadow: var(--tw-shadow, 0 0 #0000), 0 22px 0 0 rgba(24, 24, 37, 0.12), 0 22px 36px rgba(24, 24, 37, 0.18);
+  }
+
+  .work-card:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px hsl(var(--p) / 0.24), 0 22px 36px rgba(24, 24, 37, 0.18);
+  }
+
+  .work-card__halo {
+    position: absolute;
+    inset: 12px;
+    border-radius: 28px;
+    background: radial-gradient(circle at 16% 18%, rgba(255, 77, 154, 0.14), transparent 55%), radial-gradient(circle at 82% 20%, rgba(72, 242, 255, 0.14), transparent 60%);
+    opacity: 0;
+    transition: opacity 260ms ease;
+    z-index: 0;
+  }
+
+  .work-card:hover .work-card__halo,
+  .work-card:focus-visible .work-card__halo {
+    opacity: 1;
+  }
+
+  .work-card__media {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 11;
+    background: hsl(var(--b3) / 0.45);
+  }
+
+  .work-card__media--feature {
+    aspect-ratio: 4 / 3;
+  }
+
+  .work-card__image {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 420ms cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  .work-card:hover .work-card__image,
+  .work-card:focus-visible .work-card__image {
+    transform: scale(1.05) rotate(-1deg);
+  }
+
+  .work-card__frame {
+    position: absolute;
+    inset: 12px;
+    border-radius: 24px;
+    border: 1px dashed hsl(var(--n) / 0.1);
+    pointer-events: none;
+  }
+
+  .work-card__content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.75rem 2rem 1.5rem;
+    z-index: 1;
+  }
+
+  .work-card__content--feature {
+    gap: 1.2rem;
+    padding: 2.25rem 2.25rem 1.75rem;
+  }
+
+  .work-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: hsl(var(--n) / 0.6);
+  }
+
+  .work-card__chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid hsl(var(--b3) / 0.6);
+    background: hsl(var(--b1) / 0.8);
+  }
+
+  .work-card__chip--outline {
+    border-style: dashed;
+  }
+
+  .work-card__title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: hsl(var(--n));
+  }
+
+  .work-card--interactive .work-card__title {
+    font-size: 2rem;
+  }
+
+  .work-card__description {
+    color: hsl(var(--n) / 0.75);
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+
+  .work-card--interactive .work-card__description {
+    font-size: 1rem;
+  }
+
+  .work-card__impact {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: hsl(var(--p));
+  }
+
+  .work-card__meta-info {
+    font-size: 0.68rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: hsl(var(--n) / 0.55);
+  }
+
+  .work-card__tags,
+  .work-card__stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: hsl(var(--n) / 0.65);
+  }
+
+  .work-card__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 9999px;
+    padding: 0.35rem 0.85rem;
+    background: hsl(var(--b1) / 0.75);
+    border: 1px solid hsl(var(--b3) / 0.4);
+  }
+
+  .work-card__tag--ghost {
+    background: transparent;
+  }
+
+  .work-card__stack {
+    font-size: 0.7rem;
+    letter-spacing: 0;
+  }
+
+  .work-card__stack-chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .work-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0 2rem 1.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: hsl(var(--n) / 0.55);
+  }
+
+  .work-card__footer-icon {
+    display: inline-flex;
+    height: 2.5rem;
+    width: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border: 1px solid hsl(var(--n) / 0.35);
+    background: hsl(var(--b1));
+    transition: transform 220ms cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  .work-card:hover .work-card__footer-icon,
+  .work-card:focus-visible .work-card__footer-icon {
+    transform: translate(4px, -4px);
+  }
+
+  .work-card--interactive .work-card__footer {
+    padding: 0 2.25rem 2.25rem;
+  }
+
+  .work-card--interactive .work-card__footer-label {
+    letter-spacing: 0.35em;
+  }
+
+  @media (max-width: 640px) {
+    .work-card__content {
+      padding: 1.6rem 1.6rem 1.3rem;
+    }
+
+    .work-card__footer {
+      padding: 0 1.6rem 1.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .work-card,
+    .work-card__halo,
+    .work-card__image,
+    .work-card__footer-icon {
+      transition: none;
+    }
+  }
+</style>
