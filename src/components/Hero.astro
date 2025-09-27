@@ -2,50 +2,51 @@
 import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
 import { Button } from '@/components/retroui/Button';
 import { Badge } from '@/components/retroui/Badge';
+import { Card } from '@/components/retroui/Card';
 ---
 
 <section class="min-h-screen bg-background flex items-center justify-center p-4">
   <div class="w-full max-w-6xl">
-    <!-- Main Hero Card with Brutalist Design -->
-    <div class="inline-block border-2 border-black rounded shadow-md transition-all hover:shadow-none bg-card p-8 w-full">
+    <!-- Main Hero Card with Clean RetroUI Design -->
+    <Card className="p-8 w-full" client:load>
       <div class="flex flex-col lg:flex-row items-center gap-8">
         <!-- Avatar -->
         <div class="order-2 lg:order-1 flex-shrink-0">
-          <div class="inline-block border-2 border-black rounded-full shadow-md transition-all hover:shadow-none bg-card p-2">
+          <div class="border-2 border-black rounded-none shadow-[4px_4px_0px_0px_#000] bg-card p-4">
             <img 
               src={avatarPlaceholder.src} 
               width={160} 
               height={160} 
               alt="Nick Roth" 
               loading="lazy"
-              class="w-40 h-40 rounded-full object-cover"
+              class="w-40 h-40 object-cover"
             />
           </div>
         </div>
         
         <!-- Content -->
         <div class="order-1 lg:order-2 flex-1 text-center lg:text-left">
-          <h1 class="text-4xl lg:text-5xl font-bold mb-4">Nick Roth</h1>
+          <h1 class="text-4xl lg:text-5xl font-bold mb-4 text-foreground">Nick Roth</h1>
           <p class="text-2xl mb-6 text-muted-foreground font-medium">Product & Systems Director</p>
           <p class="text-lg mb-8 leading-relaxed text-muted-foreground max-w-3xl">
             Transforming complex requirements into systematic solutions through objective-first discovery and automation-driven execution.
           </p>
           
-          <!-- Key Metrics in RetroUI Style -->
+          <!-- Key Metrics in Clean RetroUI Style -->
           <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div class="inline-block border-2 border-black rounded shadow-md bg-primary text-primary-foreground p-4 text-center">
+            <div class="border-2 border-black rounded-none shadow-[4px_4px_0px_0px_#000] bg-primary text-primary-foreground p-4 text-center">
               <div class="text-2xl font-bold">400%</div>
               <div class="text-sm">YoY blog revenue increase</div>
             </div>
-            <div class="inline-block border-2 border-black rounded shadow-md bg-primary text-primary-foreground p-4 text-center">
+            <div class="border-2 border-black rounded-none shadow-[4px_4px_0px_0px_#000] bg-primary text-primary-foreground p-4 text-center">
               <div class="text-2xl font-bold">$35k</div>
               <div class="text-sm">monthly cost savings</div>
             </div>
-            <div class="inline-block border-2 border-black rounded shadow-md bg-primary text-primary-foreground p-4 text-center">
+            <div class="border-2 border-black rounded-none shadow-[4px_4px_0px_0px_#000] bg-primary text-primary-foreground p-4 text-center">
               <div class="text-2xl font-bold">150%</div>
               <div class="text-sm">organic user growth</div>
             </div>
-            <div class="inline-block border-2 border-black rounded shadow-md bg-primary text-primary-foreground p-4 text-center">
+            <div class="border-2 border-black rounded-none shadow-[4px_4px_0px_0px_#000] bg-primary text-primary-foreground p-4 text-center">
               <div class="text-2xl font-bold">125%</div>
               <div class="text-sm">mobile revenue growth</div>
             </div>
@@ -68,6 +69,6 @@ import { Badge } from '@/components/retroui/Badge';
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   </div>
 </section>

@@ -37,11 +37,11 @@ const displayTags = allTags.slice(0, 4);
 const remainingCount = allTags.length - 4;
 ---
 
-<!-- Pure RetroUI Work Card -->
-<div transition:name={`work-container-${slug}`} class="inline-block border-2 border-black rounded shadow-md transition-all hover:shadow-none hover:translate-y-1 bg-card w-full max-w-lg duration-200 h-full" data-work-card data-category={category}>
+<!-- Clean RetroUI Work Card -->
+<div transition:name={`work-container-${slug}`} class="border-2 border-black rounded-none shadow-[4px_4px_0px_0px_#000] bg-card text-card-foreground w-full max-w-lg h-full" data-work-card data-category={category}>
   <!-- Project Image -->
   <div class="p-4 pb-0">
-    <div class="border-2 border-black rounded overflow-hidden shadow-md hover:shadow-none transition-all duration-200">
+    <div class="border-2 border-black rounded-none shadow-[2px_2px_0px_0px_#000] overflow-hidden">
       <img 
         transition:name={`work-img-${slug}`}
         src={imageSrc} 

@@ -10,7 +10,7 @@ const Card = ({ className, ...props }: ICardProps) => {
   return (
     <div
       className={cn(
-        "inline-block border-2 rounded shadow-md transition-all hover:shadow-none bg-card",
+        "border-2 border-black rounded-none shadow-[4px_4px_0px_0px_#000] bg-card text-card-foreground",
         className,
       )}
       {...props}
@@ -21,22 +21,26 @@ const Card = ({ className, ...props }: ICardProps) => {
 const CardHeader = ({ className, ...props }: ICardProps) => {
   return (
     <div
-      className={cn("flex flex-col justify-start p-4", className)}
+      className={cn("flex flex-col space-y-1.5 p-6", className)}
       {...props}
     />
   );
 };
 
 const CardTitle = ({ className, ...props }: ICardProps) => {
-  return <Text as="h3" className={cn("mb-2", className)} {...props} />;
+  return <Text as="h3" className={cn("text-2xl font-semibold leading-none tracking-tight", className)} {...props} />;
 };
 
 const CardDescription = ({ className, ...props }: ICardProps) => (
-  <p className={cn("text-muted-foreground", className)} {...props} />
+  <p className={cn("text-sm text-muted-foreground", className)} {...props} />
 );
 
 const CardContent = ({ className, ...props }: ICardProps) => {
-  return <div className={cn("p-4", className)} {...props} />;
+  return <div className={cn("p-6 pt-0", className)} {...props} />;
+};
+
+const CardFooter = ({ className, ...props }: ICardProps) => {
+  return <div className={cn("flex items-center p-6 pt-0", className)} {...props} />;
 };
 
 const CardComponent = Object.assign(Card, {
@@ -44,6 +48,7 @@ const CardComponent = Object.assign(Card, {
   Title: CardTitle,
   Description: CardDescription,
   Content: CardContent,
+  Footer: CardFooter,
 });
 
 export { CardComponent as Card };

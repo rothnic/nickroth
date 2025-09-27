@@ -4,49 +4,56 @@
 
 @layer base {
   :root {
-    --background: 0.98 0.01 280; /* Very light warm white */
-    --foreground: 0.15 0.05 280; /* Deep charcoal */
-    --card: 0.98 0.01 280;
-    --card-foreground: 0.15 0.05 280;
-    --popover: 0.98 0.01 280;
-    --popover-foreground: 0.15 0.05 280;
-    --primary: 0.65 0.2 140; /* Vibrant teal-green */
-    --primary-foreground: 0.98 0.01 280;
-    --primary-hover: 0.6 0.2 140;
-    --secondary: 0.7 0.15 60; /* Warm yellow-orange */
-    --secondary-foreground: 0.15 0.05 280;
-    --muted: 0.92 0.02 280; /* Muted background */
-    --muted-foreground: 0.15 0.05 280;
-    --accent: 0.7 0.2 320; /* Bright magenta-pink */
-    --accent-foreground: 0.15 0.05 280;
-    --destructive: 0.6 0.2 15;
-    --destructive-foreground: 0.98 0.01 280;
-    --border: 0.92 0.02 280;
-    --input: 0.92 0.02 280;
-    --ring: 0.65 0.2 140;
-    --radius: 0.5rem;
+    /* Clean RetroUI defaults */
+    --background: 0 0% 100%;     /* Pure white */
+    --foreground: 0 0% 3.9%;     /* Near black */
+    --card: 0 0% 100%;           /* Pure white */
+    --card-foreground: 0 0% 3.9%; /* Near black */
+    --popover: 0 0% 100%;        /* Pure white */
+    --popover-foreground: 0 0% 3.9%; /* Near black */
+    --primary: 0 0% 9%;          /* Dark gray/black */
+    --primary-foreground: 0 0% 98%; /* Nearly white */
+    --secondary: 0 0% 96.1%;     /* Light gray */
+    --secondary-foreground: 0 0% 9%; /* Dark gray */
+    --muted: 0 0% 96.1%;         /* Light gray */
+    --muted-foreground: 0 0% 45.1%; /* Medium gray */
+    --accent: 0 0% 96.1%;        /* Light gray */
+    --accent-foreground: 0 0% 9%; /* Dark gray */
+    --destructive: 0 84.2% 60.2%; /* Red */
+    --destructive-foreground: 0 0% 98%; /* Nearly white */
+    --border: 0 0% 89.8%;        /* Light border */
+    --input: 0 0% 89.8%;         /* Light input */
+    --ring: 0 0% 3.9%;           /* Dark ring */
+    --radius: 0.5rem;            /* 8px */
   }
 
   .dark {
-    --background: 0.12 0.05 280; /* Dark background */
-    --foreground: 0.85 0.01 280; /* Light text */
-    --card: 0.15 0.05 280;
-    --card-foreground: 0.85 0.01 280;
-    --popover: 0.15 0.05 280;
-    --popover-foreground: 0.85 0.01 280;
-    --primary: 0.65 0.2 140;
-    --primary-foreground: 0.15 0.05 280;
-    --primary-hover: 0.6 0.2 140;
-    --secondary: 0.7 0.15 60;
-    --secondary-foreground: 0.85 0.01 280;
-    --muted: 0.18 0.05 280;
-    --muted-foreground: 0.85 0.01 280;
-    --accent: 0.7 0.2 320;
-    --accent-foreground: 0.85 0.01 280;
-    --destructive: 0.6 0.2 15;
-    --destructive-foreground: 0.85 0.01 280;
-    --border: 0.18 0.05 280;
-    --input: 0.18 0.05 280;
-    --ring: 0.65 0.2 140;
+    --background: 0 0% 3.9%;     /* Very dark */
+    --foreground: 0 0% 98%;      /* Nearly white */
+    --card: 0 0% 3.9%;           /* Very dark */
+    --card-foreground: 0 0% 98%; /* Nearly white */
+    --popover: 0 0% 3.9%;        /* Very dark */
+    --popover-foreground: 0 0% 98%; /* Nearly white */
+    --primary: 0 0% 98%;         /* Nearly white */
+    --primary-foreground: 0 0% 9%; /* Dark */
+    --secondary: 0 0% 14.9%;     /* Dark gray */
+    --secondary-foreground: 0 0% 98%; /* Nearly white */
+    --muted: 0 0% 14.9%;         /* Dark gray */
+    --muted-foreground: 0 0% 63.9%; /* Medium gray */
+    --accent: 0 0% 14.9%;        /* Dark gray */
+    --accent-foreground: 0 0% 98%; /* Nearly white */
+    --destructive: 0 62.8% 30.6%; /* Dark red */
+    --destructive-foreground: 0 0% 98%; /* Nearly white */
+    --border: 0 0% 14.9%;        /* Dark border */
+    --input: 0 0% 14.9%;         /* Dark input */
+    --ring: 0 0% 83.1%;          /* Light ring */
+  }
+}
+
+@layer base {
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }

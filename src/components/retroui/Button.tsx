@@ -4,22 +4,20 @@ import React, { type ButtonHTMLAttributes } from "react";
 import { Slot } from "@radix-ui/react-slot";
 
 const buttonVariants = cva(
-  "font-head transition-all rounded outline-hidden cursor-pointer duration-200 font-medium flex items-center",
+  "font-sans font-medium transition-all duration-200 cursor-pointer flex items-center justify-center border-2 border-black rounded-none shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1",
   {
     variants: {
       variant: {
-        default:
-          "shadow-md hover:shadow-none bg-primary text-primary-foreground border-2 border-black transition hover:translate-y-1 hover:bg-primary-hover",
-        secondary:
-          "shadow-md hover:shadow-none bg-secondary shadow-primary text-secondary-foreground border-2 border-black transition hover:translate-y-1",
-        outline:
-          "shadow-md hover:shadow-none bg-transparent border-2 transition hover:translate-y-1",
-        link: "bg-transparent hover:underline",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/90",
+        outline: "bg-background text-foreground hover:bg-muted",
+        ghost: "border-transparent shadow-none hover:shadow-none hover:translate-x-0 hover:translate-y-0 hover:bg-muted",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
       },
       size: {
-        sm: "px-3 py-1 text-sm shadow hover:shadow-none",
-        md: "px-4 py-1.5 text-base",
-        lg: "px-8 py-3 text-lg",
+        sm: "px-3 py-1.5 text-sm",
+        md: "px-4 py-2 text-base",
+        lg: "px-6 py-3 text-lg",
         icon: "p-2",
       },
     },
