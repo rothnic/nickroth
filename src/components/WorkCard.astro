@@ -13,118 +13,118 @@ export interface Props {
   roleCategory?: string | undefined;
 }
 
-const { 
-  title, 
-  description, 
-  slug, 
-  tags = [], 
-  image, 
+const {
+  title,
+  description,
+  company,
+  role,
+  slug,
+  tags = [],
+  image,
   category,
   impact,
   stack = [],
-  roleCategory
+  roleCategory,
 } = Astro.props;
 
-const PLACEHOLDER_IMAGE = 'https://placehold.co/600x400';
+const PLACEHOLDER_IMAGE = 'https://placehold.co/1200x800/0f172a/ffffff?text=Case+Study';
 const imageSrc = image?.trim() ? image : PLACEHOLDER_IMAGE;
 
-// Define color schemes for different categories
-const getCategoryColor = (cat: string | undefined) => {
-  switch (cat) {
-    case 'HEADLESS CMS': return 'badge-primary';
-    case 'WEB PLATFORMS': return 'badge-secondary';  
-    case 'MARKETING AUTOMATION': return 'badge-accent';
-    case 'AUTOMATION & AI': return 'badge-warning';
-    case 'CHROME EXTENSIONS': return 'badge-info';
-    case 'SYSTEMS': return 'badge-success';
-    default: return 'badge-outline';
-  }
+const getTagColor = (tag: string) => {
+  const lowerTag = tag.toLowerCase();
+  if (lowerTag.includes('headless') || lowerTag.includes('cms')) return 'bg-primary/10 text-primary';
+  if (lowerTag.includes('automation') || lowerTag.includes('ai')) return 'bg-accent/10 text-accent';
+  if (lowerTag.includes('growth') || lowerTag.includes('marketing')) return 'bg-secondary/10 text-secondary';
+  if (lowerTag.includes('system') || lowerTag.includes('operations')) return 'bg-success/10 text-success';
+  return 'bg-base-content/5 text-base-content/70';
 };
 
 const getStackColor = (tech: string) => {
   const lowerTech = tech.toLowerCase();
-  if (lowerTech.includes('astro') || lowerTech.includes('datocms')) return 'badge-primary';
-  if (lowerTech.includes('n8n') || lowerTech.includes('windmill')) return 'badge-warning';
-  if (lowerTech.includes('chrome') || lowerTech.includes('openai')) return 'badge-info';
-  if (lowerTech.includes('langchain')) return 'badge-success';
-  if (tech.includes('+')) return 'badge-success';
-  return 'badge-outline';
-};
-
-const getTagColor = (tag: string) => {
-  const lowerTag = tag.toLowerCase();
-  if (lowerTag.includes('headless') || lowerTag.includes('cms')) return 'badge-primary';
-  if (lowerTag.includes('web') || lowerTag.includes('platform')) return 'badge-secondary';
-  if (lowerTag.includes('marketing') || lowerTag.includes('automation')) return 'badge-accent';
-  if (lowerTag.includes('systems')) return 'badge-success';
-  return 'badge-outline';
+  if (lowerTech.includes('astro') || lowerTech.includes('datocms')) return 'bg-primary/10 text-primary';
+  if (lowerTech.includes('n8n') || lowerTech.includes('windmill')) return 'bg-secondary/10 text-secondary';
+  if (lowerTech.includes('chrome') || lowerTech.includes('openai')) return 'bg-accent/10 text-accent';
+  if (lowerTech.includes('langchain')) return 'bg-success/10 text-success';
+  return 'bg-base-content/5 text-base-content/70';
 };
 ---
 
-<div transition:name={`work-container-${slug}`} class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] border-2 border-base-300 h-full" data-work-card data-category={category}>
-  <!-- Hero Image -->
-  <figure class="relative h-48">
-    <img transition:name={`work-img-${slug}`} src={imageSrc} alt={title} class="w-full h-full object-cover" loading="lazy" />
-  </figure>
-  
-  <div class="card-body p-6 flex flex-col h-full">
-    <!-- Project Title -->
-    <h2 transition:name={`work-title-${slug}`} class="text-xl font-bold mb-3 leading-tight">
-      {title}
-    </h2>
-    
-    <!-- Impact Statement - Prominent Display -->
-    {impact && (
-      <div class="mb-4">
-        <p class="text-sm font-bold text-primary uppercase leading-snug tracking-wide">
-          {impact}
-        </p>
-      </div>
-    )}
-    
-    <!-- Role Category -->
-    {roleCategory && (
-      <div class="mb-4">
-        <span class="text-xs font-bold text-accent uppercase tracking-widest bg-accent/10 px-2 py-1 rounded">
-          {roleCategory}
-        </span>
-      </div>
-    )}
-    
-    <!-- Category Tags Section -->
-    {tags.length > 0 && (
-      <div class="mb-4">
-        <div class="flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <div class={`badge ${getTagColor(tag)} badge-sm font-semibold text-xs uppercase`}>
-              {tag}
-            </div>
-          ))}
-        </div>
-      </div>
-    )}
-    
-    <!-- Technology Stack Section -->
-    {stack.length > 0 && (
-      <div class="mb-4">
-        <div class="flex flex-wrap gap-2">
-          {stack.map((tech) => (
-            <div class={`badge ${getStackColor(tech)} badge-sm font-medium text-xs`}>
-              {tech}
-            </div>
-          ))}
-        </div>
-      </div>
-    )}
-    
-    <!-- Spacer to push action to bottom -->
-    <div class="flex-grow"></div>
-    
-    <!-- Action Button -->
-    <div class="card-actions justify-end mt-4">
-      <a href={`/work/${slug}`} class="btn btn-primary btn-sm">
-        View Details
-      </a>
-    </div>
+<article
+  transition:name={`work-container-${slug}`}
+  class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-base-content/10 bg-base-100/80 p-6 transition-all duration-500 hover:-translate-y-3 hover:border-primary/40 hover:shadow-[0_48px_98px_-52px_rgba(15,23,42,0.6)]"
+  data-work-card
+  data-category={category}
+>
+  <div class="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+    <div class="absolute inset-0 bg-gradient-to-br from-primary/12 via-transparent to-secondary/10"></div>
   </div>
-</div>
+
+  <div class="relative overflow-hidden rounded-2xl border border-base-content/10 bg-base-200/60">
+    <img
+      transition:name={`work-img-${slug}`}
+      src={imageSrc}
+      alt={title}
+      class="h-48 w-full object-cover transition duration-700 group-hover:scale-105"
+      loading="lazy"
+    />
+    {category && (
+      <span class="absolute right-4 top-4 rounded-full border border-base-content/10 bg-base-100/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-base-content/60">
+        {category}
+      </span>
+    )}
+  </div>
+
+  <div class="relative mt-6 flex flex-col gap-5">
+    <div class="flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-base-content/50">
+      {roleCategory && <span>{roleCategory}</span>}
+      {roleCategory && <span class="h-1 w-1 rounded-full bg-base-content/30"></span>}
+      <span>{role}</span>
+      <span class="h-1 w-1 rounded-full bg-base-content/30"></span>
+      <span>{company}</span>
+    </div>
+
+    <div class="space-y-3">
+      <h3 transition:name={`work-title-${slug}`} class="text-2xl font-semibold leading-snug text-base-content">
+        {title}
+      </h3>
+      <p class="text-sm leading-relaxed text-base-content/70">{description}</p>
+    </div>
+
+    {impact && (
+      <div class="rounded-2xl border border-primary/25 bg-primary/10 p-4 text-xs font-semibold uppercase tracking-[0.35em] text-primary/80">
+        {impact}
+      </div>
+    )}
+
+    {tags.length > 0 && (
+      <div class="flex flex-wrap gap-2 pt-1">
+        {tags.map((tag) => (
+          <span class={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${getTagColor(tag)}`}>
+            {tag}
+          </span>
+        ))}
+      </div>
+    )}
+
+    {stack.length > 0 && (
+      <div class="flex flex-wrap gap-2">
+        {stack.map((tech) => (
+          <span class={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${getStackColor(tech)}`}>
+            {tech}
+          </span>
+        ))}
+      </div>
+    )}
+  </div>
+
+  <div class="mt-auto flex items-center justify-between pt-6 text-sm font-semibold uppercase tracking-[0.3em] text-base-content/60">
+    <span>Outcome-driven build</span>
+    <a
+      href={`/work/${slug}`}
+      class="inline-flex items-center gap-2 rounded-full border border-base-content/10 bg-base-100/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-primary transition-all duration-300 hover:border-primary/40 hover:text-accent"
+    >
+      View details
+      <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</article>
