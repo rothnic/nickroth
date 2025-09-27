@@ -1,8 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import HeroRetro from '../components/HeroRetro.astro';
-import CapabilityCardRetro from '../components/CapabilityCardRetro.astro';
-import WorkCardRetro from '../components/WorkCardRetro.astro';
+import Hero from '../components/Hero.astro';
+import CapabilityCard from '../components/CapabilityCard.astro';
+import WorkCard from '../components/WorkCard.astro';
 import { getCollection } from 'astro:content';
 import { Card } from '@/components/retroui/Card';
 import { Badge } from '@/components/retroui/Badge';
@@ -29,15 +29,15 @@ const recentNotes = notes
 ---
 
 <BaseLayout>
-  <HeroRetro />
+  <Hero />
   
-  <!-- Capabilities Section -->
-  <section class="py-20 bg-base-200">
+  <!-- Capabilities Section with Brutalist Background -->
+  <section class="py-20 bg-muted">
     <div class="container mx-auto px-4">
-      <h2 class="text-4xl font-bold text-center mb-12">Core Capabilities</h2>
+      <h2 class="text-4xl font-bold text-center mb-12 text-foreground">Core Capabilities</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
         {sortedCapabilities.map((capability) => (
-          <CapabilityCardRetro
+          <CapabilityCard
             title={capability.data.title}
             description={capability.data.description}
             icon={capability.data.icon}
@@ -48,33 +48,36 @@ const recentNotes = notes
   </section>
 
   <!-- Featured Work Section -->
-  <section class="py-20">
+  <section class="py-20 bg-background">
     <div class="container mx-auto px-4">
       <div class="text-center mb-12">
-        <h2 class="text-4xl font-bold mb-4">RECENT WORK</h2>
-        <p class="text-lg text-base-content/70">CASE STUDIES SHOWCASING THE SYSTEMATIC APPROACH FROM DISCOVERY THROUGH DELIVERY.</p>
+        <h2 class="text-4xl font-bold mb-4 text-foreground">RECENT WORK</h2>
+        <p class="text-lg text-muted-foreground">CASE STUDIES SHOWCASING THE SYSTEMATIC APPROACH FROM DISCOVERY THROUGH DELIVERY.</p>
       </div>
       {featuredWork.length > 0 ? (
         <div class="flex flex-wrap justify-center gap-8 mb-12">
-          {featuredWork.map((project) => (
-            <WorkCardRetro
-              title={project.data.title}
-              description={project.data.description}
-              image={project.data.image}
-              slug={project.slug}
-              company={project.data.company}
-              role={project.data.role}
-              impact={project.data.impact}
-              tags={project.data.tags}
-              stack={project.data.stack}
+          {featuredWork.map((workItem) => (
+            <WorkCard
+              title={workItem.data.title}
+              description={workItem.data.description}
+              company={workItem.data.company}
+              role={workItem.data.role}
+              slug={workItem.slug}
+              tags={workItem.data.tags}
+              image={workItem.data.image}
+              category={workItem.data.category}
+              impact={workItem.data.impact}
+              stack={workItem.data.stack}
+              roleCategory={workItem.data.roleCategory}
             />
           ))}
         </div>
-      ) : null}
-      
+      ) : (
+        <p class="text-center text-muted-foreground">No featured work available.</p>
+      )}
       <div class="text-center">
         <Button variant="default" size="lg" client:load>
-          <a href="/work" class="no-underline text-inherit">VIEW ALL WORK →</a>
+          <a href="/work" class="no-underline text-inherit font-medium">VIEW ALL WORK →</a>
         </Button>
       </div>
     </div>
@@ -82,25 +85,28 @@ const recentNotes = notes
 
   <!-- Recent Updates Section -->
   {recentNotes.length > 0 && (
-    <section class="py-20 bg-base-200">
+    <section class="py-20 bg-muted">
       <div class="container mx-auto px-4">
-        <h2 class="text-4xl font-bold text-center mb-12">Recent Updates</h2>
+        <h2 class="text-4xl font-bold text-center mb-12 text-foreground">Recent Updates</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {recentNotes.map((note) => (
-            <Card className="hover:translate-y-1 transition-transform duration-200" client:load>
-              <Card.Content className="p-6">
-                <Card.Title className="text-lg mb-2">{note.data.title}</Card.Title>
-                <p class="text-sm opacity-75 mb-2">
+            <!-- Pure RetroUI Card for Blog Posts -->
+            <div class="inline-block border-2 border-black rounded shadow-md transition-all hover:shadow-none hover:translate-y-1 bg-card duration-200">
+              <div class="p-6">
+                <h3 class="text-lg font-bold mb-2 text-foreground">{note.data.title}</h3>
+                <p class="text-sm text-muted-foreground mb-2">
                   {new Date(note.data.publishDate).toLocaleDateString()}
                 </p>
-                <Card.Description className="text-sm mb-3">{note.data.description}</Card.Description>
+                <p class="text-sm mb-4 text-muted-foreground leading-relaxed">{note.data.description}</p>
                 <div class="flex flex-wrap gap-1">
                   {note.data.tags.slice(0, 3).map((tag: string) => (
-                    <Badge variant="outline" size="sm">{tag}</Badge>
+                    <Badge variant="outline" size="sm" className="font-medium">
+                      {tag}
+                    </Badge>
                   ))}
                 </div>
-              </Card.Content>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
       </div>

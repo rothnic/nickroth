@@ -2,9 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import {} from 'astro:transitions';
-import { Card } from '@/components/retroui/Card';
-import { Badge } from '@/components/retroui/Badge';
 import { Button } from '@/components/retroui/Button';
+import { Badge } from '@/components/retroui/Badge';
 
 export async function getStaticPaths() {
   const workEntries = await getCollection('work');
@@ -22,47 +21,24 @@ const { entry } = Astro.props as Props;
 const { Content } = await entry.render();
 const PLACEHOLDER_IMAGE = 'https://placehold.co/600x400';
 const coverImage = entry.data.image?.trim() ? entry.data.image : PLACEHOLDER_IMAGE;
-
-// Get color schemes for different categories
-const getCategoryColor = (cat: string | undefined) => {
-  switch (cat) {
-    case 'HEADLESS CMS': return 'surface';
-    case 'WEB PLATFORMS': return 'outline';  
-    case 'MARKETING AUTOMATION': return 'surface';
-    case 'AUTOMATION & AI': return 'solid';
-    case 'CHROME EXTENSIONS': return 'outline';
-    case 'SYSTEMS': return 'surface';
-    default: return 'outline';
-  }
-};
-
-const getStackColor = (tech: string) => {
-  const lowerTech = tech.toLowerCase();
-  if (lowerTech.includes('astro') || lowerTech.includes('datocms')) return 'surface';
-  if (lowerTech.includes('n8n') || lowerTech.includes('windmill')) return 'solid';
-  if (lowerTech.includes('chrome') || lowerTech.includes('openai')) return 'outline';
-  if (lowerTech.includes('langchain')) return 'surface';
-  if (tech.includes('+')) return 'solid';
-  return 'outline';
-};
 ---
 
 <BaseLayout title={`${entry.data.title} - Nick Roth`} description={entry.data.description}>
-  <main class="py-20">
+  <main class="py-20 bg-background">
     <div class="container mx-auto px-4 max-w-6xl">
       <!-- Navigation -->
       <div class="mb-8">
         <Button variant="outline" size="sm" client:load>
-          <a href="/work" class="no-underline text-inherit">← Back to Work Portfolio</a>
+          <a href="/work" class="no-underline text-inherit font-medium">← Back to Work Portfolio</a>
         </Button>
       </div>
 
-      <!-- Hero Section -->
-      <Card className="mb-16 overflow-hidden" client:load>
+      <!-- Hero Section Card -->
+      <div class="inline-block border-2 border-black rounded shadow-md bg-card w-full mb-16">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <!-- Project Image -->
           <div class="p-6 pb-0 lg:pb-6">
-            <div class="rounded border-2 border-black overflow-hidden shadow-md hover:shadow-none transition-shadow">
+            <div class="border-2 border-black rounded overflow-hidden shadow-md hover:shadow-none transition-all duration-200">
               <img 
                 src={coverImage} 
                 alt={entry.data.title} 
@@ -76,7 +52,7 @@ const getStackColor = (tech: string) => {
           <div class="p-6 flex flex-col justify-center">
             <h1 
               transition:name={`work-title-${entry.slug}`} 
-              class="text-4xl md:text-5xl font-bold mb-4 leading-tight"
+              class="text-4xl md:text-5xl font-bold mb-4 leading-tight text-foreground"
             >
               {entry.data.title}
             </h1>
@@ -84,7 +60,7 @@ const getStackColor = (tech: string) => {
             <!-- Impact Statement -->
             {entry.data.impact && (
               <div class="mb-6">
-                <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">Impact Statement</h2>
+                <h2 class="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">Impact Statement</h2>
                 <p class="text-xl font-bold text-primary uppercase leading-tight">
                   {entry.data.impact}
                 </p>
@@ -94,7 +70,7 @@ const getStackColor = (tech: string) => {
             <!-- Role Category -->
             {entry.data.roleCategory && (
               <div class="mb-6">
-                <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">Role</h2>
+                <h2 class="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">Role</h2>
                 <Badge variant="solid" size="lg" className="font-bold uppercase tracking-wider">
                   {entry.data.roleCategory}
                 </Badge>
@@ -103,182 +79,182 @@ const getStackColor = (tech: string) => {
             
             <!-- Project Timeline -->
             <div class="mb-6">
-              <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">Timeline</h2>
-              <p class="text-base-content/80">
+              <h2 class="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">Timeline</h2>
+              <p class="text-muted-foreground">
                 {entry.data.startDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} - 
                 {entry.data.endDate ? entry.data.endDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Present'}
               </p>
             </div>
           </div>
         </div>
-      </Card>
+      </div>
 
-      <!-- Structured Content Sections -->
+      <!-- Content Grid -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <!-- Main Content Column -->
         <div class="lg:col-span-2 space-y-8">
           <!-- Overview Section -->
-          <Card className="hover:translate-y-1 transition-transform duration-200" client:load>
-            <Card.Content className="p-8">
-              <Card.Title className="text-2xl font-bold mb-4 text-primary">CHALLENGE & OVERVIEW</Card.Title>
-              <Card.Description className="text-base leading-relaxed">
+          <div class="inline-block border-2 border-black rounded shadow-md hover:shadow-none hover:translate-y-1 bg-card w-full transition-all duration-200">
+            <div class="p-8">
+              <h2 class="text-2xl font-bold mb-4 text-primary">CHALLENGE & OVERVIEW</h2>
+              <p class="text-muted-foreground leading-relaxed">
                 {entry.data.description}
-              </Card.Description>
-            </Card.Content>
-          </Card>
+              </p>
+            </div>
+          </div>
 
           <!-- Systematic Approach -->
-          <Card className="hover:translate-y-1 transition-transform duration-200" client:load>
-            <Card.Content className="p-8">
-              <Card.Title className="text-2xl font-bold mb-6 text-primary">SYSTEMATIC APPROACH</Card.Title>
+          <div class="inline-block border-2 border-black rounded shadow-md hover:shadow-none hover:translate-y-1 bg-card w-full transition-all duration-200">
+            <div class="p-8">
+              <h2 class="text-2xl font-bold mb-6 text-primary">SYSTEMATIC APPROACH</h2>
               <div class="space-y-6">
                 <div class="flex items-start gap-4">
-                  <Badge variant="surface" size="lg" className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold">
+                  <div class="inline-block border-2 border-black rounded-full shadow-md bg-primary text-primary-foreground w-10 h-10 flex items-center justify-center font-bold flex-shrink-0">
                     1
-                  </Badge>
+                  </div>
                   <div>
-                    <h3 class="font-bold text-lg mb-2">DISCOVER</h3>
-                    <p class="text-base-content/80">Comprehensive analysis of existing systems, workflows, and performance baselines</p>
+                    <h3 class="font-bold text-lg mb-2 text-foreground">DISCOVER</h3>
+                    <p class="text-muted-foreground">Comprehensive analysis of existing systems, workflows, and performance baselines</p>
                   </div>
                 </div>
                 
                 <div class="flex items-start gap-4">
-                  <Badge variant="surface" size="lg" className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold">
+                  <div class="inline-block border-2 border-black rounded-full shadow-md bg-primary text-primary-foreground w-10 h-10 flex items-center justify-center font-bold flex-shrink-0">
                     2
-                  </Badge>
+                  </div>
                   <div>
-                    <h3 class="font-bold text-lg mb-2">MODEL</h3>
-                    <p class="text-base-content/80">Architecture design and technology selection with structured content modeling</p>
+                    <h3 class="font-bold text-lg mb-2 text-foreground">MODEL</h3>
+                    <p class="text-muted-foreground">Architecture design and technology selection with structured content modeling</p>
                   </div>
                 </div>
                 
                 <div class="flex items-start gap-4">
-                  <Badge variant="surface" size="lg" className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold">
+                  <div class="inline-block border-2 border-black rounded-full shadow-md bg-primary text-primary-foreground w-10 h-10 flex items-center justify-center font-bold flex-shrink-0">
                     3
-                  </Badge>
+                  </div>
                   <div>
-                    <h3 class="font-bold text-lg mb-2">SPECIFY</h3>
-                    <p class="text-base-content/80">Detailed implementation planning with migration strategy and testing framework</p>
+                    <h3 class="font-bold text-lg mb-2 text-foreground">SPECIFY</h3>
+                    <p class="text-muted-foreground">Detailed implementation planning with migration strategy and testing framework</p>
                   </div>
                 </div>
                 
                 <div class="flex items-start gap-4">
-                  <Badge variant="surface" size="lg" className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold">
+                  <div class="inline-block border-2 border-black rounded-full shadow-md bg-primary text-primary-foreground w-10 h-10 flex items-center justify-center font-bold flex-shrink-0">
                     4
-                  </Badge>
+                  </div>
                   <div>
-                    <h3 class="font-bold text-lg mb-2">BUILD</h3>
-                    <p class="text-base-content/80">Incremental implementation with continuous validation and performance optimization</p>
+                    <h3 class="font-bold text-lg mb-2 text-foreground">BUILD</h3>
+                    <p class="text-muted-foreground">Incremental implementation with continuous validation and performance optimization</p>
                   </div>
                 </div>
                 
                 <div class="flex items-start gap-4">
-                  <Badge variant="surface" size="lg" className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold">
+                  <div class="inline-block border-2 border-black rounded-full shadow-md bg-primary text-primary-foreground w-10 h-10 flex items-center justify-center font-bold flex-shrink-0">
                     5
-                  </Badge>
+                  </div>
                   <div>
-                    <h3 class="font-bold text-lg mb-2">PROVE</h3>
-                    <p class="text-base-content/80">Impact measurement, optimization, and long-term maintenance planning</p>
+                    <h3 class="font-bold text-lg mb-2 text-foreground">PROVE</h3>
+                    <p class="text-muted-foreground">Impact measurement, optimization, and long-term maintenance planning</p>
                   </div>
                 </div>
               </div>
-            </Card.Content>
-          </Card>
+            </div>
+          </div>
 
           <!-- Business Impact -->
-          <Card className="hover:translate-y-1 transition-transform duration-200 bg-accent/5 border-accent/20" client:load>
-            <Card.Content className="p-8">
-              <Card.Title className="text-2xl font-bold mb-4 text-accent">BUSINESS IMPACT</Card.Title>
-              <Card.Description className="text-base leading-relaxed">
+          <div class="inline-block border-2 border-black rounded shadow-md hover:shadow-none hover:translate-y-1 bg-accent/5 border-accent/50 w-full transition-all duration-200">
+            <div class="p-8">
+              <h2 class="text-2xl font-bold mb-4 text-accent">BUSINESS IMPACT</h2>
+              <p class="text-muted-foreground leading-relaxed">
                 Successfully modernized platform serving 2M+ monthly users with significant improvements in performance, 
                 authoring experience, and technical maintainability. Editorial team now focuses on content strategy 
                 rather than technical workarounds, enabling higher content quality and publication velocity.
-              </Card.Description>
-            </Card.Content>
-          </Card>
+              </p>
+            </div>
+          </div>
         </div>
 
         <!-- Sidebar -->
         <div class="space-y-8">
           <!-- Technology Stack -->
           {entry.data.stack && entry.data.stack.length > 0 && (
-            <Card className="hover:translate-y-1 transition-transform duration-200" client:load>
-              <Card.Content className="p-6">
-                <Card.Title className="text-lg font-bold mb-4 text-primary">TECHNOLOGY STACK</Card.Title>
+            <div class="inline-block border-2 border-black rounded shadow-md hover:shadow-none hover:translate-y-1 bg-card w-full transition-all duration-200">
+              <div class="p-6">
+                <h3 class="text-lg font-bold mb-4 text-primary">TECHNOLOGY STACK</h3>
                 <div class="flex flex-wrap gap-2">
                   {entry.data.stack.map((tech) => (
-                    <Badge variant={getStackColor(tech)} size="sm" className="font-medium">
+                    <Badge variant="outline" size="sm" className="font-medium">
                       {tech}
                     </Badge>
                   ))}
                 </div>
-              </Card.Content>
-            </Card>
+              </div>
+            </div>
           )}
 
           <!-- Project Category -->
           {entry.data.category && (
-            <Card className="hover:translate-y-1 transition-transform duration-200" client:load>
-              <Card.Content className="p-6">
-                <Card.Title className="text-lg font-bold mb-4 text-primary">PROJECT CATEGORY</Card.Title>
-                <Badge variant={getCategoryColor(entry.data.category)} size="lg" className="font-semibold">
+            <div class="inline-block border-2 border-black rounded shadow-md hover:shadow-none hover:translate-y-1 bg-card w-full transition-all duration-200">
+              <div class="p-6">
+                <h3 class="text-lg font-bold mb-4 text-primary">PROJECT CATEGORY</h3>
+                <Badge variant="solid" size="lg" className="font-semibold">
                   {entry.data.category}
                 </Badge>
-              </Card.Content>
-            </Card>
+              </div>
+            </div>
           )}
 
           <!-- Key Outcomes -->
-          <Card className="hover:translate-y-1 transition-transform duration-200 bg-success/5 border-success/20" client:load>
-            <Card.Content className="p-6">
-              <Card.Title className="text-lg font-bold mb-4 text-success">KEY OUTCOMES</Card.Title>
+          <div class="inline-block border-2 border-black rounded shadow-md hover:shadow-none hover:translate-y-1 bg-success/5 border-success/50 w-full transition-all duration-200">
+            <div class="p-6">
+              <h3 class="text-lg font-bold mb-4 text-success">KEY OUTCOMES</h3>
               <div class="space-y-3">
-                <div class="flex items-center gap-2">
-                  <Badge variant="solid" size="sm" className="w-2 h-2 p-0 bg-success rounded-full"></Badge>
-                  <span class="text-sm font-semibold">40% improvement in Core Web Vitals</span>
+                <div class="flex items-center gap-3">
+                  <div class="w-2 h-2 bg-success rounded-full flex-shrink-0"></div>
+                  <span class="text-sm font-semibold text-foreground">40% improvement in Core Web Vitals</span>
                 </div>
-                <div class="flex items-center gap-2">
-                  <Badge variant="solid" size="sm" className="w-2 h-2 p-0 bg-success rounded-full"></Badge>
-                  <span class="text-sm font-semibold">60% reduction in publishing time</span>
+                <div class="flex items-center gap-3">
+                  <div class="w-2 h-2 bg-success rounded-full flex-shrink-0"></div>
+                  <span class="text-sm font-semibold text-foreground">60% reduction in publishing time</span>
                 </div>
-                <div class="flex items-center gap-2">
-                  <Badge variant="solid" size="sm" className="w-2 h-2 p-0 bg-success rounded-full"></Badge>
-                  <span class="text-sm font-semibold">25% increase in organic traffic</span>
+                <div class="flex items-center gap-3">
+                  <div class="w-2 h-2 bg-success rounded-full flex-shrink-0"></div>
+                  <span class="text-sm font-semibold text-foreground">25% increase in organic traffic</span>
                 </div>
-                <div class="flex items-center gap-2">
-                  <Badge variant="solid" size="sm" className="w-2 h-2 p-0 bg-success rounded-full"></Badge>
-                  <span class="text-sm font-semibold">90% reduction in deployment time</span>
+                <div class="flex items-center gap-3">
+                  <div class="w-2 h-2 bg-success rounded-full flex-shrink-0"></div>
+                  <span class="text-sm font-semibold text-foreground">90% reduction in deployment time</span>
                 </div>
               </div>
-            </Card.Content>
-          </Card>
+            </div>
+          </div>
 
           <!-- Project Tags -->
           {entry.data.tags && entry.data.tags.length > 0 && (
-            <Card className="hover:translate-y-1 transition-transform duration-200" client:load>
-              <Card.Content className="p-6">
-                <Card.Title className="text-lg font-bold mb-4 text-primary">PROJECT TAGS</Card.Title>
+            <div class="inline-block border-2 border-black rounded shadow-md hover:shadow-none hover:translate-y-1 bg-card w-full transition-all duration-200">
+              <div class="p-6">
+                <h3 class="text-lg font-bold mb-4 text-primary">PROJECT TAGS</h3>
                 <div class="flex flex-wrap gap-2">
                   {entry.data.tags.slice(0, 5).map((tag) => (
-                    <Badge variant="outline" size="sm">
+                    <Badge variant="outline" size="sm" className="font-medium">
                       {tag}
                     </Badge>
                   ))}
                 </div>
-              </Card.Content>
-            </Card>
+              </div>
+            </div>
           )}
         </div>
       </div>
 
       <!-- Navigation Footer -->
       <div class="mt-16 pt-8 border-t-4 border-black">
-        <div class="flex justify-between items-center">
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
           <Button variant="default" size="lg" client:load>
-            <a href="/work" class="no-underline text-inherit">← View All Projects</a>
+            <a href="/work" class="no-underline text-inherit font-medium">← View All Projects</a>
           </Button>
           <Button variant="outline" size="lg" client:load>
-            <a href="/contact" class="no-underline text-inherit">Discuss Your Project →</a>
+            <a href="/contact" class="no-underline text-inherit font-medium">Discuss Your Project →</a>
           </Button>
         </div>
       </div>
