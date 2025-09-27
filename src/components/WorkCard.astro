@@ -32,7 +32,7 @@ const imageSrc = image?.trim() ? image : PLACEHOLDER_IMAGE;
 const getCategoryColor = (cat: string | undefined) => {
   switch (cat) {
     case 'HEADLESS CMS': return 'badge-primary';
-    case 'WEB PLATFORMS': return 'badge-secondary';
+    case 'WEB PLATFORMS': return 'badge-secondary';  
     case 'MARKETING AUTOMATION': return 'badge-accent';
     case 'AUTOMATION & AI': return 'badge-warning';
     case 'CHROME EXTENSIONS': return 'badge-info';
@@ -46,52 +46,70 @@ const getStackColor = (tech: string) => {
   if (lowerTech.includes('astro') || lowerTech.includes('datocms')) return 'badge-primary';
   if (lowerTech.includes('n8n') || lowerTech.includes('windmill')) return 'badge-warning';
   if (lowerTech.includes('chrome') || lowerTech.includes('openai')) return 'badge-info';
+  if (lowerTech.includes('langchain')) return 'badge-success';
   if (tech.includes('+')) return 'badge-success';
+  return 'badge-outline';
+};
+
+const getTagColor = (tag: string) => {
+  const lowerTag = tag.toLowerCase();
+  if (lowerTag.includes('headless') || lowerTag.includes('cms')) return 'badge-primary';
+  if (lowerTag.includes('web') || lowerTag.includes('platform')) return 'badge-secondary';
+  if (lowerTag.includes('marketing') || lowerTag.includes('automation')) return 'badge-accent';
+  if (lowerTag.includes('systems')) return 'badge-success';
   return 'badge-outline';
 };
 ---
 
-<div transition:name={`work-container-${slug}`} class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] border-2 border-base-300">
-  <figure class="relative">
-    <img transition:name={`work-img-${slug}`} src={imageSrc} alt={title} class="h-48 w-full object-cover" loading="lazy" />
-    <div class="absolute top-4 left-4">
-      {category && (
-        <div class={`badge ${getCategoryColor(category)} badge-sm text-xs font-semibold`}>
-          {category}
-        </div>
-      )}
-    </div>
+<div transition:name={`work-container-${slug}`} class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] border-2 border-base-300 h-full">
+  <!-- Hero Image -->
+  <figure class="relative h-48">
+    <img transition:name={`work-img-${slug}`} src={imageSrc} alt={title} class="w-full h-full object-cover" loading="lazy" />
   </figure>
   
-  <div class="card-body p-6">
-    <h2 transition:name={`work-title-${slug}`} class="card-title text-xl font-bold mb-2">
+  <div class="card-body p-6 flex flex-col h-full">
+    <!-- Project Title -->
+    <h2 transition:name={`work-title-${slug}`} class="text-xl font-bold mb-3 leading-tight">
       {title}
     </h2>
     
+    <!-- Impact Statement - Prominent Display -->
     {impact && (
-      <p class="text-sm font-semibold text-primary mb-3 uppercase leading-tight">
-        {impact}
-      </p>
+      <div class="mb-4">
+        <p class="text-sm font-bold text-primary uppercase leading-snug tracking-wide">
+          {impact}
+        </p>
+      </div>
     )}
     
+    <!-- Role Category -->
     {roleCategory && (
-      <div class="mb-3">
-        <span class="text-xs font-semibold text-accent uppercase tracking-wider">
+      <div class="mb-4">
+        <span class="text-xs font-bold text-accent uppercase tracking-widest bg-accent/10 px-2 py-1 rounded">
           {roleCategory}
         </span>
       </div>
     )}
     
-    <p class="text-sm text-base-content/80 mb-4 line-clamp-2">
-      {description}
-    </p>
+    <!-- Category Tags Section -->
+    {tags.length > 0 && (
+      <div class="mb-4">
+        <div class="flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <div class={`badge ${getTagColor(tag)} badge-sm font-semibold text-xs uppercase`}>
+              {tag}
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
     
-    {/* Technology Stack */}
+    <!-- Technology Stack Section -->
     {stack.length > 0 && (
       <div class="mb-4">
         <div class="flex flex-wrap gap-2">
           {stack.map((tech) => (
-            <div class={`badge ${getStackColor(tech)} badge-sm text-xs font-medium`}>
+            <div class={`badge ${getStackColor(tech)} badge-sm font-medium text-xs`}>
               {tech}
             </div>
           ))}
@@ -99,25 +117,11 @@ const getStackColor = (tech: string) => {
       </div>
     )}
     
-    {/* Original tags as secondary info */}
-    {tags.length > 0 && (
-      <div class="mb-4">
-        <div class="flex flex-wrap gap-1">
-          {tags.slice(0, 3).map((tag) => (
-            <div class="badge badge-ghost badge-xs">
-              {tag}
-            </div>
-          ))}
-          {tags.length > 3 && (
-            <div class="badge badge-ghost badge-xs">
-              +{tags.length - 3}
-            </div>
-          )}
-        </div>
-      </div>
-    )}
+    <!-- Spacer to push action to bottom -->
+    <div class="flex-grow"></div>
     
-    <div class="card-actions justify-end mt-auto">
+    <!-- Action Button -->
+    <div class="card-actions justify-end mt-4">
       <a href={`/work/${slug}`} class="btn btn-primary btn-sm">
         View Details
       </a>
