@@ -9,7 +9,7 @@ export interface Props {
 }
 
 const {
-  title = "Nick Roth - Product Manager & AI Engineer",
+  title = "Nick Roth – Product Director & Systems Strategist",
   description = "Personal site for Nick Roth",
   showNavbar = true
 } = Astro.props;
@@ -18,31 +18,88 @@ const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="nick-light">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <title>{title}</title>
     <ClientRouter />
-    <script src="/src/scripts/theme.js"></script>
-  </head>
-  <style>
-    @keyframes scale-up {
-      from { transform: scale(0.8); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
+    <script type="module" is:inline>
+      import '/src/scripts/theme.js';
+    </script>
+    <style is:global>
+      :root[data-theme='nick-light'] {
+        color-scheme: light;
+      }
 
-    @keyframes scale-down {
-      from { transform: scale(1); opacity: 1; }
-      to { transform: scale(0.8); opacity: 0; }
-    }
-  </style>
-  <body>
-    <div class="min-h-screen bg-base-100 flex flex-col">
+      :root[data-theme='nick-dark'] {
+        color-scheme: dark;
+      }
+
+      html,
+      body {
+        font-family: 'Space Grotesk', var(--font-sans), system-ui, sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        transition: background 200ms ease;
+      }
+
+      html[data-theme='nick-light'] body {
+        background-color: var(--fallback-b1, #fdf9f3);
+        background-image: linear-gradient(var(--fallback-b1, #fdf9f3), var(--fallback-b1, #fdf9f3)),
+          radial-gradient(circle at top right, rgba(255, 79, 90, 0.12), transparent 55%),
+          radial-gradient(circle at bottom left, rgba(14, 165, 233, 0.12), transparent 55%);
+      }
+
+      html[data-theme='nick-dark'] body {
+        background-color: var(--fallback-b1, #0f172a);
+        background-image: linear-gradient(var(--fallback-b1, #0f172a), var(--fallback-b1, #0f172a)),
+          radial-gradient(circle at top right, rgba(255, 122, 133, 0.18), transparent 60%),
+          radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.16), transparent 60%);
+      }
+
+      main {
+        view-transition-name: page;
+      }
+
+      ::view-transition-group(page) {
+        animation-duration: 320ms;
+        animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+      }
+
+      ::view-transition-old(page),
+      ::view-transition-new(page) {
+        mix-blend-mode: normal;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        ::view-transition-group(page) {
+          animation-duration: 1ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="font-sans text-base-content">
+    <div class="min-h-screen flex flex-col">
       {showNavbar && <Navbar currentPath={currentPath} />}
-      <slot />
+      <main class="flex-1">
+        <slot />
+      </main>
+      <footer class="border-t border-base-300 bg-base-100/80 backdrop-blur-sm">
+        <div class="max-w-6xl mx-auto px-6 py-10 text-sm text-base-content/70">
+          <p>© {new Date().getFullYear()} Nick Roth. Built with intent, iteration, and automation.</p>
+        </div>
+      </footer>
     </div>
   </body>
 </html>

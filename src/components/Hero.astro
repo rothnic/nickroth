@@ -1,52 +1,89 @@
 ---
 import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
+
+const metrics = [
+  { label: 'YoY revenue lift', value: '400%' },
+  { label: 'Ops cost removed', value: '$35k/mo' },
+  { label: 'Manual effort saved', value: '94%' },
+  { label: 'Launch cadence', value: '2-3/mo' },
+];
+
+const highlights = [
+  'Systems design for AI-assisted platforms',
+  'Content operations automation',
+  'Fractional product leadership',
+];
 ---
 
-<div class="hero min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10">
-  <div class="hero-content text-center">
-    <div class="max-w-4xl">
-      <div class="avatar mb-8">
-        <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img src={avatarPlaceholder.src} width={128} height={128} alt="Nick Roth" loading="lazy" />
+<section class="relative overflow-hidden py-24">
+  <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-base-300/50 to-transparent" aria-hidden="true"></div>
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="grid gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(320px,400px)] items-start">
+      <div class="space-y-10">
+        <div class="space-y-6">
+          <p class="text-xs uppercase tracking-[0.4em] text-base-content/60">Product & Systems Direction</p>
+          <h1 transition:name="hero-title" class="text-5xl sm:text-6xl font-black leading-[1.05] tracking-tight">
+            Nick Roth helps teams ship confident, automated experiences.
+          </h1>
+          <p class="max-w-2xl text-lg text-base-content/80 leading-relaxed">
+            I align strategy, architecture, and AI-assisted delivery so product, marketing, and ops teams move together.
+            Every engagement starts with instrumentation and ends with measurable deltas in throughput, accuracy, and growth.
+          </p>
         </div>
-      </div>
-      <h1 class="text-5xl font-bold mb-2">Nick Roth</h1>
-      <p class="text-2xl mb-4 text-base-content/80">Product & Systems Director</p>
-      <p class="text-lg mb-8 max-w-3xl mx-auto leading-relaxed">
-        Transforming complex requirements into systematic solutions through objective-first discovery and automation-driven execution.
-      </p>
-      
-      <!-- Key Metrics -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 max-w-4xl mx-auto">
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">400%</div>
-          <div class="stat-desc text-sm">YoY blog revenue increase</div>
+
+        <div class="flex flex-wrap items-center gap-4">
+          <a
+            href="/work"
+            class="btn btn-primary btn-lg shadow-brutal hover:-translate-y-1 transition-transform duration-200"
+          >
+            View recent work
+          </a>
+          <a href="/contact" class="btn btn-ghost btn-lg border-2 border-base-300/70 hover:border-primary/60">
+            Connect for a build sprint
+          </a>
         </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">$35k</div>
-          <div class="stat-desc text-sm">monthly cost savings</div>
-        </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">150%</div>
-          <div class="stat-desc text-sm">organic user growth</div>
-        </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">125%</div>
-          <div class="stat-desc text-sm">mobile revenue growth</div>
-        </div>
+
+        <ul class="grid gap-3 sm:grid-cols-2" role="list">
+          {highlights.map((item) => (
+            <li class="flex items-start gap-3 text-sm text-base-content/80">
+              <span class="mt-1 inline-flex h-2.5 w-2.5 rounded-full bg-primary"></span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
       </div>
 
-      <div class="flex gap-4 justify-center flex-wrap">
-        <a href="/work" class="btn btn-primary btn-lg">View My Work</a>
-        <a href="/contact" class="btn btn-outline btn-lg">Get In Touch</a>
-      </div>
-      
-      <div class="mt-8">
-        <p class="text-sm text-base-content/60">
-          <span class="inline-block mr-4">📍 Huntsville, AL</span>
-          <span class="inline-block">✅ Open to consulting and fractional roles</span>
-        </p>
+      <div class="relative">
+        <div class="absolute -top-8 -right-6 h-24 w-24 rounded-2xl border-2 border-dashed border-base-300/70" aria-hidden="true"></div>
+        <div class="absolute -bottom-10 -left-10 h-28 w-28 rounded-full bg-accent/20 blur-2xl" aria-hidden="true"></div>
+        <div class="group relative rounded-[32px] border-4 border-neutral/90 bg-base-100 shadow-brutal transition-all duration-300 hover:-translate-y-2 hover:shadow-brutal-dark">
+          <div class="absolute inset-4 rounded-3xl bg-repeat [background-image:linear-gradient(90deg,rgba(17,24,39,0.08)_1px,transparent_1px),linear-gradient(rgba(17,24,39,0.08)_1px,transparent_1px)] [background-size:22px_22px] opacity-60 mix-blend-multiply" aria-hidden="true"></div>
+          <div class="relative overflow-hidden rounded-[24px] m-4 bg-secondary text-secondary-content">
+            <img
+              src={avatarPlaceholder.src}
+              width={480}
+              height={480}
+              alt="Nick Roth portrait"
+              loading="lazy"
+              class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06]"
+            />
+            <div class="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-accent/15 mix-blend-screen"></div>
+          </div>
+          <div class="relative border-t border-dashed border-neutral/40 px-6 py-5">
+            <p class="text-xs uppercase tracking-[0.4em] text-base-content/60">Currently</p>
+            <p class="text-base font-semibold tracking-tight">Designing resilient systems with AI-first teams.</p>
+          </div>
+        </div>
       </div>
     </div>
+
+    <div class="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {metrics.map((metric) => (
+        <div class="rounded-2xl border border-base-300/70 bg-base-100/80 px-6 py-5 shadow-sm backdrop-blur">
+          <p class="text-xs uppercase tracking-[0.4em] text-base-content/60">{metric.label}</p>
+          <p class="mt-3 text-2xl font-semibold text-primary">{metric.value}</p>
+        </div>
+      ))}
+    </div>
   </div>
-</div>
+</section>

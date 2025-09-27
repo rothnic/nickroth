@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const notes = await getCollection('notes');
+const sortedNotes = notes
+  .filter((note) => !note.data.draft)
+  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
+---
+
+<BaseLayout title="Field Notes – Nick Roth" description="Automation, AI, and systems notes from the field.">
+  <section class="py-24">
+    <div class="max-w-4xl mx-auto px-6 space-y-12">
+      <header class="space-y-4 text-center sm:text-left">
+        <p class="text-xs uppercase tracking-[0.4em] text-base-content/60">Signals</p>
+        <h1 class="text-4xl font-semibold tracking-tight">Field notes</h1>
+        <p class="text-base text-base-content/80">
+          Working notes on AI-assisted delivery, platform instrumentation, and the automation patterns that keep teams calm
+          at scale. Expect tactical breakdowns and honest retrospectives.
+        </p>
+      </header>
+
+      <div class="space-y-6">
+        {sortedNotes.map((note) => (
+          <a
+            href={`/notes/${note.slug}`}
+            class="group block rounded-3xl border border-base-300/80 bg-base-100/90 px-6 py-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-brutal"
+          >
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p class="text-xs uppercase tracking-[0.4em] text-base-content/60">
+                {new Date(note.data.publishDate).toLocaleDateString()}
+              </p>
+              <div class="flex flex-wrap gap-2 text-xs text-base-content/70">
+                {note.data.tags.slice(0, 4).map((tag: string) => (
+                  <span class="badge badge-ghost badge-sm uppercase tracking-wide">{tag}</span>
+                ))}
+                {note.data.tags.length > 4 && (
+                  <span class="badge badge-outline badge-sm uppercase tracking-wide">+{note.data.tags.length - 4}</span>
+                )}
+              </div>
+            </div>
+            <h2 class="mt-4 text-2xl font-semibold tracking-tight text-base-content group-hover:text-primary">
+              {note.data.title}
+            </h2>
+            <p class="mt-3 text-sm text-base-content/80 leading-relaxed max-w-3xl">{note.data.description}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

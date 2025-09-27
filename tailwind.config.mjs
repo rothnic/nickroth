@@ -3,48 +3,60 @@ export default {
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
   theme: {
     extend: {
+      fontFamily: {
+        display: ['"Space Grotesk"', 'var(--font-sans)', 'system-ui', 'sans-serif'],
+        sans: ['"Space Grotesk"', 'var(--font-sans)', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        brutal: '10px 10px 0 0 rgba(17, 24, 39, 0.12)',
+        'brutal-dark': '10px 10px 0 0 rgba(15, 23, 42, 0.3)',
+      },
       colors: {
-        // Custom color scheme based on prototype design
-        'brutal-primary': 'oklch(0.65 0.2 140)',      // Vibrant teal-green
-        'brutal-secondary': 'oklch(0.7 0.15 60)',     // Warm yellow-orange  
-        'brutal-accent': 'oklch(0.7 0.2 320)',        // Bright magenta-pink
-        'brutal-foreground': 'oklch(0.15 0.05 280)',  // Deep charcoal
-        'brutal-background': 'oklch(0.98 0.01 280)',  // Very light warm white
-        'brutal-muted': 'oklch(0.92 0.02 280)',       // Muted background
-      }
+        'grid-line': 'rgba(17, 24, 39, 0.08)',
+      },
     },
   },
   plugins: [require('daisyui')],
   daisyui: {
     themes: [
       {
-        light: {
-          "primary": "oklch(0.65 0.2 140)",          // Vibrant teal-green
-          "secondary": "oklch(0.7 0.15 60)",         // Warm yellow-orange
-          "accent": "oklch(0.7 0.2 320)",            // Bright magenta-pink
-          "neutral": "oklch(0.15 0.05 280)",         // Deep charcoal
-          "base-100": "oklch(0.98 0.01 280)",        // Very light warm white
-          "base-200": "oklch(0.96 0.02 280)",        // Light card background
-          "base-300": "oklch(0.92 0.02 280)",        // Muted background
-          "info": "oklch(0.65 0.2 200)",
-          "success": "oklch(0.65 0.2 140)",
-          "warning": "oklch(0.7 0.15 60)",
-          "error": "oklch(0.6 0.2 15)",
+        'nick-light': {
+          primary: '#ff4f5a',
+          'primary-content': '#111827',
+          secondary: '#111827',
+          'secondary-content': '#fdf9f3',
+          accent: '#0ea5e9',
+          'accent-content': '#041724',
+          neutral: '#111827',
+          'neutral-content': '#f3f4f6',
+          'base-100': '#fdf9f3',
+          'base-200': '#f3ede3',
+          'base-300': '#e2d7c5',
+          info: '#0ea5e9',
+          success: '#10b981',
+          warning: '#facc15',
+          error: '#ef4444',
         },
-        dark: {
-          "primary": "oklch(0.65 0.2 140)",          // Keep same vibrant colors
-          "secondary": "oklch(0.7 0.15 60)",
-          "accent": "oklch(0.7 0.2 320)",
-          "neutral": "oklch(0.85 0.01 280)",         // Light text for dark mode
-          "base-100": "oklch(0.12 0.05 280)",        // Dark background
-          "base-200": "oklch(0.15 0.05 280)",        // Darker cards
-          "base-300": "oklch(0.18 0.05 280)",        // Darker muted
-          "info": "oklch(0.65 0.2 200)",
-          "success": "oklch(0.65 0.2 140)",
-          "warning": "oklch(0.7 0.15 60)",
-          "error": "oklch(0.6 0.2 15)",
-        }
-      }
+      },
+      {
+        'nick-dark': {
+          primary: '#ff7a85',
+          'primary-content': '#0b1324',
+          secondary: '#0b1324',
+          'secondary-content': '#f9fafb',
+          accent: '#38bdf8',
+          'accent-content': '#041724',
+          neutral: '#f4f4f5',
+          'neutral-content': '#0b1324',
+          'base-100': '#0f172a',
+          'base-200': '#111827',
+          'base-300': '#1f2937',
+          info: '#38bdf8',
+          success: '#34d399',
+          warning: '#fbbf24',
+          error: '#f87171',
+        },
+      },
     ],
   },
-}
+};

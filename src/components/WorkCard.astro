@@ -13,12 +13,12 @@ export interface Props {
   roleCategory?: string | undefined;
 }
 
-const { 
-  title, 
-  description, 
-  slug, 
-  tags = [], 
-  image, 
+const {
+  title,
+  description,
+  slug,
+  tags = [],
+  image,
   category,
   impact,
   stack = [],
@@ -28,18 +28,8 @@ const {
 const PLACEHOLDER_IMAGE = 'https://placehold.co/600x400';
 const imageSrc = image?.trim() ? image : PLACEHOLDER_IMAGE;
 
-// Define color schemes for different categories
-const getCategoryColor = (cat: string | undefined) => {
-  switch (cat) {
-    case 'HEADLESS CMS': return 'badge-primary';
-    case 'WEB PLATFORMS': return 'badge-secondary';  
-    case 'MARKETING AUTOMATION': return 'badge-accent';
-    case 'AUTOMATION & AI': return 'badge-warning';
-    case 'CHROME EXTENSIONS': return 'badge-info';
-    case 'SYSTEMS': return 'badge-success';
-    default: return 'badge-outline';
-  }
-};
+const visibleTags = tags.slice(0, 3);
+const extraTagCount = Math.max(tags.length - visibleTags.length, 0);
 
 const getStackColor = (tech: string) => {
   const lowerTech = tech.toLowerCase();
@@ -50,81 +40,80 @@ const getStackColor = (tech: string) => {
   if (tech.includes('+')) return 'badge-success';
   return 'badge-outline';
 };
-
-const getTagColor = (tag: string) => {
-  const lowerTag = tag.toLowerCase();
-  if (lowerTag.includes('headless') || lowerTag.includes('cms')) return 'badge-primary';
-  if (lowerTag.includes('web') || lowerTag.includes('platform')) return 'badge-secondary';
-  if (lowerTag.includes('marketing') || lowerTag.includes('automation')) return 'badge-accent';
-  if (lowerTag.includes('systems')) return 'badge-success';
-  return 'badge-outline';
-};
 ---
 
-<div transition:name={`work-container-${slug}`} class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] border-2 border-base-300 h-full" data-work-card data-category={category}>
-  <!-- Hero Image -->
-  <figure class="relative h-48">
-    <img transition:name={`work-img-${slug}`} src={imageSrc} alt={title} class="w-full h-full object-cover" loading="lazy" />
-  </figure>
-  
-  <div class="card-body p-6 flex flex-col h-full">
-    <!-- Project Title -->
-    <h2 transition:name={`work-title-${slug}`} class="text-xl font-bold mb-3 leading-tight">
-      {title}
-    </h2>
-    
-    <!-- Impact Statement - Prominent Display -->
-    {impact && (
-      <div class="mb-4">
-        <p class="text-sm font-bold text-primary uppercase leading-snug tracking-wide">
-          {impact}
-        </p>
+<a
+  href={`/work/${slug}`}
+  class="group relative flex h-full flex-col overflow-hidden rounded-3xl border-2 border-neutral/80 bg-base-100/95 shadow-brutal transition-all duration-300 hover:-translate-y-2 hover:shadow-brutal-dark focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/40"
+  data-work-card
+  transition:name={`work-container-${slug}`}
+  aria-label={`View case study: ${title}`}
+>
+  <div class="relative aspect-[16/11] overflow-hidden bg-base-300/60">
+    <img
+      src={imageSrc}
+      alt={title}
+      loading="lazy"
+      transition:name={`work-img-${slug}`}
+      class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+    />
+    <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-base-100/0 via-base-100/0 to-base-100/30"></div>
+    <div class="pointer-events-none absolute inset-3 rounded-[22px] border border-dashed border-base-content/10"></div>
+  </div>
+
+  <div class="flex flex-1 flex-col gap-6 px-8 py-7">
+    <div class="space-y-4">
+      <div class="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.35em] text-base-content/60">
+        {category && <span>{category}</span>}
+        {roleCategory && (
+          <span class="rounded-full border border-base-300/80 px-3 py-1 text-[0.62rem] tracking-[0.35em]">
+            {roleCategory}
+          </span>
+        )}
       </div>
-    )}
-    
-    <!-- Role Category -->
-    {roleCategory && (
-      <div class="mb-4">
-        <span class="text-xs font-bold text-accent uppercase tracking-widest bg-accent/10 px-2 py-1 rounded">
-          {roleCategory}
-        </span>
-      </div>
-    )}
-    
-    <!-- Category Tags Section -->
-    {tags.length > 0 && (
-      <div class="mb-4">
-        <div class="flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <div class={`badge ${getTagColor(tag)} badge-sm font-semibold text-xs uppercase`}>
-              {tag}
-            </div>
+
+      <h3 transition:name={`work-title-${slug}`} class="text-2xl font-semibold leading-snug tracking-tight text-base-content">
+        {title}
+      </h3>
+
+      <p class="text-sm leading-relaxed text-base-content/80 max-w-prose">{description}</p>
+
+      {impact && (
+        <p class="text-sm font-semibold uppercase tracking-[0.35em] text-primary">{impact}</p>
+      )}
+    </div>
+
+    <div class="space-y-3 text-xs text-base-content/70">
+      {visibleTags.length > 0 && (
+        <div class="flex flex-wrap items-center gap-2">
+          {visibleTags.map((tag) => (
+            <span class="badge badge-ghost badge-sm uppercase tracking-wide">{tag}</span>
           ))}
+          {extraTagCount > 0 && (
+            <span class="badge badge-outline badge-sm uppercase tracking-wide">+{extraTagCount}</span>
+          )}
         </div>
-      </div>
-    )}
-    
-    <!-- Technology Stack Section -->
-    {stack.length > 0 && (
-      <div class="mb-4">
+      )}
+
+      {stack.length > 0 && (
         <div class="flex flex-wrap gap-2">
-          {stack.map((tech) => (
-            <div class={`badge ${getStackColor(tech)} badge-sm font-medium text-xs`}>
-              {tech}
-            </div>
+          {stack.slice(0, 4).map((tech) => (
+            <span class={`badge ${getStackColor(tech)} badge-sm font-medium text-[0.7rem]`}>{tech}</span>
           ))}
+          {stack.length > 4 && (
+            <span class="badge badge-outline badge-sm font-medium text-[0.7rem]">+{stack.length - 4}</span>
+          )}
         </div>
-      </div>
-    )}
-    
-    <!-- Spacer to push action to bottom -->
-    <div class="flex-grow"></div>
-    
-    <!-- Action Button -->
-    <div class="card-actions justify-end mt-4">
-      <a href={`/work/${slug}`} class="btn btn-primary btn-sm">
-        View Details
-      </a>
+      )}
+    </div>
+
+    <div class="mt-auto flex items-center justify-between text-sm font-medium">
+      <span class="uppercase tracking-[0.35em] text-base-content/60">View case</span>
+      <span class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral/80 bg-base-100 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h9.19l-3.22-3.22a.75.75 0 1 1 1.06-1.06l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06l3.22-3.22H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd" />
+        </svg>
+      </span>
     </div>
   </div>
-</div>
+</a>

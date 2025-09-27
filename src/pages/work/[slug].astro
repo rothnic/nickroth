@@ -16,7 +16,6 @@ type Props = {
 };
 
 const { entry } = Astro.props as Props;
-const { Content } = await entry.render();
 const PLACEHOLDER_IMAGE = 'https://placehold.co/600x400';
 const coverImage = entry.data.image?.trim() ? entry.data.image : PLACEHOLDER_IMAGE;
 
