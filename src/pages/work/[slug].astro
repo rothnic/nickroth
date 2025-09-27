@@ -44,53 +44,57 @@ const getStackColor = (tech: string) => {
 ---
 
 <BaseLayout title={`${entry.data.title} - Nick Roth`} description={entry.data.description}>
-  <main class="py-20">
-    <div class="container mx-auto px-4 max-w-6xl">
+  <main class="pt-16 pb-24 sm:pt-20">
+    <div class="container mx-auto max-w-6xl px-4">
       <!-- Navigation -->
-      <div class="mb-8">
-        <a href="/work" class="btn btn-ghost">← Back to Work Portfolio</a>
+      <div class="mb-8 flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.32em] text-base-content/60">
+        <a href="/work" class="inline-flex items-center gap-2 rounded-full border border-base-300/70 bg-base-100/80 px-4 py-2 font-semibold shadow-sm transition-colors duration-200 hover:border-primary hover:text-primary">
+          ← Back to portfolio
+        </a>
+        <span class="hidden sm:inline-flex">{entry.data.category}</span>
       </div>
 
       <!-- Hero Section -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+      <div class="mb-16 grid grid-cols-1 gap-12 lg:grid-cols-2">
         <!-- Project Image -->
         <div>
-          <figure transition:name={`work-img-${entry.slug}`} class="rounded-lg overflow-hidden shadow-xl">
-            <img src={coverImage} alt={entry.data.title} class="w-full h-80 object-cover" />
+          <figure transition:name={`work-img-${entry.slug}`} class="relative overflow-hidden rounded-[32px] border-2 border-base-300/70 bg-base-100/80 shadow-brutal">
+            <img src={coverImage} alt={entry.data.title} class="h-80 w-full object-cover transition-transform duration-500 ease-out hover:scale-[1.04] hover:rotate-1" />
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-accent/20 mix-blend-screen"></div>
           </figure>
         </div>
-        
+
         <!-- Project Header -->
-        <div class="flex flex-col justify-center">
-          <h1 transition:name={`work-title-${entry.slug}`} class="text-4xl md:text-5xl font-bold mb-4 leading-tight">
+        <div class="flex flex-col justify-center gap-6">
+          <h1 transition:name={`work-title-${entry.slug}`} class="text-4xl font-black leading-tight text-base-content md:text-5xl">
             {entry.data.title}
           </h1>
-          
+
           <!-- Impact Statement -->
           {entry.data.impact && (
-            <div class="mb-6">
-              <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">Impact Statement</h2>
-              <p class="text-xl font-bold text-primary uppercase leading-tight">
+            <div class="space-y-2">
+              <h2 class="text-xs font-semibold uppercase tracking-[0.32em] text-base-content/60">Impact</h2>
+              <p class="text-xl font-bold uppercase tracking-[0.28em] text-primary">
                 {entry.data.impact}
               </p>
             </div>
           )}
-          
+
           <!-- Role Category -->
           {entry.data.roleCategory && (
-            <div class="mb-6">
-              <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">Role</h2>
-              <span class="inline-block bg-accent/10 text-accent px-4 py-2 rounded font-bold text-sm uppercase tracking-wider">
+            <div class="space-y-2">
+              <h2 class="text-xs font-semibold uppercase tracking-[0.32em] text-base-content/60">Role</h2>
+              <span class="inline-flex items-center gap-2 rounded-full border border-base-300/70 bg-base-100 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-base-content">
                 {entry.data.roleCategory}
               </span>
             </div>
           )}
-          
+
           <!-- Project Timeline -->
-          <div class="mb-6">
-            <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">Timeline</h2>
-            <p class="text-base-content/80">
-              {entry.data.startDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} - 
+          <div class="space-y-2">
+            <h2 class="text-xs font-semibold uppercase tracking-[0.32em] text-base-content/60">Timeline</h2>
+            <p class="text-sm text-base-content/75">
+              {entry.data.startDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} -
               {entry.data.endDate ? entry.data.endDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Present'}
             </p>
           </div>
