@@ -1,0 +1,19 @@
+---
+import { Card } from '@/components/retroui/Card';
+
+export interface Props {
+  title: string;
+  description: string;
+  icon?: string | undefined;
+}
+
+const { title, description, icon = "🚀" } = Astro.props;
+---
+
+<Card className="h-full hover:translate-y-1 transition-transform duration-200" client:load>
+  <Card.Content className="p-6">
+    <div class="text-4xl mb-4">{icon}</div>
+    <Card.Title className="mb-4">{title}</Card.Title>
+    <Card.Description>{description}</Card.Description>
+  </Card.Content>
+</Card>
