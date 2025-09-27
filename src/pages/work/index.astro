@@ -72,7 +72,7 @@ const categories = ['ALL WORK', ...new Set(workEntries.map(work => work.data.cat
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const categoryButtons = document.querySelectorAll('[data-category]');
-      const workCards = document.querySelectorAll('.card');
+      const workCards = document.querySelectorAll('.card') as NodeListOf<HTMLElement>;
       
       categoryButtons.forEach(button => {
         button.addEventListener('click', () => {
