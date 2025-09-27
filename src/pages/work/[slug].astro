@@ -2,8 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import {} from 'astro:transitions';
-import { Button } from '@/components/retroui/Button';
-import { Badge } from '@/components/retroui/Badge';
+import { Button } from '@/components/neobrutalism/Button';
+import { Badge } from '@/components/neobrutalism/Badge';
 
 export async function getStaticPaths() {
   const workEntries = await getCollection('work');
@@ -71,7 +71,7 @@ const coverImage = entry.data.image?.trim() ? entry.data.image : PLACEHOLDER_IMA
             {entry.data.roleCategory && (
               <div class="mb-6">
                 <h2 class="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">Role</h2>
-                <Badge variant="solid" size="lg" className="font-bold uppercase tracking-wider">
+                <Badge variant="primary" className="font-bold uppercase tracking-wider">
                   {entry.data.roleCategory}
                 </Badge>
               </div>
@@ -183,7 +183,7 @@ const coverImage = entry.data.image?.trim() ? entry.data.image : PLACEHOLDER_IMA
                 <h3 class="text-lg font-bold mb-4 text-primary">TECHNOLOGY STACK</h3>
                 <div class="flex flex-wrap gap-2">
                   {entry.data.stack.map((tech) => (
-                    <Badge variant="outline" size="sm" className="font-medium">
+                    <Badge variant="info" className="font-medium">
                       {tech}
                     </Badge>
                   ))}
@@ -197,7 +197,7 @@ const coverImage = entry.data.image?.trim() ? entry.data.image : PLACEHOLDER_IMA
             <div class="inline-block border-2 border-black rounded shadow-md hover:shadow-none hover:translate-y-1 bg-card w-full transition-all duration-200">
               <div class="p-6">
                 <h3 class="text-lg font-bold mb-4 text-primary">PROJECT CATEGORY</h3>
-                <Badge variant="solid" size="lg" className="font-semibold">
+                <Badge variant="primary" className="font-semibold">
                   {entry.data.category}
                 </Badge>
               </div>
@@ -236,7 +236,7 @@ const coverImage = entry.data.image?.trim() ? entry.data.image : PLACEHOLDER_IMA
                 <h3 class="text-lg font-bold mb-4 text-primary">PROJECT TAGS</h3>
                 <div class="flex flex-wrap gap-2">
                   {entry.data.tags.slice(0, 5).map((tag) => (
-                    <Badge variant="outline" size="sm" className="font-medium">
+                    <Badge variant="warning" className="font-medium">
                       {tag}
                     </Badge>
                   ))}

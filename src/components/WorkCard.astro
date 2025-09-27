@@ -1,6 +1,6 @@
 ---
-import { Button } from '@/components/retroui/Button';
-import { Badge } from '@/components/retroui/Badge';
+import { Button } from '@/components/neobrutalism/Button';
+import { Badge } from '@/components/neobrutalism/Badge';
 
 export interface Props {
   title: string;
@@ -37,11 +37,11 @@ const displayTags = allTags.slice(0, 4);
 const remainingCount = allTags.length - 4;
 ---
 
-<!-- Clean RetroUI Work Card -->
-<div transition:name={`work-container-${slug}`} class="border-2 border-black rounded-none shadow-[4px_4px_0px_0px_#000] bg-card text-card-foreground w-full max-w-lg h-full" data-work-card data-category={category}>
+<!-- Neobrutalism Work Card -->
+<div transition:name={`work-container-${slug}`} class="border-[3px] border-black shadow-[8px_8px_0px_0px_#000] bg-white w-full max-w-lg h-full hover:shadow-[4px_4px_0px_0px_#000] hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-150 ease-out" data-work-card data-category={category}>
   <!-- Project Image -->
   <div class="p-4 pb-0">
-    <div class="border-2 border-black rounded-none shadow-[2px_2px_0px_0px_#000] overflow-hidden">
+    <div class="border-[3px] border-black shadow-[4px_4px_0px_0px_#000] overflow-hidden">
       <img 
         transition:name={`work-img-${slug}`}
         src={imageSrc} 
@@ -54,17 +54,17 @@ const remainingCount = allTags.length - 4;
   
   <!-- Card Content -->
   <div class="p-6 flex flex-col h-full">
-    <h2 transition:name={`work-title-${slug}`} class="text-xl font-bold mb-3 text-foreground leading-tight">{title}</h2>
+    <h2 transition:name={`work-title-${slug}`} class="text-xl font-bold mb-3 text-black leading-tight uppercase">{title}</h2>
     
     {impact && (
-      <p class="text-sm font-bold text-primary uppercase mb-3 leading-tight tracking-wide">
-        {impact}
+      <p class="text-sm font-bold text-black bg-green-400 p-2 border-[2px] border-black uppercase mb-3 leading-tight tracking-wide">
+        💥 {impact}
       </p>
     )}
     
     {roleCategory && (
       <div class="mb-4">
-        <Badge variant="solid" size="sm" className="font-bold uppercase tracking-wider">
+        <Badge variant="primary" className="font-bold uppercase tracking-wider">
           {roleCategory}
         </Badge>
       </div>
@@ -74,12 +74,12 @@ const remainingCount = allTags.length - 4;
     {allTags.length > 0 && (
       <div class="flex flex-wrap gap-2 mb-4">
         {displayTags.map((tag) => (
-          <Badge variant="outline" size="sm" className="font-medium">
+          <Badge variant="warning" className="text-xs">
             {tag}
           </Badge>
         ))}
         {remainingCount > 0 && (
-          <Badge variant="solid" size="sm" className="font-medium">
+          <Badge variant="primary" className="text-xs">
             +{remainingCount}
           </Badge>
         )}
@@ -91,8 +91,8 @@ const remainingCount = allTags.length - 4;
     
     <!-- View Details Button -->
     <div class="mt-4">
-      <Button variant="default" size="sm" client:load>
-        <a href={`/work/${slug}`} class="no-underline text-inherit font-medium">
+      <Button variant="primary" size="sm" client:load>
+        <a href={`/work/${slug}`} class="no-underline text-inherit font-bold uppercase">
           View Details
         </a>
       </Button>
