@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Clean RetroUI defaults */
+    --background: 0 0% 100%;     /* Pure white */
+    --foreground: 0 0% 3.9%;     /* Near black */
+    --card: 0 0% 100%;           /* Pure white */
+    --card-foreground: 0 0% 3.9%; /* Near black */
+    --popover: 0 0% 100%;        /* Pure white */
+    --popover-foreground: 0 0% 3.9%; /* Near black */
+    --primary: 0 0% 9%;          /* Dark gray/black */
+    --primary-foreground: 0 0% 98%; /* Nearly white */
+    --secondary: 0 0% 96.1%;     /* Light gray */
+    --secondary-foreground: 0 0% 9%; /* Dark gray */
+    --muted: 0 0% 96.1%;         /* Light gray */
+    --muted-foreground: 0 0% 45.1%; /* Medium gray */
+    --accent: 0 0% 96.1%;        /* Light gray */
+    --accent-foreground: 0 0% 9%; /* Dark gray */
+    --destructive: 0 84.2% 60.2%; /* Red */
+    --destructive-foreground: 0 0% 98%; /* Nearly white */
+    --border: 0 0% 89.8%;        /* Light border */
+    --input: 0 0% 89.8%;         /* Light input */
+    --ring: 0 0% 3.9%;           /* Dark ring */
+    --radius: 0.5rem;            /* 8px */
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;     /* Very dark */
+    --foreground: 0 0% 98%;      /* Nearly white */
+    --card: 0 0% 3.9%;           /* Very dark */
+    --card-foreground: 0 0% 98%; /* Nearly white */
+    --popover: 0 0% 3.9%;        /* Very dark */
+    --popover-foreground: 0 0% 98%; /* Nearly white */
+    --primary: 0 0% 98%;         /* Nearly white */
+    --primary-foreground: 0 0% 9%; /* Dark */
+    --secondary: 0 0% 14.9%;     /* Dark gray */
+    --secondary-foreground: 0 0% 98%; /* Nearly white */
+    --muted: 0 0% 14.9%;         /* Dark gray */
+    --muted-foreground: 0 0% 63.9%; /* Medium gray */
+    --accent: 0 0% 14.9%;        /* Dark gray */
+    --accent-foreground: 0 0% 98%; /* Nearly white */
+    --destructive: 0 62.8% 30.6%; /* Dark red */
+    --destructive-foreground: 0 0% 98%; /* Nearly white */
+    --border: 0 0% 14.9%;        /* Dark border */
+    --input: 0 0% 14.9%;         /* Dark input */
+    --ring: 0 0% 83.1%;          /* Light ring */
+  }
+}
+
+@layer base {
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+}
