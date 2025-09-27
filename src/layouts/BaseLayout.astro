@@ -1,6 +1,6 @@
 ---
 import { ClientRouter } from "astro:transitions";
-import Navbar from '../components/Navbar.astro';
+import NavbarRetro from '../components/NavbarRetro.astro';
 import '../styles/globals.css';
 
 export interface Props {
@@ -42,7 +42,7 @@ const currentPath = Astro.url.pathname;
   </style>
   <body>
     <div class="min-h-screen bg-base-100 flex flex-col">
-      {showNavbar && <Navbar currentPath={currentPath} />}
+      {showNavbar && <NavbarRetro currentPath={currentPath} />}
       <slot />
     </div>
   </body>
