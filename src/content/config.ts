@@ -32,6 +32,10 @@ const work = defineCollection({
     featured: z.boolean().default(false),
     tags: z.array(z.string()).default([]),
     image: z.string().optional(),
+    category: z.string().optional(),
+    impact: z.string().optional(),
+    stack: z.array(z.string()).default([]),
+    roleCategory: z.string().optional(),
   }),
 });
 

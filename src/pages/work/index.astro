@@ -7,23 +7,42 @@ const workEntries = await getCollection('work');
 const sortedWork = workEntries
   .sort((a, b) => {
     const aDate = a.data.endDate || new Date();
-    const bDate = b.data.endDate || new Date();
+    const bDate = b.data.endDate || new Date();  
     return bDate.getTime() - aDate.getTime();
   });
+
+// Get unique categories for filtering
+const categories = ['ALL WORK', ...new Set(workEntries.map(work => work.data.category).filter(Boolean))];
 ---
 
-<BaseLayout title="Work - Nick Roth" description="Professional work and projects by Nick Roth">
+<BaseLayout title="Work Portfolio - Nick Roth" description="Case studies demonstrating systematic approach to product development from discovery through delivery">
   <main class="py-20">
     <div class="container mx-auto px-4">
       <div class="text-center mb-16">
-        <h1 class="text-5xl font-bold mb-6">My Work</h1>
-        <p class="text-xl opacity-75 max-w-2xl mx-auto">
-          A collection of projects, roles, and experiences that showcase my journey 
-          as a Product Manager and AI Engineer.
+        <h1 class="text-6xl font-bold mb-6">
+          WORK
+          <br />
+          <span class="text-primary">PORTFOLIO</span>
+        </h1>
+        <p class="text-xl opacity-75 max-w-4xl mx-auto">
+          CASE STUDIES DEMONSTRATING SYSTEMATIC APPROACH TO PRODUCT DEVELOPMENT, FROM DISCOVERY THROUGH DELIVERY WITH MEASURABLE OUTCOMES.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <!-- Category Filter Tabs -->
+      <div class="flex flex-wrap justify-center gap-2 mb-12">
+        {categories.map((category, index) => (
+          <button 
+            class={`btn btn-sm ${index === 0 ? 'btn-accent' : 'btn-outline'} font-semibold text-xs uppercase tracking-wider`}
+            data-category={category}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+
+      <!-- Work Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
         {sortedWork.map((work) => (
           <WorkCard
             title={work.data.title}
@@ -33,6 +52,10 @@ const sortedWork = workEntries
             slug={work.slug}
             tags={work.data.tags}
             image={work.data.image}
+            category={work.data.category}
+            impact={work.data.impact}
+            stack={work.data.stack}
+            roleCategory={work.data.roleCategory}
           />
         ))}
       </div>
@@ -44,4 +67,40 @@ const sortedWork = workEntries
       )}
     </div>
   </main>
+
+  <!-- Category filtering script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const categoryButtons = document.querySelectorAll('[data-category]') as NodeListOf<HTMLElement>;
+      const workCards = document.querySelectorAll('[data-work-card]') as NodeListOf<HTMLElement>;
+      
+      categoryButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const category = button.getAttribute('data-category');
+          
+          // Update button states
+          categoryButtons.forEach(btn => {
+            btn.classList.remove('btn-accent');
+            btn.classList.add('btn-outline');
+          });
+          button.classList.remove('btn-outline');
+          button.classList.add('btn-accent');
+          
+          // Filter work cards
+          workCards.forEach(card => {
+            if (category === 'ALL WORK') {
+              card.style.display = 'block';
+            } else {
+              const cardCategory = card.getAttribute('data-category');
+              if (cardCategory === category) {
+                card.style.display = 'block';
+              } else {
+                card.style.display = 'none';
+              }
+            }
+          });
+        });
+      });
+    });
+  </script>
 </BaseLayout>

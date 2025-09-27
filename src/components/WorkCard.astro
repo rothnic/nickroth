@@ -7,30 +7,124 @@ export interface Props {
   slug: string;
   tags?: string[] | undefined;
   image?: string | undefined;
+  category?: string | undefined;
+  impact?: string | undefined;
+  stack?: string[] | undefined;
+  roleCategory?: string | undefined;
 }
 
-const { title, description, company, role, slug, tags = [], image } = Astro.props;
+const { 
+  title, 
+  description, 
+  slug, 
+  tags = [], 
+  image, 
+  category,
+  impact,
+  stack = [],
+  roleCategory
+} = Astro.props;
+
 const PLACEHOLDER_IMAGE = 'https://placehold.co/600x400';
 const imageSrc = image?.trim() ? image : PLACEHOLDER_IMAGE;
+
+// Define color schemes for different categories
+const getCategoryColor = (cat: string | undefined) => {
+  switch (cat) {
+    case 'HEADLESS CMS': return 'badge-primary';
+    case 'WEB PLATFORMS': return 'badge-secondary';  
+    case 'MARKETING AUTOMATION': return 'badge-accent';
+    case 'AUTOMATION & AI': return 'badge-warning';
+    case 'CHROME EXTENSIONS': return 'badge-info';
+    case 'SYSTEMS': return 'badge-success';
+    default: return 'badge-outline';
+  }
+};
+
+const getStackColor = (tech: string) => {
+  const lowerTech = tech.toLowerCase();
+  if (lowerTech.includes('astro') || lowerTech.includes('datocms')) return 'badge-primary';
+  if (lowerTech.includes('n8n') || lowerTech.includes('windmill')) return 'badge-warning';
+  if (lowerTech.includes('chrome') || lowerTech.includes('openai')) return 'badge-info';
+  if (lowerTech.includes('langchain')) return 'badge-success';
+  if (tech.includes('+')) return 'badge-success';
+  return 'badge-outline';
+};
+
+const getTagColor = (tag: string) => {
+  const lowerTag = tag.toLowerCase();
+  if (lowerTag.includes('headless') || lowerTag.includes('cms')) return 'badge-primary';
+  if (lowerTag.includes('web') || lowerTag.includes('platform')) return 'badge-secondary';
+  if (lowerTag.includes('marketing') || lowerTag.includes('automation')) return 'badge-accent';
+  if (lowerTag.includes('systems')) return 'badge-success';
+  return 'badge-outline';
+};
 ---
 
-<div transition:name={`work-container-${slug}`} class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
-  <figure>
-    <img transition:name={`work-img-${slug}`} src={imageSrc} alt={title} class="h-48 w-full object-cover" loading="lazy" />
+<div transition:name={`work-container-${slug}`} class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] border-2 border-base-300 h-full" data-work-card data-category={category}>
+  <!-- Hero Image -->
+  <figure class="relative h-48">
+    <img transition:name={`work-img-${slug}`} src={imageSrc} alt={title} class="w-full h-full object-cover" loading="lazy" />
   </figure>
-  <div class="card-body">
-    <h2 transition:name={`work-title-${slug}`} class="card-title">{title}</h2>
-    <p class="text-sm opacity-75">{company} • {role}</p>
-    <p>{description}</p>
-    {tags.length > 0 && (
-      <div class="card-actions justify-start">
-        {tags.map((tag) => (
-          <div class="badge badge-outline">{tag}</div>
-        ))}
+  
+  <div class="card-body p-6 flex flex-col h-full">
+    <!-- Project Title -->
+    <h2 transition:name={`work-title-${slug}`} class="text-xl font-bold mb-3 leading-tight">
+      {title}
+    </h2>
+    
+    <!-- Impact Statement - Prominent Display -->
+    {impact && (
+      <div class="mb-4">
+        <p class="text-sm font-bold text-primary uppercase leading-snug tracking-wide">
+          {impact}
+        </p>
       </div>
     )}
-    <div class="card-actions justify-end">
-      <a href={`/work/${slug}`} class="btn btn-primary">View Details</a>
+    
+    <!-- Role Category -->
+    {roleCategory && (
+      <div class="mb-4">
+        <span class="text-xs font-bold text-accent uppercase tracking-widest bg-accent/10 px-2 py-1 rounded">
+          {roleCategory}
+        </span>
+      </div>
+    )}
+    
+    <!-- Category Tags Section -->
+    {tags.length > 0 && (
+      <div class="mb-4">
+        <div class="flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <div class={`badge ${getTagColor(tag)} badge-sm font-semibold text-xs uppercase`}>
+              {tag}
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+    
+    <!-- Technology Stack Section -->
+    {stack.length > 0 && (
+      <div class="mb-4">
+        <div class="flex flex-wrap gap-2">
+          {stack.map((tech) => (
+            <div class={`badge ${getStackColor(tech)} badge-sm font-medium text-xs`}>
+              {tech}
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+    
+    <!-- Spacer to push action to bottom -->
+    <div class="flex-grow"></div>
+    
+    <!-- Action Button -->
+    <div class="card-actions justify-end mt-4">
+      <a href={`/work/${slug}`} class="btn btn-primary btn-sm">
+        View Details
+      </a>
     </div>
   </div>
 </div>
