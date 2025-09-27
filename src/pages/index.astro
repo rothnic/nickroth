@@ -5,34 +5,79 @@ import CapabilityCard from '../components/CapabilityCard.astro';
 import WorkCard from '../components/WorkCard.astro';
 import { getCollection } from 'astro:content';
 
+const containerClass = 'mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8';
+
 const capabilities = await getCollection('capabilities');
-const sortedCapabilities = capabilities
-  .sort((a, b) => a.data.order - b.data.order);
+const sortedCapabilities = capabilities.sort((a, b) => a.data.order - b.data.order);
 
 const work = await getCollection('work');
 const featuredWork = work
-  .filter(w => w.data.featured)
+  .filter((w) => w.data.featured)
   .sort((a, b) => {
     const aDate = a.data.endDate || new Date();
     const bDate = b.data.endDate || new Date();
     return bDate.getTime() - aDate.getTime();
   })
-  .slice(0, 2);
+  .slice(0, 3);
 
 const notes = await getCollection('notes');
 const recentNotes = notes
   .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime())
   .slice(0, 3);
+
+const operatingRhythms = [
+  {
+    title: 'North Star Mapping',
+    cadence: 'Day 0',
+    description: 'Codify the outcomes, constraints, and signal sources guiding every decision.',
+    detail: '45-minute executive + IC alignment sprint',
+  },
+  {
+    title: 'System Design Sprints',
+    cadence: 'Week 1-2',
+    description: 'Architect automation fabrics, workflow touchpoints, and instrumentation loops.',
+    detail: 'Blend AI, ops, and engineering capabilities into one plan-of-record.',
+  },
+  {
+    title: 'Runway Reviews',
+    cadence: 'Weekly',
+    description: 'Ship, measure, and refuel the roadmap with learnings that compound across teams.',
+    detail: 'Hybrid async + live reviews tuned for distributed teams.',
+  },
+];
+
+const differentiators = [
+  {
+    title: 'AI-native operating model',
+    description: 'Pair human judgment with AI orchestration to eliminate manual drift while increasing confidence.',
+  },
+  {
+    title: 'Instrumentation obsessed',
+    description: 'Every ritual outputs signal. That feeds prioritization, automation tuning, and growth experiments.',
+  },
+  {
+    title: 'End-to-end delivery partner',
+    description: 'From product strategy through code deployment, stay embedded until the system sustains itself.',
+  },
+];
 ---
 
 <BaseLayout>
   <Hero />
-  
-  <!-- Capabilities Section -->
-  <section class="py-20 bg-base-200">
-    <div class="container mx-auto px-4">
-      <h2 class="text-4xl font-bold text-center mb-12">Core Capabilities</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+
+  <section class="relative py-24">
+    <div class={containerClass}>
+      <div class="mx-auto max-w-3xl text-center">
+        <span class="badge-pill text-primary/80">Core Capabilities</span>
+        <h2 class="mt-6 text-4xl font-semibold leading-tight text-base-content sm:text-5xl">
+          A systems stack engineered for compounding product velocity.
+        </h2>
+        <p class="mt-4 text-lg text-base-content/70">
+          Strategy, automation, and delivery operate as one surface area—so insights loop directly into execution.
+        </p>
+      </div>
+
+      <div class="mt-14 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {sortedCapabilities.map((capability) => (
           <CapabilityCard
             title={capability.data.title}
@@ -41,18 +86,65 @@ const recentNotes = notes
           />
         ))}
       </div>
+
+      <div class="relative mt-16 grid gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+        <div class="rounded-3xl border border-base-content/10 bg-base-content/5 p-8 shadow-[0_30px_80px_-60px_rgba(15,23,42,0.55)]">
+          <h3 class="text-2xl font-semibold text-base-content">Operating rhythms tuned for traction</h3>
+          <p class="mt-3 text-sm text-base-content/70">
+            Modular rituals that make it effortless to drop into a team, restore clarity, and leave behind a self-propelling system.
+          </p>
+          <div class="mt-8 space-y-5">
+            {operatingRhythms.map((rhythm) => (
+              <div class="rounded-2xl border border-base-content/10 bg-base-100/80 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40">
+                <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-base-content/50">
+                  <span>{rhythm.title}</span>
+                  <span>{rhythm.cadence}</span>
+                </div>
+                <p class="mt-3 text-sm text-base-content/70">{rhythm.description}</p>
+                <p class="mt-2 text-xs text-base-content/50">{rhythm.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="glass-panel h-full rounded-3xl p-8">
+          <h3 class="text-2xl font-semibold text-base-content">What makes the work different</h3>
+          <p class="mt-3 text-sm text-base-content/70">
+            Intentional friction where it matters, radical automation everywhere else.
+          </p>
+          <div class="mt-8 space-y-6">
+            {differentiators.map((item, index) => (
+              <div class="flex gap-4 rounded-2xl border border-base-content/10 bg-base-100/70 p-5 transition-all duration-300 hover:-translate-y-1">
+                <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-lg font-semibold text-primary">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <div class="space-y-2">
+                  <p class="text-base font-semibold text-base-content">{item.title}</p>
+                  <p class="text-sm leading-relaxed text-base-content/70">{item.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Featured Work Section -->
-  <section class="py-20">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-12">
-        <h2 class="text-4xl font-bold mb-4">RECENT WORK</h2>
-        <p class="text-lg text-base-content/70">CASE STUDIES SHOWCASING THE SYSTEMATIC APPROACH FROM DISCOVERY THROUGH DELIVERY.</p>
+  <section class="relative py-24">
+    <div class={containerClass}>
+      <div class="flex flex-col gap-6 text-left lg:flex-row lg:items-end lg:justify-between">
+        <div class="max-w-2xl space-y-4">
+          <span class="badge-pill text-accent/80">Case Studies</span>
+          <h2 class="text-4xl font-semibold leading-tight text-base-content sm:text-5xl">Recent transformations</h2>
+          <p class="text-lg text-base-content/70">
+            From headless platforms to AI-assisted operations, each project demonstrates the systematic loop from insight to shipped value.
+          </p>
+        </div>
+        <a href="/work" class="btn-outline-ghost">View full archive →</a>
       </div>
+
       {featuredWork.length > 0 ? (
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12">
+        <div class="mt-14 grid gap-8 lg:grid-cols-2">
           {featuredWork.map((project) => (
             <WorkCard
               title={project.data.title}
@@ -69,38 +161,73 @@ const recentNotes = notes
             />
           ))}
         </div>
-      ) : null}
-      
-      <div class="text-center">
-        <a href="/work" class="btn btn-primary btn-lg">VIEW ALL WORK →</a>
-      </div>
+      ) : (
+        <div class="mt-14 rounded-3xl border border-base-content/10 bg-base-content/5 p-8 text-center text-base-content/60">
+          More case studies are coming soon.
+        </div>
+      )}
     </div>
   </section>
 
-  <!-- Recent Updates Section -->
   {recentNotes.length > 0 && (
-    <section class="py-20 bg-base-200">
-      <div class="container mx-auto px-4">
-        <h2 class="text-4xl font-bold text-center mb-12">Recent Updates</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+    <section class="relative py-24">
+      <div class={containerClass}>
+        <div class="mx-auto max-w-3xl text-center">
+          <span class="badge-pill text-secondary/80">Field Notes</span>
+          <h2 class="mt-6 text-4xl font-semibold leading-tight text-base-content sm:text-5xl">Latest experiments &amp; learnings</h2>
+          <p class="mt-4 text-lg text-base-content/70">
+            Research spikes, tooling audits, and AI workflows currently in rotation.
+          </p>
+        </div>
+
+        <div class="mt-12 grid gap-6 md:grid-cols-3">
           {recentNotes.map((note) => (
-            <div class="card bg-base-100 shadow-lg">
-              <div class="card-body">
-                <h3 class="card-title text-lg">{note.data.title}</h3>
-                <p class="text-sm opacity-75 mb-2">
-                  {new Date(note.data.publishDate).toLocaleDateString()}
-                </p>
-                <p class="text-sm mb-3">{note.data.description}</p>
-                <div class="flex flex-wrap gap-1">
+            <article class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-base-content/10 bg-base-100/80 p-6 transition-all duration-500 hover:-translate-y-2 hover:border-secondary/40 hover:shadow-[0_40px_85px_-50px_rgba(15,23,42,0.6)]">
+              <div class="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                <div class="absolute inset-0 bg-gradient-to-br from-secondary/12 via-transparent to-accent/10"></div>
+              </div>
+              <div class="relative flex flex-col gap-4">
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-[0.35em] text-base-content/50">
+                    {new Date(note.data.publishDate).toLocaleDateString()}
+                  </p>
+                  <h3 class="mt-3 text-lg font-semibold text-base-content">{note.data.title}</h3>
+                  <p class="mt-2 text-sm leading-relaxed text-base-content/70">{note.data.description}</p>
+                </div>
+                <div class="mt-auto flex flex-wrap gap-2">
                   {note.data.tags.slice(0, 3).map((tag: string) => (
-                    <div class="badge badge-outline badge-xs">{tag}</div>
+                    <span class="inline-flex items-center rounded-full bg-base-content/5 px-3 py-1 text-xs font-medium text-base-content/70">
+                      {tag}
+                    </span>
                   ))}
                 </div>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       </div>
     </section>
   )}
+
+  <section class="relative pb-32">
+    <div class={containerClass}>
+      <div class="glass-panel relative overflow-hidden rounded-[36px] border border-base-content/10 px-8 py-12 text-center sm:px-12">
+        <div class="pointer-events-none absolute -left-20 top-0 h-64 w-64 rounded-full bg-primary/15 blur-3xl"></div>
+        <div class="pointer-events-none absolute -right-16 bottom-0 h-56 w-56 rounded-full bg-secondary/15 blur-3xl"></div>
+        <div class="relative mx-auto max-w-3xl space-y-6">
+          <span class="badge-pill text-base-content/70">Next Step</span>
+          <h2 class="text-4xl font-semibold leading-tight text-base-content sm:text-5xl">
+            Need a partner to turn messy requirements into a dependable product system?
+          </h2>
+          <p class="text-lg text-base-content/70">
+            Let’s run a velocity session to map the opportunity, surface hidden signal, and outline how automation and product delivery can work in tandem.
+          </p>
+          <div class="flex flex-wrap justify-center gap-4">
+            <a href="/contact" class="btn-gradient">Book a call</a>
+            <a href="/approach" class="btn-outline-ghost">Review the approach</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
