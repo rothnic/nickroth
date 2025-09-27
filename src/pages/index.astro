@@ -4,6 +4,9 @@ import Hero from '../components/Hero.astro';
 import CapabilityCard from '../components/CapabilityCard.astro';
 import WorkCard from '../components/WorkCard.astro';
 import { getCollection } from 'astro:content';
+import { Card } from '@/components/neobrutalism/Card';
+import { Badge } from '@/components/neobrutalism/Badge';
+import { Button } from '@/components/neobrutalism/Button';
 
 const capabilities = await getCollection('capabilities');
 const sortedCapabilities = capabilities
@@ -28,10 +31,10 @@ const recentNotes = notes
 <BaseLayout>
   <Hero />
   
-  <!-- Capabilities Section -->
-  <section class="py-20 bg-base-200">
+  <!-- Capabilities Section with Neobrutalism Background -->
+  <section class="py-20 bg-gray-100">
     <div class="container mx-auto px-4">
-      <h2 class="text-4xl font-bold text-center mb-12">Core Capabilities</h2>
+      <h2 class="text-4xl font-bold text-center mb-12 text-black uppercase border-[4px] border-black bg-white p-4 shadow-[8px_8px_0px_0px_#000] inline-block">Core Capabilities</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
         {sortedCapabilities.map((capability) => (
           <CapabilityCard
@@ -45,59 +48,63 @@ const recentNotes = notes
   </section>
 
   <!-- Featured Work Section -->
-  <section class="py-20">
+  <section class="py-20 bg-white">
     <div class="container mx-auto px-4">
       <div class="text-center mb-12">
-        <h2 class="text-4xl font-bold mb-4">RECENT WORK</h2>
-        <p class="text-lg text-base-content/70">CASE STUDIES SHOWCASING THE SYSTEMATIC APPROACH FROM DISCOVERY THROUGH DELIVERY.</p>
+        <h2 class="text-4xl font-bold mb-4 text-black uppercase border-[4px] border-black bg-yellow-400 p-4 shadow-[8px_8px_0px_0px_#000] inline-block">Recent Work</h2>
+        <p class="text-lg text-black font-bold uppercase">Case Studies Showcasing The Systematic Approach From Discovery Through Delivery.</p>
       </div>
       {featuredWork.length > 0 ? (
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12">
-          {featuredWork.map((project) => (
+        <div class="flex flex-wrap justify-center gap-8 mb-12">
+          {featuredWork.map((workItem) => (
             <WorkCard
-              title={project.data.title}
-              description={project.data.description}
-              company={project.data.company}
-              role={project.data.role}
-              slug={project.slug}
-              tags={project.data.tags}
-              image={project.data.image}
-              category={project.data.category}
-              impact={project.data.impact}
-              stack={project.data.stack}
-              roleCategory={project.data.roleCategory}
+              title={workItem.data.title}
+              description={workItem.data.description}
+              company={workItem.data.company}
+              role={workItem.data.role}
+              slug={workItem.slug}
+              tags={workItem.data.tags}
+              image={workItem.data.image}
+              category={workItem.data.category}
+              impact={workItem.data.impact}
+              stack={workItem.data.stack}
+              roleCategory={workItem.data.roleCategory}
             />
           ))}
         </div>
-      ) : null}
-      
+      ) : (
+        <p class="text-center text-black font-bold uppercase">No featured work available.</p>
+      )}
       <div class="text-center">
-        <a href="/work" class="btn btn-primary btn-lg">VIEW ALL WORK →</a>
+        <Button variant="primary" size="lg" client:load>
+          <a href="/work" class="no-underline text-inherit font-bold">VIEW ALL WORK →</a>
+        </Button>
       </div>
     </div>
   </section>
 
   <!-- Recent Updates Section -->
   {recentNotes.length > 0 && (
-    <section class="py-20 bg-base-200">
+    <section class="py-20 bg-green-400">
       <div class="container mx-auto px-4">
-        <h2 class="text-4xl font-bold text-center mb-12">Recent Updates</h2>
+        <h2 class="text-4xl font-bold text-center mb-12 text-black uppercase border-[4px] border-black bg-white p-4 shadow-[8px_8px_0px_0px_#000] inline-block">Recent Updates</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {recentNotes.map((note) => (
-            <div class="card bg-base-100 shadow-lg">
-              <div class="card-body">
-                <h3 class="card-title text-lg">{note.data.title}</h3>
-                <p class="text-sm opacity-75 mb-2">
-                  {new Date(note.data.publishDate).toLocaleDateString()}
-                </p>
-                <p class="text-sm mb-3">{note.data.description}</p>
-                <div class="flex flex-wrap gap-1">
-                  {note.data.tags.slice(0, 3).map((tag: string) => (
-                    <div class="badge badge-outline badge-xs">{tag}</div>
-                  ))}
-                </div>
+            <!-- Pure Neobrutalism Card for Blog Posts -->
+            <Card className="bg-white hover:shadow-[4px_4px_0px_0px_#000] hover:translate-x-[4px] hover:translate-y-[4px]" client:load>
+              <h3 class="text-lg font-bold mb-2 text-black uppercase">{note.data.title}</h3>
+              <p class="text-sm text-black mb-2 font-bold uppercase">
+                {new Date(note.data.publishDate).toLocaleDateString()}
+              </p>
+              <p class="text-sm mb-4 text-black leading-relaxed font-medium">{note.data.description}</p>
+              <div class="flex flex-wrap gap-1">
+                {note.data.tags.slice(0, 3).map((tag: string) => (
+                  <Badge variant="secondary" className="text-xs">
+                    {tag}
+                  </Badge>
+                ))}
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       </div>

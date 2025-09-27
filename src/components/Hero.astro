@@ -1,52 +1,75 @@
 ---
 import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
+import { Button } from '@/components/neobrutalism/Button';
+import { Badge } from '@/components/neobrutalism/Badge';
+import { Card } from '@/components/neobrutalism/Card';
 ---
 
-<div class="hero min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10">
-  <div class="hero-content text-center">
-    <div class="max-w-4xl">
-      <div class="avatar mb-8">
-        <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img src={avatarPlaceholder.src} width={128} height={128} alt="Nick Roth" loading="lazy" />
+<!-- Neobrutalism Hero Section -->
+<section class="min-h-screen bg-white flex items-center justify-center p-4">
+  <div class="w-full max-w-6xl">
+    <!-- Main Hero Card with Neobrutalism Design -->
+    <Card className="w-full" client:load>
+      <div class="flex flex-col lg:flex-row items-center gap-8">
+        <!-- Avatar -->
+        <div class="order-2 lg:order-1 flex-shrink-0">
+          <div class="border-[3px] border-black shadow-[6px_6px_0px_0px_#000] bg-white p-4">
+            <img 
+              src={avatarPlaceholder.src} 
+              width={160} 
+              height={160} 
+              alt="Nick Roth" 
+              loading="lazy"
+              class="w-40 h-40 object-cover"
+            />
+          </div>
         </div>
-      </div>
-      <h1 class="text-5xl font-bold mb-2">Nick Roth</h1>
-      <p class="text-2xl mb-4 text-base-content/80">Product & Systems Director</p>
-      <p class="text-lg mb-8 max-w-3xl mx-auto leading-relaxed">
-        Transforming complex requirements into systematic solutions through objective-first discovery and automation-driven execution.
-      </p>
-      
-      <!-- Key Metrics -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 max-w-4xl mx-auto">
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">400%</div>
-          <div class="stat-desc text-sm">YoY blog revenue increase</div>
-        </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">$35k</div>
-          <div class="stat-desc text-sm">monthly cost savings</div>
-        </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">150%</div>
-          <div class="stat-desc text-sm">organic user growth</div>
-        </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">125%</div>
-          <div class="stat-desc text-sm">mobile revenue growth</div>
-        </div>
-      </div>
+        
+        <!-- Content -->
+        <div class="order-1 lg:order-2 flex-1 text-center lg:text-left">
+          <h1 class="text-4xl lg:text-5xl font-bold mb-4 text-black uppercase">Nick Roth</h1>
+          <p class="text-2xl mb-6 text-black font-bold uppercase">Product & Systems Director</p>
+          <p class="text-lg mb-8 leading-relaxed text-black max-w-3xl font-medium">
+            Transforming complex requirements into systematic solutions through objective-first discovery and automation-driven execution.
+          </p>
+          
+          <!-- Key Metrics in Neobrutalism Style -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="border-[3px] border-black shadow-[5px_5px_0px_0px_#000] bg-yellow-400 text-black p-4 text-center">
+              <div class="text-2xl font-bold uppercase">400%</div>
+              <div class="text-sm font-bold uppercase">YoY blog revenue increase</div>
+            </div>
+            <div class="border-[3px] border-black shadow-[5px_5px_0px_0px_#000] bg-green-400 text-black p-4 text-center">
+              <div class="text-2xl font-bold uppercase">$35k</div>
+              <div class="text-sm font-bold uppercase">monthly cost savings</div>
+            </div>
+            <div class="border-[3px] border-black shadow-[5px_5px_0px_0px_#000] bg-blue-400 text-white p-4 text-center">
+              <div class="text-2xl font-bold uppercase">150%</div>
+              <div class="text-sm font-bold uppercase">organic user growth</div>
+            </div>
+            <div class="border-[3px] border-black shadow-[5px_5px_0px_0px_#000] bg-red-400 text-white p-4 text-center">
+              <div class="text-2xl font-bold uppercase">125%</div>
+              <div class="text-sm font-bold uppercase">mobile revenue growth</div>
+            </div>
+          </div>
 
-      <div class="flex gap-4 justify-center flex-wrap">
-        <a href="/work" class="btn btn-primary btn-lg">View My Work</a>
-        <a href="/contact" class="btn btn-outline btn-lg">Get In Touch</a>
+          <!-- CTA Buttons -->
+          <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <Button variant="primary" size="lg" client:load>
+              <a href="/work" class="no-underline text-inherit font-bold">View My Work</a>
+            </Button>
+            <Button variant="outline" size="lg" client:load>
+              <a href="/contact" class="no-underline text-inherit font-bold">Get In Touch</a>
+            </Button>
+          </div>
+          
+          <!-- Location Info -->
+          <div class="mt-8 text-sm text-black font-bold">
+            <span class="inline-block mr-6">📍 HUNTSVILLE, AL</span>
+            <span class="inline-block">✅ OPEN TO CONSULTING AND FRACTIONAL ROLES</span>
+          </div>
+        </div>
       </div>
-      
-      <div class="mt-8">
-        <p class="text-sm text-base-content/60">
-          <span class="inline-block mr-4">📍 Huntsville, AL</span>
-          <span class="inline-block">✅ Open to consulting and fractional roles</span>
-        </p>
-      </div>
-    </div>
+    </Card>
   </div>
-</div>
+</section>
