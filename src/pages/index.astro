@@ -23,36 +23,156 @@ const notes = await getCollection('notes');
 const recentNotes = notes
   .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime())
   .slice(0, 3);
+
+const approachHighlights = [
+  {
+    title: 'Signal-first discovery orchestration',
+    description: 'Integrated qual + quant research loops convert market signal into sharp opportunity models and investment cases.',
+  },
+  {
+    title: 'Automation as a force multiplier',
+    description: 'Composable workflow systems and AI copilots remove toil, unlock speed, and maintain data fidelity across teams.',
+  },
+  {
+    title: 'Launch-to-optimization accountability',
+    description: 'Every release includes instrumentation, QA automation, and runway for iterative experiments tied to revenue KPIs.',
+  },
+];
+
+const momentumSignals = [
+  {
+    value: '400%',
+    label: 'YoY revenue growth',
+    description: 'Scaled a content commerce platform with experimentation frameworks and continuous insight pipelines.',
+  },
+  {
+    value: '$35k/mo',
+    label: 'Ops savings reclaimed',
+    description: 'Replaced fragmented vendor spend with orchestrated automation and centralized product ops tooling.',
+  },
+  {
+    value: '150%',
+    label: 'Organic acquisition lift',
+    description: 'Search, lifecycle, and personalization systems created compounding demand from existing audiences.',
+  },
+  {
+    value: '125%',
+    label: 'Mobile revenue acceleration',
+    description: 'Experience modernization paired with analytics-ready releases doubled down on mobile monetization.',
+  },
+];
 ---
 
 <BaseLayout>
   <Hero />
-  
-  <!-- Capabilities Section -->
-  <section class="py-20 bg-base-200">
+
+  <section class="relative overflow-hidden py-24">
+    <div class="absolute inset-0 -z-10">
+      <div class="absolute left-0 top-1/2 h-[24rem] w-[24rem] -translate-y-1/2 -translate-x-1/3 rounded-full bg-gradient-to-tr from-primary/20 via-secondary/10 to-transparent blur-3xl"></div>
+      <div class="absolute right-0 top-0 h-[18rem] w-[18rem] translate-x-1/3 rounded-full bg-gradient-to-br from-accent/20 via-primary/10 to-transparent blur-3xl"></div>
+    </div>
+
     <div class="container mx-auto px-4">
-      <h2 class="text-4xl font-bold text-center mb-12">Core Capabilities</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-        {sortedCapabilities.map((capability) => (
-          <CapabilityCard
-            title={capability.data.title}
-            description={capability.data.description}
-            icon={capability.data.icon}
-          />
-        ))}
+      <div class="grid items-start gap-16 lg:grid-cols-[0.9fr_1.1fr]">
+        <div>
+          <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-base-100/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3rem] text-base-content/70 backdrop-blur">
+            Operating model
+          </span>
+          <h2 class="mt-6 text-4xl font-bold leading-tight text-base-content sm:text-5xl">
+            A systems blueprint that compounds product, revenue, and team performance
+          </h2>
+          <p class="mt-6 text-base text-base-content/70 sm:text-lg">
+            Engagements blend product leadership, research orchestration, and technical delivery. Each capability connects back to measurable objectives so executive teams see signal, not noise.
+          </p>
+
+          <div class="mt-10 space-y-6">
+            {approachHighlights.map((item, index) => (
+              <div class="group flex items-start gap-4 rounded-3xl border border-white/10 bg-base-100/60 p-6 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-primary/50">
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 text-sm font-bold text-primary">
+                  0{index + 1}
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-base-content">{item.title}</h3>
+                  <p class="mt-2 text-sm text-base-content/70">{item.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="grid gap-6 sm:grid-cols-2">
+          {sortedCapabilities.map((capability) => (
+            <CapabilityCard
+              title={capability.data.title}
+              description={capability.data.description}
+              icon={capability.data.icon}
+            />
+          ))}
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Featured Work Section -->
-  <section class="py-20">
+  <section class="relative overflow-hidden bg-base-200/60 py-24">
+    <div class="absolute inset-0 -z-10">
+      <div class="absolute bottom-0 left-1/2 h-[26rem] w-[36rem] -translate-x-1/2 translate-y-1/3 rounded-[40%] bg-gradient-to-t from-secondary/20 via-primary/10 to-transparent blur-3xl"></div>
+    </div>
+
     <div class="container mx-auto px-4">
-      <div class="text-center mb-12">
-        <h2 class="text-4xl font-bold mb-4">RECENT WORK</h2>
-        <p class="text-lg text-base-content/70">CASE STUDIES SHOWCASING THE SYSTEMATIC APPROACH FROM DISCOVERY THROUGH DELIVERY.</p>
+      <div class="mx-auto max-w-3xl text-center">
+        <span class="inline-flex items-center justify-center rounded-full border border-white/10 bg-base-100/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35rem] text-base-content/60">
+          Measurable momentum
+        </span>
+        <h2 class="mt-6 text-4xl font-bold text-base-content sm:text-5xl">
+          Clarity from discovery. Confidence through delivery. Compounding value post-launch.
+        </h2>
+        <p class="mt-6 text-base text-base-content/70 sm:text-lg">
+          Every engagement centers around operating dashboards and health metrics so progress is visible, instrumented, and repeatable.
+        </p>
       </div>
+
+      <div class="mt-16 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        {momentumSignals.map((signal) => (
+          <div class="relative overflow-hidden rounded-3xl border border-white/10 bg-base-100/80 p-8 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-primary/50">
+            <div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-primary/60 to-transparent"></div>
+            <p class="text-4xl font-bold text-primary">{signal.value}</p>
+            <p class="mt-2 text-sm uppercase tracking-[0.3rem] text-base-content/60">{signal.label}</p>
+            <p class="mt-4 text-sm leading-relaxed text-base-content/70">{signal.description}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-12 flex flex-wrap items-center justify-center gap-4 text-xs font-semibold uppercase tracking-[0.35rem] text-base-content/50">
+        <span class="rounded-full border border-white/10 px-3 py-1">B2B SaaS</span>
+        <span class="rounded-full border border-white/10 px-3 py-1">Media & Publishing</span>
+        <span class="rounded-full border border-white/10 px-3 py-1">Hospitality</span>
+        <span class="rounded-full border border-white/10 px-3 py-1">Marketplaces</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="relative overflow-hidden py-24">
+    <div class="absolute inset-0 -z-10">
+      <div class="absolute -top-32 right-1/4 h-48 w-48 rounded-full bg-gradient-to-br from-primary/20 via-secondary/10 to-transparent blur-3xl"></div>
+    </div>
+
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col gap-6 text-center lg:flex-row lg:items-end lg:justify-between lg:text-left">
+        <div>
+          <span class="inline-flex items-center rounded-full border border-white/10 bg-base-100/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35rem] text-base-content/60">
+            Recent systems in the wild
+          </span>
+          <h2 class="mt-6 text-4xl font-bold text-base-content sm:text-5xl">
+            Multi-disciplinary leadership backed by outcomes
+          </h2>
+        </div>
+        <p class="max-w-xl text-base text-base-content/70">
+          Case studies span platform rebuilds, GTM workflow automation, and applied AI initiatives. Each thread ladders up to strategic objectives with measurable checkpoints.
+        </p>
+      </div>
+
       {featuredWork.length > 0 ? (
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12">
+        <div class="mt-16 grid gap-8 lg:grid-cols-2">
           {featuredWork.map((project) => (
             <WorkCard
               title={project.data.title}
@@ -69,36 +189,59 @@ const recentNotes = notes
             />
           ))}
         </div>
-      ) : null}
-      
-      <div class="text-center">
-        <a href="/work" class="btn btn-primary btn-lg">VIEW ALL WORK →</a>
+      ) : (
+        <p class="mt-12 text-center text-base-content/70">Featured case studies are being curated. Check back soon or reach out for a tailored walkthrough.</p>
+      )}
+
+      <div class="mt-12 flex justify-center">
+        <a href="/work" class="btn btn-primary btn-lg shadow-lg shadow-primary/20 transition-transform hover:scale-105">
+          Explore full work library
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- Recent Updates Section -->
   {recentNotes.length > 0 && (
-    <section class="py-20 bg-base-200">
+    <section class="relative overflow-hidden bg-base-200/60 py-24">
+      <div class="absolute inset-0 -z-10">
+        <div class="absolute left-1/4 top-0 h-40 w-40 -translate-x-1/2 rounded-full bg-gradient-to-br from-secondary/20 via-primary/10 to-transparent blur-3xl"></div>
+      </div>
+
       <div class="container mx-auto px-4">
-        <h2 class="text-4xl font-bold text-center mb-12">Recent Updates</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div class="mx-auto max-w-2xl text-center">
+          <span class="inline-flex items-center justify-center rounded-full border border-white/10 bg-base-100/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35rem] text-base-content/60">
+            Field notes
+          </span>
+          <h2 class="mt-6 text-4xl font-bold text-base-content sm:text-5xl">
+            Inside the experiments, frameworks, and tooling that ship outcomes
+          </h2>
+        </div>
+
+        <div class="mt-16 grid gap-6 md:grid-cols-3">
           {recentNotes.map((note) => (
-            <div class="card bg-base-100 shadow-lg">
-              <div class="card-body">
-                <h3 class="card-title text-lg">{note.data.title}</h3>
-                <p class="text-sm opacity-75 mb-2">
-                  {new Date(note.data.publishDate).toLocaleDateString()}
-                </p>
-                <p class="text-sm mb-3">{note.data.description}</p>
-                <div class="flex flex-wrap gap-1">
-                  {note.data.tags.slice(0, 3).map((tag: string) => (
-                    <div class="badge badge-outline badge-xs">{tag}</div>
-                  ))}
-                </div>
+            <article class="group relative overflow-hidden rounded-3xl border border-white/10 bg-base-100/70 p-6 backdrop-blur transition-all duration-300 hover:-translate-y-2 hover:border-primary/50">
+              <div class="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.3rem] text-base-content/50">
+                <time datetime={note.data.publishDate.toString()}>{new Date(note.data.publishDate).toLocaleDateString()}</time>
+                <span class="h-px flex-1 bg-gradient-to-r from-transparent via-primary/40 to-primary/80"></span>
               </div>
-            </div>
+              <h3 class="mt-4 text-lg font-semibold text-base-content">{note.data.title}</h3>
+              <p class="mt-3 text-sm leading-relaxed text-base-content/70">{note.data.description}</p>
+              <div class="mt-6 flex flex-wrap gap-2">
+                {note.data.tags.slice(0, 3).map((tag: string) => (
+                  <span class="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25rem] text-primary/80">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </article>
           ))}
+        </div>
+
+        <div class="mt-12 flex flex-col items-center gap-3 text-center text-sm text-base-content/60">
+          <p>Want the operating playbook? Let's design it around your product.</p>
+          <a href="/contact" class="btn btn-outline border-primary/50 text-primary hover:bg-primary/10">
+            Connect with Nick
+          </a>
         </div>
       </div>
     </section>

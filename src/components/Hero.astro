@@ -2,51 +2,206 @@
 import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
 ---
 
-<div class="hero min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10">
-  <div class="hero-content text-center">
-    <div class="max-w-4xl">
-      <div class="avatar mb-8">
-        <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img src={avatarPlaceholder.src} width={128} height={128} alt="Nick Roth" loading="lazy" />
+<section class="relative overflow-hidden isolate">
+  <div class="absolute inset-0 -z-10">
+    <div class="absolute -top-40 left-1/2 h-[36rem] w-[36rem] -translate-x-1/2 rounded-full bg-gradient-to-br from-primary/40 via-secondary/30 to-accent/20 opacity-70 blur-3xl animate-pulse-slow"></div>
+    <div class="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-tr from-base-200/40 via-transparent to-transparent"></div>
+    <div class="absolute -bottom-40 right-[-10%] h-[28rem] w-[28rem] rounded-full bg-gradient-to-br from-secondary/30 via-primary/30 to-transparent blur-3xl opacity-60 animate-orbit"></div>
+  </div>
+
+  <div class="container mx-auto px-4 pt-32 pb-24">
+    <div class="grid gap-16 lg:grid-cols-[minmax(0,1.1fr)_0.9fr] items-center">
+      <div class="relative">
+        <div class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-base-100/60 px-4 py-2 text-sm uppercase tracking-[0.25rem] backdrop-blur shadow-spotlight animate-fade-in">
+          Product Systems Director
+          <span class="inline-flex h-2 w-2 rounded-full bg-success animate-ping-once"></span>
+          Available for fractional leadership
         </div>
-      </div>
-      <h1 class="text-5xl font-bold mb-2">Nick Roth</h1>
-      <p class="text-2xl mb-4 text-base-content/80">Product & Systems Director</p>
-      <p class="text-lg mb-8 max-w-3xl mx-auto leading-relaxed">
-        Transforming complex requirements into systematic solutions through objective-first discovery and automation-driven execution.
-      </p>
-      
-      <!-- Key Metrics -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 max-w-4xl mx-auto">
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">400%</div>
-          <div class="stat-desc text-sm">YoY blog revenue increase</div>
+
+        <h1 class="mt-8 text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.05] text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent animate-slide-up">
+          Designing high-velocity operating systems for product-led teams
+        </h1>
+
+        <p class="mt-6 text-lg sm:text-xl text-base-content/80 leading-relaxed max-w-2xl animate-fade-in-delayed">
+          I'm Nick Roth, a systems-minded product leader turning sprawling roadmaps into resilient, revenue-generating platforms.
+          My specialty is connecting research, automation, and execution so teams can ship with certainty and scale without chaos.
+        </p>
+
+        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+          <div class="group flex items-start gap-3 rounded-2xl border border-white/10 bg-base-100/60 p-4 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-primary/50">
+            <span class="text-2xl">🧭</span>
+            <div>
+              <p class="font-semibold tracking-wide text-sm uppercase text-base-content/60">Strategic Ops</p>
+              <p class="text-base-content/80 text-sm sm:text-base">Data-led alignment from market signal to prioritized roadmap.</p>
+            </div>
+          </div>
+          <div class="group flex items-start gap-3 rounded-2xl border border-white/10 bg-base-100/60 p-4 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-primary/50">
+            <span class="text-2xl">🛠️</span>
+            <div>
+              <p class="font-semibold tracking-wide text-sm uppercase text-base-content/60">Automation</p>
+              <p class="text-base-content/80 text-sm sm:text-base">Workflow systems and AI tooling that unlock measurable lift.</p>
+            </div>
+          </div>
         </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">$35k</div>
-          <div class="stat-desc text-sm">monthly cost savings</div>
-        </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">150%</div>
-          <div class="stat-desc text-sm">organic user growth</div>
-        </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">125%</div>
-          <div class="stat-desc text-sm">mobile revenue growth</div>
+
+        <div class="mt-10 flex flex-wrap items-center gap-4">
+          <a href="/work" class="btn btn-primary btn-lg shadow-lg shadow-primary/20 transition-transform hover:scale-105">
+            View systems in production
+          </a>
+          <a href="/contact" class="btn btn-outline btn-lg border-primary/50 text-primary hover:bg-primary/10">
+            Start a project conversation
+          </a>
+          <div class="flex items-center gap-2 text-sm text-base-content/70">
+            <span class="inline-flex h-2 w-2 rounded-full bg-success"></span>
+            Huntsville, AL · Remote-first
+          </div>
         </div>
       </div>
 
-      <div class="flex gap-4 justify-center flex-wrap">
-        <a href="/work" class="btn btn-primary btn-lg">View My Work</a>
-        <a href="/contact" class="btn btn-outline btn-lg">Get In Touch</a>
-      </div>
-      
-      <div class="mt-8">
-        <p class="text-sm text-base-content/60">
-          <span class="inline-block mr-4">📍 Huntsville, AL</span>
-          <span class="inline-block">✅ Open to consulting and fractional roles</span>
-        </p>
+      <div class="relative">
+        <div class="pointer-events-none absolute inset-0 rounded-[2.75rem] border border-primary/20 bg-gradient-to-br from-primary/10 via-base-100/70 to-base-200/40 blur-sm"></div>
+        <div class="relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-base-100/70 p-8 backdrop-blur-lg shadow-xl shadow-primary/10">
+          <div class="flex items-center gap-4">
+            <div class="relative">
+              <div class="absolute inset-0 rounded-full bg-primary/20 blur-xl"></div>
+              <div class="relative h-20 w-20 rounded-full border-4 border-base-100 shadow-inner overflow-hidden">
+                <img src={avatarPlaceholder.src} width={120} height={120} alt="Portrait of Nick Roth" loading="lazy" class="h-full w-full object-cover" />
+              </div>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-[0.25rem] text-base-content/60">Operating cadence</p>
+              <p class="text-xl font-semibold text-base-content">90-day product growth sprints</p>
+            </div>
+          </div>
+
+          <div class="mt-8 space-y-4">
+            <div class="rounded-2xl border border-primary/20 bg-primary/10 p-5">
+              <p class="text-xs font-semibold uppercase tracking-wide text-primary/80">Signal → System</p>
+              <p class="text-sm text-base-content/80">Translate research into proof-backed investments with prioritization frameworks your execs can rally behind.</p>
+            </div>
+            <div class="rounded-2xl border border-secondary/20 bg-secondary/10 p-5">
+              <p class="text-xs font-semibold uppercase tracking-wide text-secondary/80">Automation coverage</p>
+              <p class="text-sm text-base-content/80">Deploy AI-assisted ops that recapture 180+ hours per team each quarter.</p>
+            </div>
+            <div class="rounded-2xl border border-accent/20 bg-accent/10 p-5">
+              <p class="text-xs font-semibold uppercase tracking-wide text-accent/80">Scale readiness</p>
+              <p class="text-sm text-base-content/80">Hardening platform foundations so GTM, product, and engineering can ship faster with less risk.</p>
+            </div>
+          </div>
+
+          <dl class="mt-8 grid grid-cols-2 gap-4">
+            <div class="rounded-2xl border border-base-200 bg-base-100/80 p-4 text-center shadow-sm">
+              <dt class="text-sm uppercase tracking-wide text-base-content/60">YoY Revenue Lift</dt>
+              <dd class="mt-2 text-2xl font-bold text-primary">400%</dd>
+            </div>
+            <div class="rounded-2xl border border-base-200 bg-base-100/80 p-4 text-center shadow-sm">
+              <dt class="text-sm uppercase tracking-wide text-base-content/60">Ops Savings</dt>
+              <dd class="mt-2 text-2xl font-bold text-secondary">$35k/mo</dd>
+            </div>
+            <div class="rounded-2xl border border-base-200 bg-base-100/80 p-4 text-center shadow-sm">
+              <dt class="text-sm uppercase tracking-wide text-base-content/60">Organic Growth</dt>
+              <dd class="mt-2 text-2xl font-bold text-accent">150%</dd>
+            </div>
+            <div class="rounded-2xl border border-base-200 bg-base-100/80 p-4 text-center shadow-sm">
+              <dt class="text-sm uppercase tracking-wide text-base-content/60">Mobile Revenue</dt>
+              <dd class="mt-2 text-2xl font-bold text-primary">125%</dd>
+            </div>
+          </dl>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</section>
+
+<style>
+  :global(.animate-pulse-slow) {
+    animation: pulse-slow 14s ease-in-out infinite;
+  }
+
+  :global(.animate-orbit) {
+    animation: orbit 24s linear infinite;
+  }
+
+  :global(.animate-slide-up) {
+    animation: slide-up 0.8s ease forwards;
+    opacity: 0;
+  }
+
+  :global(.animate-fade-in) {
+    animation: fade-in 0.9s ease forwards;
+    opacity: 0;
+  }
+
+  :global(.animate-fade-in-delayed) {
+    animation: fade-in 0.9s ease 0.25s forwards;
+    opacity: 0;
+  }
+
+  :global(.animate-ping-once) {
+    animation: ping-once 1.5s cubic-bezier(0, 0, 0.2, 1) 0.2s forwards;
+    opacity: 0;
+  }
+
+  :global(.shadow-spotlight) {
+    box-shadow: 0 20px 60px -32px rgba(76, 0, 255, 0.45);
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.75;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 1;
+    }
+  }
+
+  @keyframes orbit {
+    0% {
+      transform: rotate(0deg) translateX(0);
+    }
+    50% {
+      transform: rotate(12deg) translateY(-5%);
+    }
+    100% {
+      transform: rotate(0deg) translateX(0);
+    }
+  }
+
+  @keyframes slide-up {
+    0% {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes ping-once {
+    0% {
+      transform: scale(0.3);
+      opacity: 0;
+    }
+    40% {
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1.25);
+      opacity: 0;
+    }
+  }
+</style>
