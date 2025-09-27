@@ -71,8 +71,8 @@ const categories = ['ALL WORK', ...new Set(workEntries.map(work => work.data.cat
   <!-- Category filtering script -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const categoryButtons = document.querySelectorAll('[data-category]');
-      const workCards = document.querySelectorAll('.card') as NodeListOf<HTMLElement>;
+      const categoryButtons = document.querySelectorAll('[data-category]') as NodeListOf<HTMLElement>;
+      const workCards = document.querySelectorAll('[data-work-card]') as NodeListOf<HTMLElement>;
       
       categoryButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -91,7 +91,7 @@ const categories = ['ALL WORK', ...new Set(workEntries.map(work => work.data.cat
             if (category === 'ALL WORK') {
               card.style.display = 'block';
             } else {
-              const cardCategory = card.querySelector('.badge')?.textContent;
+              const cardCategory = card.getAttribute('data-category');
               if (cardCategory === category) {
                 card.style.display = 'block';
               } else {

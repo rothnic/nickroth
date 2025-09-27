@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import CapabilityCard from '../components/CapabilityCard.astro';
+import WorkCard from '../components/WorkCard.astro';
 import { getCollection } from 'astro:content';
 
 const capabilities = await getCollection('capabilities');
@@ -46,31 +47,32 @@ const recentNotes = notes
   <!-- Featured Work Section -->
   <section class="py-20">
     <div class="container mx-auto px-4">
-      <h2 class="text-4xl font-bold text-center mb-12">Featured Work</h2>
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">RECENT WORK</h2>
+        <p class="text-lg text-base-content/70">CASE STUDIES SHOWCASING THE SYSTEMATIC APPROACH FROM DISCOVERY THROUGH DELIVERY.</p>
+      </div>
       {featuredWork.length > 0 ? (
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto mb-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12">
           {featuredWork.map((project) => (
-            <div class="card bg-base-100 shadow-xl">
-              <div class="card-body">
-                <h3 class="card-title text-xl">{project.data.title}</h3>
-                <p class="text-sm opacity-75 mb-2">{project.data.company} • {project.data.role}</p>
-                <p class="mb-4">{project.data.description}</p>
-                <div class="flex flex-wrap gap-2 mb-4">
-                  {project.data.tags.map((tag: string) => (
-                    <div class="badge badge-outline badge-sm">{tag}</div>
-                  ))}
-                </div>
-                <div class="card-actions justify-end">
-                  <a href={`/work/${project.slug}`} class="btn btn-primary btn-sm">View Details</a>
-                </div>
-              </div>
-            </div>
+            <WorkCard
+              title={project.data.title}
+              description={project.data.description}
+              company={project.data.company}
+              role={project.data.role}
+              slug={project.slug}
+              tags={project.data.tags}
+              image={project.data.image}
+              category={project.data.category}
+              impact={project.data.impact}
+              stack={project.data.stack}
+              roleCategory={project.data.roleCategory}
+            />
           ))}
         </div>
       ) : null}
       
       <div class="text-center">
-        <a href="/work" class="btn btn-primary btn-lg">View All Work</a>
+        <a href="/work" class="btn btn-primary btn-lg">VIEW ALL WORK →</a>
       </div>
     </div>
   </section>
