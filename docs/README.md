@@ -22,6 +22,10 @@ Agents and contributors can find all supplementary guides in this folder.
 - [Product requirements](./project/prd.md) – Mission, success indicators, and experience goals guiding the portfolio build.
 - [Prototype summary](./project/prototype-details.md) – Reference architecture and design insights captured from the initial React prototype.
 
+### Design system
+
+- [Neobrutalism component overview](./neobrutalism/components-overview.md) – Inventory of the official UI primitives with recommended use cases.
+
 ## Conventions
 
 - Create new guides as Markdown files in this directory.
