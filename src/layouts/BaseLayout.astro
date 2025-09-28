@@ -25,23 +25,67 @@ const currentPath = Astro.url.pathname;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
-    <ClientRouter />
+    <ClientRouter fallback="animate" />
     <script src="/src/scripts/theme.js"></script>
   </head>
   <style>
-    @keyframes scale-up {
-      from { transform: scale(0.8); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+    :global(:root) {
+      color-scheme: light dark;
+      view-transition-name: none;
     }
 
-    @keyframes scale-down {
-      from { transform: scale(1); opacity: 1; }
-      to { transform: scale(0.8); opacity: 0; }
+    :global(body) {
+      margin: 0;
+      min-height: 100%;
+      background-color: hsl(var(--b2));
+    }
+
+    :global(#app-shell) {
+      view-transition-name: app-shell;
+      position: relative;
+      isolation: isolate;
+    }
+
+    :global(::view-transition-old(root)),
+    :global(::view-transition-new(root)) {
+      animation: none;
+    }
+
+    @keyframes vt-fade-out {
+      to {
+        opacity: 0;
+        transform: translate3d(0, 0.4rem, 0) scale(0.995);
+        filter: blur(12px);
+      }
+    }
+
+    @keyframes vt-fade-in {
+      from {
+        opacity: 0;
+        transform: translate3d(0, 0.6rem, 0) scale(1.005);
+        filter: blur(18px);
+      }
+    }
+
+    :global(::view-transition-old(app-shell)) {
+      animation: vt-fade-out 320ms cubic-bezier(0.33, 1, 0.68, 1) both;
+    }
+
+    :global(::view-transition-new(app-shell)) {
+      animation: vt-fade-in 360ms cubic-bezier(0.19, 1, 0.22, 1) 60ms both;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      :global(::view-transition-old(app-shell)),
+      :global(::view-transition-new(app-shell)) {
+        animation-duration: 0.01ms;
+        animation-delay: 0.01ms;
+      }
     }
   </style>
   <body>
-    <div class="min-h-screen bg-base-100 flex flex-col">
-      {showNavbar && <Navbar currentPath={currentPath} />}
+    <div id="app-shell" class="min-h-screen bg-base-100 flex flex-col">
+      {showNavbar && <Navbar transition:persist currentPath={currentPath} />}
       <slot />
     </div>
   </body>
