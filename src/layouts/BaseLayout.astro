@@ -1,48 +1,65 @@
 ---
-import { ClientRouter } from "astro:transitions";
-import Navbar from '../components/Navbar.astro';
+import MainNav from '../components/site/MainNav';
+import '../styles/global.css';
 
-export interface Props {
+interface Props {
   title?: string;
   description?: string;
-  showNavbar?: boolean;
 }
 
-const {
-  title = "Nick Roth - Product Manager & AI Engineer",
-  description = "Personal site for Nick Roth",
-  showNavbar = true
-} = Astro.props;
-
-const currentPath = Astro.url.pathname;
+const { title = 'Nick Roth – Systems-driven product leader', description } = Astro.props as Props;
 ---
-
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="description" content={description} />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
-    <ClientRouter />
-    <script src="/src/scripts/theme.js"></script>
+    {description && <meta name="description" content={description} />}
   </head>
-  <style>
-    @keyframes scale-up {
-      from { transform: scale(0.8); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    @keyframes scale-down {
-      from { transform: scale(1); opacity: 1; }
-      to { transform: scale(0.8); opacity: 0; }
-    }
-  </style>
-  <body>
-    <div class="min-h-screen bg-base-100 flex flex-col">
-      {showNavbar && <Navbar currentPath={currentPath} />}
+  <body class="bg-background text-foreground">
+    <MainNav client:load />
+    <main class="relative pt-[90px]">
       <slot />
-    </div>
+    </main>
+    <footer class="mt-24 border-t-4 border-border bg-secondary-background">
+      <div class="mx-auto grid w-full max-w-[var(--container-width)] gap-8 px-5 py-12 md:grid-cols-[1.2fr_1fr]">
+        <div class="space-y-4">
+          <h2 class="text-2xl font-heading uppercase tracking-tight">Let&rsquo;s build resilient systems together</h2>
+          <p class="max-w-xl text-sm font-base text-foreground/75">
+            I help growth-stage teams ship platforms that scale &mdash; from product strategy and service design through to the design system and developer experience that keeps your org moving. Drop a note and we&rsquo;ll map the right starting point.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <a
+              href="mailto:hello@nickroth.com"
+              class="rounded-base border-2 border-border bg-main px-4 py-2 font-heading text-main-foreground shadow-shadow transition-all hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none"
+            >
+              hello@nickroth.com
+            </a>
+            <a
+              href="https://www.linkedin.com/in/nickroth"
+              class="rounded-base border-2 border-border bg-background px-4 py-2 font-heading text-foreground shadow-shadow transition-all hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Connect on LinkedIn
+            </a>
+          </div>
+        </div>
+        <div class="grid gap-3 text-sm font-base text-foreground/70">
+          <div>
+            <span class="font-heading text-xs uppercase tracking-wide text-foreground">Current focus</span>
+            <p>Design systems, product foundations, and AI-enabled workflows.</p>
+          </div>
+          <div>
+            <span class="font-heading text-xs uppercase tracking-wide text-foreground">Available for</span>
+            <p>Fractional product leadership, systems architecture, and critical launch programs.</p>
+          </div>
+          <div class="text-xs text-foreground/50">
+            © {new Date().getFullYear()} Nick Roth. All rights reserved.
+          </div>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

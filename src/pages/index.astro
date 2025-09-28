@@ -1,106 +1,68 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Hero from '../components/Hero.astro';
-import CapabilityCard from '../components/CapabilityCard.astro';
-import WorkCard from '../components/WorkCard.astro';
 import { getCollection } from 'astro:content';
 
-const capabilities = await getCollection('capabilities');
-const sortedCapabilities = capabilities
-  .sort((a, b) => a.data.order - b.data.order);
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { CapabilitiesTabs } from '../components/site/CapabilitiesTabs';
+import { HomeHero } from '../components/site/HomeHero';
+import { NotesGrid } from '../components/site/NotesGrid';
+import { WorkShowcase } from '../components/site/WorkShowcase';
 
-const work = await getCollection('work');
-const featuredWork = work
-  .filter(w => w.data.featured)
+const capabilitiesEntries = await getCollection('capabilities');
+const capabilities = capabilitiesEntries
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((item, index) => ({
+    slug: item.slug ?? `capability-${index}`,
+    title: item.data.title,
+    description: item.data.description,
+    icon: item.data.icon,
+  }));
+
+const workEntries = await getCollection('work');
+const featuredWork = workEntries
+  .filter((item) => item.data.featured)
   .sort((a, b) => {
-    const aDate = a.data.endDate || new Date();
-    const bDate = b.data.endDate || new Date();
+    const aDate = itemDate(a.data.endDate ?? a.data.startDate);
+    const bDate = itemDate(b.data.endDate ?? b.data.startDate);
     return bDate.getTime() - aDate.getTime();
   })
-  .slice(0, 2);
+  .slice(0, 4)
+  .map((item) => ({
+    slug: item.slug,
+    title: item.data.title,
+    description: item.data.description,
+    company: item.data.company,
+    role: item.data.role,
+    tags: item.data.tags,
+    category: item.data.category,
+    impact: item.data.impact,
+  }));
 
-const notes = await getCollection('notes');
-const recentNotes = notes
-  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime())
-  .slice(0, 3);
+const noteEntries = await getCollection('notes');
+const recentNotes = noteEntries
+  .filter((note) => !note.data.draft)
+  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
+  .slice(0, 6)
+  .map((note) => ({
+    slug: note.slug,
+    title: note.data.title,
+    description: note.data.description,
+    publishDate: note.data.publishDate.toISOString(),
+    tags: note.data.tags,
+  }));
+
+function itemDate(date: Date) {
+  return new Date(date);
+}
 ---
-
 <BaseLayout>
-  <Hero />
-  
-  <!-- Capabilities Section -->
-  <section class="py-20 bg-base-200">
-    <div class="container mx-auto px-4">
-      <h2 class="text-4xl font-bold text-center mb-12">Core Capabilities</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-        {sortedCapabilities.map((capability) => (
-          <CapabilityCard
-            title={capability.data.title}
-            description={capability.data.description}
-            icon={capability.data.icon}
-          />
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- Featured Work Section -->
-  <section class="py-20">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-12">
-        <h2 class="text-4xl font-bold mb-4">RECENT WORK</h2>
-        <p class="text-lg text-base-content/70">CASE STUDIES SHOWCASING THE SYSTEMATIC APPROACH FROM DISCOVERY THROUGH DELIVERY.</p>
-      </div>
-      {featuredWork.length > 0 ? (
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12">
-          {featuredWork.map((project) => (
-            <WorkCard
-              title={project.data.title}
-              description={project.data.description}
-              company={project.data.company}
-              role={project.data.role}
-              slug={project.slug}
-              tags={project.data.tags}
-              image={project.data.image}
-              category={project.data.category}
-              impact={project.data.impact}
-              stack={project.data.stack}
-              roleCategory={project.data.roleCategory}
-            />
-          ))}
-        </div>
-      ) : null}
-      
-      <div class="text-center">
-        <a href="/work" class="btn btn-primary btn-lg">VIEW ALL WORK →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Recent Updates Section -->
-  {recentNotes.length > 0 && (
-    <section class="py-20 bg-base-200">
-      <div class="container mx-auto px-4">
-        <h2 class="text-4xl font-bold text-center mb-12">Recent Updates</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {recentNotes.map((note) => (
-            <div class="card bg-base-100 shadow-lg">
-              <div class="card-body">
-                <h3 class="card-title text-lg">{note.data.title}</h3>
-                <p class="text-sm opacity-75 mb-2">
-                  {new Date(note.data.publishDate).toLocaleDateString()}
-                </p>
-                <p class="text-sm mb-3">{note.data.description}</p>
-                <div class="flex flex-wrap gap-1">
-                  {note.data.tags.slice(0, 3).map((tag: string) => (
-                    <div class="badge badge-outline badge-xs">{tag}</div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )}
+  <HomeHero client:load />
+  <div class="py-20">
+    <CapabilitiesTabs client:load items={capabilities} />
+  </div>
+  <div class="py-20">
+    <WorkShowcase client:load items={featuredWork} />
+  </div>
+  <div class="py-20">
+    <NotesGrid client:load items={recentNotes} />
+  </div>
 </BaseLayout>

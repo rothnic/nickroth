@@ -1,0 +1,23 @@
+---
+import { getCollection } from 'astro:content';
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { NotesGrid } from '../../components/site/NotesGrid';
+
+const noteEntries = await getCollection('notes');
+const notes = noteEntries
+  .filter((note) => !note.data.draft)
+  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
+  .map((note) => ({
+    slug: note.slug,
+    title: note.data.title,
+    description: note.data.description,
+    publishDate: note.data.publishDate.toISOString(),
+    tags: note.data.tags,
+  }));
+---
+<BaseLayout title="Notes – Nick Roth">
+  <div class="space-y-20 py-20">
+    <NotesGrid client:load items={notes} />
+  </div>
+</BaseLayout>
