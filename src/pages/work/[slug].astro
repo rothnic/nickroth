@@ -1,51 +1,63 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection, type CollectionEntry } from 'astro:content';
-import {} from 'astro:transitions';
+import { type CollectionEntry, getCollection } from "astro:content";
+import {} from "astro:transitions";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
-  const workEntries = await getCollection('work');
-  return workEntries.map((entry: CollectionEntry<'work'>) => ({
-    params: { slug: entry.slug },
-    props: { entry },
-  }));
+	const workEntries = await getCollection("work");
+	return workEntries.map((entry: CollectionEntry<"work">) => ({
+		params: { slug: entry.slug },
+		props: { entry },
+	}));
 }
 
 type Props = {
-  entry: CollectionEntry<'work'>;
+	entry: CollectionEntry<"work">;
 };
 
 const { entry } = Astro.props as Props;
 const { Content } = await entry.render();
-const PLACEHOLDER_IMAGE = 'https://placehold.co/600x400';
-const coverImage = entry.data.image?.trim() ? entry.data.image : PLACEHOLDER_IMAGE;
+const PLACEHOLDER_IMAGE = "https://placehold.co/600x400";
+const coverImage = entry.data.image?.trim()
+	? entry.data.image
+	: PLACEHOLDER_IMAGE;
 
 // Get color schemes for different categories
 const getCategoryColor = (cat: string | undefined) => {
-  switch (cat) {
-    case 'HEADLESS CMS': return 'badge-primary';
-    case 'WEB PLATFORMS': return 'badge-secondary';  
-    case 'MARKETING AUTOMATION': return 'badge-accent';
-    case 'AUTOMATION & AI': return 'badge-warning';
-    case 'CHROME EXTENSIONS': return 'badge-info';
-    case 'SYSTEMS': return 'badge-success';
-    default: return 'badge-outline';
-  }
+	switch (cat) {
+		case "HEADLESS CMS":
+			return "badge-primary";
+		case "WEB PLATFORMS":
+			return "badge-secondary";
+		case "MARKETING AUTOMATION":
+			return "badge-accent";
+		case "AUTOMATION & AI":
+			return "badge-warning";
+		case "CHROME EXTENSIONS":
+			return "badge-info";
+		case "SYSTEMS":
+			return "badge-success";
+		default:
+			return "badge-outline";
+	}
 };
 
 const getStackColor = (tech: string) => {
-  const lowerTech = tech.toLowerCase();
-  if (lowerTech.includes('astro') || lowerTech.includes('datocms')) return 'badge-primary';
-  if (lowerTech.includes('n8n') || lowerTech.includes('windmill')) return 'badge-warning';
-  if (lowerTech.includes('chrome') || lowerTech.includes('openai')) return 'badge-info';
-  if (lowerTech.includes('langchain')) return 'badge-success';
-  if (tech.includes('+')) return 'badge-success';
-  return 'badge-outline';
+	const lowerTech = tech.toLowerCase();
+	if (lowerTech.includes("astro") || lowerTech.includes("datocms"))
+		return "badge-primary";
+	if (lowerTech.includes("n8n") || lowerTech.includes("windmill"))
+		return "badge-warning";
+	if (lowerTech.includes("chrome") || lowerTech.includes("openai"))
+		return "badge-info";
+	if (lowerTech.includes("langchain")) return "badge-success";
+	if (tech.includes("+")) return "badge-success";
+	return "badge-outline";
 };
 ---
 
 <BaseLayout title={`${entry.data.title} - Nick Roth`} description={entry.data.description}>
-  <main class="py-20">
+  <main class="py-4">
     <div class="container mx-auto px-4 max-w-6xl">
       <!-- Navigation -->
       <div class="mb-8">
