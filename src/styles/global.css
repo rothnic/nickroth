@@ -1,2 +1,5 @@
 @import "tailwindcss";
+
+/* Note: Biome doesn't fully support tailwind v4 directives yet 
+    so we have to disable linting for this file  */
 @plugin "daisyui";
