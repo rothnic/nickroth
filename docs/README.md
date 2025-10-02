@@ -14,17 +14,26 @@ Agents and contributors can find all supplementary guides in this folder.
 - **[Site-First Roadmap](./site-first-roadmap.md)** – Visual development strategy with milestones (homepage → site → theme)
 - **[Component Backlog](./component-backlog.md)** – Task list (28 tasks: 18 site, 10 theme expansion)
 
+**Progress**:
+- **[P0-001 Complete](./progress/p0-001.md)** ✅ – Global CSS Setup (detailed documentation)
+  - [Quick Reference](./project/completed-work/p0-001-quick-reference.md) – One-page summary
+  - [Completion Summary](./project/completed-work/P0-001-COMPLETE.md) – Executive overview
+
 **Reference Docs**:
-- [Figma Export Review](./figma-export-review.md) – Pattern extraction from React prototype (animations, stickers, showcases)
-- [Neobrutalism DaisyUI Implementation](./neobrutalism-daisyui-implementation.md) – Complete theme implementation strategy
 - [Design System Guide](./design-system/guide.md) – Design philosophy, component architecture, visual principles
-- [Example Global Styles](./design-system/example-global-styles.md) – Reference CSS from prototype (visual reference only)
+- [Theme Implementation](./design-system/implementation.md) – Complete DaisyUI 5 neobrutalism theme reference
+- [Prototype Analysis](./design-system/prototype-analysis.md) – Pattern extraction from React prototype (animations, stickers, showcases)
+- [Color System](./design-system/colors.md) – Color palette, light/dark mode, OKLCH values, usage guidelines
 
 **Workflows & Templates**:
-- [buildComponent-streamlined.md](../.github/prompts/buildComponent-streamlined.md) – Primary workflow (4 phases)
+- [buildComponent2.prompt.md](../.github/prompts/buildComponent2.prompt.md) – **PRIMARY WORKFLOW** (updated with P0-001 learnings)
+- [buildComponent-streamlined.md](../.github/prompts/buildComponent-streamlined.md) – Alternative streamlined workflow
 - [buildComponent-reference.md](../.github/prompts/buildComponent-reference.md) – Detailed reference material
 - [Task Templates](../.github/templates/) – CSS setup, component showcase, page integration
 - [Validation Checklists](../.github/VALIDATION.md) – Phase-by-phase yes/no checks
+
+**Archive**:
+- [archive/](./archive/) – Completed fix notes and troubleshooting docs (historical reference)
 
 ### Astro patterns
 
@@ -40,9 +49,15 @@ Agents and contributors can find all supplementary guides in this folder.
 
 ### Project research & planning
 
+- [Project documentation index](./project/README.md) – All project planning and completed work
 - [Content specification](./project/content-specification.md) – Central schemas, data structures, and content architecture for the living resume portfolio.
 - [Product requirements](./project/prd.md) – Mission, success indicators, and experience goals guiding the portfolio build.
 - [Prototype summary](./project/prototype-details.md) – Reference architecture and design insights captured from the initial React prototype.
+- [Completed work](./project/completed-work/) – Quick references and summaries for finished tasks (P0-001 ✅)
+
+### Progress tracking
+
+- [P0-001 Global CSS Setup](./progress/p0-001.md) – Running notes on the global styling foundation work.
 
 ## Conventions
 

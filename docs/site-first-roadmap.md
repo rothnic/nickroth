@@ -2,244 +2,325 @@
 
 ## Strategy Overview
 
-**Goal**: Build your personal site quickly while maintaining component quality for future theme sales.
+**Goal**: Build your personal site quickly while styling it with the neobrutalism theme.
 
 **Approach**: 
-1. Build each page section when needed
-2. Extract components properly (DaisyUI + showcase)
-3. Verify in isolation (showcase) + integration (site)
-4. Complete theme library after site is functional
+1. **Use DaisyUI classes directly** - `btn btn-primary`, `badge badge-success`, `card` etc.
+2. **Style sections as-needed** - Apply neobrutalism styling when building each page
+3. **Extract components only when reused** - If a pattern repeats 3+ times, componentize it
+4. **Build showcase pages after** - Once site works, create demos for theme sales
+
+## Current Status
+
+### ✅ Complete (P0-001)
+- **Global CSS Foundation** - Neobrutalism theme with automatic styling
+- **DaisyUI Integration** - All components (btn, badge, card, etc.) styled
+- **Scroll Animations** - CSS-only animations with Astro lifecycle
+- **Dark Mode** - Automatic system preference detection
+
+### 🏗️ Existing Components (Using DaisyUI directly)
+- **Hero.astro** - Uses `btn btn-primary` (no wrapper needed)
+- **CapabilityCard.astro** - Uses `card` (no wrapper needed)  
+- **WorkCard.astro** - Uses `card`, `badge` (no wrapper needed)
+- **Navbar.astro** - Uses `navbar` (no wrapper needed)
+
+**Key Insight**: We already have a working site using DaisyUI classes directly. The neobrutalism styling from P0-001 applies automatically. **No need for wrapper components like NeoButton or StickerBadge.**
 
 ---
 
 ## Personal Site Build Order
 
-### **Phase 1: Foundation & Homepage Hero** (5 tasks)
-Get the basics in place and build the hero section.
+### **Phase 1: Polish Homepage** (2-3 tasks)
+Enhance what's already built with neobrutalism flair.
 
 ```
-P0-001 → Global CSS Setup (shadows, rotations, animations)
-P0-002 → Theme Configuration (colors)
-P0-003 → StickerBadge + Showcase (for hero badges)
-P0-004 → NeoButton + Showcase (for hero CTAs)
-P0-005 → Hero Section (compose with badges + buttons)
+✅ P0-001 → Global CSS Setup (COMPLETE)
+→ P1-001 → Enhance Hero Section (add floating shapes, stickers, better layout)
+→ P1-002 → Style Capabilities Section (add rotations, shadows, animations)
+→ P1-003 → Enhance Work Cards (add sticker badges, dramatic shadows)
 ```
 
-**Result**: Homepage hero section complete with floating badges and CTAs
+**Result**: Homepage fully neobrutalized with dramatic styling
 
 ---
 
-### **Phase 2: Homepage Content** (4 tasks)
-Complete the homepage with capabilities, work, and updates.
+### **Phase 2: Complete Core Pages** (5-6 tasks)
+Build out remaining essential pages.
 
 ```
-P0-006 → BrutalistCard + Showcase (base for all cards)
-P0-007 → CapabilityCard (using BrutalistCard)
-P0-008 → WorkCard (using BrutalistCard + badges)
-P0-009 → Recent Updates Section (style with cards)
+→ P1-004 → Work List Page (all projects with filtering)
+→ P1-005 → Work Detail Template (case study layout)
+→ P1-006 → About Page (background story)
+→ P1-007 → Contact Page (form with validation)
+→ P1-008 → Footer Component (site footer with links)
+→ P1-009 → 404 Page (custom error page)
 ```
 
-**Result**: Complete homepage with capabilities grid, featured work, recent notes
+**Result**: Complete functional personal site
 
 ---
 
-### **Phase 3: Navigation & Layout** (3 tasks)
-Add navigation and reusable layout components.
+### **Phase 3: Content Pages** (2-3 tasks)
+Add remaining informational pages.
 
 ```
-P1-010 → Navbar (site navigation)
-P1-011 → Footer (site footer)
-P1-012 → Section Components (containers + headers)
+→ P1-010 → Approach/Process Page (methodology)
+→ P1-011 → Background/Resume Page (interactive timeline)
+→ P1-012 → Notes/Blog Index (recent updates)
 ```
 
-**Result**: Full site layout with nav, footer, reusable sections
+**✅ PERSONAL SITE COMPLETE** (12-13 tasks total)
 
 ---
 
-### **Phase 4: Work & About Pages** (4 tasks)
-Expand beyond homepage to core content pages.
+### **Phase 4: Theme Showcase & Sales** (8-10 tasks)
+After site works, build showcase site to sell theme.
 
 ```
-P1-013 → Work List Page (all projects)
-P1-014 → Work Detail Pages (case studies)
-P1-015 → About Page (background)
-P1-016 → Contact Page (conversion)
+→ P2-001 → Showcase Landing Page (theme demo home)
+→ P2-002 → Components Showcase (buttons, badges, cards in isolation)
+→ P2-003 → Typography Showcase (all text styles)
+→ P2-004 → Forms Showcase (inputs, validation, states)
+→ P2-005 → Layouts Showcase (sections, grids, containers)
+→ P2-006 → Animations Showcase (hover, scroll, transitions)
+→ P2-007 → Colors Showcase (palette with examples)
+→ P2-008 → Documentation Page (how to use theme)
+→ P2-009 → Extract Reusable Components (if needed for showcase)
+→ P2-010 → Theme Package (prepare for sale)
 ```
 
-**Result**: Complete personal site with all core pages
+**✅ THEME LIBRARY COMPLETE** (20-23 tasks total)
 
----
+## Development Pattern
 
-### **Phase 5: Polish & Missing Features** (2 tasks)
-Add remaining personal site pages.
+### When Building Pages
 
-```
-P1-017 → Approach/Process Page (methodology)
-P1-018 → Background/Resume Page (experience)
-```
+**Direct Approach** (preferred):
+```astro
+<!-- Use DaisyUI classes directly -->
+<button class="btn btn-primary btn-lg shadow-brutal hover-lift">
+  View Work
+</button>
 
-**✅ PERSONAL SITE COMPLETE** (18 tasks total)
+<div class="badge badge-success rotate-sticker-1">
+  NEW
+</div>
 
----
-
-## Theme Library Expansion
-
-### **Phase 6: Theme Completion** (10 tasks)
-After personal site is functional, complete the theme library for sale.
-
-```
-P2-019 → Showcase Landing Page (demo site entry)
-P2-020 → Typography Showcase (all text styles)
-P2-021 → Form Elements Showcase (inputs, validation)
-P2-022 → Layout Components Showcase (sections, grids)
-P2-023 → Animation Showcase (hover, scroll effects)
-P3-024 → BoxedHeading Component (text in boxes)
-P3-025 → Icon System (extracted SVGs)
-P3-026 → Modal Component (dialogs)
-P3-027 → Accordion Component (collapse/expand)
-P3-028 → Carousel Component (image slider)
+<div class="card bg-base-100 shadow-brutal-lg fade-in-up">
+  <div class="card-body">
+    Content here
+  </div>
+</div>
 ```
 
-**✅ THEME LIBRARY COMPLETE** (28 tasks total)
+**Why This Works**:
+- ✅ P0-001 already styled all DaisyUI components with neobrutalism
+- ✅ Utility classes available (`shadow-brutal`, `rotate-sticker-1`, `hover-lift`, `fade-in-up`)
+- ✅ Automatic border & text colors for `bg-*` classes
+- ✅ Dark mode handled automatically
+- ✅ No component wrappers needed
 
----
+### When to Extract Components
 
-## Task Pattern: Component + Showcase + Integration
+**Only extract if**:
+1. Pattern repeats 3+ times across different pages
+2. Complex logic needs to be encapsulated
+3. Content needs consistent structure/validation
 
-Every component follows this pattern:
+**Example**:
+- ✅ **WorkCard.astro** - Repeated on multiple pages, complex layout
+- ✅ **CapabilityCard.astro** - Standardized structure across capability grid
+- ❌ **NeoButton** - Just use `<button class="btn btn-primary">` directly
+- ❌ **StickerBadge** - Just use `<span class="badge badge-success rotate-sticker-1">` directly
 
-### **1. Build Component** (DaisyUI-based)
-- Use standard DaisyUI classes
-- Override in `global.css` for neobrutalism
-- Accept props for variants
-- No hard-coded content
+### Showcase Pages Come Later
 
-### **2. Create Showcase Page** (Isolation)
-- Display all variants (sizes, colors, states)
-- Code examples
-- Usage documentation
-- Demonstrates component works independently
+Build showcase pages **after** the personal site works:
+1. Site demonstrates real usage
+2. Extract common patterns you actually used
+3. Create showcase with all variants
+4. Document usage patterns
+5. Package as sellable theme
 
-### **3. Integrate into Site** (Real Usage)
-- Use on actual page
-- Verify with real content
-- Test responsive behavior
-- Confirm no hard-coded content
+## Example: Enhancing Hero Section (P1-001)
 
-### **4. Mark Complete**
-- Check off all success criteria
-- Run acceptance test
-- Move to next task
+**Current State**:
+```astro
+<a href="/work" class="btn btn-primary btn-lg">View My Work</a>
+```
 
----
+**Enhanced with Neobrutalism**:
+```astro
+<!-- Add dramatic shadow and lift effect -->
+<a href="/work" class="btn btn-primary btn-lg shadow-brutal-xl hover-lift">
+  View My Work
+</a>
 
-## Example: Building Hero Section
+<!-- Add floating sticker badges -->
+<div class="absolute top-4 right-4">
+  <span class="badge badge-success badge-lg rotate-sticker-1 shadow-brutal">
+    ⚡ AVAILABLE NOW
+  </span>
+</div>
 
-```mermaid
-graph LR
-    A[P0-001: CSS Setup] --> B[P0-002: Theme Config]
-    B --> C[P0-003: StickerBadge]
-    C --> D[P0-003: Badge Showcase]
-    D --> E[P0-004: NeoButton]
-    E --> F[P0-004: Button Showcase]
-    F --> G[P0-005: Hero Section]
-    G --> H[Verify Hero Works]
-    H --> I[Move to Phase 2]
+<!-- Add animated background shapes -->
+<div class="absolute -top-8 -right-8 w-32 h-32 bg-primary/20 border-4 border-primary rotate-12 animate-spin-slow" 
+     aria-hidden="true">
+</div>
+
+<!-- Add scroll animation -->
+<div class="hero-content fade-in-up">
+  <!-- Content animates in on page load -->
+</div>
 ```
 
 **What You Get**:
-- ✅ Working hero section on homepage
-- ✅ StickerBadge component (reusable)
-- ✅ NeoButton component (reusable)
-- ✅ Badge showcase page (demonstrates all variants)
-- ✅ Button showcase page (demonstrates all variants)
-- ✅ Foundation CSS (used by all components)
+- ✅ Dramatic neobrutalism styling
+- ✅ Floating decorative badges
+- ✅ Animated background elements
+- ✅ Scroll-triggered animations
+- ✅ No new components needed
+- ✅ All classes from P0-001
 
-**Time Investment**: Build once, use everywhere, showcase proves it works.
+**Time**: ~30 minutes to enhance vs. 2+ hours to build wrapper components
 
----
+## Key Differences from Original Plan
 
-## Key Differences from Old Backlog
-
-### **Old Approach** ❌
-- Build all base components first (boring, no visible progress)
-- No integration testing until later
-- Harder to stay motivated
-- Risk of over-engineering unused components
+### **Original Approach** ❌
+- Build wrapper components first (NeoButton, StickerBadge, BrutalistCard)
+- Create showcase pages for each component
+- Then integrate into site
+- More upfront work, slower progress
+- Risk of over-engineering unused features
 
 ### **New Approach** ✅
-- Build components as pages need them (visible progress)
-- Immediate integration testing (use on real site)
-- Showcase ensures quality (proves component works)
-- Only build what's actually needed for site
-- Expand theme library after site works
+- **Use DaisyUI classes directly** - Already styled by P0-001
+- **Style pages as you build them** - Immediate visible progress
+- **Extract components only when needed** - If pattern repeats 3+ times
+- **Showcase pages come last** - After site works, demonstrate what you built
+- **Faster to market** - Site live sooner
 
----
+### Why This Is Better
+
+**P0-001 Already Did The Hard Work**:
+```css
+/* All DaisyUI components already have neobrutalism styling */
+.btn { border: 2px solid; box-shadow: 6px 6px 0; font-weight: 900; }
+.badge { border: 1px solid; box-shadow: 3px 3px 0; text-transform: uppercase; }
+.card { border: 2px solid; box-shadow: 8px 8px 0; }
+```
+
+**You Already Have**:
+- ✅ 50+ utility classes (`shadow-brutal-*`, `rotate-sticker-*`, `hover-*`, `fade-in-*`)
+- ✅ Automatic styling (`bg-primary` gets correct border + text color)
+- ✅ Dark mode (automatic system detection)
+- ✅ Scroll animations (Intersection Observer + CSS)
+- ✅ Responsive design (DaisyUI breakpoints)
+
+**Just Use It**:
+```html
+<!-- Instead of building NeoButton component -->
+<button class="btn btn-primary btn-lg shadow-brutal-xl hover-lift">
+  Click Me
+</button>
+
+<!-- Instead of building StickerBadge component -->
+<span class="badge badge-success badge-lg rotate-sticker-2 shadow-brutal">
+  NEW
+</span>
+```
 
 ## Progress Milestones
 
-### **Milestone 1: Homepage Live** (9 tasks)
-- Foundation CSS ✓
-- Theme colors ✓
-- Hero section with badges + buttons ✓
-- Capabilities grid ✓
-- Featured work cards ✓
-- Recent updates ✓
+### **Milestone 1: Foundation Complete** ✅
+- [x] P0-001: Global CSS with neobrutalism theme
+- [x] All DaisyUI components styled automatically
+- [x] Utility classes for shadows, rotations, animations
+- [x] Dark mode with automatic detection
+- [x] Scroll animations working
 
-### **Milestone 2: Full Navigation** (12 tasks)
-- Navbar ✓
-- Footer ✓
-- Reusable sections ✓
+### **Milestone 2: Homepage Enhanced** (Next - 3 tasks)
+- [ ] P1-001: Hero section with floating shapes, stickers, dramatic layout
+- [ ] P1-002: Capabilities section with rotations, shadows, scroll animations
+- [ ] P1-003: Work cards with sticker badges, enhanced shadows
 
-### **Milestone 3: Complete Site** (18 tasks)
-- Work list page ✓
-- Work detail pages ✓
-- About page ✓
-- Contact page ✓
-- Approach page ✓
-- Background page ✓
+**Target**: Stunning neobrutalism homepage
 
-### **Milestone 4: Sellable Theme** (28 tasks)
-- All showcase pages ✓
-- Complete component library ✓
-- Full documentation ✓
+### **Milestone 3: Core Pages Complete** (5-6 tasks)
+- [ ] Work list page with filtering
+- [ ] Work detail template
+- [ ] About page
+- [ ] Contact page with form
+- [ ] Footer component
+- [ ] Custom 404 page
 
----
+**Target**: Fully functional personal site
+
+### **Milestone 4: Content Pages** (2-3 tasks)
+- [ ] Approach/process page
+- [ ] Background/resume page
+- [ ] Notes/blog index
+
+**Target**: Complete site with all pages
+
+### **Milestone 5: Showcase & Theme** (8-10 tasks)
+- [ ] Showcase landing page
+- [ ] Component demos (buttons, badges, cards, forms, etc.)
+- [ ] Documentation
+- [ ] Theme package for sale
+
+**Target**: Sellable DaisyUI neobrutalism theme
 
 ## What This Means
 
-### **Short Term** (Next 9 tasks)
-Focus on getting a beautiful homepage live with:
-- Dramatic neobrutalism hero
-- Capabilities showcase
-- Featured work
-- Recent updates
+### **Right Now** (Next 3 tasks - P1-001 to P1-003)
+Polish the homepage you already have:
+- Add floating decorative shapes to hero
+- Add sticker badges throughout
+- Apply dramatic shadows and rotations
+- Add scroll-triggered animations
+- Make it **visually stunning**
 
-Every component built properly with showcase page, but priority is **seeing results**.
+**Outcome**: Jaw-dropping neobrutalism homepage
 
-### **Medium Term** (Next 18 tasks)
-Complete personal site with:
-- Full navigation
-- All pages (work, about, contact, etc.)
-- Consistent styling
-- No hard-coded content
+### **Short Term** (Next 12-13 tasks)
+Complete the personal site:
+- Build remaining pages (work, about, contact, etc.)
+- Use DaisyUI classes directly with neobrutalism utilities
+- Extract components only when patterns repeat
+- Focus on **shipping functional site**
 
-Your site is **live and functional**.
+**Outcome**: Full personal site live and working
 
-### **Long Term** (All 28 tasks)
-Complete theme library with:
-- Comprehensive showcase site
-- All component variants
-- Full documentation
-- Ready to **sell as theme**
+### **Long Term** (After site complete)
+Create theme for sale:
+- Build showcase pages demonstrating all features
+- Document usage patterns you actually used
+- Package as sellable theme
+- Focus on **monetizing your work**
+
+**Outcome**: Sellable DaisyUI neobrutalism theme
 
 ---
 
 ## Next Steps
 
-1. **Run**: `#file:buildComponent.prompt.md` (auto-selects P0-001)
-2. **Build**: Global CSS setup with neobrutalism overrides
-3. **Test**: Apply to existing components, verify styling works
-4. **Move On**: P0-002 theme config, then start building hero components
+### **Immediate Action** (P1-001: Enhance Hero Section)
 
-**Focus**: Get homepage hero section visible in next 5 tasks.
+1. **Open**: `src/components/Hero.astro`
+2. **Add**:
+   - Floating decorative shapes with `animate-spin-slow`, `animate-bounce-slow`
+   - Sticker badges using `badge rotate-sticker-* shadow-brutal`
+   - Dramatic shadows using `shadow-brutal-xl`
+   - Scroll animations using `fade-in-up`, `slide-in-left`
+3. **Test**: Visual impact, responsive behavior, animations
+4. **Move On**: P1-002 capabilities section
+
+### **Reference**
+
+- **Global CSS**: `src/styles/global.css` (all utilities available)
+- **Current Implementation**: `docs/design-system/implementation.md`
+- **P0-001 Details**: `docs/progress/p0-001.md`
+- **Component Backlog**: `docs/component-backlog.md` (needs update to match this roadmap)
+
+**Focus**: Ship beautiful site fast, then build showcase for sales.

@@ -1,0 +1,220 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const categories = [
+  {
+    title: 'Getting Started',
+    pages: [
+      { 
+        title: 'Overview', 
+        href: '/showcase/overview', 
+        description: 'Introduction, principles, and quick start guide',
+        icon: '📖'
+      },
+    ]
+  },
+  {
+    title: 'Foundation',
+    pages: [
+      { 
+        title: 'Colors', 
+        href: '/showcase/foundation/colors', 
+        description: 'Color palette with light and dark mode',
+        icon: '🎨'
+      },
+      { 
+        title: 'Typography', 
+        href: '/showcase/foundation/typography', 
+        description: 'Type scale, weights, and hierarchy',
+        icon: '📰'
+      },
+      { 
+        title: 'Spacing', 
+        href: '/showcase/foundation/spacing', 
+        description: 'Spacing scale based on 4px unit',
+        icon: '📏'
+      },
+      { 
+        title: 'Shadows', 
+        href: '/showcase/foundation/shadows', 
+        description: 'Hard-edged shadow system',
+        icon: '⬛'
+      },
+    ]
+  },
+  {
+    title: 'Components',
+    pages: [
+      { 
+        title: 'Buttons', 
+        href: '/showcase/components/buttons', 
+        description: 'All button variants and states',
+        icon: '🔘'
+      },
+      { 
+        title: 'Forms', 
+        href: '/showcase/components/forms', 
+        description: 'Inputs, validation, and form layouts',
+        icon: '📝'
+      },
+      { 
+        title: 'Cards', 
+        href: '/showcase/components/cards', 
+        description: 'Content cards with images and actions',
+        icon: '📇'
+      },
+      { 
+        title: 'Badges', 
+        href: '/showcase/components/badges', 
+        description: 'Status badges and rotated stickers',
+        icon: '🏷️'
+      },
+      { 
+        title: 'Navigation', 
+        href: '/showcase/components/navigation', 
+        description: 'Navbar, menus, tabs, and breadcrumbs',
+        icon: '🧭'
+      },
+      { 
+        title: 'Feedback', 
+        href: '/showcase/components/feedback', 
+        description: 'Alerts, modals, toasts, and notifications',
+        icon: '💬'
+      },
+    ]
+  },
+  {
+    title: 'Patterns',
+    pages: [
+      { 
+        title: 'Layouts', 
+        href: '/showcase/patterns/layouts', 
+        description: 'Section layouts and grid systems',
+        icon: '📐'
+      },
+      { 
+        title: 'Animations', 
+        href: '/showcase/patterns/animations', 
+        description: 'CSS animations and scroll triggers',
+        icon: '✨'
+      },
+      { 
+        title: 'Interactions', 
+        href: '/showcase/patterns/interactions', 
+        description: 'Hover effects and interactive patterns',
+        icon: '👆'
+      },
+    ]
+  },
+];
+---
+
+<BaseLayout title="Neobrutalism Theme Showcase" description="Explore the complete DaisyUI neobrutalism theme with all components and utilities.">
+  <div class="min-h-screen bg-gradient-to-br from-base-100 via-primary/5 to-secondary/5">
+    <div class="container mx-auto px-4 py-20">
+      <!-- Header -->
+      <div class="text-center mb-16">
+        <div class="inline-block">
+          <h1 class="text-6xl md:text-7xl font-black mb-4 relative">
+            <span class="inline-block bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
+              NEOBRUTALISM
+            </span>
+            <span class="badge badge-accent badge-lg rotate-sticker-1 absolute -top-4 -right-12 shadow-brutal">
+              NEW
+            </span>
+          </h1>
+        </div>
+        <h2 class="text-3xl md:text-4xl font-bold mb-6">DaisyUI Theme Showcase</h2>
+        <p class="text-xl text-base-content/70 max-w-2xl mx-auto mb-8">
+          Explore all components and utilities in this brutalist design system. 
+          Bold borders, dramatic shadows, and vibrant colors.
+        </p>
+        
+        <div class="flex flex-wrap gap-3 justify-center">
+          <div class="badge badge-primary badge-lg">Astro</div>
+          <div class="badge badge-secondary badge-lg">DaisyUI 5</div>
+          <div class="badge badge-accent badge-lg">Tailwind CSS 4</div>
+          <div class="badge badge-neutral badge-lg">Zero JS</div>
+        </div>
+      </div>
+
+      <!-- Feature Highlights -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+        <div class="card bg-base-100 shadow-brutal-lg border-2 border-black dark:border-white">
+          <div class="card-body">
+            <h3 class="card-title text-2xl">⚡ Zero Runtime JS</h3>
+            <p>Pure CSS styling with no JavaScript overhead. All animations and effects use CSS only.</p>
+          </div>
+        </div>
+        
+        <div class="card bg-base-100 shadow-brutal-lg border-2 border-black dark:border-white">
+          <div class="card-body">
+            <h3 class="card-title text-2xl">🎨 DaisyUI Native</h3>
+            <p>Uses standard DaisyUI classes - no custom wrappers. Fully compatible with DaisyUI ecosystem.</p>
+          </div>
+        </div>
+        
+        <div class="card bg-base-100 shadow-brutal-lg border-2 border-black dark:border-white">
+          <div class="card-body">
+            <h3 class="card-title text-2xl">🌓 Auto Dark Mode</h3>
+            <p>Automatic system preference detection with perfectly tuned dark mode colors.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Organized by Category -->
+      {categories.map((category, categoryIndex) => (
+        <div class="mb-12">
+          <h3 class="text-3xl font-bold mb-6">{category.title}</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {category.pages.map((page, pageIndex) => (
+              <a 
+                href={page.href} 
+                class="card bg-base-100 shadow-brutal-lg hover-lift border-2 border-black dark:border-white"
+              >
+                <div class="card-body">
+                  <div class="text-4xl mb-2" transition:name={`showcase-icon-${page.href}`}>{page.icon}</div>
+                  <h4 class="card-title text-xl" transition:name={`showcase-title-${page.href}`}>{page.title}</h4>
+                  <p class="text-sm text-base-content/70" transition:name={`showcase-desc-${page.href}`}>{page.description}</p>
+                  <div class="card-actions justify-end mt-2">
+                    <span class="text-sm font-bold">View →</span>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <!-- Call to Action -->
+      <div class="card bg-gradient-to-r from-primary to-secondary text-primary-content shadow-brutal-xl border-4 border-black mt-16">
+        <div class="card-body items-center text-center">
+          <h2 class="card-title text-3xl mb-4">Ready to Use This Theme?</h2>
+          <p class="text-lg mb-6">
+            All components are built with DaisyUI 5 and Tailwind CSS 4. 
+            Copy the global CSS and start building.
+          </p>
+          <div class="card-actions">
+            <a href="/project" class="btn btn-neutral btn-lg shadow-brutal-lg hover-lift">
+              View Case Study
+            </a>
+            <a href="https://github.com/rothnic/nickroth" class="btn btn-outline btn-lg border-2 hover-lift" target="_blank" rel="noopener noreferrer">
+              View on GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="text-center mt-16">
+        <p class="text-sm text-base-content/50 mb-4">Also explore:</p>
+        <div class="flex flex-wrap gap-4 justify-center">
+          <a href="/project" class="link link-hover">How This Was Built</a>
+          <a href="/dev/test-global-css" class="link link-hover">CSS Test Page</a>
+          <a href="/" class="link link-hover">Back to Main Site</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+```

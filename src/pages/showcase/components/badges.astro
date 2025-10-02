@@ -1,0 +1,139 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Badges - Components" 
+  description="Badge and sticker components with rotations and positioning."
+>
+  <div class="container mx-auto px-4 py-20 max-w-6xl">
+    <div class="mb-12">
+      <div class="text-4xl mb-4" transition:name="showcase-icon-/showcase/components/badges">🏷️</div>
+      <h1 class="text-5xl font-black mb-4" transition:name="showcase-title-/showcase/components/badges">Badges & Stickers</h1>
+      <p class="text-xl text-base-content/70" transition:name="showcase-desc-/showcase/components/badges">
+        Status indicators and decorative stickers with rotation utilities for playful layouts. 
+        Badges feature 2px themed borders, 3px hard shadows, and bold fonts.
+      </p>
+    </div>
+
+    <!-- Color Variants -->
+    <section class="mb-16 space-y-4">
+      <h2 class="text-3xl font-black border-b-4 pb-2 inline-block">Color Variants</h2>
+      <p class="text-sm text-base-content/60">Expected: 2px themed border, 3px hard shadow, bold font</p>
+      
+      <div class="flex flex-wrap gap-3">
+        <span class="badge badge-primary">Primary</span>
+        <span class="badge badge-secondary">Secondary</span>
+        <span class="badge badge-accent">Accent</span>
+        <span class="badge badge-info">Info</span>
+        <span class="badge badge-success">Success</span>
+        <span class="badge badge-warning">Warning</span>
+        <span class="badge badge-error">Error</span>
+        <span class="badge badge-neutral">Neutral</span>
+      </div>
+    </section>
+
+    <!-- Size Variants -->
+    <section class="mb-16 space-y-4">
+      <h2 class="text-3xl font-black border-b-4 pb-2 inline-block">Size Variants</h2>
+      <p class="text-sm text-base-content/60">From extra small to extra large</p>
+      
+      <div class="flex flex-wrap gap-3 items-center">
+        <span class="badge badge-xs">Extra Small</span>
+        <span class="badge badge-sm">Small</span>
+        <span class="badge badge-md">Medium</span>
+        <span class="badge badge-lg">Large</span>
+      </div>
+    </section>
+
+    <!-- Style Variants -->
+    <section class="mb-16 space-y-4">
+      <h2 class="text-3xl font-black border-b-4 pb-2 inline-block">Style Variants</h2>
+      <p class="text-sm text-base-content/60">Solid, outline, ghost styles</p>
+      
+      <div class="flex flex-wrap gap-3">
+        <span class="badge badge-primary">Solid</span>
+        <span class="badge badge-outline badge-primary">Outline</span>
+        <span class="badge badge-ghost">Ghost</span>
+      </div>
+    </section>
+
+    <!-- Rotation Utilities (Sticker Aesthetic) -->
+    <section class="mb-16 space-y-4">
+      <h2 class="text-3xl font-black border-b-4 pb-2 inline-block">Sticker Rotations</h2>
+      <p class="text-sm text-base-content/60">4 rotation variations for playful sticker aesthetic</p>
+      
+      <div class="flex flex-wrap gap-12 justify-center items-center py-8">
+        <span class="badge badge-lg badge-primary rotate-sticker-1 whitespace-nowrap px-6 py-3">
+          ROTATE-1 (-8deg)
+        </span>
+        <span class="badge badge-lg badge-secondary rotate-sticker-2 whitespace-nowrap px-6 py-3">
+          ROTATE-2 (5deg)
+        </span>
+        <span class="badge badge-lg badge-accent rotate-sticker-3 whitespace-nowrap px-6 py-3">
+          ROTATE-3 (-3deg)
+        </span>
+        <span class="badge badge-lg badge-info rotate-sticker-4 whitespace-nowrap px-6 py-3">
+          ROTATE-4 (12deg)
+        </span>
+      </div>
+    </section>
+
+    <!-- Sticker Positioning -->
+    <section class="mb-16 space-y-4">
+      <h2 class="text-3xl font-black border-b-4 pb-2 inline-block">Sticker Positioning</h2>
+      <p class="text-sm text-base-content/60">Absolute positioning utilities for decorative stickers</p>
+      
+      <div class="sticker-container card bg-base-200 p-12 mx-auto max-w-md h-64">
+        <div class="card-body flex items-center justify-center">
+          <p class="text-center font-bold">Container with positioned stickers</p>
+        </div>
+        
+        <!-- Positioned stickers -->
+        <span class="badge badge-sm badge-primary sticker-top-left">Top Left</span>
+        <span class="badge badge-sm badge-secondary sticker-top-right">Top Right</span>
+        <span class="badge badge-sm badge-accent sticker-bottom-left">Bottom Left</span>
+        <span class="badge badge-sm badge-success sticker-bottom-right">Bottom Right</span>
+        <span class="badge badge-sm badge-info sticker-top-center">Top Center</span>
+        <span class="badge badge-sm badge-warning sticker-bottom-center">Bottom Center</span>
+        <span class="badge badge-sm badge-error sticker-middle-left rotate-90">Middle Left</span>
+        <span class="badge badge-sm badge-neutral sticker-middle-right rotate-90">Middle Right</span>
+      </div>
+    </section>
+
+    <!-- Badges in Content -->
+    <section class="mb-16 space-y-4">
+      <h2 class="text-3xl font-black border-b-4 pb-2 inline-block">Badges in Text & Buttons</h2>
+      <p class="text-sm text-base-content/60">Using badges inline and in other components</p>
+      
+      <div class="space-y-6">
+        <p class="text-lg">
+          This text has <span class="badge badge-success">NEW</span> inline badges 
+          and <span class="badge badge-info">BETA</span> markers.
+        </p>
+        
+        <div class="flex gap-4">
+          <button class="btn btn-primary">
+            Messages
+            <span class="badge badge-secondary">99+</span>
+          </button>
+          <button class="btn btn-neutral">
+            Cart
+            <span class="badge badge-accent">5</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Usage Note -->
+    <div class="alert alert-info shadow-brutal border-2 border-black dark:border-white mt-12">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <div>
+        <h3 class="font-bold">Sticker Utilities</h3>
+        <div class="text-sm">Use <code class="bg-base-content/10 px-2 py-1 rounded">rotate-sticker-1</code> through <code class="bg-base-content/10 px-2 py-1 rounded">rotate-sticker-4</code> for rotations. 
+        Use <code class="bg-base-content/10 px-2 py-1 rounded">sticker-top-left</code>, <code class="bg-base-content/10 px-2 py-1 rounded">sticker-bottom-right</code>, etc. for positioning.</div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+```

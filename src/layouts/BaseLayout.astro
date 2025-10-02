@@ -19,7 +19,7 @@ const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="neobrutalism-light">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
@@ -29,6 +29,17 @@ const currentPath = Astro.url.pathname;
     <ClientRouter />
     <script src="/src/scripts/theme.js"></script>
   </head>
+  <script>
+    import { initScrollAnimations } from "../scripts/animations.js";
+
+    // Initialize on page load
+    initScrollAnimations();
+
+    // Reinitialize on Astro page transitions
+    document.addEventListener("astro:page-load", () => {
+      initScrollAnimations();
+    });
+  </script>
   <style>
     @keyframes scale-up {
       from { transform: scale(0.8); opacity: 0; }

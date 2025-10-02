@@ -1,0 +1,130 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Shadows - Foundation" 
+  description="Hard-edged shadows that define the neobrutalist aesthetic."
+>
+  <div class="container mx-auto px-4 py-20 max-w-6xl">
+    <div class="mb-12">
+      <div transition:name="showcase-icon-/showcase/foundation/shadows">🔲</div>
+      <h1 transition:name="showcase-title-/showcase/foundation/shadows" class="text-5xl font-black mb-4">Shadows</h1>
+      <p transition:name="showcase-desc-/showcase/foundation/shadows" class="text-xl text-base-content/70">
+        No blur. No fade. Just hard-edged, offset shadows that create depth and dimension.
+      </p>
+    </div>
+
+    <!-- Shadow Scale -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Shadow Scale</h2>
+        <p class="text-base-content/70 mb-6">Four sizes from subtle to dramatic</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="space-y-4">
+          <div class="p-8 bg-base-100 border-4 border-black dark:border-white shadow-brutal-sm">
+            <p class="font-black text-xl text-base-content">shadow-brutal-sm</p>
+            <p class="text-sm text-base-content/70 mt-2">4px offset</p>
+          </div>
+          <code class="text-xs block p-2 bg-base-200 border-2">class="shadow-brutal-sm"</code>
+        </div>
+        
+        <div class="space-y-4">
+          <div class="p-8 bg-base-100 border-4 border-black dark:border-white shadow-brutal">
+            <p class="font-black text-xl text-base-content">shadow-brutal</p>
+            <p class="text-sm text-base-content/70 mt-2">8px offset</p>
+          </div>
+          <code class="text-xs block p-2 bg-base-200 border-2">class="shadow-brutal"</code>
+        </div>
+        
+        <div class="space-y-4">
+          <div class="p-8 bg-base-100 border-4 border-black dark:border-white shadow-brutal-lg">
+            <p class="font-black text-xl text-base-content">shadow-brutal-lg</p>
+            <p class="text-sm text-base-content/70 mt-2">12px offset</p>
+          </div>
+          <code class="text-xs block p-2 bg-base-200 border-2">class="shadow-brutal-lg"</code>
+        </div>
+        
+        <div class="space-y-4">
+          <div class="p-8 bg-base-100 border-4 border-black dark:border-white shadow-brutal-xl">
+            <p class="font-black text-xl text-base-content">shadow-brutal-xl</p>
+            <p class="text-sm text-base-content/70 mt-2">20px offset</p>
+          </div>
+          <code class="text-xs block p-2 bg-base-200 border-2">class="shadow-brutal-xl"</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- With Components -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">With Components</h2>
+        <p class="text-base-content/70 mb-6">Shadows work with buttons, cards, and other elements</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Button with shadow -->
+        <div class="space-y-4">
+          <button class="btn btn-primary shadow-brutal-lg">Button with Shadow</button>
+          <code class="text-xs block p-2 bg-base-200 border-2">btn shadow-brutal-lg</code>
+        </div>
+        
+        <!-- Card with shadow -->
+        <div class="space-y-4">
+          <div class="card bg-base-100 border-4 border-black dark:border-white shadow-brutal-xl">
+            <div class="card-body p-6">
+              <h3 class="card-title text-base">Card Title</h3>
+              <p class="text-sm">Card with XL shadow</p>
+            </div>
+          </div>
+          <code class="text-xs block p-2 bg-base-200 border-2">card shadow-brutal-xl</code>
+        </div>
+        
+        <!-- Badge with shadow -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-center h-24">
+            <span class="badge badge-lg badge-accent shadow-brutal">Badge</span>
+          </div>
+          <code class="text-xs block p-2 bg-base-200 border-2">badge shadow-brutal</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- With Colors -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">With Colors</h2>
+        <p class="text-base-content/70 mb-6">Shadows automatically adjust for light/dark mode</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-8 bg-primary border-4 border-black dark:border-white shadow-brutal-lg text-center">
+          <p class="font-black text-xl text-primary-content">Primary</p>
+          <p class="text-sm text-primary-content/80 mt-2">with shadow-brutal-lg</p>
+        </div>
+        
+        <div class="p-8 bg-secondary border-4 border-black dark:border-white shadow-brutal-lg text-center">
+          <p class="font-black text-xl text-secondary-content">Secondary</p>
+          <p class="text-sm text-secondary-content/80 mt-2">with shadow-brutal-lg</p>
+        </div>
+        
+        <div class="p-8 bg-accent border-4 border-black dark:border-white shadow-brutal-lg text-center">
+          <p class="font-black text-xl text-accent-content">Accent</p>
+          <p class="text-sm text-accent-content/80 mt-2">with shadow-brutal-lg</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Usage Note -->
+    <div class="alert alert-info shadow-brutal-lg border-2 border-black dark:border-white">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <div>
+        <h3 class="font-bold">Hard-Edged Only</h3>
+        <div class="text-sm">All shadows have zero blur for a true neobrutalist aesthetic. Shadows are solid color offsets, not gradients.</div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+```

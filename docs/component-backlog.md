@@ -27,25 +27,36 @@ This backlog prioritizes **building Nick's personal site first**. Components are
 ## Phase 1: Foundation & Homepage Hero
 
 ### P0-001: Global CSS Setup
-**Priority**: P0 (Site Blocker) | **Status**: `[ ]` | **Dependencies**: None
+**Priority**: P0 (Site Blocker) | **Status**: `[x]` | **Dependencies**: None | **Completed**: Oct 2, 2025
 
 **Objective**: Establish CSS foundation - the base for all components
 
-**Tasks**:
-1. Update `src/styles/global.css` with DaisyUI overrides
-2. Add brutalist shadows utilities (sm, md, lg, xl)
-3. Add rotation utilities (sticker-1 through sticker-4)
-4. Add sticker positioning utilities (sticker-container, sticker positions)
-5. Add hover effect utilities (hover-lift, hover-scale, hover-rotate)
-6. Add scroll animation utilities (fade-in-up, slide-in-left)
-7. Override DaisyUI btn, card, badge classes with neobrutalism
-8. Add vanilla JS helper for scroll animations (Intersection Observer)
+**What Was Built**:
+- ✅ Complete neobrutalism DaisyUI theme (light + dark modes)
+- ✅ Automatic border & text color pairing system
+- ✅ Brutalist utility classes (shadows, rotations, hover effects, positioning)
+- ✅ CSS-only scroll animations with Astro lifecycle integration
+- ✅ Comprehensive test page validating all features
 
-**Files to Create/Modify**:
-- `src/styles/global.css`
-- `src/scripts/animations.js`
+**Key Learnings** (see `docs/progress/p0-001.md` for details):
+- Automatic styling: `bg-primary border-4` gets themed border + correct text automatically
+- CSS layers: Use `[data-theme] .btn` in `@layer utilities` to override DaisyUI components
+- Scroll animations: Need `!important` on CSS to override DaisyUI component transitions
+- Dark mode: Softened colors, `prefersdark: true` for automatic switching
+- Animation timing: 0.8s duration, -150px rootMargin, 0.15 threshold for visibility
 
-**Acceptance Test**: Apply `btn btn-primary` - has 4px black border, 6px hard shadow, lifts on hover. Apply `fade-in-up` - animates in on scroll.
+**Files Created/Modified**:
+- ✅ `src/styles/global.css` (588 lines - complete theme)
+- ✅ `src/scripts/animations.js` (195 lines - scroll animations + Astro lifecycle)
+- ✅ `src/layouts/BaseLayout.astro` (proper script loading)
+- ✅ `src/pages/test-global-css.astro` (comprehensive test page)
+
+**Documentation**:
+- ✅ `docs/progress/p0-001.md` (complete technical documentation)
+- ✅ `docs/project/completed-work/p0-001-quick-reference.md` (quick reference)
+- ✅ `docs/project/completed-work/P0-001-COMPLETE.md` (executive summary)
+
+**Acceptance Test**: ✅ All 12 criteria passing on test page
 
 ---
 

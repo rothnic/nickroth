@@ -7,15 +7,15 @@ Quick yes/no checklists to verify task completion. Helps catch issues early befo
 ## Phase 1: Foundation & Homepage Hero
 
 ### P0-001: Global CSS Setup ✓
-- [ ] All DaisyUI components (.btn, .card, .badge, .input) have 2-6px black borders
-- [ ] All shadows are hard-edged (no blur radius)
-- [ ] Shadow utilities (.shadow-brutal-sm/md/lg/xl) render correctly
-- [ ] Rotation utilities (.rotate-sticker-1/2/3/4) display correct angles
-- [ ] Sticker positioning utilities work with badges
-- [ ] Hover effects (.hover-lift, .hover-scale, .hover-rotate) function on hover
-- [ ] Scroll animations (.fade-in-up, .slide-in-left) trigger on scroll
-- [ ] animations.js script loads and Intersection Observer works
-- [ ] No console errors on test page
+- [x] All DaisyUI components (.btn, .card, .badge, .input) have 2-6px black borders
+- [x] All shadows are hard-edged (no blur radius)
+- [x] Shadow utilities (.shadow-brutal-sm/md/lg/xl) render correctly
+- [x] Rotation utilities (.rotate-sticker-1/2/3/4) display correct angles
+- [x] Sticker positioning utilities work with badges
+- [x] Hover effects (.hover-lift, .hover-scale, .hover-rotate) function on hover
+- [x] Scroll animations (.fade-in-up, .slide-in-left) trigger on scroll
+- [x] animations.js script loads and Intersection Observer works
+- [x] No console errors on test page
 
 ### P0-002: Theme Configuration ✓
 - [ ] Primary color renders as cyan (#22d3ee)

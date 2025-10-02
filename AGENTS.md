@@ -48,6 +48,8 @@ _Add additional entries here whenever new instruction files are added under `.gi
 - [`docs/figma-export-review.md`](docs/figma-export-review.md) – Comprehensive analysis of React prototype with migration strategy
 - [`docs/neobrutalism-daisyui-implementation.md`](docs/neobrutalism-daisyui-implementation.md) – DaisyUI neobrutalism theme implementation strategy
 - [`docs/design-system/guide.md`](docs/design-system/guide.md) – Complete design system philosophy and component architecture
+- [`docs/design-system/colors.md`](docs/design-system/colors.md) – Color palette, light/dark mode, OKLCH values, usage guidelines
+- [`docs/dark-mode-fix.md`](docs/dark-mode-fix.md) – Dark mode implementation, color changes, and testing guide
 
 ### Guides
 - [`docs/astro/view-transitions.md`](docs/astro/view-transitions.md) – Enabling and customizing view transitions
@@ -80,9 +82,15 @@ _Add additional entries here whenever new instruction files are added under `.gi
 5. **Component + Showcase**: Every component gets showcase page demonstrating all variants
 
 ### Neobrutalism Design
-- **Borders**: 2-6px black (#000000)
+- **Borders**: 4px black (#000000) in light mode
 - **Shadows**: Hard-edged (no blur) - `Xpx Ypx 0px 0px rgba(0,0,0,1)`
-- **Colors**: Black/white base, vibrant accents (cyan, lime, yellow)
+- **Colors**: Black/white base with vibrant accents
+  - Primary: Electric cyan (#00ffff aesthetic)
+  - Secondary: Lime green (#50fa7b aesthetic)
+  - Accent: Hot pink (#ff0080 aesthetic)
+  - Warning: Orange (#f97316 aesthetic)
+  - Error: Red (#ef4444 aesthetic)
+- **Dark Mode**: Automatic system preference detection with brighter accent colors
 - **Rotations**: -8deg to 12deg for sticker aesthetic
 - **Spacing**: 4px base unit (4, 8, 12, 16, 20, 24, 32, 48, 64px)
 

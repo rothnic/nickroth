@@ -13,6 +13,63 @@ applyTo: "**"
 - ❌ Don't create `.btn-brutal`, `.badge-custom`, `.card-special`
 - **Why**: Makes theme portable, keeps standard DaisyUI class names, no custom naming to remember
 
+### 1.1. DaisyUI 5 Theme Customization Approach
+**Proper three-layer customization strategy**:
+1. **Theme Variables** (`@plugin "daisyui/theme"`): Define CSS variables (--radius-*, --border, --color-*, --size-*)
+2. **Component Overrides** (`@layer components`): Customize .btn, .card, .badge with explicit CSS properties
+3. **Utility Classes** (`@layer utilities`): Add project-specific utilities (shadows, rotations, animations)
+
+**Critical Rules**:
+- ✅ Set border-radius via `--radius-selector`, `--radius-field`, `--radius-box` in theme plugin
+- ✅ Set border thickness via `--border` in theme plugin
+- ✅ Override component styles in `@layer components` - use explicit CSS properties instead of @apply
+- ⚠️ Use `!important` **sparingly** - only when theme variables + layer specificity fail
+- ❌ Never use global `* { property: value !important }` selectors
+- ❌ Never override theme variables in @layer base
+- ❌ Avoid @apply with arbitrary values (e.g., `@apply border-[4px]`) - use explicit CSS instead
+- **Why**: DaisyUI generates utility classes from theme variables, global overrides break specificity
+
+**!important Usage Guidelines**:
+- **Preferred**: Let theme variables control styling (`--radius-field: 0rem` → DaisyUI applies it)
+- **Acceptable**: Explicit CSS properties in @layer components (`border-width: 4px;`)
+- **Last Resort**: Add !important only when specificity battles can't be won otherwise
+- **Anti-Pattern**: Heavy !important usage indicates you're fighting the framework - investigate root cause
+
+**Example of Correct Approach**:
+```css
+/* ✅ GOOD: Work with theme system */
+@plugin "daisyui/theme" {
+  --radius-field: 0rem;  /* DaisyUI applies this */
+  --border: 4px;
+}
+
+@layer components {
+  .btn {
+    /* Theme already applied border-width and border-radius */
+    box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+    font-weight: 900;
+  }
+}
+
+/* ⚠️ ACCEPTABLE: When theme variables aren't enough */
+@layer components {
+  .btn {
+    border-width: 4px !important;  /* Only if theme --border not working */
+    border-radius: 0 !important;   /* Only if theme --radius-* not working */
+  }
+}
+
+/* ❌ BAD: Fighting framework with !important everywhere */
+@layer components {
+  .btn {
+    padding: 1rem !important;
+    margin: 0 !important;
+    display: flex !important;
+    /* ... everything with !important is a code smell */
+  }
+}
+```
+
 ### 2. Zero JavaScript for Styling
 **Never use JavaScript libraries for style composition**:
 - ✅ Pure CSS in `@layer components` and `@layer utilities`
@@ -52,6 +109,16 @@ applyTo: "**"
 - ❌ No arrays of content items in component files
 
 **Why**: Preparing for future CMS migration, easier content updates, translation-ready
+
+### 6.1. Dark Mode Support
+**Proper dark mode implementation with DaisyUI 5**:
+- ✅ Create separate `@plugin "daisyui/theme"` blocks for light and dark themes
+- ✅ Use `prefersdark: true` in dark theme to enable automatic switching
+- ✅ Ensure all CSS variables (--color-*, --radius-*, --border) defined in both themes
+- ✅ Test dark mode by toggling system preferences or using theme-controller
+- ❌ Don't use Tailwind's `dark:` prefix (DaisyUI handles theme switching)
+- ❌ Don't create separate component overrides for dark mode
+- **Why**: DaisyUI's theme system handles all color switching via CSS variables
 
 ### 7. Showcase/Demo Pages for Theme Sales
 

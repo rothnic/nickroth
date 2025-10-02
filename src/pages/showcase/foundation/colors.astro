@@ -1,0 +1,186 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Colors - Foundation" 
+  description="Complete color palette with light and dark mode variants."
+>
+  <div class="container mx-auto px-4 py-20 max-w-6xl">
+    <div class="mb-12">
+      <div transition:name="showcase-icon-/showcase/foundation/colors">🎨</div>
+      <h1 transition:name="showcase-title-/showcase/foundation/colors" class="text-5xl font-black mb-4">Colors</h1>
+      <p transition:name="showcase-desc-/showcase/foundation/colors" class="text-xl text-base-content/70">
+        Semantic color system with automatic dark mode support. All colors use OKLCH for perceptual uniformity.
+      </p>
+    </div>
+
+    <!-- Base Colors -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Base Colors</h2>
+        <p class="text-base-content/70 mb-6">Neutral colors for backgrounds and content</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="space-y-2">
+          <div class="bg-base-100 border-4 border-black dark:border-white p-8 shadow-brutal">
+            <div class="font-black text-2xl text-base-content">base-100</div>
+            <div class="text-sm text-base-content/70 mt-2">Main background</div>
+          </div>
+          <code class="text-xs block p-2 bg-base-200 border-2">bg-base-100</code>
+        </div>
+        
+        <div class="space-y-2">
+          <div class="bg-base-200 border-4 border-black dark:border-white p-8 shadow-brutal">
+            <div class="font-black text-2xl text-base-content">base-200</div>
+            <div class="text-sm text-base-content/70 mt-2">Elevated surfaces</div>
+          </div>
+          <code class="text-xs block p-2 bg-base-200 border-2">bg-base-200</code>
+        </div>
+        
+        <div class="space-y-2">
+          <div class="bg-base-300 border-4 border-black dark:border-white p-8 shadow-brutal">
+            <div class="font-black text-2xl text-base-content">base-300</div>
+            <div class="text-sm text-base-content/70 mt-2">Borders & dividers</div>
+          </div>
+          <code class="text-xs block p-2 bg-base-200 border-2">bg-base-300</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- Brand Colors -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Brand Colors</h2>
+        <p class="text-base-content/70 mb-6">Vibrant accents: Electric Cyan, Lime Green, Hot Pink</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="space-y-2">
+          <div class="bg-primary border-4 border-black dark:border-white p-8 shadow-brutal">
+            <div class="font-black text-2xl text-primary-content">primary</div>
+            <div class="text-sm text-primary-content/90 mt-2">Electric Cyan</div>
+          </div>
+          <code class="text-xs block p-2 bg-base-200 border-2">bg-primary</code>
+        </div>
+        
+        <div class="space-y-2">
+          <div class="bg-secondary border-4 border-black dark:border-white p-8 shadow-brutal">
+            <div class="font-black text-2xl text-secondary-content">secondary</div>
+            <div class="text-sm text-secondary-content/90 mt-2">Lime Green</div>
+          </div>
+          <code class="text-xs block p-2 bg-base-200 border-2">bg-secondary</code>
+        </div>
+        
+        <div class="space-y-2">
+          <div class="bg-accent border-4 border-black dark:border-white p-8 shadow-brutal">
+            <div class="font-black text-2xl text-accent-content">accent</div>
+            <div class="text-sm text-accent-content/90 mt-2">Hot Pink</div>
+          </div>
+          <code class="text-xs block p-2 bg-base-200 border-2">bg-accent</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- Semantic Colors -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Semantic Colors</h2>
+        <p class="text-base-content/70 mb-6">Contextual colors for feedback and status</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="space-y-2">
+          <div class="bg-info border-4 border-black dark:border-white p-8 shadow-brutal">
+            <div class="font-black text-2xl text-info-content">info</div>
+            <div class="text-sm text-info-content/90 mt-2">Blue</div>
+          </div>
+          <code class="text-xs block p-2 bg-base-200 border-2">bg-info</code>
+        </div>
+        
+        <div class="space-y-2">
+          <div class="bg-success border-4 border-black dark:border-white p-8 shadow-brutal">
+            <div class="font-black text-2xl text-success-content">success</div>
+            <div class="text-sm text-success-content/90 mt-2">Green</div>
+          </div>
+          <code class="text-xs block p-2 bg-base-200 border-2">bg-success</code>
+        </div>
+        
+        <div class="space-y-2">
+          <div class="bg-warning border-4 border-black dark:border-white p-8 shadow-brutal">
+            <div class="font-black text-2xl text-warning-content">warning</div>
+            <div class="text-sm text-warning-content/90 mt-2">Orange</div>
+          </div>
+          <code class="text-xs block p-2 bg-base-200 border-2">bg-warning</code>
+        </div>
+        
+        <div class="space-y-2">
+          <div class="bg-error border-4 border-black dark:border-white p-8 shadow-brutal">
+            <div class="font-black text-2xl text-error-content">error</div>
+            <div class="text-sm text-error-content/90 mt-2">Red</div>
+          </div>
+          <code class="text-xs block p-2 bg-base-200 border-2">bg-error</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- Neutral -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Neutral</h2>
+        <p class="text-base-content/70 mb-6">Neutral dark color for UI elements</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="space-y-2">
+          <div class="bg-neutral border-4 border-black dark:border-white p-8 shadow-brutal">
+            <div class="font-black text-2xl text-neutral-content">neutral</div>
+            <div class="text-sm text-neutral-content/90 mt-2">Dark gray</div>
+          </div>
+          <code class="text-xs block p-2 bg-base-200 border-2">bg-neutral</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- Border Color Examples -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Border Color Overrides</h2>
+        <p class="text-base-content/70 mb-6">Automatic themed borders, but can be overridden with utility classes</p>
+      </div>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="bg-primary border-4 border-black dark:border-white p-6 text-center shadow-brutal">
+          <div class="font-bold mb-2 text-primary-content">Automatic</div>
+          <code class="text-xs text-primary-content/80">bg-primary border-4</code>
+        </div>
+        
+        <div class="bg-secondary border-4 border-secondary p-6 text-center shadow-brutal">
+          <div class="font-bold mb-2 text-secondary-content">Matching</div>
+          <code class="text-xs text-secondary-content/80">border-secondary</code>
+        </div>
+        
+        <div class="bg-accent border-4 border-warning p-6 text-center shadow-brutal">
+          <div class="font-bold mb-2 text-accent-content">Custom</div>
+          <code class="text-xs text-accent-content/80">border-warning</code>
+        </div>
+        
+        <div class="bg-info p-6 text-center">
+          <div class="font-bold mb-2 text-info-content">No Border</div>
+          <code class="text-xs text-info-content/80">(no border class)</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- Usage Note -->
+    <div class="alert alert-info shadow-brutal-lg border-2 border-black dark:border-white">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <div>
+        <h3 class="font-bold">Dark Mode</h3>
+        <div class="text-sm">Toggle dark mode with the theme controller in the navbar (top-right) to see automatic color adjustments.</div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+```
