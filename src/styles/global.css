@@ -1427,6 +1427,18 @@
         }
 
         /* Animations */
+        /* Disable expensive continuous animations on mobile for better performance */
+        @media (max-width: 768px) {
+            .animate-spin-slow,
+            .animate-bounce-slow,
+            .animate-sway,
+            .animate-pulse-shadow,
+            .animate-marquee-left,
+            .animate-marquee-right {
+                animation: none;
+            }
+        }
+        
         @keyframes marquee-left {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
