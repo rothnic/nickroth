@@ -9,20 +9,20 @@ import ArrowDown from "./icons/ArrowDown.astro";
 
 <section
   id="hero"
-  class="hero-bg pt-8 pb-32 relative overflow-visible texture-grain"
+  class="hero-bg pt-1 pb-8 relative overflow-visible"
 >
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-    <div class="text-center space-y-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="text-center space-y-25">
       <div class="flex justify-center flex-wrap gap-4 mb-20">
         <span 
-          class="badge badge-lg badge-height-lg badge-secondary rotate-smooth animate-pop-in delay-1 hover-scale-up hover-rotate-wiggle hover-shadow-boost" 
-          style="transform: rotate(-8deg); opacity: 0"
+          class="badge badge-lg badge-height-lg badge-secondary -rotate-5 rotate-smooth animate-pop-in delay-1 hover-scale-up hover-rotate-wiggle hover-shadow-boost" 
+          
         >
           <Zap />
           FULL-STACK PM
         </span>
         <span 
-          class="badge badge-lg badge-height-lg badge-primary rotate-smooth animate-pop-in delay-2 hover-scale-up hover-rotate-wiggle-neg hover-shadow-boost" 
+          class="badge badge-lg badge-height-lg badge-info rotate-smooth animate-pop-in delay-2 hover-scale-up hover-rotate-wiggle-neg hover-shadow-boost" 
           style="transform: rotate(5deg); opacity: 0"
         >
           <Brain />
@@ -42,8 +42,8 @@ import ArrowDown from "./icons/ArrowDown.astro";
           <h1 class="text-7xl md:text-9xl font-display font-black hero-title leading-none">
             <span class="glitch-effect" data-text="NICK">NICK</span>
             <br />
-            <span class="hero-title-badge transform -rotate-2 bg-gradient-to-r from-fuchsia-500 to-purple-600">
-              <span class="glitch-effect text-violet-50" data-text="ROTH">ROTH</span>
+            <span class="hero-title-badge transform -rotate-2">
+              <span class="glitch-effect" data-text="ROTH">ROTH</span>
             </span>
           </h1>
         </div>
@@ -69,7 +69,7 @@ import ArrowDown from "./icons/ArrowDown.astro";
           </div>
 
           <div
-            class="hero-card-frame relative border-[6px] shadow-[20px_20px_0px_0px_var(--nr-shadow-color)] transform rotate-2 p-3 transition-all duration-300"
+            class="hero-card-frame bg-hero-gradient relative border-[6px] border-black shadow-[20px_20px_0px_0px_rgba(0,0,0,1)] transform rotate-2 p-3 transition-all duration-300"
             data-hero-card
           >
             <div class="hero-card-inner border-[4px] transform -rotate-1 overflow-hidden">
@@ -84,19 +84,19 @@ import ArrowDown from "./icons/ArrowDown.astro";
           </div>
 
           <span 
-            class="badge badge-md badge-height-md badge-accent absolute top-[-2rem] right-[-2rem] rotate-smooth animate-pop-in delay-4 hover-scale-up hover-rotate-wiggle-neg hover-shadow-boost" 
+            class="badge badge-md badge-height-md badge-primary absolute top-[-1rem] right-[-1rem] rotate-smooth animate-pop-in delay-4 hover-scale-up hover-rotate-wiggle-neg hover-shadow-boost" 
             style="transform: rotate(12deg); opacity: 0"
           >
             PRODUCT
           </span>
           <span 
-            class="badge badge-md badge-height-md badge-warning absolute bottom-[-2rem] left-[-2rem] rotate-smooth animate-pop-in delay-5 hover-scale-up hover-rotate-wiggle hover-shadow-boost" 
+            class="badge badge-md badge-height-md badge-warning absolute bottom-[-1rem] left-[-1rem] rotate-smooth animate-pop-in delay-5 hover-scale-up hover-rotate-wiggle hover-shadow-boost" 
             style="transform: rotate(-12deg); opacity: 0"
           >
             ENGINEER
           </span>
           <span 
-            class="badge badge-sm badge-height-sm badge-secondary absolute top-[50%] right-[-3rem] rotate-smooth animate-pop-in delay-6 hover-scale-up hover-rotate-wiggle-neg hover-shadow-boost" 
+            class="badge badge-sm badge-height-sm badge-secondary absolute top-[50%] right-[-1rem] rotate-smooth animate-pop-in delay-6 hover-scale-up hover-rotate-wiggle-neg hover-shadow-boost" 
             style="transform: rotate(90deg); opacity: 0"
           >
             AI
@@ -137,7 +137,7 @@ import ArrowDown from "./icons/ArrowDown.astro";
           <a
             href="#projects"
             data-smooth-scroll
-            class="btn btn-primary btn-xl border-primary"
+            class="btn btn-info btn-xl border-info"
           >
             VIEW MY WORK
           </a>
@@ -162,8 +162,6 @@ import ArrowDown from "./icons/ArrowDown.astro";
         </div>
       </div>
     </div>
-
-    <div class="w-full h-32 bg-neutral organic-bottom absolute bottom-0 left-0 right-0"></div>
   </div>
 
   <!-- This import contains attributes so the editor treats it as an inline script by default.
