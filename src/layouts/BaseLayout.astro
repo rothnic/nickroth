@@ -1,33 +1,48 @@
 ---
 import { ClientRouter } from "astro:transitions";
-import Navbar from '../components/Navbar.astro';
+import Navbar from "../components/Navbar.astro";
+import "../styles/global.css";
 
 export interface Props {
-  title?: string;
-  description?: string;
-  showNavbar?: boolean;
+	title?: string;
+	description?: string;
+	showNavbar?: boolean;
 }
 
 const {
-  title = "Nick Roth - Product Manager & AI Engineer",
-  description = "Personal site for Nick Roth",
-  showNavbar = true
+	title = "Nick Roth - Product Manager & AI Engineer",
+	description = "Personal site for Nick Roth",
+	showNavbar = true,
 } = Astro.props;
 
 const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="neobrutalism-light">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Rubik+Glitch&display=swap" rel="stylesheet" />
     <title>{title}</title>
     <ClientRouter />
     <script src="/src/scripts/theme.js"></script>
   </head>
+  <script>
+    import { initScrollAnimations } from "../scripts/animations.js";
+
+    // Initialize on page load
+    initScrollAnimations();
+
+    // Reinitialize on Astro page transitions
+    document.addEventListener("astro:page-load", () => {
+      initScrollAnimations();
+    });
+  </script>
   <style>
     @keyframes scale-up {
       from { transform: scale(0.8); opacity: 0; }
@@ -40,9 +55,66 @@ const currentPath = Astro.url.pathname;
     }
   </style>
   <body>
-    <div class="min-h-screen bg-base-100 flex flex-col">
+    <div class="min-h-screen flex flex-col">
       {showNavbar && <Navbar currentPath={currentPath} />}
       <slot />
+      <footer class="footer footer-center p-4 bg-base-200 text-base-content border-t-4 border-[var(--nr-border-color,#000)] mt-auto">
+        <div class="flex items-center gap-4">
+          <span class="text-sm">Theme:</span>
+          <select class="select select-sm select-bordered max-w-xs" id="theme-selector">
+            <option value="neobrutalism-light">Neobrutalism Light</option>
+            <option value="neobrutalism-dark">Neobrutalism Dark</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="cupcake">Cupcake</option>
+            <option value="bumblebee">Bumblebee</option>
+            <option value="emerald">Emerald</option>
+            <option value="corporate">Corporate</option>
+            <option value="synthwave">Synthwave</option>
+            <option value="retro">Retro</option>
+            <option value="cyberpunk">Cyberpunk</option>
+            <option value="valentine">Valentine</option>
+            <option value="halloween">Halloween</option>
+            <option value="garden">Garden</option>
+            <option value="forest">Forest</option>
+            <option value="aqua">Aqua</option>
+            <option value="lofi">Lo-Fi</option>
+            <option value="pastel">Pastel</option>
+            <option value="fantasy">Fantasy</option>
+            <option value="wireframe">Wireframe</option>
+            <option value="black">Black</option>
+            <option value="luxury">Luxury</option>
+            <option value="dracula">Dracula</option>
+            <option value="cmyk">CMYK</option>
+            <option value="autumn">Autumn</option>
+            <option value="business">Business</option>
+            <option value="acid">Acid</option>
+            <option value="lemonade">Lemonade</option>
+            <option value="night">Night</option>
+            <option value="coffee">Coffee</option>
+            <option value="winter">Winter</option>
+            <option value="dim">Dim</option>
+            <option value="nord">Nord</option>
+            <option value="sunset">Sunset</option>
+          </select>
+        </div>
+      </footer>
     </div>
+    <script>
+      // Theme selector
+      const themeSelector = document.getElementById('theme-selector') as HTMLSelectElement;
+      if (themeSelector) {
+        // Set initial value from current theme
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'neobrutalism-light';
+        themeSelector.value = currentTheme;
+        
+        // Listen for changes
+        themeSelector.addEventListener('change', (e) => {
+          const newTheme = (e.target as HTMLSelectElement).value;
+          document.documentElement.setAttribute('data-theme', newTheme);
+          localStorage.setItem('theme', newTheme);
+        });
+      }
+    </script>
   </body>
 </html>

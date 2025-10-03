@@ -1,52 +1,173 @@
 ---
-import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
+import headshot from "../assets/images/nick-headshot.png";
+import heroMotionScript from "../scripts/hero-motion.ts?url";
+import Zap from "./icons/Zap.astro";
+import Brain from "./icons/Brain.astro";
+import Code from "./icons/Code.astro";
+import ArrowDown from "./icons/ArrowDown.astro";
 ---
 
-<div class="hero min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10">
-  <div class="hero-content text-center">
-    <div class="max-w-4xl">
-      <div class="avatar mb-8">
-        <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img src={avatarPlaceholder.src} width={128} height={128} alt="Nick Roth" loading="lazy" />
-        </div>
+<section
+  id="hero"
+  class="hero-bg pt-1 pb-8 relative overflow-visible"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="text-center space-y-25">
+      <div class="flex justify-center flex-wrap gap-4 mb-20">
+        <span 
+          class="badge badge-lg badge-height-lg badge-secondary -rotate-5 rotate-smooth animate-pop-in delay-1 hover-scale-up hover-rotate-wiggle hover-shadow-boost" 
+          
+        >
+          <Zap />
+          FULL-STACK PM
+        </span>
+        <span 
+          class="badge badge-lg badge-height-lg badge-info rotate-smooth animate-pop-in delay-2 hover-scale-up hover-rotate-wiggle-neg hover-shadow-boost" 
+          style="transform: rotate(5deg); opacity: 0"
+        >
+          <Brain />
+          AI ENGINEER
+        </span>
+        <span 
+          class="badge badge-lg badge-height-lg badge-warning rotate-smooth animate-pop-in delay-3 hover-scale-up hover-rotate-wiggle hover-shadow-boost" 
+          style="transform: rotate(-3deg); opacity: 0"
+        >
+          <Code />
+          AUTOMATION
+        </span>
       </div>
-      <h1 class="text-5xl font-bold mb-2">Nick Roth</h1>
-      <p class="text-2xl mb-4 text-base-content/80">Product & Systems Director</p>
-      <p class="text-lg mb-8 max-w-3xl mx-auto leading-relaxed">
-        Transforming complex requirements into systematic solutions through objective-first discovery and automation-driven execution.
-      </p>
-      
-      <!-- Key Metrics -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 max-w-4xl mx-auto">
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">400%</div>
-          <div class="stat-desc text-sm">YoY blog revenue increase</div>
+
+      <div class="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20">
+        <div class="order-2 lg:order-1">
+          <h1 class="text-7xl md:text-9xl font-display font-black hero-title leading-none">
+            <span class="glitch-effect" data-text="NICK">NICK</span>
+            <br />
+            <span class="hero-title-badge transform -rotate-2">
+              <span class="glitch-effect" data-text="ROTH">ROTH</span>
+            </span>
+          </h1>
         </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">$35k</div>
-          <div class="stat-desc text-sm">monthly cost savings</div>
-        </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">150%</div>
-          <div class="stat-desc text-sm">organic user growth</div>
-        </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">125%</div>
-          <div class="stat-desc text-sm">mobile revenue growth</div>
+
+        <div class="order-1 lg:order-2 relative group" data-hero-hover>
+          <div
+            class="absolute -inset-8 pointer-events-none select-none"
+            aria-hidden="true"
+            data-hero-backdrop
+          >
+            <div
+              class="hero-decoration absolute top-0 left-0 w-20 h-20 bg-accent border-[4px] shadow-[4px_4px_0px_0px_var(--nr-shadow-color)] opacity-70 animate-spin-slow"
+            >
+            </div>
+            <div
+              class="hero-decoration absolute bottom-4 right-4 w-16 h-16 bg-primary rounded-full border-[4px] shadow-[6px_6px_0px_0px_var(--nr-shadow-color)] opacity-70 animate-bounce-slow"
+            >
+            </div>
+            <div
+              class="hero-decoration absolute top-1/2 right-0 w-12 h-24 bg-warning border-[4px] shadow-[4px_4px_0px_0px_var(--nr-shadow-color)] opacity-70 rotate-45 animate-sway"
+            >
+            </div>
+          </div>
+
+          <div
+            class="hero-card-frame bg-hero-gradient relative border-[6px] border-black shadow-[20px_20px_0px_0px_rgba(0,0,0,1)] transform rotate-2 p-3 transition-all duration-300"
+            data-hero-card
+          >
+            <div class="hero-card-inner border-[4px] transform -rotate-1 overflow-hidden">
+              <img
+                src={headshot.src}
+                alt="Nick Roth"
+                class="w-72 h-72 md:w-96 md:h-96 object-cover border-[3px] border-[var(--nr-border-color)]"
+                loading="eager"
+                data-hero-image
+              />
+            </div>
+          </div>
+
+          <span 
+            class="badge badge-md badge-height-md badge-primary absolute top-[-1rem] right-[-1rem] rotate-smooth animate-pop-in delay-4 hover-scale-up hover-rotate-wiggle-neg hover-shadow-boost" 
+            style="transform: rotate(12deg); opacity: 0"
+          >
+            PRODUCT
+          </span>
+          <span 
+            class="badge badge-md badge-height-md badge-warning absolute bottom-[-1rem] left-[-1rem] rotate-smooth animate-pop-in delay-5 hover-scale-up hover-rotate-wiggle hover-shadow-boost" 
+            style="transform: rotate(-12deg); opacity: 0"
+          >
+            ENGINEER
+          </span>
+          <span 
+            class="badge badge-sm badge-height-sm badge-secondary absolute top-[50%] right-[-1rem] rotate-smooth animate-pop-in delay-6 hover-scale-up hover-rotate-wiggle-neg hover-shadow-boost" 
+            style="transform: rotate(90deg); opacity: 0"
+          >
+            AI
+          </span>
+          <span 
+            class="badge badge-sm badge-height-sm badge-neutral font-mono absolute top-[-1.5rem] left-[3rem] rotate-smooth animate-pop-in delay-4 hover-scale-up hover-rotate-wiggle hover-shadow-boost" 
+            style="transform: rotate(-6deg); opacity: 0"
+          >
+            GT MS
+          </span>
         </div>
       </div>
 
-      <div class="flex gap-4 justify-center flex-wrap">
-        <a href="/work" class="btn btn-primary btn-lg">View My Work</a>
-        <a href="/contact" class="btn btn-outline btn-lg">Get In Touch</a>
+      <div class="max-w-4xl mx-auto relative">
+        <div
+          class="card p-8 transform -rotate-1 relative z-10"
+        >
+          <p class="text-2xl md:text-3xl leading-relaxed">
+            I turn business objectives into <span
+              class="font-mono bg-secondary/60 px-2 border border-[var(--nr-border-color)]">shippable systems</span
+            > — model the business, specify precisely, and build only what moves the needle.
+          </p>
+        </div>
+        <div
+          class="hero-decoration absolute -top-4 -right-4 w-20 h-20 bg-primary border-[4px] shadow-[6px_6px_0px_0px_var(--nr-shadow-color)] transform rotate-12"
+          aria-hidden="true"
+        >
+        </div>
+        <div
+          class="hero-decoration absolute -bottom-6 -left-6 w-16 h-24 bg-accent border-[4px] shadow-[4px_4px_0px_0px_var(--nr-shadow-color)] transform -rotate-6"
+          aria-hidden="true"
+        >
+        </div>
       </div>
-      
-      <div class="mt-8">
-        <p class="text-sm text-base-content/60">
-          <span class="inline-block mr-4">📍 Huntsville, AL</span>
-          <span class="inline-block">✅ Open to consulting and fractional roles</span>
-        </p>
+
+      <div class="flex flex-col items-center gap-6">
+        <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+          <a
+            href="#projects"
+            data-smooth-scroll
+            class="btn btn-info btn-xl border-info"
+          >
+            VIEW MY WORK
+          </a>
+          <a
+            href="#contact"
+            data-smooth-scroll
+            class="btn btn-xl btn-rotate-neg"
+          >
+            LET'S TALK
+          </a>
+        </div>
+
+        <div class="mt-4 animate-bounce">
+          <a
+            href="#process"
+            data-smooth-scroll
+            class="btn btn-square"
+          >
+            <span class="sr-only">Scroll to process</span>
+            <ArrowDown />
+          </a>
+        </div>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- This import contains attributes so the editor treats it as an inline script by default.
+       Adding `is:inline` explicitly silences the lint hint and makes the intent clear.
+       The actual motion logic lives in `src/scripts/hero-motion.ts` which is a module file
+       and is imported here for page-level initialization (split-script pattern per docs).
+  -->
+  <script type="module" is:inline src={heroMotionScript}></script>
+</section>

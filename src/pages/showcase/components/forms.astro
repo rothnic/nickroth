@@ -1,0 +1,242 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Forms - Components" 
+  description="Input fields, validation, form layouts, and interactive states."
+>
+  <div class="container mx-auto px-4 py-20 max-w-6xl">
+    <div class="mb-12">
+      <div transition:name="showcase-icon-/showcase/components/forms">📝</div>
+      <h1 transition:name="showcase-title-/showcase/components/forms" class="text-5xl font-black mb-4">Forms</h1>
+      <p transition:name="showcase-desc-/showcase/components/forms" class="text-xl text-base-content/70">
+        Complete form system with inputs, selects, textareas, checkboxes, and validation.
+      </p>
+    </div>
+
+    <!-- Text Inputs -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Text Inputs</h2>
+        <p class="text-base-content/70 mb-6">Standard text input with brutalist borders</p>
+      </div>
+      
+      <div class="space-y-4 max-w-md">
+        <input 
+          type="text" 
+          placeholder="Text Input" 
+          class="input w-full border-4 border-black dark:border-white" 
+        />
+        <input 
+          type="email" 
+          placeholder="Email Input" 
+          class="input w-full border-4 border-black dark:border-white" 
+        />
+        <input 
+          type="password" 
+          placeholder="Password Input" 
+          class="input w-full border-4 border-black dark:border-white" 
+        />
+      </div>
+    </section>
+
+    <!-- Textarea -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Textarea</h2>
+        <p class="text-base-content/70 mb-6">Multi-line text input</p>
+      </div>
+      
+      <div class="max-w-md">
+        <textarea 
+          placeholder="Textarea with multiple lines..." 
+          class="textarea w-full border-4 border-black dark:border-white" 
+          rows="4"
+        ></textarea>
+      </div>
+    </section>
+
+    <!-- Select -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Select</h2>
+        <p class="text-base-content/70 mb-6">Dropdown select menu</p>
+      </div>
+      
+      <div class="max-w-md">
+        <select class="select w-full border-4 border-black dark:border-white">
+          <option disabled selected>Choose an option</option>
+          <option>Option 1</option>
+          <option>Option 2</option>
+          <option>Option 3</option>
+          <option>Option 4</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Checkboxes & Radios -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Checkboxes & Radios</h2>
+        <p class="text-base-content/70 mb-6">Selection controls with brutalist styling</p>
+      </div>
+      
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-xl font-bold mb-3">Checkboxes</h3>
+          <div class="flex flex-col gap-3">
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" class="checkbox border-4 border-black dark:border-white" />
+              <span class="text-base-content">Checkbox Option 1</span>
+            </label>
+            
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" class="checkbox border-4 border-black dark:border-white" checked />
+              <span class="text-base-content">Checkbox Option 2 (checked)</span>
+            </label>
+            
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" class="checkbox border-4 border-black dark:border-white" />
+              <span class="text-base-content">Checkbox Option 3</span>
+            </label>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-xl font-bold mb-3">Radio Buttons</h3>
+          <div class="flex flex-col gap-3">
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="radio" name="radio-demo" class="radio border-4 border-black dark:border-white" checked />
+              <span class="text-base-content">Radio Option 1 (selected)</span>
+            </label>
+            
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="radio" name="radio-demo" class="radio border-4 border-black dark:border-white" />
+              <span class="text-base-content">Radio Option 2</span>
+            </label>
+            
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="radio" name="radio-demo" class="radio border-4 border-black dark:border-white" />
+              <span class="text-base-content">Radio Option 3</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Toggle & Range -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Toggle & Range</h2>
+        <p class="text-base-content/70 mb-6">Interactive input controls</p>
+      </div>
+      
+      <div class="space-y-6 max-w-md">
+        <div>
+          <h3 class="text-xl font-bold mb-3">Toggle Switch</h3>
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input type="checkbox" class="toggle border-4 border-black dark:border-white" />
+            <span class="text-base-content">Toggle Option</span>
+          </label>
+        </div>
+        
+        <div>
+          <h3 class="text-xl font-bold mb-3">Range Slider</h3>
+          <input 
+            type="range" 
+            min="0" 
+            max="100" 
+            value="50" 
+            class="range range-primary" 
+          />
+          <div class="flex justify-between text-xs text-base-content/70 mt-2">
+            <span>0</span>
+            <span>50</span>
+            <span>100</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Complete Form Example -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Complete Form Example</h2>
+        <p class="text-base-content/70 mb-6">All form elements together</p>
+      </div>
+      
+      <div class="card bg-base-200 border-4 border-black dark:border-white shadow-brutal-lg max-w-2xl">
+        <div class="card-body">
+          <h3 class="card-title text-2xl mb-6">Contact Form</h3>
+          
+          <form class="space-y-4">
+            <div>
+              <label class="label">
+                <span class="label-text font-bold">Name</span>
+              </label>
+              <input 
+                type="text" 
+                placeholder="Your name" 
+                class="input w-full border-4 border-black dark:border-white" 
+              />
+            </div>
+            
+            <div>
+              <label class="label">
+                <span class="label-text font-bold">Email</span>
+              </label>
+              <input 
+                type="email" 
+                placeholder="your.email@example.com" 
+                class="input w-full border-4 border-black dark:border-white" 
+              />
+            </div>
+            
+            <div>
+              <label class="label">
+                <span class="label-text font-bold">Subject</span>
+              </label>
+              <select class="select w-full border-4 border-black dark:border-white">
+                <option disabled selected>Choose a subject</option>
+                <option>General Inquiry</option>
+                <option>Technical Support</option>
+                <option>Feedback</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="label">
+                <span class="label-text font-bold">Message</span>
+              </label>
+              <textarea 
+                placeholder="Your message here..." 
+                class="textarea w-full border-4 border-black dark:border-white" 
+                rows="4"
+              ></textarea>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <input type="checkbox" class="checkbox border-4 border-black dark:border-white" />
+              <span class="text-sm">Subscribe to newsletter</span>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-lg w-full shadow-brutal">
+              Send Message
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Usage Note -->
+    <div class="alert alert-info shadow-brutal-lg border-2 border-black dark:border-white">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <div>
+        <h3 class="font-bold">Brutalist Styling</h3>
+        <div class="text-sm">All form elements feature thick 4px borders and hard shadows. Use DaisyUI's standard form classes with our theme overrides.</div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+```

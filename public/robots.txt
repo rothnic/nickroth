@@ -1,0 +1,13 @@
+# Robots.txt for nickroth.com
+
+# Allow search engines to index main site, showcase, and project pages
+User-agent: *
+Allow: /
+Allow: /showcase/
+Allow: /project/
+
+# Note: Future blog posts will be in /notes/ - allow by default
+Allow: /notes/
+
+# Sitemap (to be added later)
+# Sitemap: https://nickroth.com/sitemap.xml

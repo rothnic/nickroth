@@ -1,18 +1,20 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import WorkCard from '../../components/WorkCard.astro';
-import { getCollection } from 'astro:content';
+import { getCollection } from "astro:content";
+import WorkCard from "../../components/WorkCard.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 
-const workEntries = await getCollection('work');
-const sortedWork = workEntries
-  .sort((a, b) => {
-    const aDate = a.data.endDate || new Date();
-    const bDate = b.data.endDate || new Date();  
-    return bDate.getTime() - aDate.getTime();
-  });
+const workEntries = await getCollection("work");
+const sortedWork = workEntries.sort((a, b) => {
+	const aDate = a.data.endDate || new Date();
+	const bDate = b.data.endDate || new Date();
+	return bDate.getTime() - aDate.getTime();
+});
 
 // Get unique categories for filtering
-const categories = ['ALL WORK', ...new Set(workEntries.map(work => work.data.category).filter(Boolean))];
+const categories = [
+	"ALL WORK",
+	...new Set(workEntries.map((work) => work.data.category).filter(Boolean)),
+];
 ---
 
 <BaseLayout title="Work Portfolio - Nick Roth" description="Case studies demonstrating systematic approach to product development from discovery through delivery">

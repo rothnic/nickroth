@@ -1,0 +1,136 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Interactions - Patterns" 
+  description="Hover states, click effects, and interactive patterns."
+>
+  <div class="container mx-auto px-4 py-20 max-w-6xl">
+    <div class="mb-12">
+      <div transition:name="showcase-icon-/showcase/patterns/interactions">👆</div>
+      <h1 transition:name="showcase-title-/showcase/patterns/interactions" class="text-5xl font-black mb-4">Interactions</h1>
+      <p transition:name="showcase-desc-/showcase/patterns/interactions" class="text-xl text-base-content/70">
+        Interactive patterns and hover effects that enhance user experience.
+      </p>
+    </div>
+
+    <!-- Sticker Rotations -->
+    <section class="space-y-8 mb-24">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Sticker Rotations</h2>
+        <p class="text-base-content/70 mb-6">Four rotation variations for sticker aesthetic</p>
+      </div>
+      
+      <div class="flex flex-wrap gap-12 justify-center items-center py-8">
+        <div class="flex flex-col items-center gap-4">
+          <span class="badge badge-lg badge-primary rotate-sticker-1 whitespace-nowrap px-6 py-4">
+            ROTATE-STICKER-1
+          </span>
+          <code class="text-xs p-2 bg-base-200 border-2">rotate-sticker-1 (-8deg)</code>
+        </div>
+        
+        <div class="flex flex-col items-center gap-4">
+          <span class="badge badge-lg badge-secondary rotate-sticker-2 whitespace-nowrap px-6 py-4">
+            ROTATE-STICKER-2
+          </span>
+          <code class="text-xs p-2 bg-base-200 border-2">rotate-sticker-2 (5deg)</code>
+        </div>
+        
+        <div class="flex flex-col items-center gap-4">
+          <span class="badge badge-lg badge-accent rotate-sticker-3 whitespace-nowrap px-6 py-4">
+            ROTATE-STICKER-3
+          </span>
+          <code class="text-xs p-2 bg-base-200 border-2">rotate-sticker-3 (-3deg)</code>
+        </div>
+        
+        <div class="flex flex-col items-center gap-4">
+          <span class="badge badge-lg badge-info rotate-sticker-4 whitespace-nowrap px-6 py-4">
+            ROTATE-STICKER-4
+          </span>
+          <code class="text-xs p-2 bg-base-200 border-2">rotate-sticker-4 (12deg)</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sticker Positioning -->
+    <section class="space-y-8 mb-24">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Sticker Positioning</h2>
+        <p class="text-base-content/70 mb-6">Absolute positioning helpers for badges</p>
+      </div>
+      
+      <div class="sticker-container card bg-base-200 border-4 border-black dark:border-white p-12 mx-auto max-w-2xl h-96 shadow-brutal">
+        <div class="card-body flex items-center justify-center">
+          <p class="text-center font-bold text-2xl">Container with positioned stickers</p>
+          <p class="text-center text-base-content/70">Hover over stickers to see them lift</p>
+        </div>
+        
+        <!-- Positioned stickers -->
+        <span class="badge badge-sm badge-primary sticker-top-left hover-lift">Top Left</span>
+        <span class="badge badge-sm badge-secondary sticker-top-right hover-lift">Top Right</span>
+        <span class="badge badge-sm badge-accent sticker-bottom-left hover-lift">Bottom Left</span>
+        <span class="badge badge-sm badge-success sticker-bottom-right hover-lift">Bottom Right</span>
+        <span class="badge badge-sm badge-info sticker-top-center hover-lift">Top Center</span>
+        <span class="badge badge-sm badge-warning sticker-bottom-center hover-lift">Bottom Center</span>
+        <span class="badge badge-sm badge-error sticker-middle-left rotate-90 hover-lift">Middle Left</span>
+        <span class="badge badge-sm badge-neutral sticker-middle-right rotate-90 hover-lift">Middle Right</span>
+      </div>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+        <code class="text-xs p-2 bg-base-200 border-2">sticker-top-left</code>
+        <code class="text-xs p-2 bg-base-200 border-2">sticker-top-right</code>
+        <code class="text-xs p-2 bg-base-200 border-2">sticker-bottom-left</code>
+        <code class="text-xs p-2 bg-base-200 border-2">sticker-bottom-right</code>
+        <code class="text-xs p-2 bg-base-200 border-2">sticker-top-center</code>
+        <code class="text-xs p-2 bg-base-200 border-2">sticker-bottom-center</code>
+        <code class="text-xs p-2 bg-base-200 border-2">sticker-middle-left</code>
+        <code class="text-xs p-2 bg-base-200 border-2">sticker-middle-right</code>
+      </div>
+    </section>
+
+    <!-- Hover Effects -->
+    <section class="space-y-8 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Hover Effects</h2>
+        <p class="text-base-content/70 mb-6">Lift, scale, and rotate on hover</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="card bg-primary border-4 border-black dark:border-white hover-lift shadow-brutal">
+          <div class="card-body">
+            <h3 class="card-title text-primary-content">hover-lift</h3>
+            <p class="text-primary-content/80">Moves up with expanded shadow</p>
+            <code class="text-xs text-primary-content/60 mt-2">class="hover-lift"</code>
+          </div>
+        </div>
+        
+        <div class="card bg-secondary border-4 border-black dark:border-white hover-scale shadow-brutal">
+          <div class="card-body">
+            <h3 class="card-title text-secondary-content">hover-scale</h3>
+            <p class="text-secondary-content/80">Scales up slightly</p>
+            <code class="text-xs text-secondary-content/60 mt-2">class="hover-scale"</code>
+          </div>
+        </div>
+        
+        <div class="card bg-accent border-4 border-black dark:border-white hover-rotate shadow-brutal">
+          <div class="card-body">
+            <h3 class="card-title text-accent-content">hover-rotate</h3>
+            <p class="text-accent-content/80">Rotates slightly</p>
+            <code class="text-xs text-accent-content/60 mt-2">class="hover-rotate"</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Usage Note -->
+    <div class="alert alert-info shadow-brutal-lg border-2 border-black dark:border-white">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <div>
+        <h3 class="font-bold">Container Required</h3>
+        <div class="text-sm">For sticker positioning to work, the parent element must have the <code>sticker-container</code> class (which sets position: relative).</div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+```

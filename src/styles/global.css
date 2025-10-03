@@ -1,0 +1,1577 @@
+@import "tailwindcss";
+
+@plugin "daisyui" {
+    themes: neobrutalism-light --default, neobrutalism-dark --prefersdark;
+    logs: false;
+}
+
+    @plugin "daisyui/theme" {
+        name: "neobrutalism-light";
+        default: true;
+        color-scheme: light;
+
+        --color-base-100: oklch(0.99 0 0);
+        --color-base-200: oklch(0.96 0.01 280);
+        --color-base-300: oklch(0.92 0.02 280);
+        --color-base-content: oklch(0.15 0 0);
+        
+        /* Gradient overlay opacity */
+        --gradient-opacity: 0.05;
+        
+        /* Brand gradient colors - optional, only for neobrutalism theme */
+        --color-gradient-start: oklch(0.65 0.32 328);
+        --color-gradient-end: oklch(0.50 0.27 301);
+        
+        /* Hero headshot gradient - cyan -> lime -> yellow */
+        --color-hero-gradient-from: oklch(0.82 0.15 195);  /* cyan-400 */
+        --color-hero-gradient-via: oklch(0.87 0.20 130);   /* lime-400 */
+        --color-hero-gradient-to: oklch(0.93 0.17 100);    /* yellow-300 */
+        
+        /* Primary color - solid purple that works standalone */
+        --color-primary: oklch(0.58 0.30 314);
+        --color-primary-content: oklch(0.99 0 0);
+        
+        --color-secondary: oklch(92.68% 0.2313 124.4);
+        --color-secondary-content: oklch(0.15 0 0);
+        --color-accent: oklch(66.54% 0.2478 358.1);
+        --color-accent-content: oklch(0.15 0 0);
+        --color-neutral: oklch(0.15 0 0);
+        --color-neutral-content: oklch(0.99 0 0);
+        --color-info: oklch(0.72 0.14 210);  /* #06b6d4 cyan-500 */
+        --color-info-content: oklch(0.15 0 0);
+        --color-success: oklch(72.27% 0.1920 149.6);
+        --color-success-content: oklch(0.15 0 0);
+        --color-warning: oklch(.905 .182 98.111);
+        --color-warning-content: oklch(0.15 0 0);
+        --color-error: oklch(0.63 0.26 25);
+        --color-error-content: oklch(0.15 0 0);
+
+        --radius-selector: 0rem;
+        --radius-field: 0rem;
+        --radius-box: 0rem;
+        --size-selector: 0.25rem;
+        --size-field: 0.25rem;
+        --border: 2px;
+        --depth: 1;
+        --noise: 0;
+
+        --nr-border-color: #000000;
+        --nr-shadow-color: oklch(0.15 0 0 / 1);
+        --nr-shadow-sm: 2px 2px 0px 0px var(--nr-shadow-color);
+        --nr-shadow-base: 4px 4px 0px 0px var(--nr-shadow-color);
+        --nr-shadow-lg: 12px 12px 0px 0px var(--nr-shadow-color);
+        --nr-shadow-xl: 20px 20px 0px 0px var(--nr-shadow-color);
+        --nr-shadow-xxl: 24px 24px 0px 0px var(--nr-shadow-color);
+        --nr-shadow-hover: 10px 10px 0px 0px var(--nr-shadow-color);
+        --nr-shadow-pressed: 3px 3px 0px 0px var(--nr-shadow-color);
+        --nr-shadow-focus: 2px 2px 0px 0px var(--nr-shadow-color);
+
+        --btn-border: #000000;
+        --btn-border-width: 4px;
+        --btn-color: var(--color-base-100);
+        --btn-text: var(--color-base-content);
+        --btn-hover-border: #000000;
+        --btn-focus-border: #000000;
+        --btn-focus-ring: 0;
+        --btn-focus-scale: 1;
+        --btn-text-case: uppercase;
+        --btn-shadow: 8px 8px 0px 0px var(--nr-shadow-color);
+        --btn-shadow-colored: 8px 8px 0px 0px var(--nr-shadow-color);
+        --btn-shadow-hover: 4px 4px 0px 0px var(--nr-shadow-color);
+        --rounded-btn: 0rem;
+
+        --card-border: var(--nr-border-color);
+        --card-border-width: 4px;
+        --card-shadow: var(--nr-shadow-base);
+    }
+
+    @plugin "daisyui/theme" {
+        name: "neobrutalism-dark";
+        prefersdark: true;
+        color-scheme: dark;
+
+        --color-base-100: oklch(0.2 0.01 280);
+        --color-base-200: oklch(0.25 0.02 280);
+        --color-base-300: oklch(0.3 0.02 280);
+        --color-base-content: oklch(0.95 0.01 280);
+        
+        /* Gradient overlay opacity - brighter for dark mode */
+        --gradient-opacity: 0.12;
+        
+        /* Brand gradient colors - optional, brighter for dark mode */
+        --color-gradient-start: oklch(0.75 0.35 328);
+        --color-gradient-end: oklch(0.60 0.30 301);
+        
+        /* Hero headshot gradient - brighter for dark mode */
+        --color-hero-gradient-from: oklch(0.85 0.18 195);  /* brighter cyan */
+        --color-hero-gradient-via: oklch(0.90 0.23 130);   /* brighter lime */
+        --color-hero-gradient-to: oklch(0.95 0.20 100);    /* brighter yellow */
+        
+        /* Primary color - solid purple that works standalone */
+        --color-primary: oklch(0.68 0.33 314);
+        --color-primary-content: oklch(0.99 0 0);
+        
+        --color-secondary: oklch(92.68% 0.2313 124.4);
+        --color-secondary-content: oklch(0.2 0.01 280);
+        --color-accent: oklch(68.80% 0.2378 351.9);
+        --color-accent-content: oklch(15.51% 0.0087 274.3);
+        --color-neutral: oklch(0.35 0.01 280);
+        --color-neutral-content: oklch(0.95 0.01 280);
+        --color-info: oklch(0.72 0.14 210);  /* #06b6d4 cyan-500 */
+        --color-info-content: oklch(0.2 0.01 280);
+        --color-success: oklch(72.27% 0.1920 149.6);
+        --color-success-content: oklch(0.2 0.01 280);
+        --color-warning: oklch(76.86% 0.1647 70.1);
+        --color-warning-content: oklch(0.2 0.01 280);
+        --color-error: oklch(64.50% 0.2154 16.4);
+        --color-error-content: oklch(0.95 0.01 280);
+
+        --radius-selector: 0rem;
+        --radius-field: 0rem;
+        --radius-box: 0rem;
+        --size-selector: 0.25rem;
+        --size-field: 0.25rem;
+        --border: 2px;
+        --depth: 1;
+        --noise: 0;
+
+        --nr-border-color: #ffffff;
+        --nr-shadow-color: var(--nr-border-color);
+        --nr-shadow-sm: 4px 4px 0px 0px var(--nr-shadow-color);
+        --nr-shadow-base: 8px 8px 0px 0px var(--nr-shadow-color);
+        --nr-shadow-lg: 12px 12px 0px 0px var(--nr-shadow-color);
+        --nr-shadow-xl: 20px 20px 0px 0px var(--nr-shadow-color);
+        --nr-shadow-xxl: 24px 24px 0px 0px var(--nr-shadow-color);
+        --nr-shadow-hover: 10px 10px 0px 0px var(--nr-shadow-color);
+        --nr-shadow-pressed: 3px 3px 0px 0px var(--nr-shadow-color);
+        --nr-shadow-focus: 2px 2px 0px 0px var(--nr-shadow-color);
+
+        --btn-border: #ffffff;
+        --btn-border-width: 4px;
+        --btn-color: var(--color-base-100);
+        --btn-text: var(--color-base-content);
+        --btn-hover-border: #ffffff;
+        --btn-focus-border: #ffffff;
+        --btn-focus-ring: 0;
+        --btn-focus-scale: 1;
+        --btn-text-case: uppercase;
+        --btn-shadow: 8px 8px 0px 0px var(--nr-shadow-color);
+        --btn-shadow-colored: 8px 8px 0px 0px var(--nr-shadow-color);
+        --btn-shadow-hover: 4px 4px 0px 0px var(--nr-shadow-color);
+        --rounded-btn: 0rem;
+
+        --card-border: var(--nr-border-color);
+        --card-border-width: 4px;
+        --card-shadow: var(--nr-shadow-base);
+    }
+
+    @layer utilities {
+        /* ========================================
+           THEME-AGNOSTIC UTILITIES
+           (No theme scoping needed)
+           ======================================== */
+        
+        /* Base font family */
+        html {
+            font-family: "Space Grotesk", -apple-system, BlinkMacSystemFont, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-weight: 400;
+        }
+        
+        /* Graph paper background for body */
+        body {
+            background-color: var(--color-base-100);
+            background-image: 
+                radial-gradient(ellipse at top left, 
+                    var(--color-base-100) 0%, 
+                    transparent 40%
+                ),
+                linear-gradient(135deg, 
+                    transparent 0%, 
+                    oklch(0.58 0.30 314 / 0.08) 10%, 
+                    transparent 50%, 
+                    oklch(0.93 0.23 124.4 / 0.08) 90%, 
+                    transparent 100%
+                ),
+                linear-gradient(var(--color-base-300) 1px, transparent 1px),
+                linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 16px 16px, 16px 16px;
+            background-position: 0 0, 0 0, -1px -1px, -1px -1px;
+        }
+        
+        html[data-theme="neobrutalism-dark"] body {
+            background-color: var(--color-base-100);
+            background-image: 
+                radial-gradient(ellipse at top left, 
+                    var(--color-base-100) 0%, 
+                    transparent 50%
+                ),
+                linear-gradient(135deg, 
+                    transparent 0%, 
+                    oklch(0.68 0.33 314 / 0.03) 10%, 
+                    transparent 50%, 
+                    oklch(0.93 0.23 124.4 / 0.03) 90%, 
+                    transparent 100%
+                ),
+                linear-gradient(var(--color-base-300) 1px, transparent 1px),
+                linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 16px 16px, 16px 16px;
+            background-position: 0 0, 0 0, -1px -1px, -1px -1px;
+        }
+        
+        /* ========================================
+           SECTION TYPES & LAYERING SYSTEM
+           ======================================== */
+        
+        /* Base section - transparent, shows graph paper, handles vertical spacing */
+        section {
+            background: transparent;
+            position: relative;
+            padding: 4rem 0;
+        }
+        
+        /* Paper section - solid background, no graph paper */
+        .section-paper {
+            background-color: var(--color-base-100);
+            background-image: none;
+        }
+        
+        /* Graph section - explicitly shows graph paper */
+        .section-graph {
+            background: transparent;
+        }
+        
+        /* Override any DaisyUI section backgrounds */
+        section:not(.hero-bg):not(.section-paper):not(.rotated-section):not(.torn-gap) {
+            background: transparent !important;
+        }
+        
+        /* Section content - handles horizontal padding and max-width */
+        .section-content {
+            padding-left: 1rem;
+            padding-right: 1rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Fonts */
+        .font-display {
+            font-family: "Space Grotesk", -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .font-mono {
+            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+        }
+
+        .font-glitch {
+            font-family: "Rubik Glitch", cursive;
+        }
+
+        /* Automatically apply correct text colors when using bg-* utility classes */
+        .bg-primary { 
+            background-color: var(--color-primary);
+            color: var(--color-primary-content); 
+        }
+        
+        /* Brand gradient - falls back to primary if gradient colors not defined */
+        .bg-brand {
+            background: linear-gradient(135deg, var(--color-gradient-start, var(--color-primary)) 0%, var(--color-gradient-end, var(--color-primary)) 100%);
+            color: var(--color-primary-content);
+        }
+        
+        /* Hero headshot gradient - falls back to theme colors if not defined */
+        .bg-hero-gradient {
+            background: linear-gradient(
+                to bottom right,
+                var(--color-hero-gradient-from, var(--color-primary)) 0%,
+                var(--color-hero-gradient-via, var(--color-secondary)) 50%,
+                var(--color-hero-gradient-to, var(--color-accent)) 100%
+            );
+        }
+        
+        .bg-secondary { color: var(--color-secondary-content); }
+        .bg-accent { color: var(--color-accent-content); }
+        .bg-neutral { color: var(--color-neutral-content); }
+        .bg-base-100 { color: var(--color-base-content); }
+        .bg-base-200 { color: var(--color-base-content); }
+        .bg-base-300 { color: var(--color-base-content); }
+        .bg-info { color: var(--color-info-content); }
+        .bg-success { color: var(--color-success-content); }
+        .bg-warning { color: var(--color-warning-content); }
+        .bg-error { color: var(--color-error-content); }
+
+        /* Shadow utilities */
+        .shadow-brutal-sm { box-shadow: var(--nr-shadow-sm); }
+        .shadow-brutal { box-shadow: var(--nr-shadow-base); }
+        .shadow-brutal-lg { box-shadow: var(--nr-shadow-lg); }
+        .shadow-brutal-xl { box-shadow: var(--nr-shadow-xl); }
+
+        /* Sticker rotations */
+        /* Rotation utilities - general purpose for badges, buttons, cards */
+        /* Use inline style="transform: rotate(Xdeg)" for base rotation */
+        /* These classes add antialiasing to rotated elements */
+        .rotate-1 { 
+            transform: rotate(-8deg);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform-style: preserve-3d;
+        }
+        .rotate-2 { 
+            transform: rotate(5deg);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform-style: preserve-3d;
+        }
+        .rotate-3 { 
+            transform: rotate(-3deg);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform-style: preserve-3d;
+        }
+        .rotate-4 { 
+            transform: rotate(12deg);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform-style: preserve-3d;
+        }
+
+        /* Rotation antialiasing helper - use with inline transform styles */
+        .rotate-smooth {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform-style: preserve-3d;
+        }
+
+        /* Button rotation angle utilities */
+        .btn-rotate-neg { --btn-rotate-angle: -1deg; }
+        .btn-rotate-0 { --btn-rotate-angle: 0deg; }
+        .btn-rotate-1 { --btn-rotate-angle: 1deg; }
+        .btn-rotate-2 { --btn-rotate-angle: 2deg; }
+        .btn-rotate-3 { --btn-rotate-angle: 3deg; }
+        .btn-rotate-neg-2 { --btn-rotate-angle: -2deg; }
+        .btn-rotate-neg-3 { --btn-rotate-angle: -3deg; }
+
+        /* Border radius utilities */
+        .rounded-brutal-sm { border-radius: 0.25rem; }
+        .rounded-brutal { border-radius: 0.5rem; }
+        .rounded-brutal-lg { border-radius: 1rem; }
+        .rounded-brutal-xl { border-radius: 1.5rem; }
+        .rounded-brutal-full { border-radius: 9999px; }
+
+        /* Hover effects - composable using CSS custom properties */
+        
+        /* 
+         * COMPOSABLE HOVER EFFECTS
+         * 
+         * Base class: .hover-effect (required)
+         * Modifiers can be combined:
+         * 
+         * Examples:
+         * - .hover-effect .hover-lift              → lifts up with shadow
+         * - .hover-effect .hover-scale .hover-rotate-3  → scales AND rotates
+         * - .hover-effect .hover-lift-sm .hover-rotate-neg-2  → small lift AND rotates counter-clockwise
+         * 
+         * Available modifiers:
+         * Lift: hover-lift, hover-lift-sm, hover-lift-lg
+         * Scale: hover-scale, hover-scale-sm, hover-scale-lg
+         * Rotate: hover-rotate-1, hover-rotate-2, hover-rotate-3, hover-rotate-5
+         *         hover-rotate-neg-1, hover-rotate-neg-2, hover-rotate-neg-3, hover-rotate-neg-5
+         */
+        
+        /* Base hover utility - applies transition and anti-aliasing */
+        .hover-effect {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform-style: preserve-3d;
+            
+            /* Default values - can be overridden by modifier classes */
+            --hover-translate-x: 0px;
+            --hover-translate-y: 0px;
+            --hover-scale: 1;
+            --hover-rotate: 0deg;
+            
+            &:hover {
+                transform: 
+                    translate(var(--hover-translate-x), var(--hover-translate-y)) 
+                    scale(var(--hover-scale)) 
+                    rotate(var(--hover-rotate));
+                box-shadow: var(--hover-shadow, var(--nr-shadow-base));
+            }
+        }
+        
+        /* Lift effect modifiers */
+        .hover-lift {
+            --hover-translate-x: -6px;
+            --hover-translate-y: -6px;
+            --hover-shadow: var(--nr-shadow-xl);
+        }
+        
+        .hover-lift-sm {
+            --hover-translate-x: -3px;
+            --hover-translate-y: -3px;
+            --hover-shadow: var(--nr-shadow-lg);
+        }
+        
+        .hover-lift-lg {
+            --hover-translate-x: -8px;
+            --hover-translate-y: -8px;
+            --hover-shadow: var(--nr-shadow-xxl);
+        }
+        
+        /* Scale effect modifiers */
+        .hover-scale {
+            --hover-scale: 1.05;
+        }
+        
+        .hover-scale-sm {
+            --hover-scale: 1.02;
+        }
+        
+        .hover-scale-lg {
+            --hover-scale: 1.1;
+        }
+        
+        /* Rotation effect modifiers - various angles */
+        .hover-rotate-1 { --hover-rotate: 1deg; }
+        .hover-rotate-2 { --hover-rotate: 2deg; }
+        .hover-rotate-3 { --hover-rotate: 3deg; }
+        .hover-rotate-5 { --hover-rotate: 5deg; }
+        .hover-rotate-neg-1 { --hover-rotate: -1deg; }
+        .hover-rotate-neg-2 { --hover-rotate: -2deg; }
+        .hover-rotate-neg-3 { --hover-rotate: -3deg; }
+        .hover-rotate-neg-5 { --hover-rotate: -5deg; }
+        
+        /* Legacy classes for backward compatibility */
+        .hover-rotate {
+            --hover-rotate: -3deg;
+        }
+
+        /* Sticker positioning */
+        .sticker-container { position: relative; }
+        .sticker-top-left { position: absolute; top: 1rem; left: 1rem; }
+        .sticker-top-right { position: absolute; top: 1rem; right: 1rem; }
+        .sticker-bottom-left { position: absolute; bottom: 1rem; left: 1rem; }
+        .sticker-bottom-right { position: absolute; bottom: 1rem; right: 1rem; }
+        .sticker-top-center {
+            position: absolute;
+            top: 0.75rem;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .sticker-bottom-center {
+            position: absolute;
+            bottom: 0.75rem;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .sticker-middle-left {
+            position: absolute;
+            top: 50%;
+            left: 0.5rem;
+            transform: translateY(-50%);
+        }
+        .sticker-middle-right {
+            position: absolute;
+            top: 50%;
+            right: 0.5rem;
+            transform: translateY(-50%);
+        }
+
+        /* Organic clip paths */
+        .organic-top {
+            clip-path: polygon(0 85%, 25% 95%, 50% 90%, 75% 95%, 100% 85%, 100% 0, 0 0);
+        }
+
+        .organic-bottom {
+            clip-path: polygon(0 0, 100% 0, 100% 40%, 90% 50%, 80% 45%, 70% 55%, 60% 50%, 50% 60%, 40% 50%, 30% 55%, 20% 45%, 10% 50%, 0 40%);
+        }
+
+        .organic-both {
+            clip-path: polygon(
+                0 15%, 25% 5%, 50% 10%, 75% 5%, 100% 15%,
+                100% 85%, 75% 95%, 50% 90%, 25% 95%, 0 85%
+            );
+        }
+
+        /* ========================================
+           TORN SECTION & PAPER EFFECTS
+           ======================================== */
+        
+        /* Torn gap - creates a ripped paper effect between sections */
+        .torn-gap {
+            position: relative;
+            background: oklch(0.15 0 0);
+            padding: 6rem 0;
+            margin: 0;
+            z-index: 5;
+            
+            /* Torn top edge */
+            &::before {
+                content: '';
+                position: absolute;
+                top: -2px;
+                left: 0;
+                right: 0;
+                height: 30px;
+                background-color: var(--color-base-100);
+                background-image: 
+                    linear-gradient(var(--color-base-300) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
+                background-size: 16px 16px;
+                background-position: -1px -1px;
+                background-attachment: fixed;
+                clip-path: polygon(
+                    0% 0%, 3% 60%, 7% 30%, 12% 80%, 18% 20%, 25% 70%, 32% 40%, 
+                    38% 90%, 45% 25%, 52% 75%, 58% 35%, 65% 85%, 72% 15%, 78% 65%, 
+                    85% 45%, 91% 95%, 96% 50%, 100% 100%, 100% 0%, 0% 0%
+                );
+            }
+            
+            /* Torn bottom edge */
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                right: 0;
+                height: 30px;
+                background-color: var(--color-base-100);
+                background-image: 
+                    linear-gradient(var(--color-base-300) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
+                background-size: 16px 16px;
+                background-position: -1px -1px;
+                background-attachment: fixed;
+                clip-path: polygon(
+                    0% 100%, 4% 45%, 9% 75%, 15% 25%, 21% 85%, 28% 40%, 35% 90%, 
+                    42% 30%, 49% 70%, 56% 20%, 63% 80%, 69% 35%, 76% 95%, 82% 50%, 
+                    88% 15%, 94% 65%, 98% 40%, 100% 0%, 100% 100%, 0% 100%
+                );
+            }
+        }
+        
+        /* Add extra margin to sections following torn-gap */
+        .torn-gap + section,
+        .torn-gap + .rotated-section {
+            margin-top: 2rem;
+        }
+        
+        /* Rotated card section - sits on top of graph paper */
+        .rotated-section {
+            position: relative;
+            background-color: var(--color-base-100, #ffffff);
+            background-image: none !important;
+            border: 4px solid var(--nr-border-color, #000);
+            box-shadow: var(--nr-shadow-xl, 20px 20px 0 0 rgba(0,0,0,1));
+            padding: 3rem;
+            margin: 4rem auto;
+            max-width: 1200px;
+            transform-style: preserve-3d;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            backface-visibility: hidden;
+        }
+        
+        .rotated-section-sm {
+            transform: rotate(-1deg);
+        }
+        
+        .rotated-section-md {
+            transform: rotate(1.5deg);
+        }
+        
+        .rotated-section-lg {
+            transform: rotate(-2deg);
+        }
+
+        /* ========================================
+           CUSTOM BADGE HEIGHT UTILITIES
+           (Project-specific, not part of theme)
+           ======================================== */
+        
+        /* Badge height modifiers - add vertical padding for "chunky" badges */
+        .badge-height-xs {
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+        }
+
+        .badge-height-sm {
+            padding-top: 0.375rem;
+            padding-bottom: 0.375rem;
+        }
+
+        .badge-height-md {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .badge-height-lg {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .badge-height-xl {
+            padding-top: 0.625rem;
+            padding-bottom: 0.625rem;
+        }
+
+        /* ========================================
+           VIEW TRANSITION ANIMATIONS
+           ======================================== */
+        
+        /* Custom bounce easing for nav button animation */
+        :root {
+            --bounce-easing: linear(
+                0, 0.2037 0.99%, 0.7062 1.98%, 1 2.97%, 0.8996 4.97%, 
+                0.8252 6.96%, 0.7634 8.95%, 0.7135 10.94%, 0.6747 12.93%, 
+                0.646 14.92%, 0.6267 16.91%, 0.616 18.9%, 0.6133 20.9%, 
+                0.618 22.89%, 0.6293 24.88%, 0.6465 26.87%, 0.6689 28.86%, 
+                0.6961 30.85%, 0.7275 32.84%, 0.7628 34.83%, 0.8016 36.82%, 
+                0.8436 38.81%, 0.8885 40.8%, 0.9359 42.79%, 0.9856 44.78%, 
+                1.0373 46.77%, 1.0906 48.76%, 1.1453 50.75%, 1.1996 52.74%, 
+                1.253 54.73%, 1.3053 56.72%, 1.3563 58.71%, 1.4057 60.7%, 
+                1.4533 62.69%, 1.4988 64.68%, 1.5418 66.67%, 1.5822 68.66%, 
+                1.6196 70.65%, 1.6539 72.64%, 1.6848 74.63%, 1.7121 76.62%, 
+                1.7356 78.61%, 1.7552 80.6%, 1.7706 82.59%, 1.7816 84.58%, 
+                1.788 86.57%, 1.7896 88.56%, 1.7862 90.55%, 1.7777 92.54%, 
+                1.7638 94.53%, 1.7444 96.52%, 1.7192 98.51%, 1.6881 100%
+            );
+        }
+        
+        /* Nav active background - slides between nav items */
+        ::view-transition-old(nav-active-bg),
+        ::view-transition-new(nav-active-bg) {
+            /* Disable default fade animations - we want pure position/size morph */
+            animation: none;
+            /* Fix height to prevent snapping during morph */
+            height: 100%;
+        }
+        
+        /* When nav-active-bg disappears (going to home page), make it scale down and fade quickly */
+        ::view-transition-old(nav-active-bg):only-child {
+            animation: scale-fade-out 0.2s ease-in forwards;
+        }
+        
+        /* When nav-active-bg appears (leaving home page), make it scale up and fade in */
+        ::view-transition-new(nav-active-bg):only-child {
+            animation: scale-fade-in 0.2s ease-out forwards;
+        }
+        
+        @keyframes scale-fade-out {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+        }
+        
+        @keyframes scale-fade-in {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* Smooth horizontal morph with ease-in-out (no overshoot) */
+        ::view-transition-group(nav-active-bg) {
+            animation-duration: 0.3s;
+            animation-timing-function: ease-in-out;
+            /* Keep background behind text during transition */
+            z-index: 0;
+        }
+
+        /* Nav link text - keep visible and above background during transitions */
+        ::view-transition-group(nav-link-work),
+        ::view-transition-group(nav-link-approach),
+        ::view-transition-group(nav-link-background),
+        ::view-transition-group(nav-link-contact) {
+            /* Text stays above the background */
+            z-index: 1;
+        }
+
+        /* Ensure text in nav buttons stays above the transitioning background */
+        .navbar .btn-group .btn {
+            z-index: 1;
+        }
+
+        /* ========================================
+           SHARED STYLES (BOTH THEMES)
+           ======================================== */
+        [data-theme="neobrutalism-light"],
+        [data-theme="neobrutalism-dark"] {
+            /* Buttons */
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: calc(var(--size-field) * 4);
+                --btn-shadow: 8px 8px 0px 0px var(--nr-shadow-color);
+                --btn-shadow-colored: 8px 8px 0px 0px var(--nr-shadow-color);
+                --btn-shadow-hover: 4px 4px 0px 0px var(--nr-shadow-color);
+                border-width: var(--btn-border-width);
+                border-color: var(--btn-border);
+                border-style: solid;
+                border-radius: var(--rounded-btn);
+                box-shadow: var(--btn-shadow);
+                transform: translate(0, 0) rotate(0deg);
+                font-weight: var(--font-weight-black);
+                text-transform: var(--btn-text-case);
+                transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+                --btn-rotate-angle: 1deg;
+                /* Anti-aliasing for crisp rendering */
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+
+                &:hover:not(.hover-effect):not(.hover-lift):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]) {
+                    box-shadow: var(--btn-shadow-hover);
+                    transform: translate(2px, 2px) rotate(var(--btn-rotate-angle));
+                }
+
+                &:active {
+                    box-shadow: var(--nr-shadow-pressed);
+                    transform: translate(0, 0) rotate(0deg);
+                }
+
+                &:focus-visible {
+                    outline: 3px solid var(--btn-focus-border);
+                    outline-offset: 2px;
+                    box-shadow: var(--nr-shadow-focus);
+                }
+
+                &:disabled,
+                &[disabled],
+                &[aria-disabled="true"] {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                    box-shadow: var(--nr-shadow-sm);
+                    transform: none;
+                }
+            }
+
+            .btn-primary {
+                background-color: var(--color-primary);
+                color: var(--color-primary-content);
+            }
+
+            .btn-secondary {
+                background-color: var(--color-secondary);
+                color: var(--color-secondary-content);
+            }
+
+            .btn-accent {
+                background-color: var(--color-accent);
+                color: var(--color-accent-content);
+            }
+
+            .btn-neutral {
+                background-color: var(--color-neutral);
+                color: var(--color-neutral-content);
+            }
+
+            .btn-info {
+                background-color: var(--color-info);
+                color: var(--color-info-content);
+            }
+
+            .btn-success {
+                background-color: var(--color-success);
+                color: var(--color-success-content);
+            }
+
+            .btn-warning {
+                background-color: var(--color-warning);
+                color: var(--color-warning-content);
+            }
+
+            .btn-error {
+                background-color: var(--color-error);
+                color: var(--color-error-content);
+            }
+
+            .btn-outline,
+            .btn-ghost {
+                color: var(--color-base-content);
+                background-color: transparent;
+            }
+
+            .btn-ghost {
+                border-width: 2px;
+                box-shadow: var(--nr-shadow-sm);
+
+                &:hover {
+                    background-color: var(--color-base-200);
+                }
+            }
+
+            /* Navbar buttons - reduce shadow for active page buttons */
+            .navbar .btn-primary {
+                box-shadow: var(--nr-shadow-sm);
+                transform: translate(2px, 2px);
+
+                &:hover {
+                    box-shadow: var(--btn-shadow-hover);
+                    transform: translate(2px, 2px) rotate(var(--btn-rotate-angle));
+                }
+
+                &:active {
+                    box-shadow: var(--nr-shadow-pressed);
+                    transform: translate(4px, 4px) rotate(0deg);
+                }
+            }
+
+            /* Nav active background element - positioned absolutely to morph between buttons */
+            .nav-active-bg {
+                position: absolute;
+                top: 2px;
+                left: 2px;
+                right: 2px;
+                bottom: 2px;
+                background: linear-gradient(135deg, var(--color-gradient-start, var(--color-primary)) 0%, var(--color-gradient-end, var(--color-primary)) 100%);
+                border: 2px solid black;
+                border-radius: 0; /* Square edges to match ROTH badge */
+                z-index: 0;
+            }
+
+            /* Active nav button styling */
+            .navbar .btn-group .btn.active {
+                position: relative;
+                color: var(--color-primary-content);
+                background-color: transparent;
+                
+                /* No hover effects on active nav item */
+                &:hover {
+                    background-color: transparent;
+                    transform: none;
+                    box-shadow: none;
+                }
+            }
+
+            .btn-square {
+                width: 3rem;
+                height: 3rem;
+                padding: 0;
+            }
+
+            .btn-circle {
+                width: 3rem;
+                height: 3rem;
+                padding: 0;
+                border-radius: 9999px;
+            }
+
+            .btn-xs { padding: 0.375rem 0.875rem; font-size: 0.75rem; }
+            .btn-sm { padding: 0.5rem 1.25rem; font-size: 0.875rem; }
+            .btn-lg { padding: 1.125rem 1.75rem; font-size: 1.125rem; }
+            .btn-xl { padding: 1.375rem 2rem; font-size: 1.25rem; }
+
+            /* Button Groups */
+            .btn-group {
+                display: inline-flex;
+                flex-wrap: nowrap;
+                gap: 0;
+
+                & > .btn {
+                    margin: 0;
+                    border-radius: 0;
+
+                    &:first-child {
+                        border-top-left-radius: var(--rounded-btn);
+                        border-bottom-left-radius: var(--rounded-btn);
+                    }
+
+                    &:last-child {
+                        border-top-right-radius: var(--rounded-btn);
+                        border-bottom-right-radius: var(--rounded-btn);
+                    }
+
+                    &:not(:first-child) {
+                        margin-left: -4px; /* Overlap by border width to prevent double borders */
+                    }
+                }
+            }
+
+            /* Navbar button groups - special styling with press-down hover effect */
+            .navbar .btn-group {
+                & > .btn {
+                    /* Disable rotation angle for these buttons */
+                    --btn-rotate-angle: 0deg;
+                    
+                    /* Override shadow custom properties for button groups */
+                    --btn-shadow: none;
+                    --btn-shadow-hover: none;
+                    --btn-shadow-colored: none;
+                    
+                    /* Reset transform and shadow for button groups */
+                    transform: none;
+                    box-shadow: none;
+                    
+                    /* Remove all borders from nav buttons */
+                    border: none;
+                    
+                    /* Ensure buttons don't have background colors that could overlay */
+                    background-color: transparent;
+                }
+                
+                /* Override default button hover behavior for grouped buttons (inactive buttons) */
+                & > .btn:hover:not(.active):not(.hover-effect):not(.hover-lift):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]) {
+                    /* Only change text color slightly on hover, no opacity or background change */
+                    color: oklch(from var(--bc) calc(l * 0.7) c h);
+                    background-color: transparent;
+                    box-shadow: none;
+                    transform: none;
+                }
+
+                /* Override hover for active buttons - no effect at all */
+                & > .btn.active:hover {
+                    opacity: 1;
+                    box-shadow: none;
+                    transform: none;
+                }
+
+                /* Also override active state (when clicking) */
+                & > .btn:active {
+                    box-shadow: none;
+                    transform: none;
+                }
+
+                /* Override focus-visible state */
+                & > .btn:focus-visible {
+                    box-shadow: none;
+                }
+            }
+            
+            /* Theme toggle - fix icon positioning */
+            .navbar-end .swap {
+                /* Ensure consistent dimensions */
+                width: 2.5rem;
+                height: 2.5rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                
+                /* Fix icon positioning within swap */
+                & svg {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 1.5rem;
+                    height: 1.5rem;
+                }
+            }
+
+            /* Cards */
+            .card {
+                border-width: var(--border);
+                border-color: var(--nr-border-color);
+                border-style: solid;
+                border-radius: var(--radius-box);
+                box-shadow: var(--nr-shadow-base);
+                background-color: var(--color-base-100);
+                transform: translate(0, 0);
+                transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+                /* Anti-aliasing for crisp rendering */
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+
+                &:hover:not(.hover-effect):not(.hover-lift):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]) {
+                    transform: translate(-4px, -4px);
+                    box-shadow: var(--nr-shadow-lg);
+                }
+            }
+
+            /* Badges */
+            .badge {
+                font-weight: var(--font-weight-black);
+                text-transform: uppercase;
+                border-width: 2px;
+                border-color: var(--nr-border-color);
+                border-style: solid;
+                border-radius: var(--radius-selector);
+                box-shadow: var(--nr-shadow-sm);
+                letter-spacing: var(--nr-letter-spacing-tight);
+                height: auto; /* Override DaisyUI's fixed height to allow padding control */
+                /* Anti-aliasing for crisp rendering */
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
+            .badge-primary {
+                background-color: var(--color-primary);
+                color: var(--color-primary-content);
+            }
+
+            .badge-secondary {
+                background-color: var(--color-secondary);
+                color: var(--color-secondary-content);
+            }
+
+            .badge-accent {
+                background-color: var(--color-accent);
+                color: var(--color-accent-content);
+            }
+
+            .badge-neutral {
+                background-color: var(--color-neutral);
+                color: var(--color-neutral-content);
+            }
+
+            .badge-info {
+                background-color: var(--color-info);
+                color: var(--color-info-content);
+            }
+
+            .badge-success {
+                background-color: var(--color-success);
+                color: var(--color-success-content);
+            }
+
+            .badge-warning {
+                background-color: var(--color-warning);
+                color: var(--color-warning-content);
+            }
+
+            .badge-error {
+                background-color: var(--color-error);
+                color: var(--color-error-content);
+            }
+
+            /* Form elements */
+            .input,
+            .textarea,
+            .select,
+            .file-input {
+                border-width: var(--border);
+                border-color: var(--nr-border-color);
+                border-style: solid;
+                border-radius: var(--radius-field);
+                box-shadow: var(--nr-shadow-sm);
+                transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+
+                &:focus {
+                    border-color: var(--nr-border-color);
+                    box-shadow: var(--nr-shadow-focus);
+                    outline: none;
+                }
+            }
+
+            .checkbox,
+            .radio,
+            .toggle {
+                border-width: var(--border);
+                border-color: var(--nr-border-color);
+                border-style: solid;
+            }
+
+            /* Navigation */
+            .navbar {
+                border-bottom-width: var(--border);
+                border-color: var(--nr-border-color);
+                border-style: solid;
+                box-shadow: var(--nr-shadow-sm);
+            }
+
+            .tabs-bordered .tab {
+                border-bottom-width: var(--border);
+                border-color: var(--nr-border-color);
+                border-style: solid;
+            }
+
+            /* Utility components */
+            .toast,
+            .collapse,
+            .tooltip {
+                border-width: var(--border);
+                border-color: var(--nr-border-color);
+                border-style: solid;
+                box-shadow: var(--nr-shadow-sm);
+            }
+
+            /* Hero title badge */
+            .hero-title-badge {
+                background: linear-gradient(135deg, var(--color-gradient-start, var(--color-primary)) 0%, var(--color-gradient-end, var(--color-primary)) 100%);
+                color: var(--color-primary-content);
+                border-width: 4px;
+                border-color: var(--nr-border-color);
+                box-shadow: var(--nr-shadow-base);
+                padding: 0.5rem 1rem;
+                font-weight: 900;
+                text-transform: uppercase;
+                display: inline-block;
+            }
+
+            /* Hero components */
+            .hero-title {
+                color: var(--color-base-content);
+            }
+
+            .hero-card-frame {
+                /* Gradient now applied via .bg-hero-gradient utility class */
+                border-color: var(--nr-border-color);
+            }
+
+            .hero-card-inner {
+                background-color: var(--color-base-100);
+                border-color: var(--nr-border-color);
+            }
+
+            .hero-decoration {
+                border-color: var(--nr-border-color);
+            }
+
+            /* Sticker effect */
+            .sticker {
+                transform: rotate(-3deg);
+                /* Enhanced anti-aliasing for smooth rotation rendering */
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                backface-visibility: hidden;
+                -webkit-backface-visibility: hidden;
+                transform-style: preserve-3d;
+                will-change: transform;
+                image-rendering: crisp-edges;
+
+                &:nth-child(2n) {
+                    transform: rotate(2deg);
+                }
+
+                &:before {
+                    content: "";
+                    border-radius: inherit;
+                    z-index: -1;
+                    background: #fff3;
+                    position: absolute;
+                    inset: -2px;
+                }
+            }
+        }
+
+        /* ========================================
+           LIGHT MODE OVERRIDES
+           ======================================== */
+        [data-theme="neobrutalism-light"] {
+            /* Button borders */
+            .btn:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]) {
+                --btn-border: #000000;
+                --btn-hover-border: #000000;
+                --btn-focus-border: #000000;
+            }
+
+            /* Auto-apply black borders to bg-* utility classes */
+            .bg-primary:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-secondary:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-accent:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-neutral:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-base-100:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-base-200:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-base-300:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-info:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-success:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-warning:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-error:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]) {
+                border-color: #000000;
+            }
+
+            /* Graph paper texture */
+            .texture-grain::before {
+                background-image:
+                    repeating-linear-gradient(
+                        0deg,
+                        transparent,
+                        transparent 19px,
+                        rgba(0, 0, 0, 0.04) 19px,
+                        rgba(0, 0, 0, 0.04) 20px
+                    ),
+                    repeating-linear-gradient(
+                        90deg,
+                        transparent,
+                        transparent 19px,
+                        rgba(0, 0, 0, 0.04) 19px,
+                        rgba(0, 0, 0, 0.04) 20px
+                    );
+            }
+
+            /* Hero background gradient */
+            .hero-bg {
+                background: transparent;
+                /* Graph paper shows through from body */
+            }
+        }
+
+        /* ========================================
+           DARK MODE OVERRIDES
+           ======================================== */
+        [data-theme="neobrutalism-dark"] {
+            /* Button borders */
+            .btn:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]) {
+                --btn-border: #ffffff;
+                --btn-hover-border: #ffffff;
+                --btn-focus-border: #ffffff;
+            }
+
+            /* Auto-apply white borders to bg-* utility classes */
+            .bg-primary:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-secondary:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-accent:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-neutral:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-base-100:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-base-200:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-base-300:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-info:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-success:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-warning:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-error:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]) {
+                border-color: #ffffff;
+            }
+
+            /* Graph paper texture */
+            .texture-grain::before {
+                background-image:
+                    repeating-linear-gradient(
+                        0deg,
+                        transparent,
+                        transparent 19px,
+                        rgba(255, 255, 255, 0.04) 19px,
+                        rgba(255, 255, 255, 0.04) 20px
+                    ),
+                    repeating-linear-gradient(
+                        90deg,
+                        transparent,
+                        transparent 19px,
+                        rgba(255, 255, 255, 0.04) 19px,
+                        rgba(255, 255, 255, 0.04) 20px
+                    );
+            }
+
+            /* Disable texture-grain grid overlay for hero in dark mode, use hero-bg grid instead */
+            .hero-bg.texture-grain::before {
+                background-image: none;
+            }
+
+            /* Hero background - grid pattern for dark mode with radial fade */
+            .hero-bg {
+                background-color: var(--color-base-100);
+                background-image: 
+                    radial-gradient(ellipse at top left, 
+                        var(--color-base-100) 0%, 
+                        transparent 50%
+                    ),
+                    linear-gradient(135deg, 
+                        transparent 0%, 
+                        oklch(0.68 0.33 314 / 0.03) 10%, 
+                        transparent 50%, 
+                        oklch(0.93 0.23 124.4 / 0.03) 90%, 
+                        transparent 100%
+                    ),
+                    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+                background-size: 100% 100%, 100% 100%, 16px 16px, 16px 16px;
+                background-position: 0 0, 0 0, 0 0, 0 0;
+            }
+        }
+
+        /* ========================================
+           SHARED EFFECTS (NOT THEME-DEPENDENT)
+           ======================================== */
+        
+        /* Texture grain base */
+        .texture-grain {
+            position: relative;
+
+            &::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                pointer-events: none;
+            }
+        }
+
+        /* Glitch effect */
+        @keyframes glitch-1 {
+            0%, 100% { transform: translate(0); }
+            10% { transform: translate(-2px, -2px); }
+            20% { transform: translate(2px, 2px); }
+            30% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            50% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            70% { transform: translate(-2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            90% { transform: translate(-2px, -2px); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { transform: translate(0); }
+            10% { transform: translate(2px, 2px); }
+            20% { transform: translate(-2px, -2px); }
+            30% { transform: translate(2px, -2px); }
+            40% { transform: translate(-2px, 2px); }
+            50% { transform: translate(2px, 2px); }
+            60% { transform: translate(-2px, -2px); }
+            70% { transform: translate(2px, -2px); }
+            80% { transform: translate(-2px, 2px); }
+            90% { transform: translate(2px, 2px); }
+        }
+
+        .glitch-effect {
+            position: relative;
+            z-index: 1;
+
+            &::before,
+            &::after {
+                content: attr(data-text);
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            &:hover::before {
+                animation: glitch-1 0.3s infinite;
+                color: #ff0080;
+                opacity: 0.7;
+                z-index: -1;
+            }
+
+            &:hover::after {
+                animation: glitch-2 0.3s infinite;
+                color: #00ffff;
+                opacity: 0.7;
+                z-index: -2;
+            }
+        }
+
+        /* Animations */
+        @keyframes marquee-left {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        @keyframes marquee-right {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: translateX(0) rotate(45deg); }
+            50% { transform: translateX(15px) rotate(45deg); }
+        }
+
+        @keyframes pulse-shadow {
+            0%, 100% { box-shadow: var(--nr-shadow-base); }
+            50% { box-shadow: var(--nr-shadow-xl); }
+        }
+
+        /* Pop-in animation - scale from 0 to 1 with bounce (universal, works on any element) */
+        /* Note: This only animates scale and opacity, preserving any transform on the element */
+        @keyframes pop-in {
+            0% { 
+                scale: 0;
+                opacity: 0;
+            }
+            50% {
+                scale: 1.1;
+            }
+            100% { 
+                scale: 1;
+                opacity: 1;
+            }
+        }
+
+        .animate-marquee-left { animation: marquee-left 20s linear infinite; }
+        .animate-marquee-right { animation: marquee-right 25s linear infinite; }
+        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+        .animate-bounce-slow { animation: bounce-slow 4s ease-in-out infinite; }
+        .animate-sway { animation: sway 5s ease-in-out infinite; }
+        .animate-pulse-shadow { animation: pulse-shadow 2.5s ease-in-out infinite; }
+
+        /* Pop-in animation - works universally on any element */
+        .animate-pop-in {
+            animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* Stagger delays for sequential animations */
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+        .delay-6 { animation-delay: 0.6s; }
+
+        /* 
+         * Universal hover effects that work WITH existing transforms
+         * 
+         * STRATEGY: Use nested wrappers when combining rotation + hover scale
+         * 
+         * Pattern 1 - Simple (no rotation):
+         *   <span class="badge hover-scale-up hover-shadow-boost">Badge</span>
+         * 
+         * Pattern 2 - With rotation (nested):
+         *   <span style="transform: rotate(-8deg)" class="rotate-smooth">
+         *     <span class="badge hover-scale-up hover-shadow-boost">Badge</span>
+         *   </span>
+         * 
+         * Pattern 3 - Direct (for non-interactive rotation):
+         *   <span class="badge rotate-2">Badge</span>
+         */
+
+        /* Hover scale effect - uses scale property to work with transform: rotate() */
+        .hover-scale-up {
+            transition: scale 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), rotate 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            &:hover {
+                scale: 1.1;
+            }
+        }
+
+        .hover-scale-up-sm {
+            transition: scale 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), rotate 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            &:hover {
+                scale: 1.05;
+            }
+        }
+
+        .hover-scale-up-lg {
+            transition: scale 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), rotate 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            &:hover {
+                scale: 1.15;
+            }
+        }
+
+        /* Hover rotate effect - adds slight rotation change using rotate property */
+        /* Note: rotate property is ADDITIVE to transform: rotate(), so both work together */
+        .hover-rotate-more {
+            &:hover {
+                rotate: 3deg;
+            }
+        }
+
+        .hover-rotate-more-neg {
+            &:hover {
+                rotate: -3deg;
+            }
+        }
+
+        .hover-rotate-wiggle {
+            &:hover {
+                rotate: 2deg;
+            }
+        }
+
+        .hover-rotate-wiggle-neg {
+            &:hover {
+                rotate: -2deg;
+            }
+        }
+
+        /* Hover shadow boost - increases shadow depth */
+        .hover-shadow-boost {
+            transition: box-shadow 0.2s ease;
+            
+            &:hover {
+                box-shadow: 5px 5px 0px 0px var(--nr-shadow-color) !important;
+            }
+        }
+
+        .hover-shadow-boost-lg {
+            transition: box-shadow 0.2s ease;
+            
+            &:hover {
+                box-shadow: 8px 8px 0px 0px var(--nr-shadow-color) !important;
+            }
+        }
+
+        /* Scroll animations */
+        .fade-in-up {
+            opacity: 0 !important;
+            transform: translateY(40px) !important;
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
+
+            &.visible {
+                opacity: 1 !important;
+                transform: translateY(0) !important;
+            }
+        }
+
+        .slide-in-left {
+            opacity: 0 !important;
+            transform: translateX(-80px) !important;
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
+
+            &.visible {
+                opacity: 1 !important;
+                transform: translateX(0) !important;
+            }
+        }
+
+        .slide-in-right {
+            opacity: 0 !important;
+            transform: translateX(80px) !important;
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
+
+            &.visible {
+                opacity: 1 !important;
+                transform: translateX(0) !important;
+            }
+        }
+
+        .scale-in {
+            opacity: 0 !important;
+            transform: scale(0.7) !important;
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
+
+            &.visible {
+                opacity: 1 !important;
+                transform: scale(1) !important;
+            }
+        }
+
+        /* View transitions */
+        html[data-vt-nav] body {
+            pointer-events: none;
+        }
+
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation-duration: 0.45s;
+            animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+        }
+    }

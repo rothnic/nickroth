@@ -1,0 +1,131 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Animations - Patterns" 
+  description="CSS animations, scroll triggers, and interactive effects."
+>
+  <div class="container mx-auto px-4 py-20 max-w-6xl">
+    <div class="mb-12">
+      <div transition:name="showcase-icon-/showcase/patterns/animations">✨</div>
+      <h1 transition:name="showcase-title-/showcase/patterns/animations" class="text-5xl font-black mb-4">Animations</h1>
+      <p transition:name="showcase-desc-/showcase/patterns/animations" class="text-xl text-base-content/70">
+        Pure CSS animations with scroll-triggered effects using Intersection Observer.
+      </p>
+    </div>
+
+    <!-- CSS Looping Animations -->
+    <section class="space-y-8 mb-24">
+      <div>
+        <h2 class="text-3xl font-black mb-2">CSS Looping Animations</h2>
+        <p class="text-base-content/70 mb-6">Continuous animations without JavaScript</p>
+      </div>
+      
+      <div class="flex flex-wrap gap-16 justify-center items-center py-12">
+        <div class="flex flex-col items-center gap-4">
+          <div class="w-32 h-32 bg-primary border-4 border-black dark:border-white shadow-brutal animate-spin-slow"></div>
+          <div class="text-center">
+            <span class="badge badge-lg">animate-spin-slow</span>
+            <p class="text-xs text-base-content/70 mt-2">Slow rotation</p>
+          </div>
+        </div>
+        
+        <div class="flex flex-col items-center gap-4">
+          <div class="w-32 h-32 bg-secondary border-4 border-black dark:border-white shadow-brutal animate-bounce-slow"></div>
+          <div class="text-center">
+            <span class="badge badge-lg">animate-bounce-slow</span>
+            <p class="text-xs text-base-content/70 mt-2">Slow bounce</p>
+          </div>
+        </div>
+        
+        <div class="flex flex-col items-center gap-4">
+          <div class="w-32 h-32 bg-accent border-4 border-black dark:border-white shadow-brutal animate-pulse-shadow"></div>
+          <div class="text-center">
+            <span class="badge badge-lg">animate-pulse-shadow</span>
+            <p class="text-xs text-base-content/70 mt-2">Pulsing shadow</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scroll Animations -->
+    <section class="space-y-8 mb-24">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Scroll-Triggered Animations</h2>
+        <p class="text-base-content/70 mb-6">Elements animate in when scrolled into view (scroll down to see)</p>
+      </div>
+      
+      <div class="space-y-24 mt-24">
+        <div class="card bg-primary border-4 border-black dark:border-white fade-in-up">
+          <div class="card-body">
+            <h3 class="card-title text-primary-content">fade-in-up</h3>
+            <p class="text-primary-content/80">Fades in and slides up when scrolled into view</p>
+          </div>
+        </div>
+        
+        <div class="card bg-secondary border-4 border-black dark:border-white slide-in-left">
+          <div class="card-body">
+            <h3 class="card-title text-secondary-content">slide-in-left</h3>
+            <p class="text-secondary-content/80">Slides in from the left</p>
+          </div>
+        </div>
+        
+        <div class="card bg-accent border-4 border-black dark:border-white slide-in-right">
+          <div class="card-body">
+            <h3 class="card-title text-accent-content">slide-in-right</h3>
+            <p class="text-accent-content/80">Slides in from the right</p>
+          </div>
+        </div>
+        
+        <div class="card bg-info border-4 border-black dark:border-white scale-in">
+          <div class="card-body">
+            <h3 class="card-title text-info-content">scale-in</h3>
+            <p class="text-info-content/80">Scales up from smaller size</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hover Effects -->
+    <section class="space-y-8 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Hover Effects</h2>
+        <p class="text-base-content/70 mb-6">Interactive animations on hover</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="card bg-primary border-4 border-black dark:border-white hover-lift shadow-brutal">
+          <div class="card-body">
+            <h3 class="card-title text-primary-content">hover-lift</h3>
+            <p class="text-primary-content/80">Moves up with expanded shadow</p>
+          </div>
+        </div>
+        
+        <div class="card bg-secondary border-4 border-black dark:border-white hover-scale shadow-brutal">
+          <div class="card-body">
+            <h3 class="card-title text-secondary-content">hover-scale</h3>
+            <p class="text-secondary-content/80">Scales up slightly</p>
+          </div>
+        </div>
+        
+        <div class="card bg-accent border-4 border-black dark:border-white hover-rotate shadow-brutal">
+          <div class="card-body">
+            <h3 class="card-title text-accent-content">hover-rotate</h3>
+            <p class="text-accent-content/80">Rotates slightly</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Usage Note -->
+    <div class="alert alert-info shadow-brutal-lg border-2 border-black dark:border-white">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <div>
+        <h3 class="font-bold">Zero JavaScript for Styling</h3>
+        <div class="text-sm">All animations are pure CSS. Scroll triggers use vanilla JavaScript Intersection Observer helper (see src/scripts/animations.js).</div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+```

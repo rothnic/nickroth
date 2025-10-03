@@ -1,0 +1,220 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Cards - Components" 
+  description="Card layouts with images, content, actions, and variations."
+>
+  <div class="container mx-auto px-4 py-20 max-w-6xl">
+    <div class="mb-12">
+      <div transition:name="showcase-icon-/showcase/components/cards">🃏</div>
+      <h1 transition:name="showcase-title-/showcase/components/cards" class="text-5xl font-black mb-4">Cards</h1>
+      <p transition:name="showcase-desc-/showcase/components/cards" class="text-xl text-base-content/70">
+        Flexible card component for content grouping with brutal shadows and borders.
+      </p>
+    </div>
+
+    <!-- Basic Cards -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Basic Cards</h2>
+        <p class="text-base-content/70 mb-6">Simple content cards with 4px borders and hard shadows</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="card bg-base-100 border-4 border-black dark:border-white shadow-brutal hover-lift">
+          <div class="card-body">
+            <h3 class="card-title">Basic Card</h3>
+            <p>This card has thick border and hard shadow. Hover to see lift effect.</p>
+          </div>
+        </div>
+        
+        <div class="card bg-primary border-4 border-black dark:border-white shadow-brutal hover-lift">
+          <div class="card-body">
+            <h3 class="card-title text-primary-content">Primary Card</h3>
+            <p class="text-primary-content/80">Card with primary background color.</p>
+          </div>
+        </div>
+        
+        <div class="card bg-secondary border-4 border-black dark:border-white shadow-brutal hover-lift">
+          <div class="card-body">
+            <h3 class="card-title text-secondary-content">Secondary Card</h3>
+            <p class="text-secondary-content/80">Shadow expands on hover.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cards with Actions -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Cards with Actions</h2>
+        <p class="text-base-content/70 mb-6">Cards with buttons and action areas</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="card bg-base-100 border-4 border-black dark:border-white shadow-brutal-lg">
+          <div class="card-body">
+            <h3 class="card-title">Card with Button</h3>
+            <p>This card includes an action button at the bottom.</p>
+            <div class="card-actions justify-end mt-4">
+              <button class="btn btn-primary">Learn More</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card bg-base-100 border-4 border-black dark:border-white shadow-brutal-lg">
+          <div class="card-body">
+            <h3 class="card-title">Multiple Actions</h3>
+            <p>Cards can have multiple action buttons.</p>
+            <div class="card-actions justify-end mt-4">
+              <button class="btn btn-ghost">Cancel</button>
+              <button class="btn btn-secondary">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cards with Images -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Cards with Images</h2>
+        <p class="text-base-content/70 mb-6">Visual cards with figure elements</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="card bg-base-100 border-4 border-black dark:border-white shadow-brutal hover-lift">
+          <figure class="px-8 pt-8">
+            <div class="w-full h-48 bg-primary border-4 border-black dark:border-white flex items-center justify-center">
+              <span class="text-4xl">🎨</span>
+            </div>
+          </figure>
+          <div class="card-body">
+            <h3 class="card-title">Image Card</h3>
+            <p>Card with image at the top.</p>
+          </div>
+        </div>
+        
+        <div class="card bg-base-100 border-4 border-black dark:border-white shadow-brutal hover-lift">
+          <figure class="px-8 pt-8">
+            <div class="w-full h-48 bg-secondary border-4 border-black dark:border-white flex items-center justify-center">
+              <span class="text-4xl">✨</span>
+            </div>
+          </figure>
+          <div class="card-body">
+            <h3 class="card-title">Visual Card</h3>
+            <p>Perfect for portfolios.</p>
+            <div class="card-actions justify-end mt-2">
+              <button class="btn btn-primary btn-sm">View</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card bg-base-100 border-4 border-black dark:border-white shadow-brutal hover-lift">
+          <figure class="px-8 pt-8">
+            <div class="w-full h-48 bg-accent border-4 border-black dark:border-white flex items-center justify-center">
+              <span class="text-4xl">🔥</span>
+            </div>
+          </figure>
+          <div class="card-body">
+            <h3 class="card-title">Feature Card</h3>
+            <p>Great for showcases.</p>
+            <div class="card-actions justify-end mt-2">
+              <button class="btn btn-secondary btn-sm">Explore</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Horizontal Cards -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Horizontal Cards</h2>
+        <p class="text-base-content/70 mb-6">Side-by-side layout with card-side class</p>
+      </div>
+      
+      <div class="space-y-6">
+        <div class="card card-side bg-base-100 border-4 border-black dark:border-white shadow-brutal-lg hover-lift">
+          <figure class="w-64 flex-shrink-0 border-r-4 border-black dark:border-white">
+            <div class="w-full h-full bg-primary flex items-center justify-center">
+              <span class="text-6xl">📱</span>
+            </div>
+          </figure>
+          <div class="card-body">
+            <h3 class="card-title">Horizontal Card</h3>
+            <p>Image on the left, content on the right. Use <code>card-side</code> class.</p>
+            <div class="card-actions justify-end">
+              <button class="btn btn-primary">Action</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card card-side bg-base-100 border-4 border-black dark:border-white shadow-brutal-lg hover-lift">
+          <figure class="w-64 flex-shrink-0 border-r-4 border-black dark:border-white">
+            <div class="w-full h-full bg-secondary flex items-center justify-center">
+              <span class="text-6xl">�</span>
+            </div>
+          </figure>
+          <div class="card-body">
+            <h3 class="card-title">Product Card</h3>
+            <p>Perfect for product listings or features with prominent imagery.</p>
+            <div class="card-actions justify-end">
+              <button class="btn btn-secondary">Learn More</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Card Grid Layout -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Card Grid Layout</h2>
+        <p class="text-base-content/70 mb-6">Cards work great in responsive grid layouts</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card bg-info border-4 border-black dark:border-white shadow-brutal hover-lift">
+          <div class="card-body p-6">
+            <h3 class="card-title text-info-content text-base">Compact Card</h3>
+            <p class="text-info-content/80 text-sm">Smaller padding for dense grids.</p>
+          </div>
+        </div>
+        
+        <div class="card bg-success border-4 border-black dark:border-white shadow-brutal hover-lift">
+          <div class="card-body p-6">
+            <h3 class="card-title text-success-content text-base">Grid Item</h3>
+            <p class="text-success-content/80 text-sm">Responsive columns.</p>
+          </div>
+        </div>
+        
+        <div class="card bg-warning border-4 border-black dark:border-white shadow-brutal hover-lift">
+          <div class="card-body p-6">
+            <h3 class="card-title text-warning-content text-base">Flexible</h3>
+            <p class="text-warning-content/80 text-sm">Adapts to screen size.</p>
+          </div>
+        </div>
+        
+        <div class="card bg-error border-4 border-black dark:border-white shadow-brutal hover-lift">
+          <div class="card-body p-6">
+            <h3 class="card-title text-error-content text-base">Responsive</h3>
+            <p class="text-error-content/80 text-sm">Mobile to desktop.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Usage Note -->
+    <div class="alert alert-info shadow-brutal-lg border-2 border-black dark:border-white">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <div>
+        <h3 class="font-bold">Cards in Grids</h3>
+        <div class="text-sm">Use Tailwind's grid utilities for responsive layouts. Add <code>hover-lift</code> for interactive feedback on all cards.</div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+```

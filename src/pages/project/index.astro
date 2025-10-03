@@ -1,0 +1,232 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const projectPages = [
+  { 
+    title: 'Overview', 
+    href: '/project',
+    description: 'Project goals, approach, and key outcomes',
+    status: 'complete',
+    icon: '📋'
+  },
+  { 
+    title: 'Design Process', 
+    href: '/project/design',
+    description: 'Prototyping with Figma and design iteration',
+    status: 'planned',
+    icon: '🎨'
+  },
+  { 
+    title: 'Architecture', 
+    href: '/project/architecture',
+    description: 'Tech stack decisions and system design',
+    status: 'planned',
+    icon: '🏗️'
+  },
+  { 
+    title: 'Implementation', 
+    href: '/project/implementation',
+    description: 'Build process, challenges, and solutions',
+    status: 'planned',
+    icon: '⚙️'
+  },
+  { 
+    title: 'Deployment', 
+    href: '/project/deployment',
+    description: 'Cloudflare Pages setup and CI/CD',
+    status: 'planned',
+    icon: '🚀'
+  },
+  { 
+    title: 'Tools & Workflow', 
+    href: '/project/tools',
+    description: 'Cursor AI, GitHub Copilot, and development flow',
+    status: 'planned',
+    icon: '🛠️'
+  },
+  { 
+    title: 'Key Learnings', 
+    href: '/project/learnings',
+    description: 'Takeaways, best practices, and recommendations',
+    status: 'planned',
+    icon: '💡'
+  },
+];
+
+const techStack = [
+  { name: 'Astro', category: 'Framework', color: 'primary' },
+  { name: 'DaisyUI 5', category: 'Components', color: 'secondary' },
+  { name: 'Tailwind CSS 4', category: 'Styling', color: 'accent' },
+  { name: 'TypeScript', category: 'Language', color: 'info' },
+  { name: 'Figma', category: 'Design', color: 'success' },
+  { name: 'Cursor AI', category: 'Development', color: 'warning' },
+  { name: 'GitHub Copilot', category: 'Development', color: 'error' },
+  { name: 'Cloudflare Pages', category: 'Deployment', color: 'neutral' },
+];
+---
+
+<BaseLayout 
+  title="Building This Site - A Case Study" 
+  description="Technical case study of building a neobrutalist personal site with Astro, DaisyUI, AI tools, and modern deployment."
+>
+  <div class="min-h-screen">
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-base-100 via-accent/5 to-primary/5 py-20">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+          <div class="inline-block mb-6">
+            <h1 class="text-5xl md:text-6xl font-black mb-4 relative">
+              Building This Site
+              <span class="badge badge-success badge-lg rotate-sticker-2 absolute -top-6 -right-16 shadow-brutal">
+                CASE STUDY
+              </span>
+            </h1>
+          </div>
+          <p class="text-2xl md:text-3xl font-bold mb-6">
+            A Technical Deep Dive
+          </p>
+          <p class="text-xl text-base-content/70 mb-8">
+            How I built a modern neobrutalist personal site using Astro, DaisyUI, 
+            AI-powered development tools, and deployed it on Cloudflare Pages.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- The Stack -->
+    <section class="py-20">
+      <div class="container mx-auto px-4">
+        <div class="max-w-6xl mx-auto">
+          <h2 class="text-4xl font-black mb-12 text-center">The Stack</h2>
+          
+          <div class="card bg-base-200 shadow-brutal-xl border-2 border-black dark:border-white mb-12">
+            <div class="card-body">
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {techStack.map(tech => (
+                  <div class={`badge badge-${tech.color} badge-lg p-4 h-auto flex-col gap-1`}>
+                    <span class="font-black text-base">{tech.name}</span>
+                    <span class="text-xs opacity-75">{tech.category}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Stats -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="stat bg-base-100 shadow-brutal border-2 border-black dark:border-white">
+              <div class="stat-title">Build Time</div>
+              <div class="stat-value text-primary">~2 weeks</div>
+              <div class="stat-desc">From design to deployment</div>
+            </div>
+            
+            <div class="stat bg-base-100 shadow-brutal border-2 border-black dark:border-white">
+              <div class="stat-title">Performance</div>
+              <div class="stat-value text-success">100/100</div>
+              <div class="stat-desc">Lighthouse score</div>
+            </div>
+            
+            <div class="stat bg-base-100 shadow-brutal border-2 border-black dark:border-white">
+              <div class="stat-title">Components</div>
+              <div class="stat-value text-accent">4</div>
+              <div class="stat-desc">Custom + DaisyUI</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Project Pages Grid -->
+    <section class="py-20 bg-base-200">
+      <div class="container mx-auto px-4">
+        <div class="max-w-6xl mx-auto">
+          <h2 class="text-4xl font-black mb-12 text-center">Explore the Journey</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {projectPages.map((page, index) => (
+              <a 
+                href={page.href}
+                class={`card bg-base-100 shadow-brutal-lg hover-lift border-2 border-black dark:border-white ${
+                  page.status === 'planned' ? 'opacity-60' : ''
+                }`}
+              >
+                <div class="card-body">
+                  <div class="flex items-start justify-between">
+                    <div class="text-4xl mb-2">{page.icon}</div>
+                    {page.status === 'complete' ? (
+                      <div class="badge badge-success badge-sm">Available</div>
+                    ) : (
+                      <div class="badge badge-outline badge-sm">Coming Soon</div>
+                    )}
+                  </div>
+                  <h3 class="card-title text-xl">{page.title}</h3>
+                  <p class="text-sm text-base-content/70">{page.description}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Highlights -->
+    <section class="py-20">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+          <h2 class="text-4xl font-black mb-12 text-center">Key Highlights</h2>
+          
+          <div class="space-y-6">
+            <div class="card bg-primary text-primary-content shadow-brutal-lg border-2 border-black">
+              <div class="card-body">
+                <h3 class="card-title text-2xl">🎨 Design-First Approach</h3>
+                <p>Started with Figma prototypes to validate the neobrutalist aesthetic before writing any code.</p>
+              </div>
+            </div>
+
+            <div class="card bg-secondary text-secondary-content shadow-brutal-lg border-2 border-black">
+              <div class="card-body">
+                <h3 class="card-title text-2xl">⚡ Performance-Obsessed</h3>
+                <p>Zero runtime JavaScript for styling. All animations pure CSS. Perfect Lighthouse scores.</p>
+              </div>
+            </div>
+
+            <div class="card bg-accent text-accent-content shadow-brutal-lg border-2 border-black">
+              <div class="card-body">
+                <h3 class="card-title text-2xl">🤖 AI-Powered Development</h3>
+                <p>Leveraged Cursor AI and GitHub Copilot to accelerate implementation while maintaining quality.</p>
+              </div>
+            </div>
+
+            <div class="card bg-info text-info-content shadow-brutal-lg border-2 border-black">
+              <div class="card-body">
+                <h3 class="card-title text-2xl">📦 Content-First Architecture</h3>
+                <p>Separated content from presentation using Astro's content collections for easy updates.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-20 bg-base-200">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+          <h2 class="text-4xl font-black mb-6">Want to See the Code?</h2>
+          <p class="text-xl mb-8 text-base-content/70">
+            This entire site is open source. Explore the implementation, fork it, or use it as inspiration.
+          </p>
+          <div class="flex flex-wrap gap-4 justify-center">
+            <a href="https://github.com/rothnic/nickroth" class="btn btn-primary btn-lg shadow-brutal-xl hover-lift" target="_blank" rel="noopener noreferrer">
+              View on GitHub
+            </a>
+            <a href="/showcase" class="btn btn-outline btn-lg border-2 hover-lift">
+              Browse Theme Components
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+```
