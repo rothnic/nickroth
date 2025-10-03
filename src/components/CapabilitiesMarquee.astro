@@ -61,7 +61,7 @@ const scrollingCapabilities = [...capabilities, ...capabilities];
   </div>
 
   <div class="relative py-0 mb-20 pointer-events-none">
-    <div class="overflow-hidden mb-12">
+    <div class="overflow-hidden mb-12 py-4">
       <div class="flex gap-6 w-max animate-marquee-left py-0">
         {
           scrollingCapabilities.map((item, index) => (
@@ -77,7 +77,7 @@ const scrollingCapabilities = [...capabilities, ...capabilities];
       </div>
     </div>
 
-    <div class="overflow-hidden">
+    <div class="overflow-hidden py-4">
       <div class="flex gap-6 w-max animate-marquee-right py-0">
         {
           [...scrollingCapabilities].reverse().map((item, index) => (

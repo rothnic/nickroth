@@ -601,6 +601,7 @@
                     38% 90%, 45% 25%, 52% 75%, 58% 35%, 65% 85%, 72% 15%, 78% 65%, 
                     85% 45%, 91% 95%, 96% 50%, 100% 100%, 100% 0%, 0% 0%
                 );
+                z-index: 10;
             }
             
             /* Torn bottom edge */
@@ -623,6 +624,7 @@
                     42% 30%, 49% 70%, 56% 20%, 63% 80%, 69% 35%, 76% 95%, 82% 50%, 
                     88% 15%, 94% 65%, 98% 40%, 100% 0%, 100% 100%, 0% 100%
                 );
+                z-index: 10;
             }
         }
         
@@ -1436,9 +1438,7 @@
             .animate-spin-slow,
             .animate-bounce-slow,
             .animate-sway,
-            .animate-pulse-shadow,
-            .animate-marquee-left,
-            .animate-marquee-right {
+            .animate-pulse-shadow {
                 animation: none;
             }
         }
