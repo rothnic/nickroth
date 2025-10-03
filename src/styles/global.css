@@ -42,8 +42,8 @@
 
         --nr-border-color: #000000;
         --nr-shadow-color: oklch(0.15 0 0 / 1);
-        --nr-shadow-sm: 4px 4px 0px 0px var(--nr-shadow-color);
-        --nr-shadow-base: 8px 8px 0px 0px var(--nr-shadow-color);
+        --nr-shadow-sm: 2px 2px 0px 0px var(--nr-shadow-color);
+        --nr-shadow-base: 4px 4px 0px 0px var(--nr-shadow-color);
         --nr-shadow-lg: 12px 12px 0px 0px var(--nr-shadow-color);
         --nr-shadow-xl: 20px 20px 0px 0px var(--nr-shadow-color);
         --nr-shadow-xxl: 24px 24px 0px 0px var(--nr-shadow-color);
@@ -64,6 +64,10 @@
         --btn-shadow-colored: 8px 8px 0px 0px var(--nr-shadow-color);
         --btn-shadow-hover: 4px 4px 0px 0px var(--nr-shadow-color);
         --rounded-btn: 0rem;
+
+        --card-border: var(--nr-border-color);
+        --card-border-width: 4px;
+        --card-shadow: var(--nr-shadow-base);
     }
 
     @plugin "daisyui/theme" {
@@ -125,12 +129,25 @@
         --btn-shadow-colored: 8px 8px 0px 0px var(--nr-shadow-color);
         --btn-shadow-hover: 4px 4px 0px 0px var(--nr-shadow-color);
         --rounded-btn: 0rem;
+
+        --card-border: var(--nr-border-color);
+        --card-border-width: 4px;
+        --card-shadow: var(--nr-shadow-base);
     }
 
     @layer utilities {
         /* ========================================
-           FONTS
+           THEME-AGNOSTIC UTILITIES
+           (No theme scoping needed)
            ======================================== */
+        
+        /* Base font family */
+        html {
+            font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-weight: 400;
+        }
+
+        /* Fonts */
         .font-display {
             font-family: "Space Grotesk", -apple-system, BlinkMacSystemFont, sans-serif;
         }
@@ -143,24 +160,7 @@
             font-family: "Rubik Glitch", cursive;
         }
 
-        /* ========================================
-           THEME-SPECIFIC BORDER COLORS
-           ======================================== */
-        /* Theme-specific border colors - maintain high contrast in both modes */
-        [data-theme="neobrutalism-light"] .btn {
-            --btn-border: #000000;
-            --btn-hover-border: #000000;
-            --btn-focus-border: #000000;
-        }
-
-        [data-theme="neobrutalism-dark"] .btn {
-            --btn-border: #ffffff;
-            --btn-hover-border: #ffffff;
-            --btn-focus-border: #ffffff;
-        }
-
         /* Automatically apply correct text colors when using bg-* utility classes */
-        /* This follows DaisyUI's pattern: bg-primary automatically gets text-primary-content */
         .bg-primary { color: var(--color-primary-content); }
         .bg-secondary { color: var(--color-secondary-content); }
         .bg-accent { color: var(--color-accent-content); }
@@ -173,308 +173,189 @@
         .bg-warning { color: var(--color-warning-content); }
         .bg-error { color: var(--color-error-content); }
 
-        /* Automatically apply themed border colors when using bg-* utility classes */
-        /* Works for all semantic colors - border is always theme-consistent (black in light, white in dark) */
-        /* Can be overridden with explicit border-* utility classes */
-        /* Using :not() to exclude elements with explicit border color classes */
-        [data-theme="neobrutalism-light"] .bg-primary:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-light"] .bg-secondary:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-light"] .bg-accent:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-light"] .bg-neutral:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-light"] .bg-base-100:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-light"] .bg-base-200:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-light"] .bg-base-300:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-light"] .bg-info:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-light"] .bg-success:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-light"] .bg-warning:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-light"] .bg-error:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]) {
-            border-color: #000000;
-        }
+        /* Shadow utilities */
+        .shadow-brutal-sm { box-shadow: var(--nr-shadow-sm); }
+        .shadow-brutal { box-shadow: var(--nr-shadow-base); }
+        .shadow-brutal-lg { box-shadow: var(--nr-shadow-lg); }
+        .shadow-brutal-xl { box-shadow: var(--nr-shadow-xl); }
 
-        [data-theme="neobrutalism-dark"] .bg-primary:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-dark"] .bg-secondary:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-dark"] .bg-accent:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-dark"] .bg-neutral:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-dark"] .bg-base-100:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-dark"] .bg-base-200:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-dark"] .bg-base-300:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-dark"] .bg-info:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-dark"] .bg-success:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-dark"] .bg-warning:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-        [data-theme="neobrutalism-dark"] .bg-error:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]) {
-            border-color: #ffffff;
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: calc(var(--size-field) * 4);
-            --btn-shadow: 8px 8px 0px 0px var(--nr-shadow-color);
-            --btn-shadow-colored: 8px 8px 0px 0px var(--nr-shadow-color);
-            --btn-shadow-hover: 4px 4px 0px 0px var(--nr-shadow-color);
-            border-width: var(--btn-border-width);
-            border-color: var(--btn-border);
-            border-style: solid;
-            border-radius: var(--rounded-btn);
-            box-shadow: var(--btn-shadow);
-            transform: translate(0, 0) rotate(0deg);
-            font-weight: var(--font-weight-black);
-            text-transform: var(--btn-text-case);
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out, background-color 0.2s ease-in-out;
-            --btn-rotate-angle: 1deg;
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn:hover:not(.hover-lift):not(.hover-scale):not(.hover-rotate) {
-            box-shadow: var(--btn-shadow-hover);
-            transform: translate(2px, 2px) rotate(var(--btn-rotate-angle));
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn:active {
-            box-shadow: var(--nr-shadow-pressed);
-            transform: translate(0, 0) rotate(0deg);
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn:focus-visible {
-            outline: 3px solid var(--btn-focus-border);
-            outline-offset: 2px;
-            box-shadow: var(--nr-shadow-focus);
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn:disabled,
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn[disabled],
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn[aria-disabled="true"] {
-            opacity: 0.6;
-            cursor: not-allowed;
-            box-shadow: var(--nr-shadow-sm);
-            transform: none;
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn-primary {
-            background-color: var(--color-primary);
-            color: var(--color-primary-content);
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn-secondary {
-            background-color: var(--color-secondary);
-            color: var(--color-secondary-content);
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn-accent {
-            background-color: var(--color-accent);
-            color: var(--color-accent-content);
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn-neutral {
-            background-color: var(--color-neutral);
-            color: var(--color-neutral-content);
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn-info {
-            background-color: var(--color-info);
-            color: var(--color-info-content);
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn-success {
-            background-color: var(--color-success);
-            color: var(--color-success-content);
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn-warning {
-            background-color: var(--color-warning);
-            color: var(--color-warning-content);
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn-error {
-            background-color: var(--color-error);
-            color: var(--color-error-content);
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn-outline,
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn-ghost {
-            color: var(--color-base-content);
-            background-color: transparent;
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn-xs {
-            padding: 0.375rem 0.875rem;
-            font-size: 0.75rem;
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn-sm {
-            padding: 0.5rem 1.25rem;
-            font-size: 0.875rem;
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn-lg {
-            padding: 1rem 2.25rem;
-            font-size: 1.125rem;
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn-xl {
-            padding: 1.25rem 2.75rem;
-            font-size: 1.25rem;
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .card {
-            border-width: var(--border);
-            border-color: var(--nr-border-color);
-            border-style: solid;
-            border-radius: var(--radius-box);
-            box-shadow: var(--nr-shadow-lg);
-            transform: translate(0, 0);
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .card:hover:not(.hover-lift):not(.hover-scale):not(.hover-rotate) {
-            transform: translate(-4px, -4px);
-            box-shadow: var(--nr-shadow-xl);
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .badge {
-            font-weight: var(--font-weight-black);
-            text-transform: uppercase;
-            border-width: calc(var(--border) * 0.5);
-            border-color: var(--nr-border-color);
-            border-style: solid;
-            border-radius: var(--radius-selector);
-            box-shadow: var(--nr-shadow-sm);
-            letter-spacing: var(--nr-letter-spacing-tight);
-            padding: 0.25rem 0.75rem;
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .input,
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .textarea,
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .select,
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .file-input {
-            border-width: var(--border);
-            border-color: var(--nr-border-color);
-            border-style: solid;
-            border-radius: var(--radius-field);
-            box-shadow: var(--nr-shadow-sm);
-            transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .input:focus,
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .textarea:focus,
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .select:focus,
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .file-input:focus {
-            border-color: var(--nr-border-color);
-            box-shadow: var(--nr-shadow-focus);
-            outline: none;
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .checkbox,
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .radio,
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .toggle {
-            border-width: var(--border);
-            border-color: var(--nr-border-color);
-            border-style: solid;
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .navbar {
-            border-bottom-width: var(--border);
-            border-color: var(--nr-border-color);
-            border-style: solid;
-            box-shadow: var(--nr-shadow-sm);
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .tabs-bordered .tab {
-            border-bottom-width: var(--border);
-            border-color: var(--nr-border-color);
-            border-style: solid;
-        }
-
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .toast,
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .collapse,
-        :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .tooltip {
-            border-width: var(--border);
-            border-color: var(--nr-border-color);
-            border-style: solid;
-            box-shadow: var(--nr-shadow-sm);
-        }
-
-        .shadow-brutal-sm {
-            box-shadow: var(--nr-shadow-sm);
-        }
-
-        .shadow-brutal {
-            box-shadow: var(--nr-shadow-base);
-        }
-
-        .shadow-brutal-lg {
-            box-shadow: var(--nr-shadow-lg);
-        }
-
-        .shadow-brutal-xl {
-            box-shadow: var(--nr-shadow-xl);
-        }
-
-        .rotate-sticker-1 {
+        /* Sticker rotations */
+        /* Rotation utilities - general purpose for badges, buttons, cards */
+        /* Use inline style="transform: rotate(Xdeg)" for base rotation */
+        /* These classes add antialiasing to rotated elements */
+        .rotate-1 { 
             transform: rotate(-8deg);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform-style: preserve-3d;
         }
-
-        .rotate-sticker-2 {
+        .rotate-2 { 
             transform: rotate(5deg);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform-style: preserve-3d;
         }
-
-        .rotate-sticker-3 {
+        .rotate-3 { 
             transform: rotate(-3deg);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform-style: preserve-3d;
         }
-
-        .rotate-sticker-4 {
+        .rotate-4 { 
             transform: rotate(12deg);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform-style: preserve-3d;
         }
 
-        .sticker-container {
-            position: relative;
+        /* Rotation antialiasing helper - use with inline transform styles */
+        .rotate-smooth {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform-style: preserve-3d;
         }
 
-        .sticker-top-left {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
+        /* Button rotation angle utilities */
+        .btn-rotate-neg { --btn-rotate-angle: -1deg; }
+        .btn-rotate-0 { --btn-rotate-angle: 0deg; }
+        .btn-rotate-1 { --btn-rotate-angle: 1deg; }
+        .btn-rotate-2 { --btn-rotate-angle: 2deg; }
+        .btn-rotate-3 { --btn-rotate-angle: 3deg; }
+        .btn-rotate-neg-2 { --btn-rotate-angle: -2deg; }
+        .btn-rotate-neg-3 { --btn-rotate-angle: -3deg; }
+
+        /* Border radius utilities */
+        .rounded-brutal-sm { border-radius: 0.25rem; }
+        .rounded-brutal { border-radius: 0.5rem; }
+        .rounded-brutal-lg { border-radius: 1rem; }
+        .rounded-brutal-xl { border-radius: 1.5rem; }
+        .rounded-brutal-full { border-radius: 9999px; }
+
+        /* Hover effects - composable using CSS custom properties */
+        
+        /* 
+         * COMPOSABLE HOVER EFFECTS
+         * 
+         * Base class: .hover-effect (required)
+         * Modifiers can be combined:
+         * 
+         * Examples:
+         * - .hover-effect .hover-lift              → lifts up with shadow
+         * - .hover-effect .hover-scale .hover-rotate-3  → scales AND rotates
+         * - .hover-effect .hover-lift-sm .hover-rotate-neg-2  → small lift AND rotates counter-clockwise
+         * 
+         * Available modifiers:
+         * Lift: hover-lift, hover-lift-sm, hover-lift-lg
+         * Scale: hover-scale, hover-scale-sm, hover-scale-lg
+         * Rotate: hover-rotate-1, hover-rotate-2, hover-rotate-3, hover-rotate-5
+         *         hover-rotate-neg-1, hover-rotate-neg-2, hover-rotate-neg-3, hover-rotate-neg-5
+         */
+        
+        /* Base hover utility - applies transition and anti-aliasing */
+        .hover-effect {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform-style: preserve-3d;
+            
+            /* Default values - can be overridden by modifier classes */
+            --hover-translate-x: 0px;
+            --hover-translate-y: 0px;
+            --hover-scale: 1;
+            --hover-rotate: 0deg;
+            
+            &:hover {
+                transform: 
+                    translate(var(--hover-translate-x), var(--hover-translate-y)) 
+                    scale(var(--hover-scale)) 
+                    rotate(var(--hover-rotate));
+                box-shadow: var(--hover-shadow, var(--nr-shadow-base));
+            }
+        }
+        
+        /* Lift effect modifiers */
+        .hover-lift {
+            --hover-translate-x: -6px;
+            --hover-translate-y: -6px;
+            --hover-shadow: var(--nr-shadow-xl);
+        }
+        
+        .hover-lift-sm {
+            --hover-translate-x: -3px;
+            --hover-translate-y: -3px;
+            --hover-shadow: var(--nr-shadow-lg);
+        }
+        
+        .hover-lift-lg {
+            --hover-translate-x: -8px;
+            --hover-translate-y: -8px;
+            --hover-shadow: var(--nr-shadow-xxl);
+        }
+        
+        /* Scale effect modifiers */
+        .hover-scale {
+            --hover-scale: 1.05;
+        }
+        
+        .hover-scale-sm {
+            --hover-scale: 1.02;
+        }
+        
+        .hover-scale-lg {
+            --hover-scale: 1.1;
+        }
+        
+        /* Rotation effect modifiers - various angles */
+        .hover-rotate-1 { --hover-rotate: 1deg; }
+        .hover-rotate-2 { --hover-rotate: 2deg; }
+        .hover-rotate-3 { --hover-rotate: 3deg; }
+        .hover-rotate-5 { --hover-rotate: 5deg; }
+        .hover-rotate-neg-1 { --hover-rotate: -1deg; }
+        .hover-rotate-neg-2 { --hover-rotate: -2deg; }
+        .hover-rotate-neg-3 { --hover-rotate: -3deg; }
+        .hover-rotate-neg-5 { --hover-rotate: -5deg; }
+        
+        /* Legacy classes for backward compatibility */
+        .hover-rotate {
+            --hover-rotate: -3deg;
         }
 
-        .sticker-top-right {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-        }
-
-        .sticker-bottom-left {
-            position: absolute;
-            bottom: 1rem;
-            left: 1rem;
-        }
-
-        .sticker-bottom-right {
-            position: absolute;
-            bottom: 1rem;
-            right: 1rem;
-        }
-
+        /* Sticker positioning */
+        .sticker-container { position: relative; }
+        .sticker-top-left { position: absolute; top: 1rem; left: 1rem; }
+        .sticker-top-right { position: absolute; top: 1rem; right: 1rem; }
+        .sticker-bottom-left { position: absolute; bottom: 1rem; left: 1rem; }
+        .sticker-bottom-right { position: absolute; bottom: 1rem; right: 1rem; }
         .sticker-top-center {
             position: absolute;
             top: 0.75rem;
             left: 50%;
             transform: translateX(-50%);
         }
-
         .sticker-bottom-center {
             position: absolute;
             bottom: 0.75rem;
             left: 50%;
             transform: translateX(-50%);
         }
-
         .sticker-middle-left {
             position: absolute;
             top: 50%;
             left: 0.5rem;
             transform: translateY(-50%);
         }
-
         .sticker-middle-right {
             position: absolute;
             top: 50%;
@@ -482,404 +363,754 @@
             transform: translateY(-50%);
         }
 
-        .hover-lift {
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-        }
-
-        .hover-lift:hover {
-            transform: translate(-6px, -6px);
-            box-shadow: var(--nr-shadow-xl);
-        }
-
-        .hover-scale {
-            transition: transform 0.25s ease;
-        }
-
-        .hover-scale:hover {
-            transform: scale(1.05);
-        }
-
-        .hover-rotate {
-            transition: transform 0.25s ease;
-        }
-
-        .hover-rotate:hover {
-            transform: rotate(-3deg);
-        }
-
-        /* Button rotation angle utilities - allows customization of hover rotation */
-        .btn-rotate-neg {
-            --btn-rotate-angle: -1deg;
-        }
-
-        .btn-rotate-0 {
-            --btn-rotate-angle: 0deg;
-        }
-
-        .btn-rotate-1 {
-            --btn-rotate-angle: 1deg;
-        }
-
-        .btn-rotate-2 {
-            --btn-rotate-angle: 2deg;
-        }
-
-        .btn-rotate-3 {
-            --btn-rotate-angle: 3deg;
-        }
-
-        .btn-rotate-neg-2 {
-            --btn-rotate-angle: -2deg;
-        }
-
-        .btn-rotate-neg-3 {
-            --btn-rotate-angle: -3deg;
-        }
-
-        .rounded-brutal-sm {
-            border-radius: 0.25rem;
-        }
-
-        .rounded-brutal {
-            border-radius: 0.5rem;
-        }
-
-        .rounded-brutal-lg {
-            border-radius: 1rem;
-        }
-
-        .rounded-brutal-xl {
-            border-radius: 1.5rem;
-        }
-
-        .rounded-brutal-full {
-            border-radius: 9999px;
-        }
-
-        /* ========================================
-           GLITCH EFFECT
-           ======================================== */
-        @keyframes glitch-1 {
-            0%, 100% {
-                transform: translate(0);
-            }
-            10% {
-                transform: translate(-2px, -2px);
-            }
-            20% {
-                transform: translate(2px, 2px);
-            }
-            30% {
-                transform: translate(-2px, 2px);
-            }
-            40% {
-                transform: translate(2px, -2px);
-            }
-            50% {
-                transform: translate(-2px, -2px);
-            }
-            60% {
-                transform: translate(2px, 2px);
-            }
-            70% {
-                transform: translate(-2px, 2px);
-            }
-            80% {
-                transform: translate(2px, -2px);
-            }
-            90% {
-                transform: translate(-2px, -2px);
-            }
-        }
-
-        @keyframes glitch-2 {
-            0%, 100% {
-                transform: translate(0);
-            }
-            10% {
-                transform: translate(2px, 2px);
-            }
-            20% {
-                transform: translate(-2px, -2px);
-            }
-            30% {
-                transform: translate(2px, -2px);
-            }
-            40% {
-                transform: translate(-2px, 2px);
-            }
-            50% {
-                transform: translate(2px, 2px);
-            }
-            60% {
-                transform: translate(-2px, -2px);
-            }
-            70% {
-                transform: translate(2px, -2px);
-            }
-            80% {
-                transform: translate(-2px, 2px);
-            }
-            90% {
-                transform: translate(2px, 2px);
-            }
-        }
-
-        .glitch-effect {
-            position: relative;
-        }
-
-        .glitch-effect::before,
-        .glitch-effect::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .glitch-effect:hover::before {
-            animation: glitch-1 0.3s infinite;
-            color: #ff0080;
-            opacity: 0.8;
-            z-index: -1;
-        }
-
-        .glitch-effect:hover::after {
-            animation: glitch-2 0.3s infinite;
-            color: #00ffff;
-            opacity: 0.8;
-            z-index: -2;
-        }
-
-        /* ========================================
-           TEXTURE & DECORATIVE EFFECTS
-           ======================================== */
-        .texture-grain {
-            position: relative;
-        }
-
-        .texture-grain::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image:
-                repeating-linear-gradient(
-                    0deg,
-                    transparent,
-                    transparent 2px,
-                    rgba(0, 0, 0, 0.03) 2px,
-                    rgba(0, 0, 0, 0.03) 4px
-                ),
-                repeating-linear-gradient(
-                    90deg,
-                    transparent,
-                    transparent 2px,
-                    rgba(0, 0, 0, 0.03) 2px,
-                    rgba(0, 0, 0, 0.03) 4px
-                );
-            pointer-events: none;
-        }
-
-        .sticker {
-            transform: rotate(-3deg);
-        }
-
-        .sticker:nth-child(2n) {
-            transform: rotate(2deg);
-        }
-
-        .sticker:before {
-            content: "";
-            border-radius: inherit;
-            z-index: -1;
-            background: #fff3;
-            position: absolute;
-            inset: -2px;
-        }
-
+        /* Organic clip paths */
         .organic-top {
             clip-path: polygon(0 85%, 25% 95%, 50% 90%, 75% 95%, 100% 85%, 100% 0, 0 0);
         }
 
         .organic-bottom {
-            clip-path: polygon(0 0, 100% 0, 100% 15%, 75% 5%, 50% 10%, 25% 5%, 0 15%);
+            clip-path: polygon(0 0, 100% 0, 100% 40%, 90% 50%, 80% 45%, 70% 55%, 60% 50%, 50% 60%, 40% 50%, 30% 55%, 20% 45%, 10% 50%, 0 40%);
         }
 
         .organic-both {
             clip-path: polygon(
-                0 15%,
-                25% 5%,
-                50% 10%,
-                75% 5%,
-                100% 15%,
-                100% 85%,
-                75% 95%,
-                50% 90%,
-                25% 95%,
-                0 85%
+                0 15%, 25% 5%, 50% 10%, 75% 5%, 100% 15%,
+                100% 85%, 75% 95%, 50% 90%, 25% 95%, 0 85%
             );
         }
 
         /* ========================================
-           ANIMATIONS & KEYFRAMES
+           CUSTOM BADGE HEIGHT UTILITIES
+           (Project-specific, not part of theme)
            ======================================== */
+        
+        /* Badge height modifiers - add vertical padding for "chunky" badges */
+        .badge-height-xs {
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+        }
+
+        .badge-height-sm {
+            padding-top: 0.375rem;
+            padding-bottom: 0.375rem;
+        }
+
+        .badge-height-md {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .badge-height-lg {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .badge-height-xl {
+            padding-top: 0.625rem;
+            padding-bottom: 0.625rem;
+        }
+
+        /* ========================================
+           SHARED STYLES (BOTH THEMES)
+           ======================================== */
+        [data-theme="neobrutalism-light"],
+        [data-theme="neobrutalism-dark"] {
+            /* Buttons */
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: calc(var(--size-field) * 4);
+                --btn-shadow: 8px 8px 0px 0px var(--nr-shadow-color);
+                --btn-shadow-colored: 8px 8px 0px 0px var(--nr-shadow-color);
+                --btn-shadow-hover: 4px 4px 0px 0px var(--nr-shadow-color);
+                border-width: var(--btn-border-width);
+                border-color: var(--btn-border);
+                border-style: solid;
+                border-radius: var(--rounded-btn);
+                box-shadow: var(--btn-shadow);
+                transform: translate(0, 0) rotate(0deg);
+                font-weight: var(--font-weight-black);
+                text-transform: var(--btn-text-case);
+                transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+                --btn-rotate-angle: 1deg;
+                /* Anti-aliasing for crisp rendering */
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+
+                &:hover:not(.hover-effect):not(.hover-lift):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]) {
+                    box-shadow: var(--btn-shadow-hover);
+                    transform: translate(2px, 2px) rotate(var(--btn-rotate-angle));
+                }
+
+                &:active {
+                    box-shadow: var(--nr-shadow-pressed);
+                    transform: translate(0, 0) rotate(0deg);
+                }
+
+                &:focus-visible {
+                    outline: 3px solid var(--btn-focus-border);
+                    outline-offset: 2px;
+                    box-shadow: var(--nr-shadow-focus);
+                }
+
+                &:disabled,
+                &[disabled],
+                &[aria-disabled="true"] {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                    box-shadow: var(--nr-shadow-sm);
+                    transform: none;
+                }
+            }
+
+            .btn-primary {
+                background-color: var(--color-primary);
+                color: var(--color-primary-content);
+            }
+
+            .btn-secondary {
+                background-color: var(--color-secondary);
+                color: var(--color-secondary-content);
+            }
+
+            .btn-accent {
+                background-color: var(--color-accent);
+                color: var(--color-accent-content);
+            }
+
+            .btn-neutral {
+                background-color: var(--color-neutral);
+                color: var(--color-neutral-content);
+            }
+
+            .btn-info {
+                background-color: var(--color-info);
+                color: var(--color-info-content);
+            }
+
+            .btn-success {
+                background-color: var(--color-success);
+                color: var(--color-success-content);
+            }
+
+            .btn-warning {
+                background-color: var(--color-warning);
+                color: var(--color-warning-content);
+            }
+
+            .btn-error {
+                background-color: var(--color-error);
+                color: var(--color-error-content);
+            }
+
+            .btn-outline,
+            .btn-ghost {
+                color: var(--color-base-content);
+                background-color: transparent;
+            }
+
+            .btn-ghost {
+                border-width: 2px;
+                box-shadow: var(--nr-shadow-sm);
+
+                &:hover {
+                    background-color: var(--color-base-200);
+                }
+            }
+
+            .btn-square {
+                width: 3rem;
+                height: 3rem;
+                padding: 0;
+            }
+
+            .btn-circle {
+                width: 3rem;
+                height: 3rem;
+                padding: 0;
+                border-radius: 9999px;
+            }
+
+            .btn-xs { padding: 0.375rem 0.875rem; font-size: 0.75rem; }
+            .btn-sm { padding: 0.5rem 1.25rem; font-size: 0.875rem; }
+            .btn-lg { padding: 1.125rem 1.75rem; font-size: 1.125rem; }
+            .btn-xl { padding: 1.375rem 2rem; font-size: 1.25rem; }
+
+            /* Cards */
+            .card {
+                border-width: var(--border);
+                border-color: var(--nr-border-color);
+                border-style: solid;
+                border-radius: var(--radius-box);
+                box-shadow: var(--nr-shadow-base);
+                background-color: var(--color-base-100);
+                transform: translate(0, 0);
+                transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+                /* Anti-aliasing for crisp rendering */
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+
+                &:hover:not(.hover-effect):not(.hover-lift):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]) {
+                    transform: translate(-4px, -4px);
+                    box-shadow: var(--nr-shadow-lg);
+                }
+            }
+
+            /* Badges */
+            .badge {
+                font-weight: var(--font-weight-black);
+                text-transform: uppercase;
+                border-width: 2px;
+                border-color: var(--nr-border-color);
+                border-style: solid;
+                border-radius: var(--radius-selector);
+                box-shadow: var(--nr-shadow-sm);
+                letter-spacing: var(--nr-letter-spacing-tight);
+                height: auto; /* Override DaisyUI's fixed height to allow padding control */
+                /* Anti-aliasing for crisp rendering */
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
+            .badge-primary {
+                background-color: var(--color-primary);
+                color: var(--color-primary-content);
+            }
+
+            .badge-secondary {
+                background-color: var(--color-secondary);
+                color: var(--color-secondary-content);
+            }
+
+            .badge-accent {
+                background-color: var(--color-accent);
+                color: var(--color-accent-content);
+            }
+
+            .badge-neutral {
+                background-color: var(--color-neutral);
+                color: var(--color-neutral-content);
+            }
+
+            .badge-info {
+                background-color: var(--color-info);
+                color: var(--color-info-content);
+            }
+
+            .badge-success {
+                background-color: var(--color-success);
+                color: var(--color-success-content);
+            }
+
+            .badge-warning {
+                background-color: var(--color-warning);
+                color: var(--color-warning-content);
+            }
+
+            .badge-error {
+                background-color: var(--color-error);
+                color: var(--color-error-content);
+            }
+
+            /* Form elements */
+            .input,
+            .textarea,
+            .select,
+            .file-input {
+                border-width: var(--border);
+                border-color: var(--nr-border-color);
+                border-style: solid;
+                border-radius: var(--radius-field);
+                box-shadow: var(--nr-shadow-sm);
+                transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+
+                &:focus {
+                    border-color: var(--nr-border-color);
+                    box-shadow: var(--nr-shadow-focus);
+                    outline: none;
+                }
+            }
+
+            .checkbox,
+            .radio,
+            .toggle {
+                border-width: var(--border);
+                border-color: var(--nr-border-color);
+                border-style: solid;
+            }
+
+            /* Navigation */
+            .navbar {
+                border-bottom-width: var(--border);
+                border-color: var(--nr-border-color);
+                border-style: solid;
+                box-shadow: var(--nr-shadow-sm);
+            }
+
+            .tabs-bordered .tab {
+                border-bottom-width: var(--border);
+                border-color: var(--nr-border-color);
+                border-style: solid;
+            }
+
+            /* Utility components */
+            .toast,
+            .collapse,
+            .tooltip {
+                border-width: var(--border);
+                border-color: var(--nr-border-color);
+                border-style: solid;
+                box-shadow: var(--nr-shadow-sm);
+            }
+
+            /* Hero title badge */
+            .hero-title-badge {
+                background-color: var(--color-accent);
+                color: var(--color-accent-content);
+                border-width: 4px;
+                border-color: var(--nr-border-color);
+                box-shadow: var(--nr-shadow-base);
+                padding: 0.5rem 1rem;
+                font-weight: 900;
+                text-transform: uppercase;
+                display: inline-block;
+            }
+
+            /* Hero components */
+            .hero-title {
+                color: var(--color-base-content);
+            }
+
+            .hero-card-frame {
+                background: linear-gradient(to bottom right,
+                    var(--color-primary),
+                    var(--color-secondary),
+                    var(--color-warning)
+                );
+                border-color: var(--nr-border-color);
+            }
+
+            .hero-card-inner {
+                background-color: var(--color-base-100);
+                border-color: var(--nr-border-color);
+            }
+
+            .hero-decoration {
+                border-color: var(--nr-border-color);
+            }
+
+            /* Sticker effect */
+            .sticker {
+                transform: rotate(-3deg);
+                /* Enhanced anti-aliasing for smooth rotation rendering */
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                backface-visibility: hidden;
+                -webkit-backface-visibility: hidden;
+                transform-style: preserve-3d;
+                will-change: transform;
+                image-rendering: crisp-edges;
+
+                &:nth-child(2n) {
+                    transform: rotate(2deg);
+                }
+
+                &:before {
+                    content: "";
+                    border-radius: inherit;
+                    z-index: -1;
+                    background: #fff3;
+                    position: absolute;
+                    inset: -2px;
+                }
+            }
+        }
+
+        /* ========================================
+           LIGHT MODE OVERRIDES
+           ======================================== */
+        [data-theme="neobrutalism-light"] {
+            /* Button borders */
+            .btn:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]) {
+                --btn-border: #000000;
+                --btn-hover-border: #000000;
+                --btn-focus-border: #000000;
+            }
+
+            /* Auto-apply black borders to bg-* utility classes */
+            .bg-primary:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-secondary:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-accent:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-neutral:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-base-100:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-base-200:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-base-300:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-info:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-success:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-warning:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-error:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]) {
+                border-color: #000000;
+            }
+
+            /* Graph paper texture */
+            .texture-grain::before {
+                background-image:
+                    repeating-linear-gradient(
+                        0deg,
+                        transparent,
+                        transparent 19px,
+                        rgba(0, 0, 0, 0.04) 19px,
+                        rgba(0, 0, 0, 0.04) 20px
+                    ),
+                    repeating-linear-gradient(
+                        90deg,
+                        transparent,
+                        transparent 19px,
+                        rgba(0, 0, 0, 0.04) 19px,
+                        rgba(0, 0, 0, 0.04) 20px
+                    );
+            }
+
+            /* Hero background gradient */
+            .hero-bg {
+                background: linear-gradient(to bottom right, 
+                    oklch(0.99 0 0), 
+                    oklch(0.95 0.02 195), 
+                    oklch(0.96 0.02 135)
+                );
+            }
+        }
+
+        /* ========================================
+           DARK MODE OVERRIDES
+           ======================================== */
+        [data-theme="neobrutalism-dark"] {
+            /* Button borders */
+            .btn:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]) {
+                --btn-border: #ffffff;
+                --btn-hover-border: #ffffff;
+                --btn-focus-border: #ffffff;
+            }
+
+            /* Auto-apply white borders to bg-* utility classes */
+            .bg-primary:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-secondary:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-accent:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-neutral:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-base-100:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-base-200:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-base-300:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-info:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-success:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-warning:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
+            .bg-error:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]) {
+                border-color: #ffffff;
+            }
+
+            /* Graph paper texture */
+            .texture-grain::before {
+                background-image:
+                    repeating-linear-gradient(
+                        0deg,
+                        transparent,
+                        transparent 19px,
+                        rgba(255, 255, 255, 0.04) 19px,
+                        rgba(255, 255, 255, 0.04) 20px
+                    ),
+                    repeating-linear-gradient(
+                        90deg,
+                        transparent,
+                        transparent 19px,
+                        rgba(255, 255, 255, 0.04) 19px,
+                        rgba(255, 255, 255, 0.04) 20px
+                    );
+            }
+
+            /* Hero background gradient */
+            .hero-bg {
+                background: linear-gradient(to bottom right,
+                    oklch(0.2 0.01 280),
+                    oklch(0.22 0.06 195),
+                    oklch(0.24 0.08 135)
+                );
+            }
+        }
+
+        /* ========================================
+           SHARED EFFECTS (NOT THEME-DEPENDENT)
+           ======================================== */
+        
+        /* Texture grain base */
+        .texture-grain {
+            position: relative;
+
+            &::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                pointer-events: none;
+            }
+        }
+
+        /* Glitch effect */
+        @keyframes glitch-1 {
+            0%, 100% { transform: translate(0); }
+            10% { transform: translate(-2px, -2px); }
+            20% { transform: translate(2px, 2px); }
+            30% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            50% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            70% { transform: translate(-2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            90% { transform: translate(-2px, -2px); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { transform: translate(0); }
+            10% { transform: translate(2px, 2px); }
+            20% { transform: translate(-2px, -2px); }
+            30% { transform: translate(2px, -2px); }
+            40% { transform: translate(-2px, 2px); }
+            50% { transform: translate(2px, 2px); }
+            60% { transform: translate(-2px, -2px); }
+            70% { transform: translate(2px, -2px); }
+            80% { transform: translate(-2px, 2px); }
+            90% { transform: translate(2px, 2px); }
+        }
+
+        .glitch-effect {
+            position: relative;
+
+            &::before,
+            &::after {
+                content: attr(data-text);
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            &:hover::before {
+                animation: glitch-1 0.3s infinite;
+                color: #ff0080;
+                opacity: 0.8;
+                z-index: -1;
+            }
+
+            &:hover::after {
+                animation: glitch-2 0.3s infinite;
+                color: #00ffff;
+                opacity: 0.8;
+                z-index: -2;
+            }
+        }
+
+        /* Animations */
         @keyframes marquee-left {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(-50%);
-            }
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
 
         @keyframes marquee-right {
-            0% {
-                transform: translateX(-50%);
-            }
-            100% {
-                transform: translateX(0);
-            }
-        }
-
-        .animate-marquee-left {
-            animation: marquee-left 20s linear infinite;
-        }
-
-        .animate-marquee-right {
-            animation: marquee-right 25s linear infinite;
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
         }
 
         @keyframes spin-slow {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .animate-spin-slow {
-            animation: spin-slow 20s linear infinite;
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         @keyframes bounce-slow {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-20px);
-            }
-        }
-
-        .animate-bounce-slow {
-            animation: bounce-slow 4s ease-in-out infinite;
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
 
         @keyframes sway {
-            0%, 100% {
-                transform: translateX(0) rotate(45deg);
-            }
-            50% {
-                transform: translateX(15px) rotate(45deg);
-            }
-        }
-
-        .animate-sway {
-            animation: sway 5s ease-in-out infinite;
-        }
-
-        /* Legacy keyframes - kept for compatibility */
-        @keyframes spin-slow-legacy {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @keyframes bounce-slow-legacy {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
+            0%, 100% { transform: translateX(0) rotate(45deg); }
+            50% { transform: translateX(15px) rotate(45deg); }
         }
 
         @keyframes pulse-shadow {
-            0%, 100% {
-                box-shadow: var(--nr-shadow-base);
+            0%, 100% { box-shadow: var(--nr-shadow-base); }
+            50% { box-shadow: var(--nr-shadow-xl); }
+        }
+
+        /* Pop-in animation - scale from 0 to 1 with bounce (universal, works on any element) */
+        /* Note: This only animates scale and opacity, preserving any transform on the element */
+        @keyframes pop-in {
+            0% { 
+                scale: 0;
+                opacity: 0;
             }
             50% {
-                box-shadow: var(--nr-shadow-xl);
+                scale: 1.1;
+            }
+            100% { 
+                scale: 1;
+                opacity: 1;
             }
         }
 
-        .animate-spin-slow {
-            animation: spin-slow 4s linear infinite;
+        .animate-marquee-left { animation: marquee-left 20s linear infinite; }
+        .animate-marquee-right { animation: marquee-right 25s linear infinite; }
+        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+        .animate-bounce-slow { animation: bounce-slow 4s ease-in-out infinite; }
+        .animate-sway { animation: sway 5s ease-in-out infinite; }
+        .animate-pulse-shadow { animation: pulse-shadow 2.5s ease-in-out infinite; }
+
+        /* Pop-in animation - works universally on any element */
+        .animate-pop-in {
+            animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
-        .animate-bounce-slow {
-            animation: bounce-slow 3s ease-in-out infinite;
+        /* Stagger delays for sequential animations */
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+        .delay-6 { animation-delay: 0.6s; }
+
+        /* 
+         * Universal hover effects that work WITH existing transforms
+         * 
+         * STRATEGY: Use nested wrappers when combining rotation + hover scale
+         * 
+         * Pattern 1 - Simple (no rotation):
+         *   <span class="badge hover-scale-up hover-shadow-boost">Badge</span>
+         * 
+         * Pattern 2 - With rotation (nested):
+         *   <span style="transform: rotate(-8deg)" class="rotate-smooth">
+         *     <span class="badge hover-scale-up hover-shadow-boost">Badge</span>
+         *   </span>
+         * 
+         * Pattern 3 - Direct (for non-interactive rotation):
+         *   <span class="badge rotate-2">Badge</span>
+         */
+
+        /* Hover scale effect - uses scale property to work with transform: rotate() */
+        .hover-scale-up {
+            transition: scale 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), rotate 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            &:hover {
+                scale: 1.1;
+            }
         }
 
-        .animate-pulse-shadow {
-            animation: pulse-shadow 2.5s ease-in-out infinite;
+        .hover-scale-up-sm {
+            transition: scale 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), rotate 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            &:hover {
+                scale: 1.05;
+            }
         }
 
-        /* Scroll-triggered animations - Use !important to override component styles */
+        .hover-scale-up-lg {
+            transition: scale 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), rotate 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            &:hover {
+                scale: 1.15;
+            }
+        }
+
+        /* Hover rotate effect - adds slight rotation change using rotate property */
+        /* Note: rotate property is ADDITIVE to transform: rotate(), so both work together */
+        .hover-rotate-more {
+            &:hover {
+                rotate: 3deg;
+            }
+        }
+
+        .hover-rotate-more-neg {
+            &:hover {
+                rotate: -3deg;
+            }
+        }
+
+        .hover-rotate-wiggle {
+            &:hover {
+                rotate: 2deg;
+            }
+        }
+
+        .hover-rotate-wiggle-neg {
+            &:hover {
+                rotate: -2deg;
+            }
+        }
+
+        /* Hover shadow boost - increases shadow depth */
+        .hover-shadow-boost {
+            transition: box-shadow 0.2s ease;
+            
+            &:hover {
+                box-shadow: 5px 5px 0px 0px var(--nr-shadow-color) !important;
+            }
+        }
+
+        .hover-shadow-boost-lg {
+            transition: box-shadow 0.2s ease;
+            
+            &:hover {
+                box-shadow: 8px 8px 0px 0px var(--nr-shadow-color) !important;
+            }
+        }
+
+        /* Scroll animations */
         .fade-in-up {
             opacity: 0 !important;
             transform: translateY(40px) !important;
             transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
-        }
 
-        .fade-in-up.visible {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
+            &.visible {
+                opacity: 1 !important;
+                transform: translateY(0) !important;
+            }
         }
 
         .slide-in-left {
             opacity: 0 !important;
             transform: translateX(-80px) !important;
             transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
-        }
 
-        .slide-in-left.visible {
-            opacity: 1 !important;
-            transform: translateX(0) !important;
+            &.visible {
+                opacity: 1 !important;
+                transform: translateX(0) !important;
+            }
         }
 
         .slide-in-right {
             opacity: 0 !important;
             transform: translateX(80px) !important;
             transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
-        }
 
-        .slide-in-right.visible {
-            opacity: 1 !important;
-            transform: translateX(0) !important;
+            &.visible {
+                opacity: 1 !important;
+                transform: translateX(0) !important;
+            }
         }
 
         .scale-in {
             opacity: 0 !important;
             transform: scale(0.7) !important;
             transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
+
+            &.visible {
+                opacity: 1 !important;
+                transform: scale(1) !important;
+            }
         }
 
-        .scale-in.visible {
-            opacity: 1 !important;
-            transform: scale(1) !important;
-        }
-
-        /* ========================================
-           VIEW TRANSITIONS
-           ======================================== */
+        /* View transitions */
         html[data-vt-nav] body {
             pointer-events: none;
         }

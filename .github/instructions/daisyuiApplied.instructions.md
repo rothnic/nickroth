@@ -1,7 +1,259 @@
 ---
-description: daisyUI 5 Documentation via llms.txt (should not be modified directly)
+description: daisyUI 5 Guidance for Customizing daisyUI and Previous Findings
 applyTo: "**/*.css, **/*.astro, **/*.html"
 ---
+
+# daisyUI CRITICAL instructions
+
+## Core Principles
+
+### 1. Override, Don't Extend
+**Always customize DaisyUI's built-in classes directly** rather than creating custom variants:
+- ✅ Override `.btn`, `.badge`, `.card` in `global.css` 
+- ❌ Don't create `.btn-brutal`, `.badge-custom`, `.card-special`
+- **Why**: Makes theme portable, keeps standard DaisyUI class names, no custom naming to remember
+
+### 1.1. DaisyUI 5 Theme Customization Approach
+**Proper three-layer customization strategy**:
+1. **Theme Variables** (`@plugin "daisyui/theme"`): Define CSS variables (--radius-*, --border, --color-*, --size-*)
+2. **Component Overrides** (`@layer components`): Customize .btn, .card, .badge with explicit CSS properties
+3. **Utility Classes** (`@layer utilities`): Add project-specific utilities (shadows, rotations, animations)
+
+**Critical Rules**:
+- ✅ Set border-radius via `--radius-selector`, `--radius-field`, `--radius-box` in theme plugin
+- ✅ Set border thickness via `--border` in theme plugin
+- ✅ Override component styles in `@layer components` - use explicit CSS properties instead of @apply
+- ⚠️ Use `!important` **sparingly** - only when theme variables + layer specificity fail
+- ❌ Never use global `* { property: value !important }` selectors
+- ❌ Never override theme variables in @layer base
+- ❌ Avoid @apply with arbitrary values (e.g., `@apply border-[4px]`) - use explicit CSS instead
+- **Why**: DaisyUI generates utility classes from theme variables, global overrides break specificity
+
+**!important Usage Guidelines**:
+- **Preferred**: Let theme variables control styling (`--radius-field: 0rem` → DaisyUI applies it)
+- **Acceptable**: Explicit CSS properties in @layer components (`border-width: 4px;`)
+- **Last Resort**: Add !important only when specificity battles can't be won otherwise
+- **Anti-Pattern**: Heavy !important usage indicates you're fighting the framework - investigate root cause
+
+**Example of Correct Approach**:
+```css
+/* ✅ GOOD: Work with theme system */
+@plugin "daisyui/theme" {
+  --radius-field: 0rem;  /* DaisyUI applies this */
+  --border: 4px;
+}
+
+@layer components {
+  .btn {
+    /* Theme already applied border-width and border-radius */
+    box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+    font-weight: 900;
+  }
+}
+
+/* ⚠️ ACCEPTABLE: When theme variables aren't enough */
+@layer components {
+  .btn {
+    border-width: 4px !important;  /* Only if theme --border not working */
+    border-radius: 0 !important;   /* Only if theme --radius-* not working */
+  }
+}
+
+/* ❌ BAD: Fighting framework with !important everywhere */
+@layer components {
+  .btn {
+    padding: 1rem !important;
+    margin: 0 !important;
+    display: flex !important;
+    /* ... everything with !important is a code smell */
+  }
+}
+```
+
+### 2. Zero JavaScript for Styling
+**Never use JavaScript libraries for style composition**:
+- ✅ Pure CSS in `@layer components` and `@layer utilities`
+- ✅ Simple string concatenation in Astro components: `class={['btn', variant && `btn-${variant}`].join(' ')}`
+- ❌ No `tailwind-variants`, `clsx`, `classnames`, or similar libraries
+- **Why**: Maintains performance, portability, and framework-agnostic approach
+
+### 3. Framework Agnostic
+**Write components that work anywhere**:
+- ✅ Standard HTML with class attributes
+- ✅ Works in Astro, React, Vue, Svelte, vanilla HTML
+- ❌ No framework-specific styling patterns
+- **Why**: Theme can be sold/reused across different tech stacks
+
+### 4. CSS-Only Animations
+**All animations must use pure CSS**:
+- ✅ `@keyframes` in `global.css`
+- ✅ Utility classes like `animate-spin-slow`
+- ❌ No JavaScript animation libraries
+- ❌ No GSAP, Framer Motion, or similar
+- **Why**: Better performance, no hydration needed, works everywhere
+
+### 5. Reference Implementation vs. Production
+**When viewing example code (screenshots, snippets)**:
+- The example is a **reference for visual design only**
+- Never copy framework-specific implementations (React hooks, Vue composables, etc.)
+- Extract the **visual patterns** and rebuild using DaisyUI components + CSS overrides
+- Ask: "What DaisyUI components can achieve this look?"
+
+### 6. Content-Component Separation (CMS-Ready Architecture)
+
+**Never hard-code content in components**:
+- ✅ Components accept data via props/slots
+- ✅ Content lives in `src/content/` collections (frontmatter + markdown)
+- ✅ Data objects/arrays in dedicated files (`src/data/`)
+- ❌ No text content directly in component markup (except labels/UI text)
+- ❌ No arrays of content items in component files
+
+**Why**: Preparing for future CMS migration, easier content updates, translation-ready
+
+### 6.1. Dark Mode Support
+**Proper dark mode implementation with DaisyUI 5**:
+- ✅ Create separate `@plugin "daisyui/theme"` blocks for light and dark themes
+- ✅ Use `prefersdark: true` in dark theme to enable automatic switching
+- ✅ Ensure all CSS variables (--color-*, --radius-*, --border) defined in both themes
+- ✅ Test dark mode by toggling system preferences or using theme-controller
+- ❌ Don't use Tailwind's `dark:` prefix (DaisyUI handles theme switching)
+- ❌ Don't create separate component overrides for dark mode
+- **Why**: DaisyUI's theme system handles all color switching via CSS variables
+
+### 7. Showcase/Demo Pages for Theme Sales
+
+**Always build component showcases**:
+- ✅ Create dedicated pages showing all variants/options (`src/pages/showcase/`)
+- ✅ Components must work in isolation, not just in context
+- ✅ Showcase pages serve as visual documentation for buyers
+- ✅ Include live examples of every size, color, state variation
+- ❌ Don't skip showcase pages - they're critical for selling theme
+- **Why**: Buyers need to see capabilities, validates components work independently
+
+**Example Structure**:
+```
+src/pages/showcase/
+├── index.astro          # Landing page with navigation
+├── buttons.astro        # All button variants
+├── cards.astro          # All card types
+├── badges.astro         # Stickers/badges with positioning
+├── forms.astro          # Form elements and states
+└── typography.astro     # Typography system
+```
+
+### 8. Animation Strategy
+
+**CSS-first approach for all animations**:
+- ✅ CSS transitions/animations for hover, focus, active states
+- ✅ Vanilla JS + Intersection Observer + CSS classes for scroll animations
+- ✅ Motion One (5kb) for complex interactive animations CSS can't handle
+- ❌ Never Framer Motion (45kb, React-specific, breaks portability)
+- ❌ No GSAP or other heavy animation libraries
+- **Why**: Performance, works everywhere, no framework lock-in
+
+**Pattern Examples**:
+```css
+/* Hover effects in @layer utilities */
+.hover-lift:hover { 
+  transform: translate(-2px, -2px); 
+  box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+}
+
+/* Scroll animations with Intersection Observer */
+.fade-in-up { 
+  opacity: 0; 
+  transform: translateY(20px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.fade-in-up.visible { 
+  opacity: 1; 
+  transform: translateY(0); 
+}
+```
+
+**Decision Tree**:
+1. Can it be pure CSS? → Use CSS transitions/animations
+2. Need scroll detection? → Vanilla JS + Intersection Observer
+3. Complex sequencing? → Motion One library
+4. Interactive component? → Preact/Alpine.js island
+
+### 9. Icon Management
+
+**Keep icon overhead minimal**:
+- ✅ Static SVG imports for commonly used icons (<20 icons)
+- ✅ Create Astro icon components (`src/components/icons/`)
+- ✅ Use `unplugin-icons` if icon count grows beyond 20
+- ❌ Don't import full icon libraries (lucide-react, react-icons)
+- ❌ Avoid framework-specific icon components
+- **Why**: Reduces bundle size, maintains framework-agnostic approach
+
+**Example**:
+```astro
+---
+// src/components/icons/ArrowRight.astro
+---
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+  <path d="M5 12h14m-7-7l7 7-7 7"/>
+</svg>
+```
+- ✅ Data objects/arrays in dedicated files (`src/data/`)
+- ❌ No text content directly in component markup (except labels/UI text)
+- ❌ No arrays of content items in component files
+
+**Why**: Preparing for future CMS migration, easier content updates, translation-ready
+
+**Example**:
+```astro
+<!-- ❌ BAD: Hard-coded content in component -->
+<Hero>
+  <h1>Nick Roth</h1>
+  <p>I turn business objectives into shippable systems</p>
+</Hero>
+
+<!-- ✅ GOOD: Content passed as props -->
+<Hero 
+  name={frontmatter.name}
+  tagline={frontmatter.tagline}
+  badges={frontmatter.badges}
+/>
+
+<!-- ✅ GOOD: Content from collection -->
+---
+import { getEntry } from 'astro:content';
+const hero = await getEntry('hero', 'home');
+---
+<Hero {...hero.data} />
+```
+
+## Implementation Checklist
+
+Before building any component:
+- [ ] Identify which DaisyUI components map to the design (hero, card, badge, btn, etc.)
+- [ ] Plan CSS overrides in `@layer components` for brutalist styling
+- [ ] Use only standard DaisyUI class names in markup
+- [ ] Define any new utilities in `@layer utilities` (rotations, shadows, animations)
+- [ ] Ensure animations are CSS-only (or vanilla JS + CSS if needed for scroll)
+- [ ] Test that markup works as plain HTML (framework-agnostic)
+- [ ] **Separate content from presentation** - no hard-coded text in components
+- [ ] **Use content collections or data files** for all user-facing text
+- [ ] **Plan showcase page** - consider how to display all variants
+- [ ] **Extract icons as static SVGs** - avoid icon library dependencies
+
+## Project Context
+
+**Goal**: Build a reusable neobrutalism DaisyUI theme for future sale
+**Proving Ground**: Nick Roth's personal site
+**Strategy**: Slowly refine components to be portable, performant, and beautiful
+
+## Key Files
+- `./docs/figma-export-review.md` - Comprehensive analysis of React prototype (animation, stickers, showcase structure)
+- `./docs/neobrutalism-daisyui-implementation.md` - Complete implementation strategy
+- `./docs/design-system/guide.md` - Full design system principles and patterns
+- `./docs/design-system/example-global-styles.md` - Reference styles (NOT for direct copying)
+- `./docs/component-backlog.md` - Prioritized task list with dependencies
+- `tailwind.config.mjs` - Theme color configuration
+- `src/styles/global.css` - Component overrides and utilities
+- `.github/prompts/buildComponent.prompt.md` - Component development workflow
 
 # daisyUI 5
 daisyUI 5 is a CSS library for Tailwind CSS 4
