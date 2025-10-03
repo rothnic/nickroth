@@ -1,52 +1,128 @@
 ---
-import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
+import headshotImage from "../assets/images/nick-headshot.png";
+import GlitchText from "./GlitchText.astro";
+import LucideIcon from "./icons/LucideIcon.astro";
+import { heroContent } from "../data/hero";
+
+const { name, floatingBadges, stickers, ctas, statement, scrollCta, portraitAlt } = heroContent;
+
+const stickerPositionClasses: Record<string, string> = {
+        "top-left": "absolute -top-6 left-12",
+        "top-right": "absolute -top-8 -right-8",
+        "bottom-left": "absolute -bottom-8 -left-8",
+        "bottom-right": "absolute -bottom-8 -right-8",
+        "top-center": "absolute -top-8 left-1/2 -translate-x-1/2",
+        "bottom-center": "absolute -bottom-8 left-1/2 -translate-x-1/2",
+        "middle-left": "absolute top-1/2 -left-12 -translate-y-1/2",
+        "middle-right": "absolute top-1/2 -right-12 -translate-y-1/2",
+};
+
+const stickerSizeClasses: Record<string, string> = {
+        sm: "px-3 py-1.5 text-xs",
+        md: "px-4 py-2 text-sm",
+        lg: "px-5 py-3 text-base",
+};
+
+const ctaClasses: Record<string, string> = {
+        primary: "btn btn-lg btn-primary hero-btn hero-btn-primary",
+        secondary: "btn btn-lg btn-secondary hero-btn hero-btn-secondary",
+};
 ---
+<section
+        id="hero"
+        class="hero hero-home relative overflow-hidden bg-gradient-to-br from-base-100 via-cyan-50 to-lime-50 pt-12 texture-grid-paper"
+>
+        <div class="hero-content mx-auto flex min-h-[85vh] w-full max-w-7xl flex-col justify-center gap-14 px-4 py-12 text-center sm:px-6 lg:px-8 lg:gap-20 lg:py-16">
+                <div class="flex flex-wrap justify-center gap-4 lg:gap-6">
+                        {floatingBadges.map((badge) => (
+                                <span
+                                        class={`badge hero-badge hero-badge-floating px-4 py-2 ${badge.colorClass} ${badge.textClass ?? "text-black"}`}
+                                        style={`--badge-rotation:${badge.rotation}deg;`}
+                                >
+                                        <LucideIcon name={badge.icon} class="h-4 w-4" />
+                                        <span>{badge.label}</span>
+                                </span>
+                        ))}
+                </div>
 
-<div class="hero min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10">
-  <div class="hero-content text-center">
-    <div class="max-w-4xl">
-      <div class="avatar mb-8">
-        <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img src={avatarPlaceholder.src} width={128} height={128} alt="Nick Roth" loading="lazy" />
-        </div>
-      </div>
-      <h1 class="text-5xl font-bold mb-2">Nick Roth</h1>
-      <p class="text-2xl mb-4 text-base-content/80">Product & Systems Director</p>
-      <p class="text-lg mb-8 max-w-3xl mx-auto leading-relaxed">
-        Transforming complex requirements into systematic solutions through objective-first discovery and automation-driven execution.
-      </p>
-      
-      <!-- Key Metrics -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 max-w-4xl mx-auto">
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">400%</div>
-          <div class="stat-desc text-sm">YoY blog revenue increase</div>
-        </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">$35k</div>
-          <div class="stat-desc text-sm">monthly cost savings</div>
-        </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">150%</div>
-          <div class="stat-desc text-sm">organic user growth</div>
-        </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">125%</div>
-          <div class="stat-desc text-sm">mobile revenue growth</div>
-        </div>
-      </div>
+                <div class="flex flex-col items-center justify-center gap-12 lg:flex-row lg:items-end lg:justify-between lg:gap-20">
+                        <div class="order-2 text-center lg:order-1 lg:text-left">
+                                <h1 class="text-7xl font-display font-black leading-none text-black md:text-9xl">
+                                        <GlitchText text={name.first} class="block" />
+                                        <span class="mt-4 inline-block -rotate-2 border-[6px] border-black bg-gradient-to-r from-fuchsia-500 to-purple-600 px-4 py-2 text-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                                                <GlitchText text={name.last} />
+                                        </span>
+                                </h1>
+                        </div>
 
-      <div class="flex gap-4 justify-center flex-wrap">
-        <a href="/work" class="btn btn-primary btn-lg">View My Work</a>
-        <a href="/contact" class="btn btn-outline btn-lg">Get In Touch</a>
-      </div>
-      
-      <div class="mt-8">
-        <p class="text-sm text-base-content/60">
-          <span class="inline-block mr-4">📍 Huntsville, AL</span>
-          <span class="inline-block">✅ Open to consulting and fractional roles</span>
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
+                        <div class="order-1 lg:order-2">
+                                <div class="relative inline-flex hero-portrait-cluster">
+                                        <div class="pointer-events-none absolute -inset-8">
+                                                <div class="hero-shape hero-shape-square"></div>
+                                                <div class="hero-shape hero-shape-circle"></div>
+                                                <div class="hero-shape hero-shape-bar"></div>
+                                        </div>
+
+                                        <div class="hero-portrait-frame">
+                                                <div class="hero-portrait-inner">
+                                                        <div class="overflow-hidden border-4 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                                                <img
+                                                                        src={headshotImage.src}
+                                                                        alt={portraitAlt}
+                                                                        width={384}
+                                                                        height={384}
+                                                                        loading="lazy"
+                                                                        class="h-80 w-80 object-cover md:h-96 md:w-96"
+                                                                />
+                                                        </div>
+                                                </div>
+                                        </div>
+
+                                        {stickers.map((sticker) => {
+                                                const positionClass = stickerPositionClasses[sticker.position] ?? "";
+                                                const sizeClass = stickerSizeClasses[sticker.size ?? "md"];
+
+                                                return (
+                                                        <span
+                                                                class={`badge hero-badge hero-badge-sticker ${sizeClass} ${positionClass} ${sticker.colorClass} ${sticker.textClass ?? "text-black"}`}
+                                                                style={`--badge-rotation:${sticker.rotation}deg;`}
+                                                        >
+                                                                {sticker.label}
+                                                        </span>
+                                                );
+                                        })}
+                                </div>
+                        </div>
+                </div>
+
+                <div class="relative mx-auto max-w-4xl">
+                        <div class="card hero-statement-card">
+                                <div class="card-body">
+                                        <p class="m-0 text-2xl font-black leading-relaxed text-black md:text-3xl">
+                                                {statement.leading} <span class="hero-statement-highlight">{statement.highlight}</span> {statement.trailing}
+                                        </p>
+                                </div>
+                        </div>
+                        <div class="hero-statement-accent hero-statement-accent-square"></div>
+                        <div class="hero-statement-accent hero-statement-accent-bar"></div>
+                </div>
+
+                <div class="flex flex-col items-center gap-6 sm:flex-row sm:justify-center">
+                        {ctas.map((cta) => (
+                                <a href={cta.href} class={ctaClasses[cta.variant]}>
+                                        <span>{cta.label}</span>
+                                </a>
+                        ))}
+                </div>
+        </div>
+
+        <div class="absolute bottom-8 left-1/2 hidden -translate-x-1/2 sm:block">
+                <a
+                        href={scrollCta.href}
+                        class="btn btn-circle btn-outline hero-scroll-btn"
+                        aria-label={scrollCta.label}
+                >
+                        <LucideIcon name="arrow-down" class="h-6 w-6" />
+                </a>
+        </div>
+</section>

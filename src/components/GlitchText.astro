@@ -1,0 +1,16 @@
+---
+interface Props {
+        text: string;
+        as?: keyof HTMLElementTagNameMap;
+        class?: string;
+}
+
+const { text, as = "span", class: className = "" } = Astro.props as Props;
+const Tag = as;
+const classes = ["glitch-effect", "font-glitch", className].filter(Boolean).join(" ");
+const glitchValue = text.replace(/"/g, '\\"');
+---
+
+<Tag class={classes} data-text={text} style={`--glitch-text:"${glitchValue}"`}>
+        {text}
+</Tag>

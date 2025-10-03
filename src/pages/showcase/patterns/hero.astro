@@ -1,0 +1,71 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import HeroSection from "../../../components/Hero.astro";
+import { heroContent } from "../../../data/hero";
+
+const stickerPositionClasses: Record<string, string> = {
+  "top-left": "absolute -top-6 left-12",
+  "top-right": "absolute -top-8 -right-8",
+  "bottom-left": "absolute -bottom-8 -left-8",
+  "bottom-right": "absolute -bottom-8 -right-8",
+  "top-center": "absolute -top-8 left-1/2 -translate-x-1/2",
+  "bottom-center": "absolute -bottom-8 left-1/2 -translate-x-1/2",
+  "middle-left": "absolute top-1/2 -left-12 -translate-y-1/2",
+  "middle-right": "absolute top-1/2 -right-12 -translate-y-1/2",
+};
+
+const stickerSizeClasses: Record<string, string> = {
+  sm: "px-3 py-1 text-xs",
+  md: "px-4 py-2 text-sm",
+  lg: "px-5 py-2.5 text-base",
+};
+---
+
+<BaseLayout
+  title="Hero - Patterns"
+  description="Homepage hero with glitch branding, stickers, and CTA layout."
+  showNavbar={false}
+>
+  <div class="bg-base-200 min-h-screen">
+    <div class="space-y-12">
+      <section class="container mx-auto px-4 pt-20">
+        <div class="flex flex-col items-center text-center gap-4 mb-12">
+          <span class="badge badge-accent badge-sm shadow-brutal-sm">Homepage Pattern</span>
+          <h1 class="text-5xl font-black">Hero Block</h1>
+          <p class="text-xl text-base-content/70 max-w-3xl">
+            Full-width hero showcasing glitch branding, sticker badges, and CTA system. Hover over the portrait to trigger
+            rotation on both the background and headshot.
+          </p>
+        </div>
+        <div class="rounded-none lg:rounded-[2.5rem] border-4 border-black dark:border-white shadow-brutal-xl overflow-hidden">
+          <HeroSection />
+        </div>
+      </section>
+
+      <section class="container mx-auto space-y-8 px-4 pb-20">
+        <h2 class="inline-block border-b-4 border-base-content pb-2 text-3xl font-black">Sticker Layout</h2>
+        <p class="max-w-3xl text-base text-base-content/70">
+          Sticker text, colors, and rotations live in <code class="bg-base-content/10 px-2 py-1 rounded">src/data/hero.ts</code>. The
+          live hero and this preview both map that data to brutalist badges for consistent placement.
+        </p>
+        <div class="relative mx-auto max-w-md rounded-[2rem] border-4 border-black bg-base-100 p-12 shadow-brutal-xl">
+          <p class="mb-2 text-center font-bold uppercase tracking-[0.3em]">Sticker positions</p>
+          <p class="mb-10 text-center text-sm text-base-content/70">Hover each badge to see the rotate-and-lift micro-interaction.</p>
+          {heroContent.stickers.map((sticker) => {
+            const positionClass = stickerPositionClasses[sticker.position] ?? "";
+            const sizeClass = stickerSizeClasses[sticker.size ?? "md"];
+
+            return (
+              <span
+                class={`badge hero-badge hero-badge-sticker ${sticker.colorClass} ${sticker.textClass ?? "text-black"} ${sizeClass} ${positionClass}`}
+                style={`--badge-rotation:${sticker.rotation}deg;`}
+              >
+                {sticker.label}
+              </span>
+            );
+          })}
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,27 +1,124 @@
 ---
-import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Navbar from "../../../components/Navbar.astro";
+import GlitchText from "../../../components/GlitchText.astro";
+import LucideIcon from "../../../components/icons/LucideIcon.astro";
+import { navigationData } from "../../../data/navigation";
+
+const { demoItems, items } = navigationData;
 ---
 
-<BaseLayout 
-  title="Navigation - Components" 
-  description="Navbar, menu, breadcrumbs, and navigation patterns."
+<BaseLayout
+  title="Navigation - Components"
+  description="Navbar, menu, and navigation patterns with glitch branding."
+  showNavbar={false}
 >
-  <div class="container mx-auto px-4 py-20 max-w-6xl">
-    <h1 class="text-5xl font-black mb-4">Navigation</h1>
-    <p class="text-xl text-base-content/70 mb-12">
-      Navigation components for site structure and wayfinding.
-    </p>
+  <div class="min-h-screen bg-base-200 py-20">
+    <div class="container mx-auto px-4 max-w-6xl space-y-16">
+      <header class="space-y-4 text-center">
+        <div class="inline-flex items-center gap-3">
+          <GlitchText text="NR//NAV" class="text-sm" />
+          <span class="badge badge-accent badge-sm shadow-brutal-sm">Showcase</span>
+        </div>
+        <h1 class="text-5xl font-black">Navigation System</h1>
+        <p class="mx-auto max-w-3xl text-xl text-base-content/70">
+          Glitch-branded navigation with icon-labeled pills and a hover-triggered demo dropdown — matching the exported
+          Figma build pixel-for-pixel across desktop and mobile breakpoints.
+        </p>
+      </header>
 
-    <!-- TODO: Navbar variations -->
-    <!-- TODO: Menu (vertical/horizontal) -->
-    <!-- TODO: Breadcrumbs -->
-    <!-- TODO: Tabs -->
-    <!-- TODO: Pagination -->
-    <!-- TODO: Drawer -->
-    
-    <div class="alert alert-warning shadow-brutal border-2 border-black dark:border-white">
-      <span>🚧 This page is under construction. Check back soon!</span>
+      <section class="space-y-6">
+        <h2 class="text-3xl font-black border-b-4 border-base-content inline-block pb-2">Default Light Mode</h2>
+        <p class="text-base text-base-content/70">
+          Fixed desktop bar with glitch lockup, icon buttons, and a hover-triggered demo menu sourced from shared data.
+        </p>
+        <div class="rounded-3xl border-4 border-black bg-base-100 shadow-brutal-xl overflow-hidden">
+          <Navbar currentPath="/showcase/components/navigation" />
+        </div>
+        <ul class="list-disc space-y-2 pl-6 text-base-content/70">
+          <li>Glitch lockup renders with <code class="bg-base-content/10 px-1">GlitchText</code> and the Space Grotesk display font.</li>
+          <li>Icon pills inherit active state from <code class="bg-base-content/10 px-1">Navbar</code>&rsquo;s pathname logic.</li>
+          <li>Hovering the Demo pill reveals the brutalist dropdown from the same data source used in production.</li>
+        </ul>
+      </section>
+
+      <section class="space-y-6">
+        <h2 class="text-3xl font-black border-b-4 border-base-content inline-block pb-2">Dark Mode Preview</h2>
+        <p class="text-base text-base-content/70">
+          Navigation automatically inverts borders and shadows when dark theme is applied.
+        </p>
+        <div data-theme="neobrutalism-dark" class="rounded-3xl border-4 border-white bg-base-300 shadow-brutal-xl overflow-hidden">
+          <Navbar currentPath="/work" />
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <h2 class="inline-block border-b-4 border-base-content pb-2 text-3xl font-black">Demo Dropdown &amp; Mobile Drawer</h2>
+        <p class="text-base text-base-content/70">
+          Desktop hover menu and mobile <code class="bg-base-content/10 px-1">&lt;details&gt;</code> share the same data. Both reuse the brutalist panel styling from the production navigation.
+        </p>
+        <div class="grid gap-6 lg:grid-cols-2">
+          <div class="rounded-3xl border-4 border-black bg-base-100 p-6 shadow-brutal-xl">
+            <div class="mb-4 text-sm uppercase tracking-[0.3em] text-base-content/60">Desktop dropdown</div>
+            <div class="dropdown dropdown-hover dropdown-end inline-block">
+              <label tabindex="0" class="btn btn-sm btn-nav btn-nav-default">
+                <LucideIcon name="zap" class="h-4 w-4" />
+                <span>Demo</span>
+                <LucideIcon name="chevron-down" class="h-3 w-3 nav-chevron" />
+              </label>
+              <ul tabindex="0" class="menu menu-sm dropdown-content nav-dropdown-panel mt-3 w-72 gap-2 p-3">
+                {demoItems.map((item) => (
+                  <li>
+                    <a href={item.href} class="nav-dropdown-link">
+                      <span class="font-bold text-black">{item.label}</span>
+                      <span class="text-sm text-gray-600">{item.description}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border-4 border-black bg-base-100 p-6 shadow-brutal-xl">
+            <div class="mb-4 text-sm uppercase tracking-[0.3em] text-base-content/60">Mobile drawer</div>
+            <details class="dropdown dropdown-end nav-mobile-toggle relative w-full max-w-xs" open>
+              <summary class="btn btn-square btn-nav btn-nav-default">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-open hidden">
+                  <LucideIcon name="menu" class="h-6 w-6" ariaHidden={true} />
+                </span>
+                <span class="icon-close flex">
+                  <LucideIcon name="x" class="h-6 w-6" ariaHidden={true} />
+                </span>
+              </summary>
+              <div class="dropdown-content nav-mobile-panel">
+                <ul class="menu menu-vertical gap-2">
+                  {items.map((item) => (
+                    <li>
+                      <a href={item.href} class="btn btn-nav btn-nav-block btn-nav-default">
+                        <LucideIcon name={item.icon} class="h-4 w-4" />
+                        <span>{item.label}</span>
+                      </a>
+                    </li>
+                  ))}
+                  <li class="menu-title nav-mobile-status">Demo</li>
+                  {demoItems.map((item) => (
+                    <li>
+                      <a href={item.href} class="btn btn-nav btn-nav-block btn-nav-default">
+                        <LucideIcon name="zap" class="h-4 w-4" />
+                        <span>Demo • {item.label}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </details>
+            <p class="mt-4 text-sm text-base-content/70">
+              Open state mirrors the site navigation: zap-tagged demo shortcuts sourced from the shared data file.
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </BaseLayout>
-```
