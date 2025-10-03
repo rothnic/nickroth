@@ -52,16 +52,17 @@
         --nr-shadow-focus: 2px 2px 0px 0px var(--nr-shadow-color);
 
         --btn-border: #000000;
-        --btn-border-width: var(--border);
+        --btn-border-width: 4px;
         --btn-color: var(--color-base-100);
         --btn-text: var(--color-base-content);
         --btn-hover-border: #000000;
         --btn-focus-border: #000000;
         --btn-focus-ring: 0;
         --btn-focus-scale: 1;
-        --btn-text-case: none;
-        --btn-shadow: 4px 4px 0px 0px var(--nr-shadow-color);
-        --btn-shadow-colored: 4px 4px 0px 0px var(--nr-shadow-color);
+        --btn-text-case: uppercase;
+        --btn-shadow: 8px 8px 0px 0px var(--nr-shadow-color);
+        --btn-shadow-colored: 8px 8px 0px 0px var(--nr-shadow-color);
+        --btn-shadow-hover: 4px 4px 0px 0px var(--nr-shadow-color);
         --rounded-btn: 0rem;
     }
 
@@ -112,20 +113,39 @@
         --nr-shadow-focus: 2px 2px 0px 0px var(--nr-shadow-color);
 
         --btn-border: #ffffff;
-        --btn-border-width: var(--border);
+        --btn-border-width: 4px;
         --btn-color: var(--color-base-100);
         --btn-text: var(--color-base-content);
         --btn-hover-border: #ffffff;
         --btn-focus-border: #ffffff;
         --btn-focus-ring: 0;
         --btn-focus-scale: 1;
-        --btn-text-case: none;
-        --btn-shadow: 4px 4px 0px 0px var(--nr-shadow-color);
-        --btn-shadow-colored: 4px 4px 0px 0px var(--nr-shadow-color);
+        --btn-text-case: uppercase;
+        --btn-shadow: 8px 8px 0px 0px var(--nr-shadow-color);
+        --btn-shadow-colored: 8px 8px 0px 0px var(--nr-shadow-color);
+        --btn-shadow-hover: 4px 4px 0px 0px var(--nr-shadow-color);
         --rounded-btn: 0rem;
     }
 
     @layer utilities {
+        /* ========================================
+           FONTS
+           ======================================== */
+        .font-display {
+            font-family: "Space Grotesk", -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .font-mono {
+            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+        }
+
+        .font-glitch {
+            font-family: "Rubik Glitch", cursive;
+        }
+
+        /* ========================================
+           THEME-SPECIFIC BORDER COLORS
+           ======================================== */
         /* Theme-specific border colors - maintain high contrast in both modes */
         [data-theme="neobrutalism-light"] .btn {
             --btn-border: #000000;
@@ -190,27 +210,29 @@
             align-items: center;
             justify-content: center;
             gap: calc(var(--size-field) * 4);
-            --btn-shadow: 6px 6px 0px 0px var(--nr-shadow-color);
-            --btn-shadow-colored: 6px 6px 0px 0px var(--nr-shadow-color);
+            --btn-shadow: 8px 8px 0px 0px var(--nr-shadow-color);
+            --btn-shadow-colored: 8px 8px 0px 0px var(--nr-shadow-color);
+            --btn-shadow-hover: 4px 4px 0px 0px var(--nr-shadow-color);
             border-width: var(--btn-border-width);
             border-color: var(--btn-border);
             border-style: solid;
             border-radius: var(--rounded-btn);
             box-shadow: var(--btn-shadow);
-            transform: translate(0, 0);
+            transform: translate(0, 0) rotate(0deg);
             font-weight: var(--font-weight-black);
             text-transform: var(--btn-text-case);
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+            --btn-rotate-angle: 1deg;
         }
 
         :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn:hover:not(.hover-lift):not(.hover-scale):not(.hover-rotate) {
-            box-shadow: 6px 6px 0px 0px var(--nr-shadow-color);
-            transform: translate(-2px, -2px);
+            box-shadow: var(--btn-shadow-hover);
+            transform: translate(2px, 2px) rotate(var(--btn-rotate-angle));
         }
 
         :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn:active {
             box-shadow: var(--nr-shadow-pressed);
-            transform: translate(0, 0);
+            transform: translate(0, 0) rotate(0deg);
         }
 
         :is([data-theme="neobrutalism-light"], [data-theme="neobrutalism-dark"]) .btn:focus-visible {
@@ -485,6 +507,35 @@
             transform: rotate(-3deg);
         }
 
+        /* Button rotation angle utilities - allows customization of hover rotation */
+        .btn-rotate-neg {
+            --btn-rotate-angle: -1deg;
+        }
+
+        .btn-rotate-0 {
+            --btn-rotate-angle: 0deg;
+        }
+
+        .btn-rotate-1 {
+            --btn-rotate-angle: 1deg;
+        }
+
+        .btn-rotate-2 {
+            --btn-rotate-angle: 2deg;
+        }
+
+        .btn-rotate-3 {
+            --btn-rotate-angle: 3deg;
+        }
+
+        .btn-rotate-neg-2 {
+            --btn-rotate-angle: -2deg;
+        }
+
+        .btn-rotate-neg-3 {
+            --btn-rotate-angle: -3deg;
+        }
+
         .rounded-brutal-sm {
             border-radius: 0.25rem;
         }
@@ -505,13 +556,253 @@
             border-radius: 9999px;
         }
 
+        /* ========================================
+           GLITCH EFFECT
+           ======================================== */
+        @keyframes glitch-1 {
+            0%, 100% {
+                transform: translate(0);
+            }
+            10% {
+                transform: translate(-2px, -2px);
+            }
+            20% {
+                transform: translate(2px, 2px);
+            }
+            30% {
+                transform: translate(-2px, 2px);
+            }
+            40% {
+                transform: translate(2px, -2px);
+            }
+            50% {
+                transform: translate(-2px, -2px);
+            }
+            60% {
+                transform: translate(2px, 2px);
+            }
+            70% {
+                transform: translate(-2px, 2px);
+            }
+            80% {
+                transform: translate(2px, -2px);
+            }
+            90% {
+                transform: translate(-2px, -2px);
+            }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% {
+                transform: translate(0);
+            }
+            10% {
+                transform: translate(2px, 2px);
+            }
+            20% {
+                transform: translate(-2px, -2px);
+            }
+            30% {
+                transform: translate(2px, -2px);
+            }
+            40% {
+                transform: translate(-2px, 2px);
+            }
+            50% {
+                transform: translate(2px, 2px);
+            }
+            60% {
+                transform: translate(-2px, -2px);
+            }
+            70% {
+                transform: translate(2px, -2px);
+            }
+            80% {
+                transform: translate(-2px, 2px);
+            }
+            90% {
+                transform: translate(2px, 2px);
+            }
+        }
+
+        .glitch-effect {
+            position: relative;
+        }
+
+        .glitch-effect::before,
+        .glitch-effect::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .glitch-effect:hover::before {
+            animation: glitch-1 0.3s infinite;
+            color: #ff0080;
+            opacity: 0.8;
+            z-index: -1;
+        }
+
+        .glitch-effect:hover::after {
+            animation: glitch-2 0.3s infinite;
+            color: #00ffff;
+            opacity: 0.8;
+            z-index: -2;
+        }
+
+        /* ========================================
+           TEXTURE & DECORATIVE EFFECTS
+           ======================================== */
+        .texture-grain {
+            position: relative;
+        }
+
+        .texture-grain::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.03) 2px,
+                    rgba(0, 0, 0, 0.03) 4px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.03) 2px,
+                    rgba(0, 0, 0, 0.03) 4px
+                );
+            pointer-events: none;
+        }
+
+        .sticker {
+            transform: rotate(-3deg);
+        }
+
+        .sticker:nth-child(2n) {
+            transform: rotate(2deg);
+        }
+
+        .sticker:before {
+            content: "";
+            border-radius: inherit;
+            z-index: -1;
+            background: #fff3;
+            position: absolute;
+            inset: -2px;
+        }
+
+        .organic-top {
+            clip-path: polygon(0 85%, 25% 95%, 50% 90%, 75% 95%, 100% 85%, 100% 0, 0 0);
+        }
+
+        .organic-bottom {
+            clip-path: polygon(0 0, 100% 0, 100% 15%, 75% 5%, 50% 10%, 25% 5%, 0 15%);
+        }
+
+        .organic-both {
+            clip-path: polygon(
+                0 15%,
+                25% 5%,
+                50% 10%,
+                75% 5%,
+                100% 15%,
+                100% 85%,
+                75% 95%,
+                50% 90%,
+                25% 95%,
+                0 85%
+            );
+        }
+
+        /* ========================================
+           ANIMATIONS & KEYFRAMES
+           ======================================== */
+        @keyframes marquee-left {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        @keyframes marquee-right {
+            0% {
+                transform: translateX(-50%);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .animate-marquee-left {
+            animation: marquee-left 20s linear infinite;
+        }
+
+        .animate-marquee-right {
+            animation: marquee-right 25s linear infinite;
+        }
+
         @keyframes spin-slow {
+            from {
+                transform: rotate(0deg);
+            }
             to {
                 transform: rotate(360deg);
             }
         }
 
+        .animate-spin-slow {
+            animation: spin-slow 20s linear infinite;
+        }
+
         @keyframes bounce-slow {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .animate-bounce-slow {
+            animation: bounce-slow 4s ease-in-out infinite;
+        }
+
+        @keyframes sway {
+            0%, 100% {
+                transform: translateX(0) rotate(45deg);
+            }
+            50% {
+                transform: translateX(15px) rotate(45deg);
+            }
+        }
+
+        .animate-sway {
+            animation: sway 5s ease-in-out infinite;
+        }
+
+        /* Legacy keyframes - kept for compatibility */
+        @keyframes spin-slow-legacy {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes bounce-slow-legacy {
             0%, 100% {
                 transform: translateY(0);
             }
@@ -584,5 +875,18 @@
         .scale-in.visible {
             opacity: 1 !important;
             transform: scale(1) !important;
+        }
+
+        /* ========================================
+           VIEW TRANSITIONS
+           ======================================== */
+        html[data-vt-nav] body {
+            pointer-events: none;
+        }
+
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation-duration: 0.45s;
+            animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
         }
     }

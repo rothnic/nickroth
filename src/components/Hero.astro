@@ -1,52 +1,177 @@
 ---
-import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
+import headshot from "../assets/images/nick-headshot.png";
+import heroMotionScript from "../scripts/hero-motion.ts?url";
+import Zap from "./icons/Zap.astro";
+import Brain from "./icons/Brain.astro";
+import Code from "./icons/Code.astro";
+import ArrowDown from "./icons/ArrowDown.astro";
 ---
 
-<div class="hero min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10">
-  <div class="hero-content text-center">
-    <div class="max-w-4xl">
-      <div class="avatar mb-8">
-        <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img src={avatarPlaceholder.src} width={128} height={128} alt="Nick Roth" loading="lazy" />
-        </div>
+<section
+  id="hero"
+  class="min-h-screen bg-gradient-to-br from-white via-cyan-50 to-lime-50 pt-8 relative overflow-hidden texture-grain"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <div class="text-center space-y-12">
+      <div class="flex justify-center flex-wrap gap-4 mb-20">
+        <span
+          class="sticker inline-flex items-center gap-2 bg-lime-300 border-2 border-black px-3 py-2 font-black text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+          style="transform: rotate(-8deg);"
+        >
+          <Zap />
+          FULL-STACK PM
+        </span>
+        <span
+          class="sticker inline-flex items-center gap-2 bg-cyan-300 border-2 border-black px-3 py-2 font-black text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+          style="transform: rotate(5deg);"
+        >
+          <Brain />
+          AI ENGINEER
+        </span>
+        <span
+          class="sticker inline-flex items-center gap-2 bg-yellow-300 border-2 border-black px-3 py-2 font-black text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+          style="transform: rotate(-3deg);"
+        >
+          <Code />
+          AUTOMATION
+        </span>
       </div>
-      <h1 class="text-5xl font-bold mb-2">Nick Roth</h1>
-      <p class="text-2xl mb-4 text-base-content/80">Product & Systems Director</p>
-      <p class="text-lg mb-8 max-w-3xl mx-auto leading-relaxed">
-        Transforming complex requirements into systematic solutions through objective-first discovery and automation-driven execution.
-      </p>
-      
-      <!-- Key Metrics -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 max-w-4xl mx-auto">
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">400%</div>
-          <div class="stat-desc text-sm">YoY blog revenue increase</div>
+
+      <div class="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20">
+        <div class="order-2 lg:order-1">
+          <h1 class="text-7xl md:text-9xl font-display font-black text-black leading-none">
+            <span class="glitch-effect" data-text="NICK">NICK</span>
+            <br />
+            <span
+              class="bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white px-4 py-2 transform -rotate-2 inline-block shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-[4px] border-black"
+            >
+              <span class="glitch-effect" data-text="ROTH">ROTH</span>
+            </span>
+          </h1>
         </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">$35k</div>
-          <div class="stat-desc text-sm">monthly cost savings</div>
-        </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">150%</div>
-          <div class="stat-desc text-sm">organic user growth</div>
-        </div>
-        <div class="stat bg-base-200/50 rounded-lg p-4">
-          <div class="stat-value text-2xl text-primary">125%</div>
-          <div class="stat-desc text-sm">mobile revenue growth</div>
+
+        <div class="order-1 lg:order-2 relative group" data-hero-hover>
+          <div
+            class="absolute -inset-8 pointer-events-none select-none"
+            aria-hidden="true"
+            data-hero-backdrop
+          >
+            <div
+              class="absolute top-0 left-0 w-20 h-20 bg-fuchsia-500 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] opacity-70 animate-spin-slow"
+            >
+            </div>
+            <div
+              class="absolute bottom-4 right-4 w-16 h-16 bg-cyan-400 rounded-full border-[4px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] opacity-70 animate-bounce-slow"
+            >
+            </div>
+            <div
+              class="absolute top-1/2 right-0 w-12 h-24 bg-yellow-300 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] opacity-70 rotate-45 animate-sway"
+            >
+            </div>
+          </div>
+
+          <div
+            class="relative bg-gradient-to-br from-cyan-400 via-lime-400 to-yellow-300 border-[6px] border-black shadow-[20px_20px_0px_0px_rgba(0,0,0,1)] transform rotate-2 p-3 transition-all duration-300"
+            data-hero-card
+          >
+            <div class="bg-white border-[4px] border-black transform -rotate-1 overflow-hidden">
+              <img
+                src={headshot.src}
+                alt="Nick Roth"
+                class="w-72 h-72 md:w-96 md:h-96 object-cover border-[3px] border-black"
+                loading="eager"
+                data-hero-image
+              />
+            </div>
+          </div>
+
+          <span
+            class="sticker bg-fuchsia-500 text-white border-2 border-black px-4 py-3 font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+            style="transform: rotate(12deg); position: absolute; top: -2rem; right: -2rem;"
+          >
+            PRODUCT
+          </span>
+          <span
+            class="sticker bg-yellow-300 border-2 border-black px-4 py-3 font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+            style="transform: rotate(-12deg); position: absolute; bottom: -2rem; left: -2rem;"
+          >
+            ENGINEER
+          </span>
+          <span
+            class="sticker bg-lime-400 border-2 border-black px-3 py-2 font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+            style="transform: rotate(90deg); position: absolute; top: 50%; right: -3rem;"
+          >
+            AI
+          </span>
+          <span
+            class="sticker bg-black text-white border-2 border-black px-3 py-2 font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] font-mono"
+            style="transform: rotate(-6deg); position: absolute; top: -1.5rem; left: 3rem;"
+          >
+            GT MS
+          </span>
         </div>
       </div>
 
-      <div class="flex gap-4 justify-center flex-wrap">
-        <a href="/work" class="btn btn-primary btn-lg">View My Work</a>
-        <a href="/contact" class="btn btn-outline btn-lg">Get In Touch</a>
+      <div class="max-w-4xl mx-auto relative">
+        <div
+          class="bg-white border-[4px] border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform -rotate-1 relative z-10"
+        >
+          <p class="text-2xl md:text-3xl text-black leading-relaxed font-black">
+            I turn business objectives into <span
+              class="font-mono bg-lime-200 px-2 border border-black">shippable systems</span
+            > — model the business, specify precisely, and build only what moves the needle.
+          </p>
+        </div>
+        <div
+          class="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-cyan-400 to-blue-500 border-[4px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transform rotate-12"
+          aria-hidden="true"
+        >
+        </div>
+        <div
+          class="absolute -bottom-6 -left-6 w-16 h-24 bg-gradient-to-t from-fuchsia-400 to-pink-500 border-[4px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-6"
+          aria-hidden="true"
+        >
+        </div>
       </div>
-      
-      <div class="mt-8">
-        <p class="text-sm text-base-content/60">
-          <span class="inline-block mr-4">📍 Huntsville, AL</span>
-          <span class="inline-block">✅ Open to consulting and fractional roles</span>
-        </p>
+
+      <div class="flex flex-col items-center gap-6">
+        <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+          <a
+            href="#projects"
+            data-smooth-scroll
+            class="btn btn-primary btn-xl"
+          >
+            VIEW MY WORK
+          </a>
+          <a
+            href="#contact"
+            data-smooth-scroll
+            class="btn btn-xl btn-rotate-neg"
+          >
+            LET'S TALK
+          </a>
+        </div>
+
+        <div class="mt-4 animate-bounce">
+          <a
+            href="#process"
+            data-smooth-scroll
+            class="inline-flex items-center justify-center p-3 bg-white border-[2px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all duration-200"
+          >
+            <span class="sr-only">Scroll to process</span>
+            <ArrowDown />
+          </a>
+        </div>
       </div>
     </div>
+
+    <div class="w-full h-8 bg-black organic-bottom"></div>
   </div>
-</div>
+
+  <!-- This import contains attributes so the editor treats it as an inline script by default.
+       Adding `is:inline` explicitly silences the lint hint and makes the intent clear.
+       The actual motion logic lives in `src/scripts/hero-motion.ts` which is a module file
+       and is imported here for page-level initialization (split-script pattern per docs).
+  -->
+  <script type="module" is:inline src={heroMotionScript}></script>
+</section>
