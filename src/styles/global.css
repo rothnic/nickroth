@@ -576,6 +576,10 @@
             padding: 6rem 0;
             margin: 0;
             z-index: 5;
+            /* Prevent scrolling within this section */
+            overflow: hidden;
+            /* Disable touch interactions on the marquee area */
+            touch-action: pan-y;
             
             /* Torn top edge */
             &::before {
