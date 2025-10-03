@@ -55,6 +55,57 @@ function cleanup() {
  * @param {string} options.rootMargin - Margin around viewport for triggering
  */
 export function initScrollAnimations(options = {}) {
+	// Check if user prefers reduced motion - skip animations if so
+	const prefersReducedMotion = window.matchMedia(
+		"(prefers-reduced-motion: reduce)",
+	).matches;
+
+	if (prefersReducedMotion) {
+		// User prefers reduced motion - make all elements visible immediately
+		const animationSelectors = [
+			".fade-in-up",
+			".slide-in-left",
+			".slide-in-right",
+			".scale-in",
+		];
+
+		const animatedElements = document.querySelectorAll(
+			animationSelectors.join(", "),
+		);
+
+		animatedElements.forEach((element) => {
+			element.classList.add("visible");
+		});
+
+		return null;
+	}
+
+	// Check for slow connection and skip animations if needed
+	// This helps on mobile devices with poor connectivity
+	if (
+		navigator.connection &&
+		(navigator.connection.saveData ||
+			navigator.connection.effectiveType === "slow-2g" ||
+			navigator.connection.effectiveType === "2g")
+	) {
+		const animationSelectors = [
+			".fade-in-up",
+			".slide-in-left",
+			".slide-in-right",
+			".scale-in",
+		];
+
+		const animatedElements = document.querySelectorAll(
+			animationSelectors.join(", "),
+		);
+
+		animatedElements.forEach((element) => {
+			element.classList.add("visible");
+		});
+
+		return null;
+	}
+
 	const {
 		threshold = 0.15, // Element must be 15% visible before triggering
 		rootMargin = "0px 0px -150px 0px", // Trigger 150px before element enters viewport (closer to center)

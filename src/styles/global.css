@@ -171,10 +171,35 @@
            (No theme scoping needed)
            ======================================== */
         
-        /* Base font family */
+        /* Base font family and box model */
+        * {
+            box-sizing: border-box;
+        }
+        
         html {
             font-family: "Space Grotesk", -apple-system, BlinkMacSystemFont, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
             font-weight: 400;
+            /* Prevent horizontal scrolling */
+            overflow-x: hidden;
+            max-width: 100%;
+            /* Enable smooth scrolling but respect user preferences */
+            scroll-behavior: smooth;
+            /* Optimize touch scrolling on mobile */
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+        }
+        
+        /* Optimize touch scrolling performance */
+        body {
+            /* Enable momentum-based scrolling on iOS */
+            -webkit-overflow-scrolling: touch;
+            /* Optimize touch actions - only allow vertical scrolling */
+            touch-action: pan-y;
         }
         
         /* Graph paper background for body */
@@ -196,6 +221,24 @@
                 linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 16px 16px, 16px 16px;
             background-position: 0 0, 0 0, -1px -1px, -1px -1px;
+            /* Prevent horizontal scrolling */
+            overflow-x: hidden;
+            max-width: 100%;
+            /* Enable hardware acceleration for background */
+            background-attachment: fixed;
+        }
+        
+        /* Simplify background on mobile for better performance */
+        @media (max-width: 768px) {
+            body {
+                /* Remove complex gradients on mobile, keep only graph paper */
+                background-image: 
+                    linear-gradient(var(--color-base-300) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
+                background-size: 16px 16px, 16px 16px;
+                background-position: -1px -1px, -1px -1px;
+                background-attachment: scroll;
+            }
         }
         
         html[data-theme="neobrutalism-dark"] body {
@@ -216,6 +259,19 @@
                 linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 16px 16px, 16px 16px;
             background-position: 0 0, 0 0, -1px -1px, -1px -1px;
+            background-attachment: fixed;
+        }
+        
+        /* Simplify dark mode background on mobile for better performance */
+        @media (max-width: 768px) {
+            html[data-theme="neobrutalism-dark"] body {
+                background-image: 
+                    linear-gradient(var(--color-base-300) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
+                background-size: 16px 16px, 16px 16px;
+                background-position: -1px -1px, -1px -1px;
+                background-attachment: scroll;
+            }
         }
         
         /* ========================================
@@ -227,6 +283,9 @@
             background: transparent;
             position: relative;
             padding: 4rem 0;
+            /* Ensure sections don't cause horizontal overflow */
+            overflow-x: hidden;
+            max-width: 100%;
         }
         
         /* Paper section - solid background, no graph paper */
@@ -517,6 +576,10 @@
             padding: 6rem 0;
             margin: 0;
             z-index: 5;
+            /* Prevent scrolling within this section */
+            overflow: hidden;
+            /* Disable touch interactions on the marquee area */
+            touch-action: pan-y;
             
             /* Torn top edge */
             &::before {
@@ -538,6 +601,7 @@
                     38% 90%, 45% 25%, 52% 75%, 58% 35%, 65% 85%, 72% 15%, 78% 65%, 
                     85% 45%, 91% 95%, 96% 50%, 100% 100%, 100% 0%, 0% 0%
                 );
+                z-index: 10;
             }
             
             /* Torn bottom edge */
@@ -560,6 +624,7 @@
                     42% 30%, 49% 70%, 56% 20%, 63% 80%, 69% 35%, 76% 95%, 82% 50%, 
                     88% 15%, 94% 65%, 98% 40%, 100% 0%, 100% 100%, 0% 100%
                 );
+                z-index: 10;
             }
         }
         
@@ -1368,6 +1433,16 @@
         }
 
         /* Animations */
+        /* Disable expensive continuous animations on mobile for better performance */
+        @media (max-width: 768px) {
+            .animate-spin-slow,
+            .animate-bounce-slow,
+            .animate-sway,
+            .animate-pulse-shadow {
+                animation: none;
+            }
+        }
+        
         @keyframes marquee-left {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
@@ -1520,14 +1595,30 @@
         }
 
         /* Scroll animations */
+        /* Respect reduced motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            .fade-in-up,
+            .slide-in-left,
+            .slide-in-right,
+            .scale-in {
+                opacity: 1 !important;
+                transform: none !important;
+                transition: none !important;
+            }
+        }
+        
         .fade-in-up {
             opacity: 0 !important;
             transform: translateY(40px) !important;
             transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
+            /* GPU acceleration hint for smoother animations */
+            will-change: opacity, transform;
 
             &.visible {
                 opacity: 1 !important;
                 transform: translateY(0) !important;
+                /* Remove will-change after animation completes to free resources */
+                will-change: auto;
             }
         }
 
@@ -1535,10 +1626,12 @@
             opacity: 0 !important;
             transform: translateX(-80px) !important;
             transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
+            will-change: opacity, transform;
 
             &.visible {
                 opacity: 1 !important;
                 transform: translateX(0) !important;
+                will-change: auto;
             }
         }
 
@@ -1546,10 +1639,12 @@
             opacity: 0 !important;
             transform: translateX(80px) !important;
             transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
+            will-change: opacity, transform;
 
             &.visible {
                 opacity: 1 !important;
                 transform: translateX(0) !important;
+                will-change: auto;
             }
         }
 
@@ -1557,10 +1652,12 @@
             opacity: 0 !important;
             transform: scale(0.7) !important;
             transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
+            will-change: opacity, transform;
 
             &.visible {
                 opacity: 1 !important;
                 transform: scale(1) !important;
+                will-change: auto;
             }
         }
 
