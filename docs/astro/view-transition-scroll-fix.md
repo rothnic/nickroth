@@ -21,75 +21,81 @@ The CSS rule `html { scroll-behavior: smooth; }` applies to **all** scroll opera
 
 During view transitions, Astro's router needs to instantly restore the scroll position so the morphing animation can be seen. The smooth scroll interferes with this timing.
 
+## Problem
+
+When using Astro's view transitions with CSS `scroll-behavior: smooth`, a conflict occurs:
+
+1. User scrolls down a list page (e.g., `/showcase/`)
+2. User clicks on an item to view details (e.g., `/showcase/components/badges`)
+3. View transition animates the navigation (works fine going forward)
+4. User clicks back button to return to list
+5. **Issue**: CSS smooth scroll applies to the scroll restoration during navigation
+6. The scroll restoration animates slowly, completing **after** the view transition
+7. User misses the visual transition effect entirely
+
+## Root Cause
+
+The CSS rule `html { scroll-behavior: smooth; }` applies to **all** scroll operations, including:
+- User-initiated scrolls (clicking anchor links)
+- JavaScript `scrollTo()` calls
+- **Browser scroll restoration during page navigation** ← This is the problem
+
+During view transitions, Astro's router needs to instantly restore the scroll position so the morphing animation can be seen at the correct location. The CSS smooth scroll causes the restoration itself to animate, which breaks the timing.
+
 ## Solution
 
-Use Astro's lifecycle events with scroll position monitoring to temporarily disable smooth scroll during view transitions:
+**Remove CSS smooth scroll entirely** and enable it selectively only for within-page navigation (anchor links):
+
+### Step 1: Remove CSS smooth scroll
+
+```css
+/* In src/styles/global.css */
+html {
+  /* scroll-behavior: smooth; */  /* Comment out or remove */
+}
+```
+
+### Step 2: Add JavaScript-based smooth scroll for anchor links only
 
 ```javascript
-// Track scroll position to detect when restoration is complete
-let lastScrollY = window.scrollY;
-let scrollStableFrames = 0;
-let isTransitioning = false;
-
-// Disable smooth scroll when navigation starts
-document.addEventListener("astro:before-preparation", () => {
-  isTransitioning = true;
-  document.documentElement.style.scrollBehavior = "auto";
-});
-
-// After DOM swap, monitor scroll position until it stabilizes
-document.addEventListener("astro:after-swap", () => {
-  lastScrollY = window.scrollY;
-  scrollStableFrames = 0;
+// In your base layout script (e.g., BaseLayout.astro)
+document.addEventListener("click", (e) => {
+  const target = e.target as HTMLElement;
+  const link = target.closest("a");
   
-  const checkScrollStable = () => {
-    if (!isTransitioning) return;
+  if (!link) return;
+  
+  const href = link.getAttribute("href");
+  
+  // Only apply smooth scroll for anchor links (within-page navigation)
+  if (href && href.startsWith("#")) {
+    e.preventDefault();
     
-    const currentScrollY = window.scrollY;
+    const targetId = href.substring(1);
+    const targetElement = document.getElementById(targetId);
     
-    // If scroll position hasn't changed, increment stable frame counter
-    if (Math.abs(currentScrollY - lastScrollY) < 1) {
-      scrollStableFrames++;
+    if (targetElement) {
+      // Check user's motion preference
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       
-      // After 3 stable frames (~50ms), re-enable smooth scroll
-      if (scrollStableFrames >= 3) {
-        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (!prefersReducedMotion) {
-          document.documentElement.style.scrollBehavior = "smooth";
-        }
-        isTransitioning = false;
-        return;
-      }
-    } else {
-      // Scroll position changed, reset counter
-      scrollStableFrames = 0;
-      lastScrollY = currentScrollY;
+      // Smooth scroll to the anchor
+      targetElement.scrollIntoView({ 
+        behavior: prefersReducedMotion ? "auto" : "smooth" 
+      });
+      
+      // Update URL hash
+      history.pushState(null, "", href);
     }
-    
-    requestAnimationFrame(checkScrollStable);
-  };
-  
-  requestAnimationFrame(checkScrollStable);
+  }
 });
 ```
 
 ### How It Works
 
-1. **`astro:before-preparation`**: Fired when navigation starts
-   - Set `scroll-behavior: auto` to allow instant scroll restoration
-   - Mark that a transition is in progress
-   
-2. **`astro:after-swap`**: Fired after DOM replacement
-   - Begin monitoring scroll position using `requestAnimationFrame`
-   - Track when scroll position stabilizes (3 consecutive frames with no change)
-   - Only re-enable smooth scroll after scroll restoration completes
-
-3. **Scroll Stability Detection**: Uses `requestAnimationFrame` to check scroll position each frame
-   - Waits for 3 stable frames (~50ms) to ensure scroll restoration is complete
-   - Accounts for browser timing variations in scroll restoration
-   - Respects `prefers-reduced-motion` user preference
-
-This approach ensures smooth scroll remains disabled throughout the entire scroll restoration process, regardless of timing variations between browsers or navigation patterns.
+1. **CSS smooth scroll removed**: Page-to-page navigation now uses instant scroll restoration
+2. **JavaScript handles anchor links**: Intercepts clicks on `#` links and applies smooth scrolling selectively
+3. **View transitions work**: Scroll restoration during navigation is instant, allowing transitions to be visible
+4. **Respects user preferences**: Checks `prefers-reduced-motion` for accessibility
 
 ### Benefits
 

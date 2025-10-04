@@ -182,8 +182,8 @@
             /* Prevent horizontal scrolling */
             overflow-x: hidden;
             max-width: 100%;
-            /* Enable smooth scrolling but respect user preferences */
-            scroll-behavior: smooth;
+            /* Smooth scrolling is controlled by JavaScript to avoid conflicts with view transitions */
+            /* scroll-behavior: smooth; */
             /* Optimize touch scrolling on mobile */
             -webkit-overflow-scrolling: touch;
         }

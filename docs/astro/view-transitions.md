@@ -147,52 +147,46 @@ document.addEventListener("astro:before-swap", (event) => {
 
 When navigating from a list page (scrolled down) to a detail page and back, CSS `scroll-behavior: smooth` can conflict with view transitions. The slow scroll animation prevents users from seeing the transition effect.
 
-**Solution**: Monitor scroll position and re-enable smooth scroll only after scroll restoration completes:
+**Solution**: Remove CSS smooth scroll entirely and enable it only for anchor links (within-page navigation):
+
+```css
+/* In global.css - remove or comment out smooth scroll */
+html {
+  /* scroll-behavior: smooth; */  /* Removed to avoid conflicts */
+}
+```
 
 ```js
-// In your base layout script
-let lastScrollY = window.scrollY;
-let scrollStableFrames = 0;
-let isTransitioning = false;
-
-document.addEventListener("astro:before-preparation", () => {
-  isTransitioning = true;
-  document.documentElement.style.scrollBehavior = "auto";
-});
-
-document.addEventListener("astro:after-swap", () => {
-  lastScrollY = window.scrollY;
-  scrollStableFrames = 0;
+// In your base layout script - enable smooth scroll only for anchor links
+document.addEventListener("click", (e) => {
+  const target = e.target as HTMLElement;
+  const link = target.closest("a");
   
-  const checkScrollStable = () => {
-    if (!isTransitioning) return;
+  if (!link) return;
+  
+  const href = link.getAttribute("href");
+  
+  // Only apply smooth scroll for anchor links (within-page navigation)
+  if (href && href.startsWith("#")) {
+    e.preventDefault();
     
-    const currentScrollY = window.scrollY;
+    const targetId = href.substring(1);
+    const targetElement = document.getElementById(targetId);
     
-    if (Math.abs(currentScrollY - lastScrollY) < 1) {
-      scrollStableFrames++;
+    if (targetElement) {
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       
-      if (scrollStableFrames >= 3) {
-        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (!prefersReducedMotion) {
-          document.documentElement.style.scrollBehavior = "smooth";
-        }
-        isTransitioning = false;
-        return;
-      }
-    } else {
-      scrollStableFrames = 0;
-      lastScrollY = currentScrollY;
+      targetElement.scrollIntoView({ 
+        behavior: prefersReducedMotion ? "auto" : "smooth" 
+      });
+      
+      history.pushState(null, "", href);
     }
-    
-    requestAnimationFrame(checkScrollStable);
-  };
-  
-  requestAnimationFrame(checkScrollStable);
+  }
 });
 ```
 
-This disables smooth scroll when navigation starts, then uses `requestAnimationFrame` to monitor scroll position after DOM swap, waiting for it to stabilize before re-enabling smooth scroll.
+This approach ensures smooth scrolling is only active for within-page navigation (anchor links), not for page-to-page navigation where it conflicts with view transitions.
 
 ## References
 

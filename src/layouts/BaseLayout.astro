@@ -47,60 +47,48 @@ const currentPath = Astro.url.pathname;
     // Initialize on page load
     initScrollAnimations();
 
-    // Track scroll position to detect when restoration is complete
-    let lastScrollY = window.scrollY;
-    let scrollStableFrames = 0;
-    let isTransitioning = false;
-
     // Reinitialize on Astro page transitions
     document.addEventListener("astro:page-load", () => {
       initScrollAnimations();
     });
 
-    // Fix smooth scroll conflict with view transitions
-    // Disable smooth scroll during navigation to allow instant scroll restoration
-    document.addEventListener("astro:before-preparation", () => {
-      isTransitioning = true;
-      document.documentElement.style.scrollBehavior = "auto";
-    });
-
-    // After DOM swap, wait for scroll position to stabilize before re-enabling smooth scroll
-    document.addEventListener("astro:after-swap", () => {
-      // Reset tracking variables
-      lastScrollY = window.scrollY;
-      scrollStableFrames = 0;
+    // Enable smooth scrolling ONLY for anchor links (within-page navigation)
+    // This avoids conflicts with view transitions during page-to-page navigation
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      const link = target.closest("a");
       
-      // Monitor scroll position until it stabilizes
-      const checkScrollStable = () => {
-        if (!isTransitioning) return;
+      if (!link) return;
+      
+      const href = link.getAttribute("href");
+      
+      // Check if it's an anchor link (starts with #)
+      if (href && href.startsWith("#")) {
+        e.preventDefault();
         
-        const currentScrollY = window.scrollY;
+        const targetId = href.substring(1);
+        const targetElement = document.getElementById(targetId);
         
-        // If scroll position hasn't changed, increment stable frame counter
-        if (Math.abs(currentScrollY - lastScrollY) < 1) {
-          scrollStableFrames++;
+        if (targetElement) {
+          // Check user's motion preference
+          const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
           
-          // After 3 stable frames (~50ms), re-enable smooth scroll
-          if (scrollStableFrames >= 3) {
-            const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-            if (!prefersReducedMotion) {
-              document.documentElement.style.scrollBehavior = "smooth";
-            }
-            isTransitioning = false;
-            return; // Stop monitoring
+          // Temporarily enable smooth scroll for this anchor navigation only
+          if (!prefersReducedMotion) {
+            document.documentElement.style.scrollBehavior = "smooth";
           }
-        } else {
-          // Scroll position changed, reset counter
-          scrollStableFrames = 0;
-          lastScrollY = currentScrollY;
+          
+          targetElement.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth" });
+          
+          // Update URL hash
+          history.pushState(null, "", href);
+          
+          // Reset scroll behavior after scrolling completes
+          setTimeout(() => {
+            document.documentElement.style.scrollBehavior = "auto";
+          }, 1000);
         }
-        
-        // Continue monitoring
-        requestAnimationFrame(checkScrollStable);
-      };
-      
-      // Start monitoring on next frame
-      requestAnimationFrame(checkScrollStable);
+      }
     });
   </script>
   <style>
