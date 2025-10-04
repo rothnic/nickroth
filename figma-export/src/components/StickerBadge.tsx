@@ -43,6 +43,7 @@ export function StickerBadge({
           shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] 
           hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
           transition-all duration-200 cursor-default
+          whitespace-nowrap
           ${color} ${textColor} ${sizeClasses[size]} ${className}
         `}
       >
