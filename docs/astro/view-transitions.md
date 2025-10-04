@@ -142,6 +142,31 @@ document.addEventListener("astro:before-swap", (event) => {
 - Disable transitions temporarily (e.g., `transition:animate="none"`) to debug layout shifts.
 - Use Chromium DevTools (Rendering panel → View Transition) to inspect captured layers.
 
+
+### Fixing smooth scroll conflicts
+
+When navigating from a list page (scrolled down) to a detail page and back, CSS `scroll-behavior: smooth` can conflict with view transitions. The slow scroll animation prevents users from seeing the transition effect.
+
+**Solution**: Temporarily disable smooth scroll during view transitions:
+
+```js
+// In your base layout script
+document.addEventListener("astro:before-preparation", () => {
+  document.documentElement.style.scrollBehavior = "auto";
+});
+
+document.addEventListener("astro:after-swap", () => {
+  setTimeout(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!prefersReducedMotion) {
+      document.documentElement.style.scrollBehavior = "smooth";
+    }
+  }, 0);
+});
+```
+
+This allows Astro's router to instantly restore scroll position during the transition, then re-enables smooth scroll for normal page interactions.
+
 ## References
 
 - [Astro docs: View transitions](https://docs.astro.build/en/guides/view-transitions/)
