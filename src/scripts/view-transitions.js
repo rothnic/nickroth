@@ -20,21 +20,19 @@
  * Scroll to a specific element with optional offset
  * @param {HTMLElement} element - Element to scroll to
  * @param {number} offset - Offset in pixels from top (default: 80 for navbar)
+ * @param {boolean} instant - If true, scroll instantly without animation (default: true for view transitions)
  */
-function scrollToElement(element, offset = 80) {
+function scrollToElement(element, offset = 80, instant = true) {
 	if (!element) return;
-
-	const prefersReducedMotion = window.matchMedia(
-		"(prefers-reduced-motion: reduce)",
-	).matches;
 
 	const elementTop = element.getBoundingClientRect().top + window.scrollY;
 	const scrollPosition = elementTop - offset;
 
-	// Use smooth scroll unless user prefers reduced motion
+	// Use instant scroll by default to avoid conflicting with view transition animations
+	// This ensures the card is positioned correctly before the view transition completes
 	window.scrollTo({
 		top: scrollPosition,
-		behavior: prefersReducedMotion ? "auto" : "smooth",
+		behavior: instant ? "auto" : "smooth",
 	});
 }
 
@@ -118,11 +116,10 @@ function setupViewTransitionHandlers() {
 
 	// Handle scroll after navigation completes
 	document.addEventListener("astro:page-load", () => {
-		// Small delay to ensure DOM is ready and view transition has settled
+		// Minimal delay to ensure DOM is ready
+		// Use instant scroll to avoid conflicting with view transition animation
 		requestAnimationFrame(() => {
-			setTimeout(() => {
-				handleScrollToCard();
-			}, 100);
+			handleScrollToCard();
 		});
 	});
 }
@@ -187,11 +184,12 @@ export function initViewTransitionScrolling() {
  * Manual scroll to card helper
  * @param {string} cardId - ID of card to scroll to
  * @param {number} offset - Optional offset from top
+ * @param {boolean} instant - If true, scroll instantly without animation (default: false for manual calls)
  */
-export function scrollToCard(cardId, offset = 80) {
+export function scrollToCard(cardId, offset = 80, instant = false) {
 	const card = document.querySelector(`[data-card-id="${cardId}"]`);
 	if (card) {
-		scrollToElement(card, offset);
+		scrollToElement(card, offset, instant);
 	}
 }
 
