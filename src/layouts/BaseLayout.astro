@@ -47,22 +47,60 @@ const currentPath = Astro.url.pathname;
     // Initialize on page load
     initScrollAnimations();
 
+    // Track scroll position to detect when restoration is complete
+    let lastScrollY = window.scrollY;
+    let scrollStableFrames = 0;
+    let isTransitioning = false;
+
     // Reinitialize on Astro page transitions
     document.addEventListener("astro:page-load", () => {
       initScrollAnimations();
-      
-      // Re-enable smooth scroll after page fully loads and scroll is restored
-      // Only re-enable if user hasn't set prefers-reduced-motion
-      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (!prefersReducedMotion) {
-        document.documentElement.style.scrollBehavior = "smooth";
-      }
     });
 
     // Fix smooth scroll conflict with view transitions
     // Disable smooth scroll during navigation to allow instant scroll restoration
     document.addEventListener("astro:before-preparation", () => {
+      isTransitioning = true;
       document.documentElement.style.scrollBehavior = "auto";
+    });
+
+    // After DOM swap, wait for scroll position to stabilize before re-enabling smooth scroll
+    document.addEventListener("astro:after-swap", () => {
+      // Reset tracking variables
+      lastScrollY = window.scrollY;
+      scrollStableFrames = 0;
+      
+      // Monitor scroll position until it stabilizes
+      const checkScrollStable = () => {
+        if (!isTransitioning) return;
+        
+        const currentScrollY = window.scrollY;
+        
+        // If scroll position hasn't changed, increment stable frame counter
+        if (Math.abs(currentScrollY - lastScrollY) < 1) {
+          scrollStableFrames++;
+          
+          // After 3 stable frames (~50ms), re-enable smooth scroll
+          if (scrollStableFrames >= 3) {
+            const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            if (!prefersReducedMotion) {
+              document.documentElement.style.scrollBehavior = "smooth";
+            }
+            isTransitioning = false;
+            return; // Stop monitoring
+          }
+        } else {
+          // Scroll position changed, reset counter
+          scrollStableFrames = 0;
+          lastScrollY = currentScrollY;
+        }
+        
+        // Continue monitoring
+        requestAnimationFrame(checkScrollStable);
+      };
+      
+      // Start monitoring on next frame
+      requestAnimationFrame(checkScrollStable);
     });
   </script>
   <style>

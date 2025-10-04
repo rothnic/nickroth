@@ -23,33 +23,73 @@ During view transitions, Astro's router needs to instantly restore the scroll po
 
 ## Solution
 
-Use Astro's lifecycle events to temporarily disable smooth scroll during view transitions:
+Use Astro's lifecycle events with scroll position monitoring to temporarily disable smooth scroll during view transitions:
 
 ```javascript
+// Track scroll position to detect when restoration is complete
+let lastScrollY = window.scrollY;
+let scrollStableFrames = 0;
+let isTransitioning = false;
+
 // Disable smooth scroll when navigation starts
 document.addEventListener("astro:before-preparation", () => {
+  isTransitioning = true;
   document.documentElement.style.scrollBehavior = "auto";
 });
 
-// Re-enable smooth scroll after page fully loads and scroll is restored
-document.addEventListener("astro:page-load", () => {
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!prefersReducedMotion) {
-    document.documentElement.style.scrollBehavior = "smooth";
-  }
+// After DOM swap, monitor scroll position until it stabilizes
+document.addEventListener("astro:after-swap", () => {
+  lastScrollY = window.scrollY;
+  scrollStableFrames = 0;
+  
+  const checkScrollStable = () => {
+    if (!isTransitioning) return;
+    
+    const currentScrollY = window.scrollY;
+    
+    // If scroll position hasn't changed, increment stable frame counter
+    if (Math.abs(currentScrollY - lastScrollY) < 1) {
+      scrollStableFrames++;
+      
+      // After 3 stable frames (~50ms), re-enable smooth scroll
+      if (scrollStableFrames >= 3) {
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (!prefersReducedMotion) {
+          document.documentElement.style.scrollBehavior = "smooth";
+        }
+        isTransitioning = false;
+        return;
+      }
+    } else {
+      // Scroll position changed, reset counter
+      scrollStableFrames = 0;
+      lastScrollY = currentScrollY;
+    }
+    
+    requestAnimationFrame(checkScrollStable);
+  };
+  
+  requestAnimationFrame(checkScrollStable);
 });
 ```
 
 ### How It Works
 
-1. **`astro:before-preparation`**: Fired when navigation starts, before Astro fetches/prepares the new page
+1. **`astro:before-preparation`**: Fired when navigation starts
    - Set `scroll-behavior: auto` to allow instant scroll restoration
+   - Mark that a transition is in progress
    
-2. **`astro:page-load`**: Fired after the page is fully loaded, DOM is swapped, and scroll is restored
-   - Check `prefers-reduced-motion` to respect user preferences
-   - Re-enable `scroll-behavior: smooth` for normal page interactions
+2. **`astro:after-swap`**: Fired after DOM replacement
+   - Begin monitoring scroll position using `requestAnimationFrame`
+   - Track when scroll position stabilizes (3 consecutive frames with no change)
+   - Only re-enable smooth scroll after scroll restoration completes
 
-The key difference from the initial implementation is using `astro:page-load` instead of `astro:after-swap`. The `page-load` event fires after scroll restoration is complete, ensuring smooth scroll doesn't interfere with Astro's instant scroll positioning.
+3. **Scroll Stability Detection**: Uses `requestAnimationFrame` to check scroll position each frame
+   - Waits for 3 stable frames (~50ms) to ensure scroll restoration is complete
+   - Accounts for browser timing variations in scroll restoration
+   - Respects `prefers-reduced-motion` user preference
+
+This approach ensures smooth scroll remains disabled throughout the entire scroll restoration process, regardless of timing variations between browsers or navigation patterns.
 
 ### Benefits
 

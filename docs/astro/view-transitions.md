@@ -147,23 +147,52 @@ document.addEventListener("astro:before-swap", (event) => {
 
 When navigating from a list page (scrolled down) to a detail page and back, CSS `scroll-behavior: smooth` can conflict with view transitions. The slow scroll animation prevents users from seeing the transition effect.
 
-**Solution**: Temporarily disable smooth scroll during view transitions:
+**Solution**: Monitor scroll position and re-enable smooth scroll only after scroll restoration completes:
 
 ```js
 // In your base layout script
+let lastScrollY = window.scrollY;
+let scrollStableFrames = 0;
+let isTransitioning = false;
+
 document.addEventListener("astro:before-preparation", () => {
+  isTransitioning = true;
   document.documentElement.style.scrollBehavior = "auto";
 });
 
-document.addEventListener("astro:page-load", () => {
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!prefersReducedMotion) {
-    document.documentElement.style.scrollBehavior = "smooth";
-  }
+document.addEventListener("astro:after-swap", () => {
+  lastScrollY = window.scrollY;
+  scrollStableFrames = 0;
+  
+  const checkScrollStable = () => {
+    if (!isTransitioning) return;
+    
+    const currentScrollY = window.scrollY;
+    
+    if (Math.abs(currentScrollY - lastScrollY) < 1) {
+      scrollStableFrames++;
+      
+      if (scrollStableFrames >= 3) {
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (!prefersReducedMotion) {
+          document.documentElement.style.scrollBehavior = "smooth";
+        }
+        isTransitioning = false;
+        return;
+      }
+    } else {
+      scrollStableFrames = 0;
+      lastScrollY = currentScrollY;
+    }
+    
+    requestAnimationFrame(checkScrollStable);
+  };
+  
+  requestAnimationFrame(checkScrollStable);
 });
 ```
 
-This disables smooth scroll when navigation starts, allows Astro's router to instantly restore scroll position, then re-enables smooth scroll after the page fully loads and scroll restoration is complete.
+This disables smooth scroll when navigation starts, then uses `requestAnimationFrame` to monitor scroll position after DOM swap, waiting for it to stabilize before re-enabling smooth scroll.
 
 ## References
 
