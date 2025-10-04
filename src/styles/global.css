@@ -763,6 +763,9 @@
             animation-timing-function: ease-in-out;
             /* Keep background behind text during transition */
             z-index: 0;
+            /* Prevent height changes from affecting layout */
+            overflow: hidden;
+            contain: layout;
         }
 
         /* Nav link text - keep visible and above background during transitions */
@@ -772,6 +775,8 @@
         ::view-transition-group(nav-link-contact) {
             /* Text stays above the background */
             z-index: 1;
+            /* Prevent height variations during transition */
+            contain: layout;
         }
 
         /* Ensure text in nav buttons stays above the transitioning background */
@@ -1664,6 +1669,13 @@
         /* View transitions */
         html[data-vt-nav] body {
             pointer-events: none;
+        }
+
+        /* Fix layout shift during view transitions - ensure navbar maintains consistent height */
+        .navbar {
+            contain: layout;
+            min-height: 4rem;
+            max-height: 4rem;
         }
 
         ::view-transition-old(root),
