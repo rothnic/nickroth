@@ -12,17 +12,17 @@ const sortedWork = workEntries.sort((a, b) => {
 
 // Get unique categories for filtering
 const categories = [
-	"ALL WORK",
+	"ALL PROJECTS",
 	...new Set(workEntries.map((work) => work.data.category).filter(Boolean)),
 ];
 ---
 
-<BaseLayout title="Work Portfolio - Nick Roth" description="Case studies demonstrating systematic approach to product development from discovery through delivery">
+<BaseLayout title="Projects Portfolio - Nick Roth" description="Case studies demonstrating systematic approach to product development from discovery through delivery">
   <main class="py-20">
     <div class="container mx-auto px-4">
       <div class="text-center mb-16">
         <h1 class="text-6xl font-bold mb-6">
-          WORK
+          PROJECTS
           <br />
           <span class="text-primary">PORTFOLIO</span>
         </h1>
@@ -43,8 +43,8 @@ const categories = [
         ))}
       </div>
 
-      <!-- Work Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+      <!-- Projects Grid - 2 columns on tablet and up -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
         {sortedWork.map((work) => (
           <WorkCard
             title={work.data.title}
@@ -64,7 +64,7 @@ const categories = [
       
       {sortedWork.length === 0 && (
         <div class="text-center">
-          <p class="text-lg opacity-75">No work entries yet. Check back soon!</p>
+          <p class="text-lg opacity-75">No projects yet. Check back soon!</p>
         </div>
       )}
     </div>
@@ -90,7 +90,7 @@ const categories = [
           
           // Filter work cards
           workCards.forEach(card => {
-            if (category === 'ALL WORK') {
+            if (category === 'ALL PROJECTS') {
               card.style.display = 'block';
             } else {
               const cardCategory = card.getAttribute('data-category');

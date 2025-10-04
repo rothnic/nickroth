@@ -62,36 +62,40 @@ const getTagColor = (tag: string) => {
 ---
 
 <div 
-  class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] border-2 border-base-300 h-full max-w-md mx-auto" 
+  class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] border-2 border-base-300 h-full" 
   data-work-card 
   data-category={category}
   data-card-id={slug}
   data-scroll-target
 >
-  <!-- Hero Image - consistent aspect ratio with detail page -->
-  <figure class="relative h-80 w-full">
-    <img transition:name={`work-img-${slug}`} src={imageSrc} alt={title} class="w-full h-full object-cover" loading="lazy" />
-  </figure>
+  <!-- Category Badge at Top - Positioned absolutely over image -->
+  {category && (
+    <div class="absolute top-2 left-2 z-10">
+      <span class={`badge ${getCategoryColor(category)} badge-sm font-bold text-xs uppercase`}>
+        {category}
+      </span>
+    </div>
+  )}
   
-  <div class="card-body">
-    <!-- Category Badge at Top -->
-    {category && (
-      <div class="mb-2">
-        <span class={`badge ${getCategoryColor(category)} badge-sm font-bold text-xs uppercase`}>
-          {category}
-        </span>
-      </div>
-    )}
-    
+  <!-- Hero Image - smaller for card -->
+  <a href={`/work/${slug}`} class="block">
+    <figure class="relative h-48 w-full">
+      <img transition:name={`work-img-${slug}`} src={imageSrc} alt={title} class="w-full h-full object-cover" loading="lazy" />
+    </figure>
+  </a>
+  
+  <div class="card-body p-4">
     <!-- Project Title -->
-    <h2 transition:name={`work-title-${slug}`} class="text-xl font-bold mb-2 leading-tight">
-      {title}
-    </h2>
+    <a href={`/work/${slug}`} class="block">
+      <h2 transition:name={`work-title-${slug}`} class="text-lg font-bold mb-2 leading-tight hover:text-primary transition-colors">
+        {title}
+      </h2>
+    </a>
     
-    <!-- Impact Statement - Prominent Display -->
+    <!-- Impact Statement - Prominent Display in Primary Color -->
     {impact && (
-      <div class="mb-3">
-        <p class="text-xs font-bold text-primary uppercase leading-snug tracking-wide">
+      <div class="mb-2">
+        <p class="text-xs font-bold text-primary uppercase leading-tight tracking-wide">
           {impact}
         </p>
       </div>
@@ -99,25 +103,15 @@ const getTagColor = (tag: string) => {
     
     <!-- Limited Tags (2-3 with muted display) -->
     {tags.length > 0 && (
-      <div class="mb-3">
-        <div class="flex flex-wrap gap-1.5">
+      <div>
+        <div class="flex flex-wrap gap-1">
           {tags.slice(0, 3).map((tag) => (
-            <span class="badge badge-ghost badge-sm text-xs opacity-60">
+            <span class="badge badge-outline badge-xs text-xs">
               {tag}
             </span>
           ))}
         </div>
       </div>
     )}
-    
-    <!-- Spacer to push action to bottom -->
-    <div class="flex-grow"></div>
-    
-    <!-- Action Button -->
-    <div class="card-actions justify-end mt-3">
-      <a href={`/work/${slug}`} class="btn btn-primary btn-md btn-info">
-        View Details
-      </a>
-    </div>
   </div>
 </div>
