@@ -1324,25 +1324,10 @@
                 background-image: none;
             }
 
-            /* Hero background - grid pattern for dark mode with radial fade */
+            /* Hero background - transparent to show fixed grid */
             .hero-bg {
-                background-color: var(--color-base-100);
-                background-image: 
-                    radial-gradient(ellipse at top left, 
-                        var(--color-base-100) 0%, 
-                        transparent 50%
-                    ),
-                    linear-gradient(135deg, 
-                        transparent 0%, 
-                        oklch(0.68 0.33 314 / 0.03) 10%, 
-                        transparent 50%, 
-                        oklch(0.93 0.23 124.4 / 0.03) 90%, 
-                        transparent 100%
-                    ),
-                    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-                background-size: 100% 100%, 100% 100%, 16px 16px, 16px 16px;
-                background-position: 0 0, 0 0, 0 0, 0 0;
+                background: transparent;
+                /* Graph paper shows through from body::before pseudo-element */
             }
         }
 
