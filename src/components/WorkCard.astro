@@ -62,14 +62,14 @@ const getTagColor = (tag: string) => {
 ---
 
 <div 
-  class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] border-2 border-base-300 h-full card-side md:flex-col lg:card-side" 
+  class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] border-2 border-base-300 h-full max-w-md mx-auto" 
   data-work-card 
   data-category={category}
   data-card-id={slug}
   data-scroll-target
 >
-  <!-- Hero Image - horizontal on mobile and desktop, vertical on tablet -->
-  <figure class="relative w-40 md:w-full lg:w-48 h-full md:h-48 lg:h-auto shrink-0">
+  <!-- Hero Image - consistent aspect ratio with detail page -->
+  <figure class="relative h-80 w-full">
     <img transition:name={`work-img-${slug}`} src={imageSrc} alt={title} class="w-full h-full object-cover" loading="lazy" />
   </figure>
   
