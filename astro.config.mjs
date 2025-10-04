@@ -15,6 +15,14 @@ export default defineConfig({
 		format: "directory",
 	},
 
+	image: {
+		// Optimize images for web with multiple formats
+		// Astro will automatically generate optimized versions
+		service: {
+			entrypoint: "astro/assets/services/sharp",
+		},
+	},
+
 	vite: {
 		plugins: [tailwindcss()],
 	},

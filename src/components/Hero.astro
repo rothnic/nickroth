@@ -1,5 +1,6 @@
 ---
-import headshot from "../assets/images/nick-headshot.webp";
+import { Image } from "astro:assets";
+import headshot from "../assets/images/nick-headshot.png";
 import Zap from "./icons/Zap.astro";
 import Brain from "./icons/Brain.astro";
 import Code from "./icons/Code.astro";
@@ -72,14 +73,16 @@ import ArrowDown from "./icons/ArrowDown.astro";
             data-hero-card
           >
             <div class="hero-card-inner border-[4px] transform -rotate-1 overflow-hidden">
-              <img
-                src={headshot.src}
+              <Image
+                src={headshot}
                 alt="Nick Roth"
                 class="w-72 h-72 md:w-96 md:h-96 object-cover border-[3px] border-[var(--nr-border-color)]"
-                width="800"
-                height="800"
+                widths={[288, 384, 576, 768]}
+                sizes="(max-width: 768px) 288px, 384px"
                 loading="eager"
                 fetchpriority="high"
+                format="webp"
+                quality={85}
                 data-hero-image
               />
             </div>
