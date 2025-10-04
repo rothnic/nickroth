@@ -202,25 +202,8 @@
             touch-action: pan-y;
         }
         
-        /* Graph paper background for body */
+        /* Graph paper background for body - scrolls with content */
         body {
-            background-color: var(--color-base-100);
-            /* Prevent horizontal scrolling */
-            overflow-x: hidden;
-            max-width: 100%;
-            position: relative;
-        }
-        
-        /* Fixed grid background using pseudo-element */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: -1;
-            pointer-events: none;
             background-color: var(--color-base-100);
             background-image: 
                 radial-gradient(ellipse at top left, 
@@ -238,9 +221,12 @@
                 linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 16px 16px, 16px 16px;
             background-position: 0 0, 0 0, -1px -1px, -1px -1px;
+            /* Prevent horizontal scrolling */
+            overflow-x: hidden;
+            max-width: 100%;
         }
         
-        html[data-theme="neobrutalism-dark"] body::before {
+        html[data-theme="neobrutalism-dark"] body {
             background-color: var(--color-base-100);
             background-image: 
                 radial-gradient(ellipse at top left, 
@@ -261,47 +247,12 @@
         }
         
         /* ========================================
-           MAKE ALL LAYOUT ELEMENTS TRANSPARENT
-           (Grid shows through from body::before)
-           ======================================== */
-        
-        /* Make html and body transparent so fixed grid shows through */
-        html, body {
-            background-color: transparent !important;
-        }
-        
-        /* Make navbar transparent - overrides bg-base-100 class from template */
-        .navbar {
-            background-color: transparent !important;
-        }
-        
-        /* Make buttons transparent by default - cards can opt-in to backgrounds */
-        .btn {
-            background-color: transparent !important;
-        }
-        
-        /* Make select/dropdown transparent */
-        .select {
-            background-color: transparent !important;
-        }
-        
-        /* Make menu dropdown transparent */
-        .menu {
-            background-color: transparent !important;
-        }
-        
-        /* Make footer transparent */
-        footer, .footer {
-            background-color: transparent !important;
-        }
-        
-        /* ========================================
            SECTION TYPES & LAYERING SYSTEM
            ======================================== */
         
-        /* Base section - transparent, shows graph paper, handles vertical spacing */
+        /* Base section - transparent by default, shows graph paper, handles vertical spacing */
         section {
-            background: transparent !important;
+            background: transparent;
             position: relative;
             padding: 4rem 0;
             /* Ensure sections don't cause horizontal overflow */
@@ -311,13 +262,19 @@
         
         /* Paper section - solid background, no graph paper */
         .section-paper {
-            background-color: var(--color-base-100) !important;
+            background-color: var(--color-base-100);
+            background-image: none;
+        }
+        
+        /* Rotated section - card-like component with solid background */
+        .rotated-section {
+            background-color: var(--color-base-100);
             background-image: none;
         }
         
         /* Torn gap section - solid background for ripped edge effect */
         .torn-gap {
-            background-color: oklch(0.15 0 0) !important;
+            background-color: oklch(0.15 0 0);
             background-image: none;
         }
         
