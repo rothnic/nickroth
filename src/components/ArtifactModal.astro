@@ -1,0 +1,52 @@
+---
+interface Artifact {
+  label?: string;
+  href?: string;
+  type?: 'link' | 'image' | 'video';
+}
+
+interface Props {
+  artifacts: Artifact[];
+  phaseTitle: string;
+}
+
+const { artifacts, phaseTitle } = Astro.props;
+const modalId = `artifacts-${phaseTitle.replace(/\s+/g, '-').toLowerCase()}`;
+---
+
+<dialog id={modalId} class="modal">
+  <div class="modal-box border-4 border-base-content shadow-brutal max-w-3xl">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+    </form>
+    <h3 class="font-bold text-lg mb-4">{phaseTitle} - Artifacts</h3>
+    <div class="grid grid-cols-1 gap-4">
+      {artifacts.filter(a => a.label && a.href).map((artifact) => (
+        <div class="card bg-base-200 border-2 border-base-content">
+          <div class="card-body p-4">
+            {artifact.type === 'image' && (
+              <figure class="mb-2">
+                <img src={artifact.href} alt={artifact.label} class="w-full h-auto border-2 border-base-content" />
+              </figure>
+            )}
+            {artifact.type === 'video' && (
+              <figure class="mb-2">
+                <video controls class="w-full h-auto border-2 border-base-content">
+                  <source src={artifact.href} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </figure>
+            )}
+            <h4 class="font-bold">{artifact.label}</h4>
+            <a href={artifact.href} target="_blank" rel="noopener noreferrer" class="link link-primary text-sm">
+              View full size →
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>

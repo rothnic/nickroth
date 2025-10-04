@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import BadgeList from './BadgeList.astro';
 import MetricsRow from './MetricsRow.astro';
 import ProjectPreviewList from './ProjectPreviewList.astro';
+import ArtifactModal from './ArtifactModal.astro';
 
 interface Props {
   phase: CollectionEntry<'phases'>;
@@ -11,8 +12,10 @@ interface Props {
 }
 
 const { phase, projects = [], index } = Astro.props;
-const { era, title, oneliner, focus, skills, metrics, artifacts, bridge, current, featured } = phase.data;
+const { era, title, oneliner, focus, skills, metrics, artifacts, bridge, current } = phase.data;
 const phaseId = phase.slug;
+const hasMediaArtifacts = artifacts?.some(a => a.type === 'image' || a.type === 'video');
+const modalId = `artifacts-${phaseId}`;
 ---
 
 <details class="collapse collapse-arrow bg-base-100 border-4 border-base-content shadow-brutal" id={phaseId}>
@@ -70,15 +73,25 @@ const phaseId = phase.slug;
         <h4 class="font-bold text-sm mb-2 uppercase">Artifacts</h4>
         <div class="flex flex-wrap gap-2">
           {artifacts.map((artifact) => (
-            <a 
-              href={artifact.href} 
-              class="link link-primary text-sm"
-              target={artifact.type === 'link' ? '_blank' : undefined}
-              rel={artifact.type === 'link' ? 'noopener noreferrer' : undefined}
-            >
-              {artifact.label}
-            </a>
+            artifact.type === 'link' || !artifact.type ? (
+              <a 
+                href={artifact.href} 
+                class="link link-primary text-sm"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {artifact.label}
+              </a>
+            ) : null
           ))}
+          {hasMediaArtifacts && (
+            <button 
+              class="btn btn-xs btn-primary"
+              onclick={`document.getElementById('${modalId}').showModal()`}
+            >
+              View media
+            </button>
+          )}
         </div>
       </div>
     )}
@@ -89,3 +102,8 @@ const phaseId = phase.slug;
     )}
   </div>
 </details>
+
+{/* Artifact Modal */}
+{hasMediaArtifacts && artifacts && (
+  <ArtifactModal artifacts={artifacts.filter(a => a.type === 'image' || a.type === 'video')} phaseTitle={title} />
+)}
