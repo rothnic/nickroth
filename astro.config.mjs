@@ -16,8 +16,9 @@ export default defineConfig({
 	},
 
 	image: {
-		// Optimize images for web with multiple formats
-		// Astro will automatically generate optimized versions
+		// Sharp is used at BUILD TIME for image optimization
+		// This works for Cloudflare Pages (static builds) - not Workers
+		// Sharp automatically generates multiple responsive WebP sizes
 		service: {
 			entrypoint: "astro/assets/services/sharp",
 		},

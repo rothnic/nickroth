@@ -103,9 +103,31 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: lighthouse-report
+          name: lighthouse-report-${{ github.run_number }}
           path: lighthouse-report.json
-          retention-days: 30
+          retention-days: 90
+      
+      - name: Save historical scores
+        if: github.ref == 'refs/heads/main'
+        run: |
+          # Create a simple CSV file with timestamp and scores
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          COMMIT="${{ github.sha }}"
+          PERF=${{ steps.lighthouse.outputs.performance }}
+          A11Y=${{ steps.lighthouse.outputs.accessibility }}
+          BP=${{ steps.lighthouse.outputs.best-practices }}
+          SEO=${{ steps.lighthouse.outputs.seo }}
+          
+          # Create scores history file
+          echo "$TIMESTAMP,$COMMIT,$PERF,$A11Y,$BP,$SEO" > lighthouse-scores.csv
+          
+      - name: Upload scores history
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-scores-history
+          path: lighthouse-scores.csv
+          retention-days: 365
 
       - name: Comment on PR
         if: github.event_name == 'pull_request'
