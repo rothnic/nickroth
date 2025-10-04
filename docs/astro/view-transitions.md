@@ -142,6 +142,52 @@ document.addEventListener("astro:before-swap", (event) => {
 - Disable transitions temporarily (e.g., `transition:animate="none"`) to debug layout shifts.
 - Use Chromium DevTools (Rendering panel → View Transition) to inspect captured layers.
 
+
+### Fixing smooth scroll conflicts
+
+When navigating from a list page (scrolled down) to a detail page and back, CSS `scroll-behavior: smooth` can conflict with view transitions. The slow scroll animation prevents users from seeing the transition effect.
+
+**Solution**: Remove CSS smooth scroll entirely and enable it only for anchor links (within-page navigation):
+
+```css
+/* In global.css - remove or comment out smooth scroll */
+html {
+  /* scroll-behavior: smooth; */  /* Removed to avoid conflicts */
+}
+```
+
+```js
+// In your base layout script - enable smooth scroll only for anchor links
+document.addEventListener("click", (e) => {
+  const target = e.target as HTMLElement;
+  const link = target.closest("a");
+  
+  if (!link) return;
+  
+  const href = link.getAttribute("href");
+  
+  // Only apply smooth scroll for anchor links (within-page navigation)
+  if (href && href.startsWith("#")) {
+    e.preventDefault();
+    
+    const targetId = href.substring(1);
+    const targetElement = document.getElementById(targetId);
+    
+    if (targetElement) {
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      
+      targetElement.scrollIntoView({ 
+        behavior: prefersReducedMotion ? "auto" : "smooth" 
+      });
+      
+      history.pushState(null, "", href);
+    }
+  }
+});
+```
+
+This approach ensures smooth scrolling is only active for within-page navigation (anchor links), not for page-to-page navigation where it conflicts with view transitions.
+
 ## References
 
 - [Astro docs: View transitions](https://docs.astro.build/en/guides/view-transitions/)
