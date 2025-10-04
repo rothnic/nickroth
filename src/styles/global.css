@@ -205,6 +205,23 @@
         /* Graph paper background for body */
         body {
             background-color: var(--color-base-100);
+            /* Prevent horizontal scrolling */
+            overflow-x: hidden;
+            max-width: 100%;
+            position: relative;
+        }
+        
+        /* Fixed grid background using pseudo-element */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            pointer-events: none;
+            background-color: var(--color-base-100);
             background-image: 
                 radial-gradient(ellipse at top left, 
                     var(--color-base-100) 0%, 
@@ -221,14 +238,9 @@
                 linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 16px 16px, 16px 16px;
             background-position: 0 0, 0 0, -1px -1px, -1px -1px;
-            /* Prevent horizontal scrolling */
-            overflow-x: hidden;
-            max-width: 100%;
-            /* Enable hardware acceleration for background */
-            background-attachment: fixed;
         }
         
-        html[data-theme="neobrutalism-dark"] body {
+        html[data-theme="neobrutalism-dark"] body::before {
             background-color: var(--color-base-100);
             background-image: 
                 radial-gradient(ellipse at top left, 
@@ -246,7 +258,6 @@
                 linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 16px 16px, 16px 16px;
             background-position: 0 0, 0 0, -1px -1px, -1px -1px;
-            background-attachment: fixed;
         }
         
         /* ========================================
