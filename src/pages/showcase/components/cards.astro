@@ -207,6 +207,81 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
       </div>
     </section>
 
+    <!-- Project Cards (2-Column Grid) -->
+    <section class="space-y-6 mb-16">
+      <div>
+        <h2 class="text-3xl font-black mb-2">Project Cards - 2-Column Grid</h2>
+        <p class="text-base-content/70 mb-6">Responsive 2-column layout for project portfolios with clickable cards</p>
+      </div>
+      
+      <!-- 2-Column Grid Demo -->
+      <div class="grid grid-cols-2 gap-3 sm:gap-6 max-w-5xl mx-auto">
+        <a href="#" class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] border-2 border-base-300 h-full block cursor-pointer">
+          <!-- Category Badge -->
+          <div class="absolute top-1 left-1 sm:top-2 sm:left-2 z-10">
+            <span class="badge badge-warning badge-xs sm:badge-sm font-bold text-[0.6rem] sm:text-xs uppercase">
+              AUTOMATION & AI
+            </span>
+          </div>
+          
+          <!-- Image -->
+          <figure class="relative h-32 sm:h-48 w-full bg-gradient-to-br from-primary/20 to-accent/20">
+            <div class="flex items-center justify-center h-full text-4xl sm:text-6xl">🤖</div>
+          </figure>
+          
+          <div class="card-body p-2 sm:p-4">
+            <h2 class="text-sm sm:text-lg font-bold mb-1 sm:mb-2 leading-tight">
+              AI-Powered Automation
+            </h2>
+            <p class="text-[0.6rem] sm:text-xs font-bold text-primary uppercase leading-tight tracking-wide mb-1 sm:mb-2">
+              94% REDUCTION IN MANUAL PROCESSING TIME
+            </p>
+            <div class="flex flex-wrap gap-0.5 sm:gap-1">
+              <span class="badge badge-outline badge-xs text-[0.6rem] sm:text-xs">AI</span>
+              <span class="badge badge-outline badge-xs text-[0.6rem] sm:text-xs">Automation</span>
+              <span class="badge badge-outline badge-xs text-[0.6rem] sm:text-xs">LLM</span>
+            </div>
+          </div>
+        </a>
+        
+        <a href="#" class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] border-2 border-base-300 h-full block cursor-pointer">
+          <!-- Category Badge -->
+          <div class="absolute top-1 left-1 sm:top-2 sm:left-2 z-10">
+            <span class="badge badge-primary badge-xs sm:badge-sm font-bold text-[0.6rem] sm:text-xs uppercase">
+              HEADLESS CMS
+            </span>
+          </div>
+          
+          <!-- Image -->
+          <figure class="relative h-32 sm:h-48 w-full bg-gradient-to-br from-secondary/20 to-success/20">
+            <div class="flex items-center justify-center h-full text-4xl sm:text-6xl">📝</div>
+          </figure>
+          
+          <div class="card-body p-2 sm:p-4">
+            <h2 class="text-sm sm:text-lg font-bold mb-1 sm:mb-2 leading-tight">
+              Platform Modernization
+            </h2>
+            <p class="text-[0.6rem] sm:text-xs font-bold text-primary uppercase leading-tight tracking-wide mb-1 sm:mb-2">
+              FASTER AUTHORING, CLEANER ARCHITECTURE
+            </p>
+            <div class="flex flex-wrap gap-0.5 sm:gap-1">
+              <span class="badge badge-outline badge-xs text-[0.6rem] sm:text-xs">Platform</span>
+              <span class="badge badge-outline badge-xs text-[0.6rem] sm:text-xs">CMS</span>
+              <span class="badge badge-outline badge-xs text-[0.6rem] sm:text-xs">Performance</span>
+            </div>
+          </div>
+        </a>
+      </div>
+      
+      <div class="alert alert-success shadow-brutal border-2 border-black dark:border-white mt-6">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <div>
+          <h3 class="font-bold">2-Column Grid at All Sizes</h3>
+          <div class="text-sm">Uses <code>grid-cols-2</code> to maintain 2 columns from 320px mobile to desktop. Cards scale with responsive sizing (<code>h-32 sm:h-48</code>, <code>text-sm sm:text-lg</code>). Entire card is clickable.</div>
+        </div>
+      </div>
+    </section>
+
     <!-- Usage Note -->
     <div class="alert alert-info shadow-brutal-lg border-2 border-black dark:border-white">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
