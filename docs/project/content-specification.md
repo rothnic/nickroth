@@ -23,7 +23,7 @@ This document defines all content structures, data schemas, and content requirem
     },
     "social": {
       "github": "https://github.com/nickroth",
-      "linkedin": "https://linkedin.com/in/nickroth",
+      "linkedin": "https://www.linkedin.com/in/nicholasleeroth",
       "twitter": "@nickroth"
     }
   }
