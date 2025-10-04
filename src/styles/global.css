@@ -203,6 +203,7 @@
         /* Optimize touch scrolling performance */
         body {
             position: relative;
+            isolation: isolate;
             /* Enable momentum-based scrolling on iOS */
             -webkit-overflow-scrolling: touch;
             /* Optimize touch actions - only allow vertical scrolling */
@@ -210,6 +211,16 @@
             /* Prevent horizontal scrolling */
             overflow-x: hidden;
             max-width: 100%;
+        }
+        
+        /* Fixed grid background layer - always behind content */
+        #grid-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            will-change: transform;
+            transform: translateZ(0);
             background-color: var(--color-base-100);
             background-image: 
                 radial-gradient(ellipse at top left, 
@@ -229,8 +240,8 @@
             background-position: 0 0, 0 0, 0 0, 0 0;
         }
         
-        /* Dark mode scrolling grid */
-        html[data-theme="neobrutalism-dark"] body {
+        /* Dark mode fixed grid */
+        html[data-theme="neobrutalism-dark"] #grid-bg {
             background-color: var(--color-base-100);
             background-image: 
                 radial-gradient(ellipse at top left, 
