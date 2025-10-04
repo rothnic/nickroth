@@ -63,18 +63,25 @@ function isBackNavigation(navigation) {
  * @returns {string|null} Card ID to scroll to
  */
 function getCardReference() {
-	// Check if current page has a card reference
+	// Check if current page has a card reference (e.g., detail page)
 	const cardRef = document.body.getAttribute("data-card-ref");
 	if (cardRef) {
-		return cardRef;
+		// If we're on a detail page, don't return anything (no scrolling needed)
+		return null;
 	}
 
 	// Check sessionStorage for last viewed card (set when navigating forward)
 	const lastCard = sessionStorage.getItem("lastViewedCard");
 	if (lastCard) {
-		// Clear it after reading
-		sessionStorage.removeItem("lastViewedCard");
-		return lastCard;
+		// Mark as used with a timestamp to prevent reuse
+		const usedAt = sessionStorage.getItem("lastViewedCardUsedAt");
+		const now = Date.now();
+		
+		// Only use if not recently used (within last 500ms)
+		if (!usedAt || (now - parseInt(usedAt, 10)) > 500) {
+			sessionStorage.setItem("lastViewedCardUsedAt", now.toString());
+			return lastCard;
+		}
 	}
 
 	return null;
@@ -137,6 +144,7 @@ function handleScrollToCard() {
 	const card = document.querySelector(`[data-card-id="${cardId}"]`);
 	if (!card) {
 		console.debug(`Card with ID ${cardId} not found on this page`);
+		// Don't clear the reference here - we might need it on the next navigation
 		return;
 	}
 
@@ -155,6 +163,10 @@ function handleScrollToCard() {
 	
 	// Scroll to the card
 	scrollToElement(card, offset);
+	
+	// Clear the reference after successful scroll
+	sessionStorage.removeItem("lastViewedCard");
+	sessionStorage.removeItem("lastViewedCardUsedAt");
 }
 
 /**
