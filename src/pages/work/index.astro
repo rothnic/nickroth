@@ -43,8 +43,8 @@ const categories = [
         ))}
       </div>
 
-      <!-- Projects Grid - 2 columns on tablet and up -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+      <!-- Projects Grid - 2 columns on all screen sizes -->
+      <div class="grid grid-cols-2 gap-3 sm:gap-6 max-w-5xl mx-auto">
         {sortedWork.map((work) => (
           <WorkCard
             title={work.data.title}

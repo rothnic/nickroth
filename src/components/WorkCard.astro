@@ -70,32 +70,32 @@ const getTagColor = (tag: string) => {
 >
   <!-- Category Badge at Top - Positioned absolutely over image -->
   {category && (
-    <div class="absolute top-2 left-2 z-10">
-      <span class={`badge ${getCategoryColor(category)} badge-sm font-bold text-xs uppercase`}>
+    <div class="absolute top-1 left-1 sm:top-2 sm:left-2 z-10">
+      <span class={`badge ${getCategoryColor(category)} badge-xs sm:badge-sm font-bold text-[0.6rem] sm:text-xs uppercase`}>
         {category}
       </span>
     </div>
   )}
   
-  <!-- Hero Image - smaller for card -->
+  <!-- Hero Image - responsive sizes -->
   <a href={`/work/${slug}`} class="block">
-    <figure class="relative h-48 w-full">
+    <figure class="relative h-32 sm:h-48 w-full">
       <img transition:name={`work-img-${slug}`} src={imageSrc} alt={title} class="w-full h-full object-cover" loading="lazy" />
     </figure>
   </a>
   
-  <div class="card-body p-4">
+  <div class="card-body p-2 sm:p-4">
     <!-- Project Title -->
     <a href={`/work/${slug}`} class="block">
-      <h2 transition:name={`work-title-${slug}`} class="text-lg font-bold mb-2 leading-tight hover:text-primary transition-colors">
+      <h2 transition:name={`work-title-${slug}`} class="text-sm sm:text-lg font-bold mb-1 sm:mb-2 leading-tight hover:text-primary transition-colors">
         {title}
       </h2>
     </a>
     
     <!-- Impact Statement - Prominent Display in Primary Color -->
     {impact && (
-      <div class="mb-2">
-        <p class="text-xs font-bold text-primary uppercase leading-tight tracking-wide">
+      <div class="mb-1 sm:mb-2">
+        <p class="text-[0.6rem] sm:text-xs font-bold text-primary uppercase leading-tight tracking-wide">
           {impact}
         </p>
       </div>
@@ -104,9 +104,9 @@ const getTagColor = (tag: string) => {
     <!-- Limited Tags (2-3 with muted display) -->
     {tags.length > 0 && (
       <div>
-        <div class="flex flex-wrap gap-1">
+        <div class="flex flex-wrap gap-0.5 sm:gap-1">
           {tags.slice(0, 3).map((tag) => (
-            <span class="badge badge-outline badge-xs text-xs">
+            <span class="badge badge-outline badge-xs text-[0.6rem] sm:text-xs">
               {tag}
             </span>
           ))}
