@@ -266,7 +266,7 @@
         
         /* Base section - transparent, shows graph paper, handles vertical spacing */
         section {
-            background: transparent;
+            background: transparent !important;
             position: relative;
             padding: 4rem 0;
             /* Ensure sections don't cause horizontal overflow */
@@ -276,18 +276,14 @@
         
         /* Paper section - solid background, no graph paper */
         .section-paper {
-            background-color: var(--color-base-100);
+            background-color: var(--color-base-100) !important;
             background-image: none;
         }
         
-        /* Graph section - explicitly shows graph paper */
-        .section-graph {
-            background: transparent;
-        }
-        
-        /* Override any DaisyUI section backgrounds */
-        section:not(.hero-bg):not(.section-paper):not(.rotated-section):not(.torn-gap) {
-            background: transparent !important;
+        /* Torn gap section - solid background for ripped edge effect */
+        .torn-gap {
+            background-color: oklch(0.15 0 0) !important;
+            background-image: none;
         }
         
         /* Section content - handles horizontal padding and max-width */
