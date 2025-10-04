@@ -50,24 +50,19 @@ const currentPath = Astro.url.pathname;
     // Reinitialize on Astro page transitions
     document.addEventListener("astro:page-load", () => {
       initScrollAnimations();
+      
+      // Re-enable smooth scroll after page fully loads and scroll is restored
+      // Only re-enable if user hasn't set prefers-reduced-motion
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!prefersReducedMotion) {
+        document.documentElement.style.scrollBehavior = "smooth";
+      }
     });
 
     // Fix smooth scroll conflict with view transitions
     // Disable smooth scroll during navigation to allow instant scroll restoration
     document.addEventListener("astro:before-preparation", () => {
       document.documentElement.style.scrollBehavior = "auto";
-    });
-
-    // Re-enable smooth scroll after transition completes
-    document.addEventListener("astro:after-swap", () => {
-      // Use setTimeout to ensure scroll restoration happens first
-      setTimeout(() => {
-        // Only re-enable if user hasn't set prefers-reduced-motion
-        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (!prefersReducedMotion) {
-          document.documentElement.style.scrollBehavior = "smooth";
-        }
-      }, 0);
     });
   </script>
   <style>

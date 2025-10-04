@@ -155,17 +155,15 @@ document.addEventListener("astro:before-preparation", () => {
   document.documentElement.style.scrollBehavior = "auto";
 });
 
-document.addEventListener("astro:after-swap", () => {
-  setTimeout(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!prefersReducedMotion) {
-      document.documentElement.style.scrollBehavior = "smooth";
-    }
-  }, 0);
+document.addEventListener("astro:page-load", () => {
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!prefersReducedMotion) {
+    document.documentElement.style.scrollBehavior = "smooth";
+  }
 });
 ```
 
-This allows Astro's router to instantly restore scroll position during the transition, then re-enables smooth scroll for normal page interactions.
+This disables smooth scroll when navigation starts, allows Astro's router to instantly restore scroll position, then re-enables smooth scroll after the page fully loads and scroll restoration is complete.
 
 ## References
 

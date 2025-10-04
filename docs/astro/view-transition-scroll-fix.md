@@ -31,14 +31,12 @@ document.addEventListener("astro:before-preparation", () => {
   document.documentElement.style.scrollBehavior = "auto";
 });
 
-// Re-enable smooth scroll after transition completes
-document.addEventListener("astro:after-swap", () => {
-  setTimeout(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!prefersReducedMotion) {
-      document.documentElement.style.scrollBehavior = "smooth";
-    }
-  }, 0);
+// Re-enable smooth scroll after page fully loads and scroll is restored
+document.addEventListener("astro:page-load", () => {
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!prefersReducedMotion) {
+    document.documentElement.style.scrollBehavior = "smooth";
+  }
 });
 ```
 
@@ -47,10 +45,11 @@ document.addEventListener("astro:after-swap", () => {
 1. **`astro:before-preparation`**: Fired when navigation starts, before Astro fetches/prepares the new page
    - Set `scroll-behavior: auto` to allow instant scroll restoration
    
-2. **`astro:after-swap`**: Fired after the new page's DOM is swapped in and scroll is restored
-   - Use `setTimeout(..., 0)` to ensure scroll restoration completes first
+2. **`astro:page-load`**: Fired after the page is fully loaded, DOM is swapped, and scroll is restored
    - Check `prefers-reduced-motion` to respect user preferences
    - Re-enable `scroll-behavior: smooth` for normal page interactions
+
+The key difference from the initial implementation is using `astro:page-load` instead of `astro:after-swap`. The `page-load` event fires after scroll restoration is complete, ensuring smooth scroll doesn't interfere with Astro's instant scroll positioning.
 
 ### Benefits
 
