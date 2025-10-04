@@ -212,9 +212,9 @@
                 ),
                 linear-gradient(135deg, 
                     transparent 0%, 
-                    oklch(0.58 0.30 314 / 0.25) 10%, 
+                    oklch(0.58 0.30 314 / 0.08) 10%, 
                     transparent 50%, 
-                    oklch(0.93 0.23 124.4 / 0.25) 90%, 
+                    oklch(0.93 0.23 124.4 / 0.08) 90%, 
                     transparent 100%
                 ),
                 linear-gradient(var(--color-base-300) 1px, transparent 1px),
@@ -228,19 +228,6 @@
             background-attachment: fixed;
         }
         
-        /* Simplify background on mobile for better performance */
-        @media (max-width: 768px) {
-            body {
-                /* Remove complex gradients on mobile, keep only graph paper */
-                background-image: 
-                    linear-gradient(var(--color-base-300) 1px, transparent 1px),
-                    linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
-                background-size: 16px 16px, 16px 16px;
-                background-position: -1px -1px, -1px -1px;
-                background-attachment: scroll;
-            }
-        }
-        
         html[data-theme="neobrutalism-dark"] body {
             background-color: var(--color-base-100);
             background-image: 
@@ -250,9 +237,9 @@
                 ),
                 linear-gradient(135deg, 
                     transparent 0%, 
-                    oklch(0.68 0.33 314 / 0.20) 10%, 
+                    oklch(0.68 0.33 314 / 0.03) 10%, 
                     transparent 50%, 
-                    oklch(0.93 0.23 124.4 / 0.20) 90%, 
+                    oklch(0.93 0.23 124.4 / 0.03) 90%, 
                     transparent 100%
                 ),
                 linear-gradient(var(--color-base-300) 1px, transparent 1px),
@@ -260,18 +247,6 @@
             background-size: 100% 100%, 100% 100%, 16px 16px, 16px 16px;
             background-position: 0 0, 0 0, -1px -1px, -1px -1px;
             background-attachment: fixed;
-        }
-        
-        /* Simplify dark mode background on mobile for better performance */
-        @media (max-width: 768px) {
-            html[data-theme="neobrutalism-dark"] body {
-                background-image: 
-                    linear-gradient(var(--color-base-300) 1px, transparent 1px),
-                    linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
-                background-size: 16px 16px, 16px 16px;
-                background-position: -1px -1px, -1px -1px;
-                background-attachment: scroll;
-            }
         }
         
         /* ========================================
