@@ -43,9 +43,11 @@ const currentPath = Astro.url.pathname;
   </head>
   <script>
     import { initScrollAnimations } from "../scripts/animations.js";
+    import { initViewTransitionScrolling } from "../scripts/view-transitions.js";
 
     // Initialize on page load
     initScrollAnimations();
+    initViewTransitionScrolling();
 
     // Reinitialize on Astro page transitions
     document.addEventListener("astro:page-load", () => {
