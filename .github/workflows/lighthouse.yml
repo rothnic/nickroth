@@ -1,0 +1,207 @@
+name: Lighthouse CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+  actions: read
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.11.1
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Lighthouse audit (3 runs for median)
+        run: |
+          echo "Running Lighthouse 3 times to get median score..."
+          pnpm run audit
+          cp lighthouse-report.json lighthouse-report-1.json
+          sleep 5
+          pnpm run audit
+          cp lighthouse-report.json lighthouse-report-2.json
+          sleep 5
+          pnpm run audit
+          cp lighthouse-report.json lighthouse-report-3.json
+        
+      - name: Calculate median Lighthouse scores
+        id: lighthouse
+        run: |
+          # Extract scores from all 3 runs
+          PERF1=$(jq '.categories.performance.score * 100 | round' lighthouse-report-1.json)
+          PERF2=$(jq '.categories.performance.score * 100 | round' lighthouse-report-2.json)
+          PERF3=$(jq '.categories.performance.score * 100 | round' lighthouse-report-3.json)
+          
+          A11Y1=$(jq '.categories.accessibility.score * 100 | round' lighthouse-report-1.json)
+          A11Y2=$(jq '.categories.accessibility.score * 100 | round' lighthouse-report-2.json)
+          A11Y3=$(jq '.categories.accessibility.score * 100 | round' lighthouse-report-3.json)
+          
+          BP1=$(jq '.categories["best-practices"].score * 100 | round' lighthouse-report-1.json)
+          BP2=$(jq '.categories["best-practices"].score * 100 | round' lighthouse-report-2.json)
+          BP3=$(jq '.categories["best-practices"].score * 100 | round' lighthouse-report-3.json)
+          
+          SEO1=$(jq '.categories.seo.score * 100 | round' lighthouse-report-1.json)
+          SEO2=$(jq '.categories.seo.score * 100 | round' lighthouse-report-2.json)
+          SEO3=$(jq '.categories.seo.score * 100 | round' lighthouse-report-3.json)
+          
+          # Calculate median (sort and pick middle value)
+          PERF=$(echo -e "$PERF1\n$PERF2\n$PERF3" | sort -n | sed -n '2p')
+          A11Y=$(echo -e "$A11Y1\n$A11Y2\n$A11Y3" | sort -n | sed -n '2p')
+          BP=$(echo -e "$BP1\n$BP2\n$BP3" | sort -n | sed -n '2p')
+          SEO=$(echo -e "$SEO1\n$SEO2\n$SEO3" | sort -n | sed -n '2p')
+          
+          echo "performance=$PERF" >> $GITHUB_OUTPUT
+          echo "accessibility=$A11Y" >> $GITHUB_OUTPUT
+          echo "best-practices=$BP" >> $GITHUB_OUTPUT
+          echo "seo=$SEO" >> $GITHUB_OUTPUT
+          
+          echo "### 🔍 Lighthouse Scores (Median of 3 Runs)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Category | Run 1 | Run 2 | Run 3 | **Median** | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|-------|-------|------------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Performance | $PERF1 | $PERF2 | $PERF3 | **$PERF** | $([ $PERF -ge 90 ] && echo '✅' || echo '❌') |" >> $GITHUB_STEP_SUMMARY
+          echo "| Accessibility | $A11Y1 | $A11Y2 | $A11Y3 | **$A11Y** | $([ $A11Y -ge 90 ] && echo '✅' || echo '❌') |" >> $GITHUB_STEP_SUMMARY
+          echo "| Best Practices | $BP1 | $BP2 | $BP3 | **$BP** | $([ $BP -ge 95 ] && echo '✅' || echo '❌') |" >> $GITHUB_STEP_SUMMARY
+          echo "| SEO | $SEO1 | $SEO2 | $SEO3 | **$SEO** | $([ $SEO -ge 95 ] && echo '✅' || echo '❌') |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Thresholds**: Performance ≥90, Accessibility ≥90, Best Practices ≥95, SEO ≥95" >> $GITHUB_STEP_SUMMARY
+
+      - name: Check minimum thresholds
+        run: |
+          PERF=${{ steps.lighthouse.outputs.performance }}
+          A11Y=${{ steps.lighthouse.outputs.accessibility }}
+          BP=${{ steps.lighthouse.outputs.best-practices }}
+          SEO=${{ steps.lighthouse.outputs.seo }}
+          
+          echo "Performance: $PERF (minimum: 90)"
+          echo "Accessibility: $A11Y (minimum: 90)"
+          echo "Best Practices: $BP (minimum: 95)"
+          echo "SEO: $SEO (minimum: 95)"
+          
+          if [ $PERF -lt 90 ]; then
+            echo "❌ Performance score ($PERF) is below minimum threshold (90)"
+            exit 1
+          fi
+          
+          if [ $A11Y -lt 90 ]; then
+            echo "❌ Accessibility score ($A11Y) is below minimum threshold (90)"
+            exit 1
+          fi
+          
+          if [ $BP -lt 95 ]; then
+            echo "❌ Best Practices score ($BP) is below minimum threshold (95)"
+            exit 1
+          fi
+          
+          if [ $SEO -lt 95 ]; then
+            echo "❌ SEO score ($SEO) is below minimum threshold (95)"
+            exit 1
+          fi
+          
+          echo "✅ All Lighthouse scores meet minimum thresholds!"
+
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports-${{ github.run_number }}
+          path: |
+            lighthouse-report-1.json
+            lighthouse-report-2.json
+            lighthouse-report-3.json
+            lighthouse-report.json
+          retention-days: 90
+      
+      - name: Save historical scores
+        if: github.ref == 'refs/heads/main'
+        run: |
+          # Create a simple CSV file with timestamp and scores
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          COMMIT="${{ github.sha }}"
+          PERF=${{ steps.lighthouse.outputs.performance }}
+          A11Y=${{ steps.lighthouse.outputs.accessibility }}
+          BP=${{ steps.lighthouse.outputs.best-practices }}
+          SEO=${{ steps.lighthouse.outputs.seo }}
+          
+          # Create scores history file
+          echo "$TIMESTAMP,$COMMIT,$PERF,$A11Y,$BP,$SEO" > lighthouse-scores.csv
+          
+      - name: Upload scores history
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-scores-history
+          path: lighthouse-scores.csv
+          retention-days: 365
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const perf = ${{ steps.lighthouse.outputs.performance }};
+            const a11y = ${{ steps.lighthouse.outputs.accessibility }};
+            const bp = ${{ steps.lighthouse.outputs['best-practices'] }};
+            const seo = ${{ steps.lighthouse.outputs.seo }};
+            
+            const status = (score, threshold) => score >= threshold ? '✅' : '❌';
+            
+            const comment = `## 🔍 Lighthouse Performance Report (Median of 3 Runs)
+            
+            | Category | Median Score | Status |
+            |----------|-------------|--------|
+            | Performance | ${perf} | ${status(perf, 90)} |
+            | Accessibility | ${a11y} | ${status(a11y, 90)} |
+            | Best Practices | ${bp} | ${status(bp, 95)} |
+            | SEO | ${seo} | ${status(seo, 95)} |
+            
+            ### Thresholds
+            - Performance: **90+** required
+            - Accessibility: **90+** required
+            - Best Practices: **95+** required
+            - SEO: **95+** required
+            
+            > **Note**: Scores are calculated as the median of 3 Lighthouse runs to account for variance in CI environments.
+            
+            [View full Lighthouse report in artifacts →](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

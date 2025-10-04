@@ -1,6 +1,6 @@
 ---
+import { Image } from "astro:assets";
 import headshot from "../assets/images/nick-headshot.png";
-import heroMotionScript from "../scripts/hero-motion.ts?url";
 import Zap from "./icons/Zap.astro";
 import Brain from "./icons/Brain.astro";
 import Code from "./icons/Code.astro";
@@ -73,11 +73,16 @@ import ArrowDown from "./icons/ArrowDown.astro";
             data-hero-card
           >
             <div class="hero-card-inner border-[4px] transform -rotate-1 overflow-hidden">
-              <img
-                src={headshot.src}
+              <Image
+                src={headshot}
                 alt="Nick Roth"
                 class="w-72 h-72 md:w-96 md:h-96 object-cover border-[3px] border-[var(--nr-border-color)]"
+                widths={[288, 384, 576, 768]}
+                sizes="(max-width: 768px) 288px, 384px"
                 loading="eager"
+                fetchpriority="high"
+                format="webp"
+                quality={85}
                 data-hero-image
               />
             </div>
@@ -164,10 +169,95 @@ import ArrowDown from "./icons/ArrowDown.astro";
     </div>
   </div>
 
-  <!-- This import contains attributes so the editor treats it as an inline script by default.
-       Adding `is:inline` explicitly silences the lint hint and makes the intent clear.
-       The actual motion logic lives in `src/scripts/hero-motion.ts` which is a module file
-       and is imported here for page-level initialization (split-script pattern per docs).
-  -->
-  <script type="module" is:inline src={heroMotionScript}></script>
+  <script>
+    import type { AnimationPlaybackControls } from "motion";
+    import { animate } from "motion";
+
+    type KeyframeTargets = Record<string, string | number>;
+    type AnimationMap = Map<Element, AnimationPlaybackControls>;
+
+    const setupHeroMotion = () => {
+      if (!window.matchMedia("(hover: hover)").matches) {
+        return;
+      }
+
+      const hoverRegion = document.querySelector<HTMLElement>("[data-hero-hover]");
+      const card = hoverRegion?.querySelector<HTMLElement>("[data-hero-card]");
+      const image = hoverRegion?.querySelector<HTMLElement>("[data-hero-image]");
+      const backdrop = hoverRegion?.querySelector<HTMLElement>(
+        "[data-hero-backdrop]",
+      );
+
+      if (!hoverRegion || !card || !image) {
+        return;
+      }
+
+      const activeAnimations: AnimationMap = new Map();
+
+      const animateTo = (
+        element: Element | null | undefined,
+        keyframes: KeyframeTargets,
+        duration = 0.35,
+      ) => {
+        if (!element) return;
+
+        activeAnimations.get(element)?.stop();
+
+        const controls = animate(element, keyframes, {
+          duration,
+          ease: "easeOut",
+        });
+
+        activeAnimations.set(element, controls);
+      };
+
+      const reset = () => {
+        animateTo(card, { rotate: "2deg", scale: 1 }, 0.4);
+        animateTo(image, { rotate: "-1deg", scale: 1 }, 0.4);
+        animateTo(backdrop, { rotate: "0deg", scale: 1 }, 0.4);
+      };
+
+      const onEnter = () => {
+        animateTo(card, { rotate: "5deg", scale: 1.05 });
+        animateTo(image, { rotate: "0deg", scale: 1.02 });
+        animateTo(backdrop, { rotate: "-3deg", scale: 1.03 });
+      };
+
+      const onLeave = () => {
+        reset();
+      };
+
+      const controller = new AbortController();
+      const { signal } = controller;
+
+      hoverRegion.addEventListener("pointerenter", onEnter, { signal });
+      hoverRegion.addEventListener("pointerleave", onLeave, { signal });
+
+      reset();
+
+      document.addEventListener(
+        "astro:before-swap",
+        () => {
+          controller.abort();
+          activeAnimations.forEach((animation) => {
+            animation.stop();
+          });
+          activeAnimations.clear();
+        },
+        { once: true },
+      );
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", setupHeroMotion, {
+        once: true,
+      });
+    } else {
+      setupHeroMotion();
+    }
+
+    document.addEventListener("astro:after-swap", () => {
+      requestAnimationFrame(setupHeroMotion);
+    });
+  </script>
 </section>

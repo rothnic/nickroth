@@ -10,6 +10,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "audit": "node ./scripts/run-lighthouse.mjs",
+    "audit:check": "node ./scripts/run-lighthouse.mjs && node ./scripts/check-lighthouse-thresholds.mjs",
     "setup": "volta install node@22.16.0 && volta install pnpm@10.11.1 && pnpm install"
   },
   "dependencies": {
@@ -25,7 +26,8 @@
   "devDependencies": {
     "@types/node": "^22.18.6",
     "daisyui": "^5.1.26",
-    "lighthouse": "^12.8.2"
+    "lighthouse": "^12.8.2",
+    "sharp": "^0.34.4"
   },
   "volta": {
     "node": "22.16.0",

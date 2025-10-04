@@ -42,6 +42,7 @@ Agents and contributors can find all supplementary guides in this folder.
 ### Astro operations & QA
 
 - [Auditing Astro sites](./astro/auditing.md) – Run the automated Lighthouse script and follow manual QA best practices.
+- [Performance Monitoring](./project/performance-monitoring.md) – Guide for maintaining high Lighthouse scores, running audits, and CI/CD integration.
 
 ### Tooling & automation
 

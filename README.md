@@ -1,5 +1,10 @@
 # Nick Roth – Personal Site
 
+![Lighthouse Performance](https://img.shields.io/badge/Lighthouse-99%2F100-success?logo=lighthouse&logoColor=white)
+![Lighthouse Accessibility](https://img.shields.io/badge/Accessibility-92%2F100-success?logo=lighthouse&logoColor=white)
+![Lighthouse Best Practices](https://img.shields.io/badge/Best%20Practices-100%2F100-success?logo=lighthouse&logoColor=white)
+![Lighthouse SEO](https://img.shields.io/badge/SEO-100%2F100-success?logo=lighthouse&logoColor=white)
+
 A content-focused site built with Astro, Tailwind CSS, and DaisyUI.
 
 ## Quick start
