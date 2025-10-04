@@ -194,16 +194,22 @@
             }
         }
         
+        /* Establish stacking context for fixed grid layer */
+        html, body {
+            min-height: 100%;
+            background: var(--color-base-100);
+        }
+
         /* Optimize touch scrolling performance */
         body {
+            position: relative;
             /* Enable momentum-based scrolling on iOS */
             -webkit-overflow-scrolling: touch;
             /* Optimize touch actions - only allow vertical scrolling */
             touch-action: pan-y;
-        }
-        
-        /* Graph paper background for body - scrolls with content */
-        body {
+            /* Prevent horizontal scrolling */
+            overflow-x: hidden;
+            max-width: 100%;
             background-color: var(--color-base-100);
             background-image: 
                 radial-gradient(ellipse at top left, 
@@ -220,12 +226,10 @@
                 linear-gradient(var(--color-base-300) 1px, transparent 1px),
                 linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 16px 16px, 16px 16px;
-            background-position: 0 0, 0 0, -1px -1px, -1px -1px;
-            /* Prevent horizontal scrolling */
-            overflow-x: hidden;
-            max-width: 100%;
+            background-position: 0 0, 0 0, 0 0, 0 0;
         }
         
+        /* Dark mode scrolling grid */
         html[data-theme="neobrutalism-dark"] body {
             background-color: var(--color-base-100);
             background-image: 
@@ -243,39 +247,87 @@
                 linear-gradient(var(--color-base-300) 1px, transparent 1px),
                 linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 16px 16px, 16px 16px;
-            background-position: 0 0, 0 0, -1px -1px, -1px -1px;
+            background-position: 0 0, 0 0, 0 0, 0 0;
         }
         
         /* ========================================
            SECTION TYPES & LAYERING SYSTEM
            ======================================== */
         
+        /* Make all default layout wrappers transparent - grid shows through */
+        :where(header, nav, main, section, footer, .container, .prose, .hero, .menu, .tabs) {
+            background-color: transparent !important;
+        }
+        
+        /* Override daisyUI bg-base-100 utility class on wrappers */
+        :where(.bg-base-100) {
+            background-color: transparent !important;
+        }
+        
+        /* Navbar gets a background */
+        .navbar {
+            background-color: var(--color-base-100);
+        }
+        
         /* Base section - transparent by default, shows graph paper, handles vertical spacing */
         section {
-            background: transparent;
+            background: transparent !important;
             position: relative;
             padding: 4rem 0;
+            z-index: 1; /* above the fixed grid */
             /* Ensure sections don't cause horizontal overflow */
             overflow-x: hidden;
             max-width: 100%;
         }
         
-        /* Paper section - solid background, no graph paper */
-        .section-paper {
-            background-color: var(--color-base-100);
+        /* Paper section - solid white overlay with border and shadow */
+        .section-paper,
+        .paper {
+            position: relative;
+            z-index: 1;
+            background-color: var(--color-base-100) !important;
+            background-image: none;
+            border: 2px solid var(--nr-border-color);
+            box-shadow: 6px 6px 0 var(--nr-border-color);
+        }
+        
+        /* Cards - intentional white panels for content separation */
+        .card {
+            position: relative;
+            z-index: 1;
+            background-color: var(--color-base-100) !important;
             background-image: none;
         }
         
         /* Rotated section - card-like component with solid background */
         .rotated-section {
-            background-color: var(--color-base-100);
+            position: relative;
+            z-index: 1;
+            background-color: var(--color-base-100) !important;
             background-image: none;
         }
         
-        /* Torn gap section - solid background for ripped edge effect */
+        /* Torn gap section - solid black band with jagged edge overlay */
         .torn-gap {
-            background-color: oklch(0.15 0 0);
+            position: relative;
+            z-index: 1;
+            background-color: oklch(0.15 0 0) !important;
             background-image: none;
+            color: white;
+        }
+        
+        /* Jagged top edge for torn-gap sections */
+        .torn-gap::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -24px;
+            height: 48px;
+            background: oklch(0.15 0 0);
+            -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100' preserveAspectRatio='none'><path d='M0,100 L0,40 60,80 120,40 180,80 240,40 300,80 360,40 420,80 480,40 540,80 600,40 660,80 720,40 780,80 840,40 900,80 960,40 1020,80 1080,40 1140,80 1200,40 1200,100 Z' fill='black'/></svg>") center / 100% 100% no-repeat;
+            mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100' preserveAspectRatio='none'><path d='M0,100 L0,40 60,80 120,40 180,80 240,40 300,80 360,40 420,80 480,40 540,80 600,40 660,80 720,40 780,80 840,40 900,80 960,40 1020,80 1080,40 1140,80 1200,40 1200,100 Z' fill='black'/></svg>") center / 100% 100% no-repeat;
+            pointer-events: none;
         }
         
         /* Section content - handles horizontal padding and max-width */
