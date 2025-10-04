@@ -194,16 +194,33 @@
             }
         }
         
+        /* Establish stacking context for fixed grid layer */
+        html, body {
+            min-height: 100%;
+            background: var(--color-base-100);
+        }
+
         /* Optimize touch scrolling performance */
         body {
+            position: relative;
+            isolation: isolate;
             /* Enable momentum-based scrolling on iOS */
             -webkit-overflow-scrolling: touch;
             /* Optimize touch actions - only allow vertical scrolling */
             touch-action: pan-y;
+            /* Prevent horizontal scrolling */
+            overflow-x: hidden;
+            max-width: 100%;
         }
         
-        /* Graph paper background for body */
-        body {
+        /* Fixed grid background layer - always behind content */
+        #grid-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            will-change: transform;
+            transform: translateZ(0);
             background-color: var(--color-base-100);
             background-image: 
                 radial-gradient(ellipse at top left, 
@@ -220,28 +237,11 @@
                 linear-gradient(var(--color-base-300) 1px, transparent 1px),
                 linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 16px 16px, 16px 16px;
-            background-position: 0 0, 0 0, -1px -1px, -1px -1px;
-            /* Prevent horizontal scrolling */
-            overflow-x: hidden;
-            max-width: 100%;
-            /* Enable hardware acceleration for background */
-            background-attachment: fixed;
+            background-position: 0 0, 0 0, 0 0, 0 0;
         }
         
-        /* Simplify background on mobile for better performance */
-        @media (max-width: 768px) {
-            body {
-                /* Remove complex gradients on mobile, keep only graph paper */
-                background-image: 
-                    linear-gradient(var(--color-base-300) 1px, transparent 1px),
-                    linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
-                background-size: 16px 16px, 16px 16px;
-                background-position: -1px -1px, -1px -1px;
-                background-attachment: scroll;
-            }
-        }
-        
-        html[data-theme="neobrutalism-dark"] body {
+        /* Dark mode fixed grid */
+        html[data-theme="neobrutalism-dark"] #grid-bg {
             background-color: var(--color-base-100);
             background-image: 
                 radial-gradient(ellipse at top left, 
@@ -258,50 +258,87 @@
                 linear-gradient(var(--color-base-300) 1px, transparent 1px),
                 linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 16px 16px, 16px 16px;
-            background-position: 0 0, 0 0, -1px -1px, -1px -1px;
-            background-attachment: fixed;
-        }
-        
-        /* Simplify dark mode background on mobile for better performance */
-        @media (max-width: 768px) {
-            html[data-theme="neobrutalism-dark"] body {
-                background-image: 
-                    linear-gradient(var(--color-base-300) 1px, transparent 1px),
-                    linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
-                background-size: 16px 16px, 16px 16px;
-                background-position: -1px -1px, -1px -1px;
-                background-attachment: scroll;
-            }
+            background-position: 0 0, 0 0, 0 0, 0 0;
         }
         
         /* ========================================
            SECTION TYPES & LAYERING SYSTEM
            ======================================== */
         
-        /* Base section - transparent, shows graph paper, handles vertical spacing */
+        /* Make all default layout wrappers transparent - grid shows through */
+        :where(header, nav, main, section, footer, .container, .prose, .hero, .menu, .tabs) {
+            background-color: transparent !important;
+        }
+        
+        /* Override daisyUI bg-base-100 utility class on wrappers */
+        :where(.bg-base-100) {
+            background-color: transparent !important;
+        }
+        
+        /* Navbar gets a background */
+        .navbar {
+            background-color: var(--color-base-100);
+        }
+        
+        /* Base section - transparent by default, shows graph paper, handles vertical spacing */
         section {
-            background: transparent;
+            background: transparent !important;
             position: relative;
             padding: 4rem 0;
+            z-index: 1; /* above the fixed grid */
             /* Ensure sections don't cause horizontal overflow */
             overflow-x: hidden;
             max-width: 100%;
         }
         
-        /* Paper section - solid background, no graph paper */
-        .section-paper {
-            background-color: var(--color-base-100);
+        /* Paper section - solid white overlay with border and shadow */
+        .section-paper,
+        .paper {
+            position: relative;
+            z-index: 1;
+            background-color: var(--color-base-100) !important;
+            background-image: none;
+            border: 2px solid var(--nr-border-color);
+            box-shadow: 6px 6px 0 var(--nr-border-color);
+        }
+        
+        /* Cards - intentional white panels for content separation */
+        .card {
+            position: relative;
+            z-index: 1;
+            background-color: var(--color-base-100) !important;
             background-image: none;
         }
         
-        /* Graph section - explicitly shows graph paper */
-        .section-graph {
-            background: transparent;
+        /* Rotated section - card-like component with solid background */
+        .rotated-section {
+            position: relative;
+            z-index: 1;
+            background-color: var(--color-base-100) !important;
+            background-image: none;
         }
         
-        /* Override any DaisyUI section backgrounds */
-        section:not(.hero-bg):not(.section-paper):not(.rotated-section):not(.torn-gap) {
-            background: transparent !important;
+        /* Torn gap section - solid black band with jagged edge overlay */
+        .torn-gap {
+            position: relative;
+            z-index: 1;
+            background-color: oklch(0.15 0 0) !important;
+            background-image: none;
+            color: white;
+        }
+        
+        /* Jagged top edge for torn-gap sections */
+        .torn-gap::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -24px;
+            height: 48px;
+            background: oklch(0.15 0 0);
+            -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100' preserveAspectRatio='none'><path d='M0,100 L0,40 60,80 120,40 180,80 240,40 300,80 360,40 420,80 480,40 540,80 600,40 660,80 720,40 780,80 840,40 900,80 960,40 1020,80 1080,40 1140,80 1200,40 1200,100 Z' fill='black'/></svg>") center / 100% 100% no-repeat;
+            mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100' preserveAspectRatio='none'><path d='M0,100 L0,40 60,80 120,40 180,80 240,40 300,80 360,40 420,80 480,40 540,80 600,40 660,80 720,40 780,80 840,40 900,80 960,40 1020,80 1080,40 1140,80 1200,40 1200,100 Z' fill='black'/></svg>") center / 100% 100% no-repeat;
+            pointer-events: none;
         }
         
         /* Section content - handles horizontal padding and max-width */
@@ -1057,7 +1094,7 @@
                 border-style: solid;
                 border-radius: var(--radius-box);
                 box-shadow: var(--nr-shadow-base);
-                background-color: var(--color-base-100);
+                background: var(--color-base-100) !important;  /* Cards should have solid backgrounds */
                 transform: translate(0, 0);
                 transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
                 /* Anti-aliasing for crisp rendering */
@@ -1201,7 +1238,7 @@
             }
 
             .hero-card-inner {
-                background-color: var(--color-base-100);
+                background: transparent;
                 border-color: var(--nr-border-color);
             }
 
@@ -1338,25 +1375,10 @@
                 background-image: none;
             }
 
-            /* Hero background - grid pattern for dark mode with radial fade */
+            /* Hero background - transparent to show fixed grid */
             .hero-bg {
-                background-color: var(--color-base-100);
-                background-image: 
-                    radial-gradient(ellipse at top left, 
-                        var(--color-base-100) 0%, 
-                        transparent 50%
-                    ),
-                    linear-gradient(135deg, 
-                        transparent 0%, 
-                        oklch(0.68 0.33 314 / 0.03) 10%, 
-                        transparent 50%, 
-                        oklch(0.93 0.23 124.4 / 0.03) 90%, 
-                        transparent 100%
-                    ),
-                    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-                background-size: 100% 100%, 100% 100%, 16px 16px, 16px 16px;
-                background-position: 0 0, 0 0, 0 0, 0 0;
+                background: transparent;
+                /* Graph paper shows through from body::before pseudo-element */
             }
         }
 
