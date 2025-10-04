@@ -1,0 +1,100 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import PhaseCard from './PhaseCard.astro';
+
+interface Props {
+  view?: 'timeline' | 'cards' | 'list';
+  density?: 'compact' | 'normal' | 'spacious';
+}
+
+const { view = 'timeline', density = 'normal' } = Astro.props;
+
+// Get all phases and projects
+const phases = await getCollection('phases');
+const projects = await getCollection('projects');
+
+// Sort phases by era (most recent first)
+const sortedPhases = phases.sort((a, b) => {
+  // Extract year from era string (e.g., "2019–Present" -> 2019)
+  const getStartYear = (era: string) => {
+    const match = era.match(/(\d{4})/);
+    return match ? parseInt(match[1]) : 0;
+  };
+  return getStartYear(b.data.era) - getStartYear(a.data.era);
+});
+
+// Build project lookup by phase
+const projectsByPhase = new Map<string, Array<CollectionEntry<'projects'>>>();
+for (const project of projects) {
+  // Add to primary phase
+  if (project.data.phase) {
+    const phaseProjects = projectsByPhase.get(project.data.phase) || [];
+    phaseProjects.push(project);
+    projectsByPhase.set(project.data.phase, phaseProjects);
+  }
+  // Add to additional phases
+  if (project.data.phases) {
+    for (const phaseSlug of project.data.phases) {
+      const phaseProjects = projectsByPhase.get(phaseSlug) || [];
+      if (!phaseProjects.includes(project)) {
+        phaseProjects.push(project);
+      }
+      projectsByPhase.set(phaseSlug, phaseProjects);
+    }
+  }
+}
+
+// Sort projects within each phase by weight (desc) then alpha
+for (const [phaseSlug, phaseProjects] of projectsByPhase) {
+  phaseProjects.sort((a, b) => {
+    if (a.data.weight !== b.data.weight) {
+      return (b.data.weight || 0) - (a.data.weight || 0);
+    }
+    return a.data.title.localeCompare(b.data.title);
+  });
+  // Limit to top 3
+  projectsByPhase.set(phaseSlug, phaseProjects.slice(0, 3));
+}
+
+// Density classes
+const densityClasses = {
+  compact: 'space-y-2',
+  normal: 'space-y-4',
+  spacious: 'space-y-8'
+};
+---
+
+{view === 'timeline' && (
+  <ul class={`timeline timeline-vertical ${densityClasses[density]}`}>
+    {sortedPhases.map((phase, index) => (
+      <li>
+        {index > 0 && <hr class="bg-base-content" />}
+        <div class="timeline-start text-sm font-mono opacity-70 font-bold">{phase.data.era}</div>
+        <div class="timeline-middle">
+          <span class={`status ${phase.data.current ? 'status-primary' : 'status-neutral'} status-md`}></span>
+        </div>
+        <div class="timeline-end">
+          <PhaseCard phase={phase} projects={projectsByPhase.get(phase.slug) || []} index={index} />
+        </div>
+        {index < sortedPhases.length - 1 && <hr class="bg-base-content" />}
+      </li>
+    ))}
+  </ul>
+)}
+
+{view === 'cards' && (
+  <div class={`grid grid-cols-1 gap-6 ${densityClasses[density]}`}>
+    {sortedPhases.map((phase, index) => (
+      <PhaseCard phase={phase} projects={projectsByPhase.get(phase.slug) || []} index={index} />
+    ))}
+  </div>
+)}
+
+{view === 'list' && (
+  <div class={`flex flex-col ${densityClasses[density]}`}>
+    {sortedPhases.map((phase, index) => (
+      <PhaseCard phase={phase} projects={projectsByPhase.get(phase.slug) || []} index={index} />
+    ))}
+  </div>
+)}

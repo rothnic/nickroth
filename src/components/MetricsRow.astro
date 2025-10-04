@@ -1,0 +1,25 @@
+---
+interface Metric {
+  label?: string;
+  value?: string;
+}
+
+interface Props {
+  metrics: Metric[];
+}
+
+const { metrics } = Astro.props;
+// Limit to 4 metrics maximum for density and filter out any without both label and value
+const displayMetrics = metrics
+  .filter(m => m.label && m.value)
+  .slice(0, 4);
+---
+
+<div class="stats stats-vertical sm:stats-horizontal shadow-brutal border-4 border-base-content bg-base-100 w-full">
+  {displayMetrics.map((metric) => (
+    <div class="stat p-4">
+      <div class="stat-title text-xs uppercase font-bold opacity-70">{metric.label}</div>
+      <div class="stat-value text-2xl sm:text-3xl font-black">{metric.value}</div>
+    </div>
+  ))}
+</div>

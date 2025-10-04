@@ -1,0 +1,35 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  projects: Array<CollectionEntry<'projects'>>;
+  phaseSlug: string;
+  maxVisible?: number;
+}
+
+const { projects, phaseSlug, maxVisible = 3 } = Astro.props;
+const visibleProjects = projects.slice(0, maxVisible);
+const hasMore = projects.length > maxVisible;
+---
+
+{projects.length > 0 && (
+  <div class="flex flex-wrap gap-2 items-center">
+    {visibleProjects.map((project) => (
+      <a 
+        href={`/projects/${project.slug}`} 
+        class="badge badge-soft badge-height-xs text-xs hover-scale-up-sm"
+        title={project.data.summary}
+      >
+        {project.data.title}
+      </a>
+    ))}
+    {hasMore && (
+      <a 
+        href={`/phases/${phaseSlug}`} 
+        class="badge badge-outline badge-height-xs text-xs hover-scale-up-sm"
+      >
+        +{projects.length - maxVisible} more
+      </a>
+    )}
+  </div>
+)}
