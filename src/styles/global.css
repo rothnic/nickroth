@@ -210,12 +210,12 @@
                     var(--color-base-100) 0%, 
                     transparent 40%
                 ),
-                conic-gradient(from 135deg at 50% 50%, 
-                    transparent 0deg, 
-                    oklch(0.58 0.30 314 / 0.15) 90deg, 
-                    transparent 180deg, 
-                    oklch(0.93 0.23 124.4 / 0.15) 270deg, 
-                    transparent 360deg
+                linear-gradient(135deg, 
+                    transparent 0%, 
+                    oklch(0.58 0.30 314 / 0.25) 10%, 
+                    transparent 50%, 
+                    oklch(0.93 0.23 124.4 / 0.25) 90%, 
+                    transparent 100%
                 ),
                 linear-gradient(var(--color-base-300) 1px, transparent 1px),
                 linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
@@ -248,12 +248,12 @@
                     var(--color-base-100) 0%, 
                     transparent 50%
                 ),
-                conic-gradient(from 135deg at 50% 50%, 
-                    transparent 0deg, 
-                    oklch(0.68 0.33 314 / 0.12) 90deg, 
-                    transparent 180deg, 
-                    oklch(0.93 0.23 124.4 / 0.12) 270deg, 
-                    transparent 360deg
+                linear-gradient(135deg, 
+                    transparent 0%, 
+                    oklch(0.68 0.33 314 / 0.20) 10%, 
+                    transparent 50%, 
+                    oklch(0.93 0.23 124.4 / 0.20) 90%, 
+                    transparent 100%
                 ),
                 linear-gradient(var(--color-base-300) 1px, transparent 1px),
                 linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
