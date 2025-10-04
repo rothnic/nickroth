@@ -158,7 +158,7 @@ export function HeroBlock() {
               <HoverCard hoverEffect="lift">
                 <div className="bg-white border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative z-10">
                   <Text size="lg" className="text-2xl md:text-3xl text-black leading-relaxed font-black">
-                    I turn business objectives into <span className="font-mono bg-lime-200 px-2 border border-black">shippable systems</span> — 
+                    I turn business objectives into <span className="font-mono bg-lime-200 px-2 border border-black whitespace-nowrap">shippable systems</span> — 
                     model the business, specify precisely, and build only what moves the needle.
                   </Text>
                 </div>
