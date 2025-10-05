@@ -66,11 +66,11 @@ const densityClasses = {
 ---
 
 {view === 'timeline' && (
-  <ul class={`timeline timeline-vertical ${densityClasses[density]}`}>
+  <ul class={`timeline timeline-vertical timeline-compact-mobile ${densityClasses[density]}`}>
     {sortedPhases.map((phase, index) => (
       <li>
         {index > 0 && <hr class="bg-base-content" />}
-        <div class="timeline-start text-sm font-mono opacity-70 font-bold">{phase.data.era}</div>
+        <div class="timeline-start text-sm font-mono opacity-70 font-bold timeline-date-mobile">{phase.data.era}</div>
         <div class="timeline-middle">
           <span class={`status ${phase.data.current ? 'status-primary' : 'status-neutral'} status-md`}></span>
         </div>
