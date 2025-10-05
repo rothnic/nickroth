@@ -1701,9 +1701,11 @@
                 letter-spacing: 0.05em;
             }
 
-            /* Adjust timeline layout for mobile - move closer to left */
+            /* Adjust timeline layout for mobile - add minimal padding */
             .timeline-compact-mobile {
-                margin-left: -0.5rem;
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+                width: 100%;
             }
 
             /* Reduce timeline start width on mobile */
