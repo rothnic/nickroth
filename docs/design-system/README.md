@@ -42,6 +42,19 @@ Includes:
 
 **Status**: ✅ Current color specification
 
+### [Grid Background System](./grid-background-system.md)
+**Complete documentation of the scrolling grid background architecture**
+
+Covers:
+- Three-layer system (background, content, overlays)
+- Scrolling grid implementation
+- Transparent sections and overlay sections
+- Torn edge effect using clip-path
+- Z-index hierarchy and performance considerations
+- Usage guidelines and troubleshooting
+
+**Status**: ✅ Current implementation (October 2025)
+
 ### [Prototype Analysis](./prototype-analysis.md)
 **Analysis of React prototype for pattern extraction**
 
@@ -69,8 +82,9 @@ Visual reference images from prototype and design mockups
 
 ### For Implementation
 1. Read **[Implementation Guide](./implementation.md)** - Current technical reference
-2. Check **[Color System](./colors.md)** - Color values and usage
-3. Reference **[Design System Guide](./guide.md)** - Design principles
+2. Check **[Grid Background System](./grid-background-system.md)** - Background architecture
+3. Check **[Color System](./colors.md)** - Color values and usage
+4. Reference **[Design System Guide](./guide.md)** - Design principles
 
 ### For Design Decisions
 1. Review **[Design System Guide](./guide.md)** - Philosophy and patterns
@@ -89,6 +103,7 @@ Visual reference images from prototype and design mockups
 | `implementation.md` | ✅ Current | Technical implementation reference |
 | `guide.md` | 📖 Reference | Design philosophy and architecture |
 | `colors.md` | ✅ Current | Color specification |
+| `grid-background-system.md` | ✅ Current | Grid background architecture |
 | `prototype-analysis.md` | 📖 Reference | Pattern extraction from prototype |
 | `customizing-daisyui-tailwindv4-directives.md` | 📖 Reference | Technical notes |
 | `example-global-styles.md` | 📖 Reference | Code examples |

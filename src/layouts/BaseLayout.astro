@@ -105,6 +105,9 @@ const currentPath = Astro.url.pathname;
     }
   </style>
   <body>
+    <!-- Fixed grid background layer -->
+    <div id="grid-bg" aria-hidden="true"></div>
+    
     <div class="min-h-screen flex flex-col">
       {showNavbar && <Navbar currentPath={currentPath} />}
       <slot />
