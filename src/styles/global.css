@@ -165,10 +165,39 @@
         --card-shadow: var(--nr-shadow-base);
     }
 
-    @layer utilities {
-        /* ========================================
-           THEME-AGNOSTIC UTILITIES
+@layer utilities {
+    /* ========================================
+       THEME-AGNOSTIC UTILITIES
            (No theme scoping needed)
+           ======================================== */
+        
+        /* ========================================
+           ROTATION SYSTEM OVERVIEW
+           
+           This design system uses multiple approaches for rotation:
+           
+           1. STATIC ROTATIONS (sections/containers):
+              - Applied via .rotated-section-sm/md/lg classes
+              - Uses Tailwind's rotate utilities via @apply
+              - NO hover effects - containers remain static
+              - Example: <section class="card rotated-section rotated-section-lg">
+           
+           2. STICKER ROTATIONS (badges, small elements):
+              - Applied via .rotate-1 through .rotate-12 utilities
+              - Can combine with hover effects: .hover-rotate-more, .hover-rotate-wiggle
+              - Uses CSS 'rotate' property for better composition
+              - Example: <span class="badge rotate-3 hover-rotate-wiggle">
+           
+           3. HOVER-ONLY ROTATIONS (interactive elements):
+              - Applied via .hover-rotate-1 through .hover-rotate-5 classes
+              - Uses CSS custom properties (--hover-rotate)
+              - Requires .hover-effect base class for transitions
+              - Example: <button class="hover-effect hover-rotate-2">
+           
+           EXCLUSION SYSTEM:
+           - .rotated-section is explicitly excluded from card hover effects
+           - Prevents container rotation/translation on hover
+           - Child elements can still have their own hover effects
            ======================================== */
         
         /* Base font family and box model */
@@ -213,14 +242,13 @@
             max-width: 100%;
         }
         
-        /* Fixed grid background layer - always behind content */
+        /* Scrolling grid background layer - scrolls with content */
         #grid-bg {
-            position: fixed;
+            position: absolute;
             inset: 0;
+            min-height: 100vh;
             z-index: -1;
             pointer-events: none;
-            will-change: transform;
-            transform: translateZ(0);
             background-color: var(--color-base-100);
             background-image: 
                 radial-gradient(ellipse at top left, 
@@ -231,7 +259,7 @@
                     transparent 0%, 
                     oklch(0.58 0.30 314 / 0.08) 10%, 
                     transparent 50%, 
-                    oklch(0.93 0.23 124.4 / 0.08) 90%, 
+                    oklch(0.65 0.25 314 / 0.06) 90%, 
                     transparent 100%
                 ),
                 linear-gradient(var(--color-base-300) 1px, transparent 1px),
@@ -240,7 +268,7 @@
             background-position: 0 0, 0 0, 0 0, 0 0;
         }
         
-        /* Dark mode fixed grid */
+        /* Dark mode scrolling grid */
         html[data-theme="neobrutalism-dark"] #grid-bg {
             background-color: var(--color-base-100);
             background-image: 
@@ -252,7 +280,7 @@
                     transparent 0%, 
                     oklch(0.68 0.33 314 / 0.03) 10%, 
                     transparent 50%, 
-                    oklch(0.93 0.23 124.4 / 0.03) 90%, 
+                    oklch(0.75 0.28 314 / 0.02) 90%, 
                     transparent 100%
                 ),
                 linear-gradient(var(--color-base-300) 1px, transparent 1px),
@@ -275,9 +303,12 @@
             background-color: transparent !important;
         }
         
-        /* Navbar gets a background */
+        /* Navbar gets a solid background with border for definition */
         .navbar {
-            background-color: var(--color-base-100);
+            background-color: var(--color-base-100) !important;
+            border-bottom: 4px solid var(--nr-border-color);
+            position: relative;
+            z-index: 100; /* Ensure navbar stays above scrolling content */
         }
         
         /* Base section - transparent by default, shows graph paper, handles vertical spacing */
@@ -291,16 +322,13 @@
             max-width: 100%;
         }
         
-        /* Paper section - solid white overlay with border and shadow */
-        .section-paper,
-        .paper {
-            position: relative;
-            z-index: 1;
-            background-color: var(--color-base-100) !important;
-            background-image: none;
-            border: 2px solid var(--nr-border-color);
-            box-shadow: 6px 6px 0 var(--nr-border-color);
-        }
+        /* Paper section - solid white overlay (extends .card)
+           Usage: <div class="card paper shadow-brutal-sm"> or <section class="card section-paper shadow-brutal-sm">
+           - .card provides: base background, positioning, border via theme variables
+           - Add shadow utility class: .shadow-brutal-sm, .shadow-brutal, .shadow-brutal-lg, etc.
+           - .paper/.section-paper provides: semantic class name for component identification
+           - Note: .paper and .section-paper have no styles - use .card class for actual styling
+        */
         
         /* Cards - intentional white panels for content separation */
         .card {
@@ -308,15 +336,14 @@
             z-index: 1;
             background-color: var(--color-base-100) !important;
             background-image: none;
+            /* DaisyUI automatically applies:
+               - border: var(--card-border-width) solid var(--card-border)
+               - For shadows, use utility classes: .shadow-brutal-sm, .shadow-brutal, .shadow-brutal-lg, .shadow-brutal-xl
+            */
         }
         
-        /* Rotated section - card-like component with solid background */
-        .rotated-section {
-            position: relative;
-            z-index: 1;
-            background-color: var(--color-base-100) !important;
-            background-image: none;
-        }
+        /* Rotated section - extends .card (see full definition near torn-gap styles)
+           Duplicate removed - single definition below at line ~647 */
         
         /* Torn gap section - solid black band with jagged edge overlay */
         .torn-gap {
@@ -540,6 +567,21 @@
             --hover-scale: 1.1;
         }
         
+        /* Disable hover effects - useful for containers with child elements that have hover effects
+           This class prevents any transform/shadow changes on hover while preserving existing transforms
+        */
+        .no-hover {
+            transition: none;
+            
+            &:hover {
+                transform: inherit;
+                box-shadow: inherit;
+                translate: inherit;
+                scale: inherit;
+                rotate: inherit;
+            }
+        }
+        
         /* Rotation effect modifiers - various angles */
         .hover-rotate-1 { --hover-rotate: 1deg; }
         .hover-rotate-2 { --hover-rotate: 2deg; }
@@ -614,55 +656,25 @@
             margin: 0;
             z-index: 5;
             /* Prevent scrolling within this section */
-            overflow: hidden;
+            overflow: visible; /* Changed from hidden to allow torn edges to extend */
             /* Disable touch interactions on the marquee area */
             touch-action: pan-y;
             
-            /* Torn top edge */
-            &::before {
-                content: '';
-                position: absolute;
-                top: -2px;
-                left: 0;
-                right: 0;
-                height: 30px;
-                background-color: var(--color-base-100);
-                background-image: 
-                    linear-gradient(var(--color-base-300) 1px, transparent 1px),
-                    linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
-                background-size: 16px 16px;
-                background-position: -1px -1px;
-                background-attachment: fixed;
-                clip-path: polygon(
-                    0% 0%, 3% 60%, 7% 30%, 12% 80%, 18% 20%, 25% 70%, 32% 40%, 
-                    38% 90%, 45% 25%, 52% 75%, 58% 35%, 65% 85%, 72% 15%, 78% 65%, 
-                    85% 45%, 91% 95%, 96% 50%, 100% 100%, 100% 0%, 0% 0%
-                );
-                z-index: 10;
-            }
-            
-            /* Torn bottom edge */
-            &::after {
-                content: '';
-                position: absolute;
-                bottom: -2px;
-                left: 0;
-                right: 0;
-                height: 30px;
-                background-color: var(--color-base-100);
-                background-image: 
-                    linear-gradient(var(--color-base-300) 1px, transparent 1px),
-                    linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
-                background-size: 16px 16px;
-                background-position: -1px -1px;
-                background-attachment: fixed;
-                clip-path: polygon(
-                    0% 100%, 4% 45%, 9% 75%, 15% 25%, 21% 85%, 28% 40%, 35% 90%, 
-                    42% 30%, 49% 70%, 56% 20%, 63% 80%, 69% 35%, 76% 95%, 82% 50%, 
-                    88% 15%, 94% 65%, 98% 40%, 100% 0%, 100% 100%, 0% 100%
-                );
-                z-index: 10;
-            }
+            /* Apply torn edges using clip-path on the section itself */
+            clip-path: polygon(
+                /* Top torn edge */
+                0% 0%, 3% 1.5%, 7% 0.8%, 12% 2%, 18% 0.5%, 25% 1.8%, 32% 1%, 
+                38% 2.3%, 45% 0.6%, 52% 1.9%, 58% 0.9%, 65% 2.1%, 72% 0.4%, 78% 1.6%, 
+                85% 1.1%, 91% 2.4%, 96% 1.3%, 100% 2.5%,
+                /* Right edge */
+                100% 2.5%, 100% 100%,
+                /* Bottom torn edge */
+                100% 98.5%, 96% 99.1%, 94% 98.4%, 88% 99.4%, 82% 98.8%, 76% 99.7%, 
+                69% 98.9%, 63% 99.5%, 56% 98.5%, 49% 99.3%, 42% 98.7%, 35% 99.6%, 
+                28% 98.9%, 21% 99.6%, 15% 98.6%, 9% 99.4%, 4% 99.1%, 0% 98.5%,
+                /* Left edge */
+                0% 98.5%, 0% 0%
+            );
         }
         
         /* Add extra margin to sections following torn-gap */
@@ -671,13 +683,33 @@
             margin-top: 2rem;
         }
         
-        /* Rotated card section - sits on top of graph paper */
+        /* ========================================
+           ROTATED SECTIONS
+           Container sections with static rotation
+           ======================================== */
+        
+        /* Rotated section - extends .card with rotation transforms
+           
+           ARCHITECTURE:
+           - Base class (.rotated-section) provides container sizing and positioning
+           - Rotation variants (-sm, -md, -lg) apply static rotation via @apply
+           - MUST be combined with .card class for borders/background
+           - MUST be combined with shadow utility (.shadow-brutal-xl) for depth
+           
+           HOVER BEHAVIOR:
+           - NO hover effects on container (transition: none)
+           - Excluded from .card hover effects via :not(.rotated-section) selectors
+           - Child elements CAN have their own hover effects
+           
+           ROTATION SYSTEM:
+           - Rotation applied via Tailwind utilities (@apply -rotate-1, etc.)
+           - Uses CSS 'rotate' property (not transform) for better composition
+           - Static rotation - does NOT change on hover or interaction
+           - Rotation angles: -sm: -1deg, -md: 1.5deg, -lg: -2deg
+           
+           Usage: <section class="card rotated-section rotated-section-lg shadow-brutal-xl">
+        */
         .rotated-section {
-            position: relative;
-            background-color: var(--color-base-100, #ffffff);
-            background-image: none !important;
-            border: 4px solid var(--nr-border-color, #000);
-            box-shadow: var(--nr-shadow-xl, 20px 20px 0 0 rgba(0,0,0,1));
             padding: 3rem;
             margin: 4rem auto;
             max-width: 1200px;
@@ -685,18 +717,23 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             backface-visibility: hidden;
+            
+            /* Prevent ALL transitions - container must remain static */
+            transition: none;
         }
         
+        /* Rotation variants - use @apply to leverage Tailwind's rotate utilities */
         .rotated-section-sm {
-            transform: rotate(-1deg);
+            @apply -rotate-1;  /* -1deg rotation */
         }
         
         .rotated-section-md {
-            transform: rotate(1.5deg);
+            @apply rotate-[1.5deg];  /* 1.5deg rotation */
         }
         
         .rotated-section-lg {
-            transform: rotate(-2deg);
+            @apply -rotate-2;  /* -2deg rotation */
+        }
         }
 
         /* ========================================
@@ -1096,12 +1133,23 @@
                 box-shadow: var(--nr-shadow-base);
                 background: var(--color-base-100) !important;  /* Cards should have solid backgrounds */
                 transform: translate(0, 0);
-                transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
                 /* Anti-aliasing for crisp rendering */
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
 
-                &:hover:not(.hover-effect):not(.hover-lift):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]) {
+                /* HOVER SYSTEM: Apply transitions only to cards that will have hover effects
+                   Excludes .rotated-section to prevent unwanted container animations */
+                &:not(.rotated-section) {
+                    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+                }
+
+                /* HOVER EFFECT: Lift cards on hover with increased shadow
+                   EXCLUSIONS:
+                   - .hover-effect, .hover-lift, .hover-scale, .hover-rotate: Use custom hover classes
+                   - [class*="hover-rotate-"]: Use specific rotation hover modifiers
+                   - .rotated-section: Container sections must remain static (child elements can still hover)
+                */
+                &:hover:not(.hover-effect):not(.hover-lift):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]):not(.rotated-section) {
                     transform: translate(-4px, -4px);
                     box-shadow: var(--nr-shadow-lg);
                 }
@@ -1705,4 +1753,3 @@
             animation-duration: 0.45s;
             animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
         }
-    }

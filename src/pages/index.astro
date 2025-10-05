@@ -1,29 +1,34 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Hero from '../components/Hero.astro';
-import CapabilityCard from '../components/CapabilityCard.astro';
-import CapabilitiesMarquee from '../components/CapabilitiesMarquee.astro';
-import WorkCard from '../components/WorkCard.astro';
-import { getCollection } from 'astro:content';
+import { getCollection } from "astro:content";
+import CapabilitiesMarquee from "../components/CapabilitiesMarquee.astro";
+import CapabilityCard from "../components/CapabilityCard.astro";
+import Hero from "../components/Hero.astro";
+import WorkCard from "../components/WorkCard.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 
-const capabilities = await getCollection('capabilities');
-const sortedCapabilities = capabilities
-  .sort((a, b) => a.data.order - b.data.order);
+const capabilities = await getCollection("capabilities");
+const sortedCapabilities = capabilities.sort(
+	(a, b) => a.data.order - b.data.order,
+);
 
-const work = await getCollection('work');
+const work = await getCollection("work");
 const featuredWork = work
-  .filter(w => w.data.featured)
-  .sort((a, b) => {
-    const aDate = a.data.endDate || new Date();
-    const bDate = b.data.endDate || new Date();
-    return bDate.getTime() - aDate.getTime();
-  })
-  .slice(0, 2);
+	.filter((w) => w.data.featured)
+	.sort((a, b) => {
+		const aDate = a.data.endDate || new Date();
+		const bDate = b.data.endDate || new Date();
+		return bDate.getTime() - aDate.getTime();
+	})
+	.slice(0, 2);
 
-const notes = await getCollection('notes');
+const notes = await getCollection("notes");
 const recentNotes = notes
-  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime())
-  .slice(0, 3);
+	.sort(
+		(a, b) =>
+			new Date(b.data.publishDate).getTime() -
+			new Date(a.data.publishDate).getTime(),
+	)
+	.slice(0, 3);
 ---
 
 <BaseLayout>
@@ -83,7 +88,7 @@ const recentNotes = notes
 
   <!-- Recent Updates Section -->
   {recentNotes.length > 0 && (
-    <section id="process" class="rotated-section rotated-section-lg">
+    <section id="process" class="card rotated-section rotated-section-lg shadow-brutal-xl">
       <h2 class="text-4xl font-bold text-center mb-12 uppercase">Recent Updates</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         {recentNotes.map((note) => (
@@ -120,6 +125,10 @@ const recentNotes = notes
         <a href="https://www.linkedin.com/in/nicholasleeroth" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-lg">
           Connect on LinkedIn
         </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>        </a>
       </div>
     </div>
   </section>
