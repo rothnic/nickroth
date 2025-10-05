@@ -74,76 +74,55 @@ const getTagColor = (tag: string) => {
 };
 ---
 
-<div 
-  class="card card-xl bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] border-2 border-base-300 h-full" 
+<a 
+  href={`/work/${slug}`}
+  class="card bg-base-100 shadow-xs transition-all duration-300 border-2 border-base-300 h-full block cursor-pointer" 
   data-work-card 
   data-category={category}
   data-card-id={slug}
   data-scroll-target
+  transition:name={`work-card-${slug}`}
 >
-  <!-- Hero Image -->
-  <figure class="relative h-80">
+  <!-- Category Badge at Top - Positioned absolutely over image -->
+  {category && (
+    <div class="absolute top-1 left-1 sm:top-2 sm:left-2 z-10">
+      <span transition:name={`work-category-${slug}`}class={`badge ${getCategoryColor(category)} badge-xs sm:badge-sm font-bold text-[0.6rem] sm:text-xs uppercase`}>
+        {category}
+      </span>
+    </div>
+  )}
+  
+  <!-- Hero Image - responsive sizes -->
+  <figure class="relative h-32 sm:h-48 w-full">
     <img transition:name={`work-img-${slug}`} src={imageSrc} alt={title} class="w-full h-full object-cover" loading="lazy" />
   </figure>
   
-  <div class="card-body">
+  <div class="card-body p-2 sm:p-4">
     <!-- Project Title -->
-    <h2 transition:name={`work-title-${slug}`} class="text-2xl font-bold mb-3 leading-tight">
+    <h2 transition:name={`work-title-${slug}`} class="text-sm sm:text-lg font-bold mb-1 sm:mb-2 leading-tight">
       {title}
     </h2>
     
-    <!-- Impact Statement - Prominent Display -->
+    <!-- Impact Statement - Prominent Display in Primary Color -->
     {impact && (
-      <div class="">
-        <p class="text-sm font-bold text-primary uppercase leading-snug tracking-wide">
+      <div class="mb-1 sm:mb-2">
+        <p class="text-[0.6rem] sm:text-xs font-bold text-primary uppercase leading-tight tracking-wide">
           {impact}
         </p>
       </div>
     )}
     
-    <!-- Role Category -->
-    {roleCategory && (
-      <div class="mb-4">
-        <span class="text-xs font-bold text-accent uppercase tracking-widest bg-accent/20 px-2 py-1 rounded border border-accent/30">
-          {roleCategory}
-        </span>
-      </div>
-    )}
-    
-    <!-- Category Tags Section -->
+    <!-- Limited Tags (2-3 with muted display) -->
     {tags.length > 0 && (
-      <div class="mb-4">
-        <div class="flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <div class={`badge ${getTagColor(tag)} badge-sm font-semibold text-xs uppercase`}>
+      <div>
+        <div class="flex flex-wrap gap-0.5 sm:gap-1">
+          {tags.slice(0, 3).map((tag) => (
+            <span class="badge badge-outline badge-xs text-[0.6rem] sm:text-xs">
               {tag}
-            </div>
+            </span>
           ))}
         </div>
       </div>
     )}
-    
-    <!-- Technology Stack Section -->
-    {stack.length > 0 && (
-      <div class="mb-4">
-        <div class="flex flex-wrap gap-2">
-          {stack.map((tech) => (
-            <div class={`badge ${getStackColor(tech)} badge-sm font-medium text-xs`}>
-              {tech}
-            </div>
-          ))}
-        </div>
-      </div>
-    )}
-    
-    <!-- Spacer to push action to bottom -->
-    <div class="flex-grow"></div>
-    
-    <!-- Action Button -->
-    <div class="card-actions justify-end mt-4">
-      <a href={`/work/${slug}`} class="btn btn-lg btn-info">
-        View Details
-      </a>
-    </div>
   </div>
-</div>
+</a>

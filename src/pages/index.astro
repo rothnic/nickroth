@@ -61,7 +61,7 @@ const recentNotes = notes
         <p class="text-lg text-base-content/70 uppercase">Case studies showcasing the systematic approach from discovery through delivery.</p>
       </div>
       {featuredWork.length > 0 ? (
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <div class="grid grid-cols-2 gap-3 sm:gap-6 max-w-5xl mx-auto mb-12">
           {featuredWork.map((project) => (
             <WorkCard
               title={project.data.title}
