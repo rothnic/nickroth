@@ -71,7 +71,7 @@ const getStackColor = (tech: string) => {
           <img transition:name={`work-img-${entry.slug}`} src={coverImage} alt={entry.data.title} class="w-full h-96 object-cover" />
           {entry.data.category && (
             <div class="absolute top-4 left-4">
-              <span class={`badge ${getCategoryColor(entry.data.category)} badge-lg font-semibold text-sm shadow-lg`}>
+              <span transition:name={`work-category-${entry.slug}`} class={`badge ${getCategoryColor(entry.data.category)} badge-lg font-semibold text-sm shadow-lg`}>
                 {entry.data.category}
               </span>
             </div>

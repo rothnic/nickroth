@@ -1,63 +1,76 @@
 ---
 export interface Props {
-  title: string;
-  description: string;
-  company: string;
-  role: string;
-  slug: string;
-  tags?: string[] | undefined;
-  image?: string | undefined;
-  category?: string | undefined;
-  impact?: string | undefined;
-  stack?: string[] | undefined;
-  roleCategory?: string | undefined;
+	title: string;
+	description: string;
+	company: string;
+	role: string;
+	slug: string;
+	tags?: string[] | undefined;
+	image?: string | undefined;
+	category?: string | undefined;
+	impact?: string | undefined;
+	stack?: string[] | undefined;
+	roleCategory?: string | undefined;
 }
 
-const { 
-  title, 
-  description, 
-  slug, 
-  tags = [], 
-  image, 
-  category,
-  impact,
-  stack = [],
-  roleCategory
+const {
+	title,
+	description,
+	slug,
+	tags = [],
+	image,
+	category,
+	impact,
+	stack = [],
+	roleCategory,
 } = Astro.props;
 
-const PLACEHOLDER_IMAGE = 'https://placehold.co/600x400';
+const PLACEHOLDER_IMAGE = "https://placehold.co/600x400";
 const imageSrc = image?.trim() ? image : PLACEHOLDER_IMAGE;
 
 // Define color schemes for different categories
 const getCategoryColor = (cat: string | undefined) => {
-  switch (cat) {
-    case 'HEADLESS CMS': return 'badge-primary';
-    case 'WEB PLATFORMS': return 'badge-secondary';  
-    case 'MARKETING AUTOMATION': return 'badge-accent';
-    case 'AUTOMATION & AI': return 'badge-warning';
-    case 'CHROME EXTENSIONS': return 'badge-info';
-    case 'SYSTEMS': return 'badge-success';
-    default: return 'badge-outline';
-  }
+	switch (cat) {
+		case "HEADLESS CMS":
+			return "badge-primary";
+		case "WEB PLATFORMS":
+			return "badge-secondary";
+		case "MARKETING AUTOMATION":
+			return "badge-accent";
+		case "AUTOMATION & AI":
+			return "badge-warning";
+		case "CHROME EXTENSIONS":
+			return "badge-info";
+		case "SYSTEMS":
+			return "badge-success";
+		default:
+			return "badge-outline";
+	}
 };
 
 const getStackColor = (tech: string) => {
-  const lowerTech = tech.toLowerCase();
-  if (lowerTech.includes('astro') || lowerTech.includes('datocms')) return 'badge-primary';
-  if (lowerTech.includes('n8n') || lowerTech.includes('windmill')) return 'badge-warning';
-  if (lowerTech.includes('chrome') || lowerTech.includes('openai')) return 'badge-info';
-  if (lowerTech.includes('langchain')) return 'badge-success';
-  if (tech.includes('+')) return 'badge-success';
-  return 'badge-outline';
+	const lowerTech = tech.toLowerCase();
+	if (lowerTech.includes("astro") || lowerTech.includes("datocms"))
+		return "badge-primary";
+	if (lowerTech.includes("n8n") || lowerTech.includes("windmill"))
+		return "badge-warning";
+	if (lowerTech.includes("chrome") || lowerTech.includes("openai"))
+		return "badge-info";
+	if (lowerTech.includes("langchain")) return "badge-success";
+	if (tech.includes("+")) return "badge-success";
+	return "badge-outline";
 };
 
 const getTagColor = (tag: string) => {
-  const lowerTag = tag.toLowerCase();
-  if (lowerTag.includes('headless') || lowerTag.includes('cms')) return 'badge-primary';
-  if (lowerTag.includes('web') || lowerTag.includes('platform')) return 'badge-secondary';
-  if (lowerTag.includes('marketing') || lowerTag.includes('automation')) return 'badge-accent';
-  if (lowerTag.includes('systems')) return 'badge-success';
-  return 'badge-outline';
+	const lowerTag = tag.toLowerCase();
+	if (lowerTag.includes("headless") || lowerTag.includes("cms"))
+		return "badge-primary";
+	if (lowerTag.includes("web") || lowerTag.includes("platform"))
+		return "badge-secondary";
+	if (lowerTag.includes("marketing") || lowerTag.includes("automation"))
+		return "badge-accent";
+	if (lowerTag.includes("systems")) return "badge-success";
+	return "badge-outline";
 };
 ---
 
@@ -73,7 +86,7 @@ const getTagColor = (tag: string) => {
   <!-- Category Badge at Top - Positioned absolutely over image -->
   {category && (
     <div class="absolute top-1 left-1 sm:top-2 sm:left-2 z-10">
-      <span class={`badge ${getCategoryColor(category)} badge-xs sm:badge-sm font-bold text-[0.6rem] sm:text-xs uppercase`}>
+      <span transition:name={`work-category-${slug}`}class={`badge ${getCategoryColor(category)} badge-xs sm:badge-sm font-bold text-[0.6rem] sm:text-xs uppercase`}>
         {category}
       </span>
     </div>
