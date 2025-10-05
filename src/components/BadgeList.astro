@@ -1,0 +1,33 @@
+---
+interface Props {
+  items: string[];
+  maxVisible?: number;
+}
+
+const { items, maxVisible = 8 } = Astro.props;
+const visibleItems = items.slice(0, maxVisible);
+const hiddenCount = items.length - maxVisible;
+const hasMore = hiddenCount > 0;
+const hiddenItems = hasMore ? items.slice(maxVisible) : [];
+---
+
+<div class="flex flex-wrap gap-2">
+  {visibleItems.map((item) => (
+    <span class="badge badge-neutral badge-height-sm font-bold text-xs">{item}</span>
+  ))}
+  
+  {hasMore && (
+    <details class="inline-block">
+      <summary class="badge badge-ghost badge-height-sm font-bold text-xs cursor-pointer">
+        +{hiddenCount} more
+      </summary>
+      <div class="absolute z-10 mt-2 p-3 bg-base-100 border-4 border-base-content shadow-brutal rounded-brutal min-w-[200px]">
+        <div class="flex flex-wrap gap-2">
+          {hiddenItems.map((item) => (
+            <span class="badge badge-neutral badge-height-sm font-bold text-xs">{item}</span>
+          ))}
+        </div>
+      </div>
+    </details>
+  )}
+</div>

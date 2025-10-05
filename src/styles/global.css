@@ -1683,4 +1683,50 @@
             animation-duration: 0.45s;
             animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
         }
+
+        /* Timeline mobile optimizations */
+        @media (max-width: 768px) {
+            /* Rotate date text vertically on mobile for better space usage */
+            .timeline-date-mobile {
+                writing-mode: vertical-rl;
+                text-orientation: mixed;
+                transform: rotate(180deg);
+                white-space: nowrap;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                padding: 0;
+                font-size: 0.75rem;
+                line-height: 1;
+                letter-spacing: 0.05em;
+            }
+
+            /* Adjust timeline layout for mobile - add minimal padding */
+            .timeline-compact-mobile {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+                width: 100%;
+            }
+
+            /* Reduce timeline start width on mobile */
+            .timeline-compact-mobile .timeline-start {
+                min-width: 1.5rem;
+                width: 1.5rem;
+                text-align: center;
+                padding: 0;
+                margin-right: 0;
+            }
+
+            /* Adjust timeline middle spacing */
+            .timeline-compact-mobile .timeline-middle {
+                margin-left: 0.25rem;
+                margin-right: 0.75rem;
+            }
+
+            /* Ensure cards take full available width */
+            .timeline-compact-mobile .timeline-end {
+                flex: 1;
+                min-width: 0;
+            }
+        }
     }

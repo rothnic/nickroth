@@ -1,12 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import TimelineRenderer from '../components/TimelineRenderer.astro';
 import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
+
+// Get view parameter from URL
+const url = new URL(Astro.request.url);
+const view = (url.searchParams.get('view') as 'timeline' | 'cards' | 'list') || 'timeline';
+const density = (url.searchParams.get('density') as 'compact' | 'normal' | 'spacious') || 'normal';
 ---
 
 <BaseLayout title="Background - Nick Roth" description="Professional background, education, and career journey of Nick Roth">
   <main class="py-20">
+    <!-- Hero Section - Contained -->
     <div class="container mx-auto px-4 max-w-6xl">
-      <!-- Hero Section -->
       <div class="text-center mb-16">
         <div class="avatar mb-8">
           <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
@@ -22,130 +28,18 @@ import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
           From systems engineering to product leadership - a journey of applying systematic thinking to complex challenges.
         </p>
       </div>
+    </div>
 
-      <!-- Timeline -->
-      <div class="mb-20">
-        <h2 class="text-3xl font-bold text-center mb-12">Career Timeline</h2>
-        <div class="space-y-12">
-          
-          <!-- Current Role -->
-          <div class="card bg-primary text-primary-content shadow-xl">
-            <div class="card-body">
-              <div class="flex flex-wrap justify-between items-start mb-4">
-                <div>
-                  <h3 class="card-title text-2xl">Director of Product Management</h3>
-                  <p class="text-lg opacity-90">DealNews</p>
-                </div>
-                <div class="text-right">
-                  <div class="badge badge-secondary badge-lg">2019 - Present</div>
-                  <div class="text-sm opacity-75 mt-1">Huntsville, AL</div>
-                </div>
-              </div>
-              <p class="mb-4">
-                Lead product strategy and execution for content platform serving 2M+ monthly users. 
-                Spearhead platform modernization initiatives, implement AI-assisted workflows, and 
-                optimize marketing automation systems.
-              </p>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 class="font-semibold mb-2">Key Achievements:</h4>
-                  <ul class="text-sm space-y-1">
-                    <li>• $35k monthly email platform cost savings</li>
-                    <li>• 400% YoY blog revenue increase</li>
-                    <li>• 125% YoY mobile revenue growth</li>
-                    <li>• 150% monthly organic user growth</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 class="font-semibold mb-2">Focus Areas:</h4>
-                  <ul class="text-sm space-y-1">
-                    <li>• Platform modernization and architecture</li>
-                    <li>• AI-assisted content workflows</li>
-                    <li>• Marketing automation optimization</li>
-                    <li>• Cross-functional team leadership</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Previous Role -->
-          <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
-              <div class="flex flex-wrap justify-between items-start mb-4">
-                <div>
-                  <h3 class="card-title text-xl">Senior Product Manager</h3>
-                  <p class="text-lg">DealNews</p>
-                </div>
-                <div class="text-right">
-                  <div class="badge badge-outline">2017 - 2019</div>
-                  <div class="text-sm opacity-75 mt-1">Huntsville, AL</div>
-                </div>
-              </div>
-              <p class="mb-4">
-                Drove product initiatives focused on user experience and conversion optimization. 
-                Implemented systematic A/B testing framework and established data-driven product development processes.
-              </p>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 class="font-semibold mb-2">Key Projects:</h4>
-                  <ul class="text-sm space-y-1">
-                    <li>• Mobile conversion optimization program</li>
-                    <li>• User onboarding flow redesign</li>
-                    <li>• A/B testing framework implementation</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 class="font-semibold mb-2">Results:</h4>
-                  <ul class="text-sm space-y-1">
-                    <li>• 30% improvement in user engagement</li>
-                    <li>• 25% increase in conversion rates</li>
-                    <li>• 50% reduction in support tickets</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Systems Engineering -->
-          <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
-              <div class="flex flex-wrap justify-between items-start mb-4">
-                <div>
-                  <h3 class="card-title text-xl">Systems Engineer</h3>
-                  <p class="text-lg">Various Defense Contractors</p>
-                </div>
-                <div class="text-right">
-                  <div class="badge badge-outline">2014 - 2017</div>
-                  <div class="text-sm opacity-75 mt-1">Huntsville, AL</div>
-                </div>
-              </div>
-              <p class="mb-4">
-                Applied systems engineering principles to complex defense and aerospace projects. 
-                Specialized in requirements gathering, system modeling with SysML/BPMN, and technical specification development.
-              </p>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 class="font-semibold mb-2">Key Projects:</h4>
-                  <ul class="text-sm space-y-1">
-                    <li>• Missile defense system requirements specification</li>
-                    <li>• Satellite communication system architecture</li>
-                    <li>• Process improvement initiatives</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 class="font-semibold mb-2">Skills Developed:</h4>
-                  <ul class="text-sm space-y-1">
-                    <li>• Requirements analysis and specification</li>
-                    <li>• SysML modeling and system architecture</li>
-                    <li>• Technical documentation</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <!-- Timeline - Full width on mobile, contained on desktop -->
+    <div class="mb-20 w-full md:container md:mx-auto md:px-4 md:max-w-6xl">
+      <h2 class="text-3xl font-bold text-center mb-12 px-4 md:px-0">Career Timeline</h2>
+      <div class="w-full md:w-auto">
+        <TimelineRenderer view={view} density={density} />
       </div>
+    </div>
+
+    <!-- Education, Skills, Philosophy - Contained -->
+    <div class="container mx-auto px-4 max-w-6xl">
 
       <!-- Education -->
       <div class="mb-20">
@@ -268,4 +162,6 @@ import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
       </div>
     </div>
   </main>
+  
+  <script src="../scripts/timeline-deep-linking.js"></script>
 </BaseLayout>

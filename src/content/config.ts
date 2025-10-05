@@ -50,9 +50,49 @@ const notes = defineCollection({
   }),
 });
 
+const phases = defineCollection({
+  type: 'content',
+  schema: z.object({
+    era: z.string(),
+    title: z.string(),
+    oneliner: z.string().max(160),
+    focus: z.array(z.string()).max(3).optional(),
+    skills: z.array(z.string()).optional(),
+    metrics: z.array(z.object({ label: z.string(), value: z.string() })).optional(),
+    artifacts: z.array(z.object({ 
+      label: z.string(), 
+      href: z.string(), 
+      type: z.enum(['link','image','video']).optional() 
+    })).optional(),
+    bridge: z.string().optional(),
+    current: z.boolean().optional(),
+    featured: z.boolean().optional(),
+  })
+});
+
+const projects = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    summary: z.string(),
+    era: z.string().optional(),
+    phase: z.string().optional(),         // primary phase slug
+    phases: z.array(z.string()).optional(), // additional phase slugs
+    tags: z.array(z.string()).optional(),
+    tech: z.array(z.string()).optional(),
+    impact: z.array(z.object({ label: z.string(), value: z.string() })).optional(),
+    links: z.array(z.object({ label: z.string(), href: z.string() })).optional(),
+    cover: z.string().optional(),
+    weight: z.number().default(0),
+    featured: z.boolean().optional()
+  })
+});
+
 export const collections = {
   pages,
   capabilities,
   work,
   notes,
+  phases,
+  projects,
 };
