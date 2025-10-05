@@ -22,6 +22,7 @@ Agents and contributors can find all supplementary guides in this folder.
 **Reference Docs**:
 - [Design System Guide](./design-system/guide.md) – Design philosophy, component architecture, visual principles
 - [Theme Implementation](./design-system/implementation.md) – Complete DaisyUI 5 neobrutalism theme reference
+- [Grid Background System](./design-system/grid-background-system.md) – Scrolling grid architecture, layers, torn edges, z-index hierarchy
 - [Prototype Analysis](./design-system/prototype-analysis.md) – Pattern extraction from React prototype (animations, stickers, showcases)
 - [Color System](./design-system/colors.md) – Color palette, light/dark mode, OKLCH values, usage guidelines
 
