@@ -61,6 +61,19 @@ Agents and contributors can find all supplementary guides in this folder.
 
 - [P0-001 Global CSS Setup](./progress/p0-001.md) – Running notes on the global styling foundation work.
 
+### Issue tracking
+
+- [Documentation Issues](./issues/documentation-issues.md) – Active issues discovered during documentation reviews
+- [Issue Tracking System](./issues/README.md) – How we track and resolve documentation problems
+- [Resolved Issues](./issues/resolved-issues.md) – Archive of fixed issues
+
+### Documentation maintenance
+
+- [Documentation Instructions](../.github/instructions/documentation.instructions.md) – Complete authoring guidelines, organization rules, and conventions
+- [Documentation Mode](../.github/chatmodes/Documentation.chatmode.md) – Chat mode for doc-only operations
+- [Doc Cleanup Workflow](../.github/prompts/docCleanup.prompt.md) – 6-phase cleanup procedure
+- [Doc Validation Tooling](./project/tooling-doc-validation.md) – Validation script usage and Biome limitations
+
 ## Conventions
 
 - Create new guides as Markdown files in this directory.
