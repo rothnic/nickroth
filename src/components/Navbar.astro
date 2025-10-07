@@ -55,7 +55,7 @@ const desktopLinkClass = (href: string) =>
 	}`;
 ---
 
-<div class="navbar bg-base-100 h-16 items-center relative z-50">
+<div class="navbar bg-base-100 h-16 items-center relative z-50" transition:name="main-navbar">
 	<div class="navbar-start">
 		<a href="/" class={`flex items-center gap-1 px-4 py-2 text-xl font-display font-black transition-transform hover:scale-105 ${isActive('/') ? 'bg-base-200' : ''}`}>
 			<span class="glitch-effect" data-text="NICK">NICK</span>

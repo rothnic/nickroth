@@ -217,77 +217,116 @@
             -webkit-overflow-scrolling: touch;
         }
         
+        /* ========================================
+           ACCESSIBILITY & PERFORMANCE
+           Disable animations for users who prefer reduced motion
+           ======================================== */
         @media (prefers-reduced-motion: reduce) {
             html {
                 scroll-behavior: auto;
             }
+            
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
         }
         
-        /* Establish stacking context for fixed grid layer */
-        html, body {
+        /* ========================================
+           PERFORMANT GRID BACKGROUND
+           
+           Uses a single tiled SVG image instead of multiple gradients
+           to minimize paint operations during scrolling.
+           
+           Key optimizations:
+           - Tiny cached SVG tile with infinite repeat
+           - Attached directly to html for single background layer
+           - No competing backgrounds in child elements
+           - Sections remain transparent by default
+           ======================================== */
+        
+        /* Grid background attached to main scroller (html/body) */
+        html {
             min-height: 100%;
-            background: var(--color-base-100);
+            margin: 0;
+            background-color: var(--color-base-100);
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><path d='M0 0H16M0 0V16' stroke='rgba(0,0,0,0.08)' stroke-width='1'/></svg>");
+            background-size: 16px 16px;
+            background-repeat: repeat;
         }
-
-        /* Optimize touch scrolling performance */
+        
+        /* Dark mode grid - lighter stroke for visibility */
+        html[data-theme="neobrutalism-dark"] {
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><path d='M0 0H16M0 0V16' stroke='rgba(255,255,255,0.1)' stroke-width='1'/></svg>");
+        }
+        
         body {
+            min-height: 100%;
+            margin: 0;
             position: relative;
             isolation: isolate;
-            /* Enable momentum-based scrolling on iOS */
+            /* Optimize touch scrolling on iOS */
             -webkit-overflow-scrolling: touch;
-            /* Optimize touch actions - only allow vertical scrolling */
+            /* Only allow vertical scrolling */
             touch-action: pan-y;
             /* Prevent horizontal scrolling */
             overflow-x: hidden;
             max-width: 100%;
         }
         
-        /* Scrolling grid background layer - scrolls with content */
-        #grid-bg {
-            position: absolute;
-            inset: 0;
-            min-height: 100vh;
-            z-index: -1;
+        /* Subtle radial gradient overlay - layered on top of grid background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
-            background-color: var(--color-base-100);
-            background-image: 
-                radial-gradient(ellipse at top left, 
-                    var(--color-base-100) 0%, 
-                    transparent 40%
-                ),
-                linear-gradient(135deg, 
-                    transparent 0%, 
-                    oklch(0.58 0.30 314 / 0.08) 10%, 
-                    transparent 50%, 
-                    oklch(0.65 0.25 314 / 0.06) 90%, 
-                    transparent 100%
-                ),
-                linear-gradient(var(--color-base-300) 1px, transparent 1px),
-                linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 16px 16px, 16px 16px;
-            background-position: 0 0, 0 0, 0 0, 0 0;
+            z-index: 0;
+            background: radial-gradient(
+                ellipse 800px 600px at top left,
+                var(--color-primary) 0%,
+                var(--color-secondary) 15%,
+                var(--color-accent) 30%,
+                transparent 50%
+            );
+            opacity: 0.08;
         }
         
-        /* Dark mode scrolling grid */
-        html[data-theme="neobrutalism-dark"] #grid-bg {
-            background-color: var(--color-base-100);
-            background-image: 
-                radial-gradient(ellipse at top left, 
-                    var(--color-base-100) 0%, 
-                    transparent 50%
-                ),
-                linear-gradient(135deg, 
-                    transparent 0%, 
-                    oklch(0.68 0.33 314 / 0.03) 10%, 
-                    transparent 50%, 
-                    oklch(0.75 0.28 314 / 0.02) 90%, 
-                    transparent 100%
-                ),
-                linear-gradient(var(--color-base-300) 1px, transparent 1px),
-                linear-gradient(90deg, var(--color-base-300) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 16px 16px, 16px 16px;
-            background-position: 0 0, 0 0, 0 0, 0 0;
-        }
+        /* ========================================
+           CSS PERFORMANCE BEST PRACTICES
+           
+           This design system follows paint/GPU optimization guidelines:
+           
+           1. GRID BACKGROUND: Single tiled SVG image, not gradients
+              - One cached tile with infinite repeat
+              - Attached to html (the scroller), not repositioned elements
+              - Sections stay transparent to show grid underneath
+           
+           2. ANIMATIONS: Transform & opacity only
+              - Never animate layout properties (width/height/top/left)
+              - will-change used strategically (add before, remove after)
+              - See sticker animations for proper usage patterns
+           
+           3. CONTAINMENT: Isolate expensive work
+              - content-visibility: auto on sections (skip offscreen paint/layout)
+              - contain: layout paint on isolated components
+              - contain-intrinsic-size prevents layout jumps
+           
+           4. LAYER HYGIENE: Minimize new stacking contexts
+              - Avoid unnecessary position: fixed/sticky
+              - No global filters/backdrop-filters/blend-modes
+              - isolation: isolate only where needed (body for grid)
+           
+           5. ACCESSIBILITY: prefers-reduced-motion support
+              - Disables all animations/transitions when requested
+              - See @media block above
+           ======================================== */
         
         /* ========================================
            SECTION TYPES & LAYERING SYSTEM
@@ -320,6 +359,12 @@
             /* Ensure sections don't cause horizontal overflow */
             overflow-x: hidden;
             max-width: 100%;
+            /* Performance: Skip layout/paint for offscreen sections */
+            content-visibility: auto;
+            /* Provide estimated height to prevent layout jumps */
+            contain-intrinsic-size: auto 500px;
+            /* Isolate layout/paint work to this container */
+            contain: layout paint;
         }
         
         /* Paper section - solid white overlay (extends .card)
@@ -428,6 +473,13 @@
         .shadow-brutal { box-shadow: var(--nr-shadow-base); }
         .shadow-brutal-lg { box-shadow: var(--nr-shadow-lg); }
         .shadow-brutal-xl { box-shadow: var(--nr-shadow-xl); }
+        .shadow-none { box-shadow: none !important; }
+
+        /* Border utilities - override card defaults */
+        .border-none { border: none !important; }
+
+        /* Background utilities - override card defaults */
+        .bg-transparent { background: transparent !important; }
 
         /* Sticker rotations */
         /* Rotation utilities - general purpose for badges, buttons, cards */
@@ -1138,8 +1190,8 @@
                 -moz-osx-font-smoothing: grayscale;
 
                 /* HOVER SYSTEM: Apply transitions only to cards that will have hover effects
-                   Excludes .rotated-section to prevent unwanted container animations */
-                &:not(.rotated-section) {
+                   Excludes .rotated-section and .no-hover to prevent unwanted container animations */
+                &:not(.rotated-section):not(.no-hover) {
                     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
                 }
 
@@ -1148,8 +1200,9 @@
                    - .hover-effect, .hover-lift, .hover-scale, .hover-rotate: Use custom hover classes
                    - [class*="hover-rotate-"]: Use specific rotation hover modifiers
                    - .rotated-section: Container sections must remain static (child elements can still hover)
+                   - .no-hover: Explicitly disabled hover effects
                 */
-                &:hover:not(.hover-effect):not(.hover-lift):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]):not(.rotated-section) {
+                &:hover:not(.hover-effect):not(.hover-lift):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]):not(.rotated-section):not(.no-hover) {
                     transform: translate(-4px, -4px);
                     box-shadow: var(--nr-shadow-lg);
                 }
@@ -1740,6 +1793,12 @@
         html[data-vt-nav] body {
             pointer-events: none;
         }
+        
+        /* Disable hover effects during view transitions to prevent animations */
+        html[data-vt-nav] .card:hover:not(.hover-effect):not(.hover-lift):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]):not(.rotated-section):not(.no-hover) {
+            transform: translate(0, 0) !important;
+            box-shadow: var(--nr-shadow-base) !important;
+        }
 
         /* Fix layout shift during view transitions - ensure navbar maintains consistent height */
         .navbar {
@@ -1750,6 +1809,168 @@
 
         ::view-transition-old(root),
         ::view-transition-new(root) {
-            animation-duration: 0.45s;
+            animation-duration: .45s;
             animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
         }
+        
+        /* ========================================
+           WORK CARD VIEW TRANSITIONS
+           ======================================== */
+        
+        /* Work card transitions - elevate z-index to prevent overlap with other cards */
+        ::view-transition-group(work-card-*) {
+            z-index: 100;
+            animation-duration: 5s;
+            animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Work card old state (leaving card view) - fade out faster than default */
+        ::view-transition-old(work-card-*) {
+            animation: work-card-fade-out 0.1s ease-out forwards;
+        }
+        
+        /* Work card new state (entering expanded view) - fade in smoothly */
+        ::view-transition-new(work-card-*) {
+            animation: work-card-fade-in 3s ease-in forwards;
+        }
+        
+        @keyframes work-card-fade-out {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+        
+        @keyframes work-card-fade-in {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        /* Work card image transitions - match card timing */
+        /* ::view-transition-group(work-img-*) {
+            z-index: 101;
+            animation-duration: 3s;
+            animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        } */
+        
+        /* Work card category badge - keep above during transition */
+        /* ::view-transition-group(work-category-*) {
+            z-index: 102;
+            animation-duration: 3s;
+            animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        } */
+        
+        /* Fade out other cards (not participating in transition) during navigation */
+        html[data-vt-nav] [data-work-card]:not([style*="view-transition-name"]) {
+            animation: fade-out-cards 0.8s ease-out forwards;
+        }
+        
+        @keyframes fade-out-cards {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+        
+        /* ========================================
+           NAVBAR VIEW TRANSITIONS
+           ======================================== */
+        
+        /* Navbar appears - snap down with bounce (when navigating from homepage to internal pages) */
+        ::view-transition-new(main-navbar):only-child {
+            animation: navbar-snap-down 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+        
+        /* Navbar disappears - quick fade out (when navigating to homepage) */
+        ::view-transition-old(main-navbar):only-child {
+            animation: navbar-fade-out 0.2s ease-out forwards;
+        }
+        
+        /* Navbar morphs between pages - smooth transition (internal navigation) */
+        ::view-transition-group(main-navbar) {
+            animation-duration: 0.5s;
+            animation-timing-function: ease-in-out;
+        }
+        
+        @keyframes navbar-snap-down {
+            from {
+                opacity: 0;
+                transform: translateY(-100%) scale(0.95);
+            }
+            60% {
+                transform: translateY(8px) scale(1.02);
+            }
+            80% {
+                transform: translateY(-4px) scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes navbar-fade-out {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+        
+        /* ========================================
+           WORK PAGE NAVIGATION TRANSITIONS
+           ======================================== */
+        
+        /* Back navigation button - appears after navbar with slight delay */
+        ::view-transition-new(work-back-nav):only-child {
+            animation: nav-button-pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s backwards;
+        }
+        
+        /* Footer navigation - appears after back button */
+        ::view-transition-new(work-footer-nav):only-child {
+            animation: nav-button-pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s backwards;
+        }
+        
+        /* Hide when leaving */
+        ::view-transition-old(work-back-nav):only-child,
+        ::view-transition-old(work-footer-nav):only-child {
+            animation: nav-button-fade-out 0.2s ease-out forwards;
+        }
+        
+        /* Pop-in animation - scale and fade with slight overshoot */
+        @keyframes nav-button-pop-in {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.9);
+            }
+            70% {
+                transform: translateY(2px) scale(1.02);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes nav-button-fade-out {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+        }
+

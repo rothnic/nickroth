@@ -1,29 +1,34 @@
 ---
+import type { CollectionEntry } from "astro:content";
+
 export interface Props {
-	title: string;
-	description: string;
-	company: string;
-	role: string;
-	slug: string;
-	tags?: string[] | undefined;
-	image?: string | undefined;
-	category?: string | undefined;
-	impact?: string | undefined;
-	stack?: string[] | undefined;
-	roleCategory?: string | undefined;
+	entry: CollectionEntry<"work">;
+	mode?: "card" | "expanded";
 }
 
+const { entry, mode = "card" } = Astro.props;
+
+// Extract data from entry
 const {
 	title,
 	description,
-	slug,
-	tags = [],
+	company,
+	role,
 	image,
 	category,
 	impact,
 	stack = [],
+	tags = [],
 	roleCategory,
-} = Astro.props;
+	startDate,
+	endDate,
+} = entry.data;
+
+const slug = entry.slug;
+
+// Render markdown content if in expanded mode
+const { Content } =
+	mode === "expanded" ? await entry.render() : { Content: null };
 
 const PLACEHOLDER_IMAGE = "https://placehold.co/600x400";
 const imageSrc = image?.trim() ? image : PLACEHOLDER_IMAGE;
@@ -74,50 +79,118 @@ const getTagColor = (tag: string) => {
 };
 ---
 
-<a 
-  href={`/work/${slug}`}
-  class="card bg-base-100 shadow-xs transition-all duration-300 border-2 border-base-300 h-full block cursor-pointer" 
-  data-work-card 
-  data-category={category}
-  data-card-id={slug}
-  data-scroll-target
+<!-- Unified Work Card - same structure for both modes -->
+<div
+  class:list={[
+    "card bg-base-100 border-2 border-base-300 overflow-hidden relative mb-12 h-full transition-shadow shadow-xs hover:shadow-md",
+    mode === "expanded" ? "no-hover shadow-none border-none bg-transparent" : "",
+  ]}
+  data-work-card={mode === "card" ? true : undefined}
+  data-category={mode === "card" ? category : undefined}
+  data-card-id={mode === "card" ? slug : undefined}
+  data-scroll-target={mode === "card" ? true : undefined}
   transition:name={`work-card-${slug}`}
 >
-  <!-- Category Badge at Top - Positioned absolutely over image -->
-  {category && (
-    <div class="absolute top-1 left-1 sm:top-2 sm:left-2 z-10">
-      <span transition:name={`work-category-${slug}`}class={`badge ${getCategoryColor(category)} badge-xs sm:badge-sm font-bold text-[0.6rem] sm:text-xs uppercase`}>
-        {category}
-      </span>
-    </div>
+  {/* Overlay link for card mode - makes entire card clickable */}
+  {mode === "card" && (
+    <a 
+      href={`/work/${slug}`}
+      class="absolute inset-0 z-10"
+      aria-label={`View ${title} project details`}
+	  data-astro-prefetch
+    />
   )}
   
-  <!-- Hero Image - responsive sizes -->
-  <figure class="relative h-32 sm:h-48 w-full">
-    <img transition:name={`work-img-${slug}`} src={imageSrc} alt={title} class="w-full h-full object-cover" loading="lazy" />
+  <!-- Hero Image - scales based on mode -->
+  <figure transition:name={`work-img-${slug}`} class:list={[
+    "relative w-full",
+    mode === "card" ? "h-32 sm:h-48 max-h-32" : "h-64 sm:h-96"
+  ]}>
+    <img
+      src={imageSrc} 
+      alt={title} 
+      class:list={["h-full w-full z-0 object-cover"]}
+      loading="eager" 
+    />
+    
+    <!-- Category Badge - positioned absolutely over image -->
+    {category && (
+      <div class="absolute top-2 left-2 z-20">
+        <span 
+        //   transition:name={`work-category-${slug}`} 
+          class:list={[
+            `badge ${getCategoryColor(category)} font-bold uppercase`,
+            mode === "card" ? "badge-sm" : "badge-lg"
+          ]}
+        >
+          {category}
+        </span>
+      </div>
+    )}
   </figure>
   
-  <div class="card-body p-2 sm:p-4">
-    <!-- Project Title -->
-    <h2 transition:name={`work-title-${slug}`} class="text-sm sm:text-lg font-bold mb-1 sm:mb-2 leading-tight">
-      {title}
-    </h2>
+  <!-- Main Content Area -->
+  <div transition:name={`work-body-${slug}`} class="card-body">
+    <!-- Title - different tag but same content -->
+    {mode === "card" ? (
+      <h2 
+        transition:name={`work-title-${slug}`} 
+        class="card-title text-sm sm:text-lg leading-tight"
+      >
+        {title}
+      </h2>
+    ) : (
+      <h1 
+        transition:name={`work-title-${slug}`} 
+        class="text-4xl md:text-5xl font-bold mb-4"
+      >
+        {title}
+      </h1>
+    )}
     
-    <!-- Impact Statement - Prominent Display in Primary Color -->
+    <!-- Impact Statement - shown in both modes -->
     {impact && (
-      <div class="mb-1 sm:mb-2">
-        <p class="text-[0.6rem] sm:text-xs font-bold text-primary uppercase leading-tight tracking-wide">
+      <div transition:name={`work-impact-${slug}`} class="mb-4">
+        {mode === "expanded" && (
+          <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">
+            Impact Statement
+          </h2>
+        )}
+        <p class:list={[
+          "font-bold text-primary uppercase leading-tight",
+          mode === "card" ? "text-xs" : "text-xl"
+        ]}>
           {impact}
         </p>
       </div>
     )}
     
-    <!-- Limited Tags (2-3 with muted display) -->
-    {tags.length > 0 && (
-      <div>
-        <div class="flex flex-wrap gap-0.5 sm:gap-1">
+    <!-- Role & Timeline - only in expanded mode -->
+    {mode === "expanded" && roleCategory && (
+      <div class="mb-4">
+        <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">Role</h2>
+        <span class="inline-block bg-accent/10 text-accent px-4 py-2 rounded font-bold text-sm uppercase">
+          {roleCategory}
+        </span>
+      </div>
+    )}
+    
+    {mode === "expanded" && (
+      <div class="mb-4">
+        <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">Timeline</h2>
+        <p class="text-base-content/80">
+          {startDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} - 
+          {endDate ? endDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Present'}
+        </p>
+      </div>
+    )}
+    
+    <!-- Tags - limited in card mode -->
+    {tags.length > 0 && mode === "card" && (
+      <div class="card-actions">
+        <div class="flex flex-wrap gap-1">
           {tags.slice(0, 3).map((tag) => (
-            <span class="badge badge-outline badge-xs text-[0.6rem] sm:text-xs">
+            <span class="badge badge-outline badge-xs">
               {tag}
             </span>
           ))}
@@ -125,4 +198,115 @@ const getTagColor = (tag: string) => {
       </div>
     )}
   </div>
-</a>
+  
+  <!-- Expanded Content Sections - only in expanded mode -->
+  {mode === "expanded" && (
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 p-6 lg:p-8 bg-base-200/30">
+      <!-- Main Content Column -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- Overview Section -->
+        <section class="bg-base-100 p-6 rounded-lg shadow-lg border-2 border-base-300">
+          <h2 class="text-2xl font-bold mb-3 text-primary">CHALLENGE & OVERVIEW</h2>
+          <div class="prose prose-lg max-w-none">
+            <p class="text-base-content/80 leading-relaxed">
+              {description}
+            </p>
+          </div>
+        </section>
+
+        <!-- Systematic Approach -->
+        <section class="bg-base-100 p-6 rounded-lg shadow-lg border-2 border-base-300">
+          <h2 class="text-2xl font-bold mb-4 text-primary">SYSTEMATIC APPROACH</h2>
+          <div class="space-y-4">
+            {[
+              { num: 1, title: "DISCOVER", desc: "Comprehensive analysis of existing systems, workflows, and performance baselines" },
+              { num: 2, title: "MODEL", desc: "Architecture design and technology selection with structured content modeling" },
+              { num: 3, title: "SPECIFY", desc: "Detailed implementation planning with migration strategy and testing framework" },
+              { num: 4, title: "BUILD", desc: "Incremental implementation with continuous validation and performance optimization" },
+              { num: 5, title: "PROVE", desc: "Impact measurement, optimization, and long-term maintenance planning" }
+            ].map((step) => (
+              <div class="flex items-start gap-3">
+                <div class="flex-shrink-0 w-10 h-10 bg-primary text-primary-content rounded-full flex items-center justify-center font-bold">
+                  {step.num}
+                </div>
+                <div>
+                  <h3 class="font-bold text-lg mb-1">{step.title}</h3>
+                  <p class="text-base-content/80 text-sm">{step.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Business Impact -->
+        <section class="bg-accent/5 p-6 rounded-lg shadow-lg border-2 border-accent/20">
+          <h2 class="text-2xl font-bold mb-3 text-accent">BUSINESS IMPACT</h2>
+          <p class="text-base-content/80 leading-relaxed text-sm">
+            Successfully modernized platform serving 2M+ monthly users with significant improvements in performance, 
+            authoring experience, and technical maintainability. Editorial team now focuses on content strategy 
+            rather than technical workarounds, enabling higher content quality and publication velocity.
+          </p>
+        </section>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="space-y-6">
+        <!-- Technology Stack -->
+        {stack && stack.length > 0 && (
+          <section class="bg-base-100 p-4 rounded-lg shadow-lg border-2 border-base-300">
+            <h3 class="text-lg font-bold mb-3 text-primary">TECHNOLOGY STACK</h3>
+            <div class="flex flex-wrap gap-2">
+              {stack.map((tech) => (
+                <div class={`badge ${getStackColor(tech)} badge-sm font-medium text-xs`}>
+                  {tech}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <!-- Project Category -->
+        {category && (
+          <section class="bg-base-100 p-4 rounded-lg shadow-lg border-2 border-base-300">
+            <h3 class="text-lg font-bold mb-3 text-primary">PROJECT CATEGORY</h3>
+            <div class={`badge ${getCategoryColor(category)} badge-lg font-semibold`}>
+              {category}
+            </div>
+          </section>
+        )}
+
+        <!-- Key Outcomes -->
+        <section class="bg-success/5 p-4 rounded-lg shadow-lg border-2 border-success/20">
+          <h3 class="text-lg font-bold mb-3 text-success">KEY OUTCOMES</h3>
+          <div class="space-y-2">
+            {[
+              "40% improvement in Core Web Vitals",
+              "60% reduction in publishing time",
+              "25% increase in organic traffic",
+              "90% reduction in deployment time"
+            ].map((outcome) => (
+              <div class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-success rounded-full"></div>
+                <span class="text-sm font-semibold">{outcome}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Project Tags -->
+        {tags && tags.length > 0 && (
+          <section class="bg-base-100 p-4 rounded-lg shadow-lg border-2 border-base-300">
+            <h3 class="text-lg font-bold mb-3 text-primary">PROJECT TAGS</h3>
+            <div class="flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <div class="badge badge-outline badge-sm">
+                  {tag}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
+  )}
+</div>

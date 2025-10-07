@@ -1,6 +1,6 @@
 ---
 import { type CollectionEntry, getCollection } from "astro:content";
-import {} from "astro:transitions";
+import WorkCard from "../../components/WorkCard.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
@@ -16,256 +16,21 @@ type Props = {
 };
 
 const { entry } = Astro.props as Props;
-const { Content } = await entry.render();
-const PLACEHOLDER_IMAGE = "https://placehold.co/600x400";
-const coverImage = entry.data.image?.trim()
-	? entry.data.image
-	: PLACEHOLDER_IMAGE;
-
-// Get color schemes for different categories
-const getCategoryColor = (cat: string | undefined) => {
-	switch (cat) {
-		case "HEADLESS CMS":
-			return "badge-primary";
-		case "WEB PLATFORMS":
-			return "badge-secondary";
-		case "MARKETING AUTOMATION":
-			return "badge-accent";
-		case "AUTOMATION & AI":
-			return "badge-warning";
-		case "CHROME EXTENSIONS":
-			return "badge-info";
-		case "SYSTEMS":
-			return "badge-success";
-		default:
-			return "badge-outline";
-	}
-};
-
-const getStackColor = (tech: string) => {
-	const lowerTech = tech.toLowerCase();
-	if (lowerTech.includes("astro") || lowerTech.includes("datocms"))
-		return "badge-primary";
-	if (lowerTech.includes("n8n") || lowerTech.includes("windmill"))
-		return "badge-warning";
-	if (lowerTech.includes("chrome") || lowerTech.includes("openai"))
-		return "badge-info";
-	if (lowerTech.includes("langchain")) return "badge-success";
-	if (tech.includes("+")) return "badge-success";
-	return "badge-outline";
-};
 ---
 
 <BaseLayout title={`${entry.data.title} - Nick Roth`} description={entry.data.description}>
   <main class="py-4" data-card-ref={entry.slug}>
     <div class="container mx-auto px-4 max-w-6xl">
       <!-- Navigation -->
-      <div class="mb-6">
+      <div class="mb-6" transition:name="work-back-nav">
         <a href="/work" class="btn btn-ghost">← Back to Projects</a>
       </div>
 
-      <!-- Card Container with Border Transition -->
-      <div transition:name={`work-card-${entry.slug}`} class="card bg-base-100 shadow-xl border-2 border-base-300 overflow-hidden mb-12">
-        <!-- Hero Image - Full Width with Badge Overlay -->
-        <figure class="relative">
-          <img transition:name={`work-img-${entry.slug}`} src={coverImage} alt={entry.data.title} class="w-full h-96 object-cover" />
-          {entry.data.category && (
-            <div class="absolute top-4 left-4">
-              <span transition:name={`work-category-${entry.slug}`} class={`badge ${getCategoryColor(entry.data.category)} badge-lg font-semibold text-sm shadow-lg`}>
-                {entry.data.category}
-              </span>
-            </div>
-          )}
-        </figure>
-        
-        <!-- Content Section -->
-        <div class="p-6 lg:p-8">
-          <!-- Project Header -->
-          <div class="mb-8">
-            <h1 transition:name={`work-title-${entry.slug}`} class="text-4xl md:text-5xl font-bold mb-4 leading-tight">
-              {entry.data.title}
-            </h1>
-            
-            <!-- Impact Statement -->
-            {entry.data.impact && (
-              <div class="mb-4">
-                <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">Impact Statement</h2>
-                <p class="text-xl font-bold text-primary uppercase leading-tight">
-                  {entry.data.impact}
-                </p>
-              </div>
-            )}
-            
-            <!-- Role Category -->
-            {entry.data.roleCategory && (
-              <div class="mb-4">
-                <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">Role</h2>
-                <span class="inline-block bg-accent/10 text-accent px-4 py-2 rounded font-bold text-sm uppercase tracking-wider">
-                  {entry.data.roleCategory}
-                </span>
-              </div>
-            )}
-            
-            <!-- Project Timeline -->
-            <div class="mb-4">
-              <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">Timeline</h2>
-              <p class="text-base-content/80">
-                {entry.data.startDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} - 
-                {entry.data.endDate ? entry.data.endDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Present'}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Structured Content Sections with tighter spacing -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 p-6 lg:p-8 bg-base-200/30">
-          <!-- Main Content Column -->
-          <div class="lg:col-span-2 space-y-8">
-            <!-- Overview Section -->
-            <section class="bg-base-100 p-6 rounded-lg shadow-lg border-2 border-base-300">
-              <h2 class="text-2xl font-bold mb-3 text-primary">CHALLENGE & OVERVIEW</h2>
-              <div class="prose prose-lg max-w-none">
-                <p class="text-base-content/80 leading-relaxed">
-                  {entry.data.description}
-                </p>
-              </div>
-            </section>
-
-            <!-- Systematic Approach -->
-            <section class="bg-base-100 p-6 rounded-lg shadow-lg border-2 border-base-300">
-              <h2 class="text-2xl font-bold mb-4 text-primary">SYSTEMATIC APPROACH</h2>
-              <div class="space-y-4">
-                <div class="flex items-start gap-3">
-                  <div class="flex-shrink-0 w-10 h-10 bg-primary text-primary-content rounded-full flex items-center justify-center font-bold">
-                    1
-                  </div>
-                  <div>
-                    <h3 class="font-bold text-lg mb-1">DISCOVER</h3>
-                    <p class="text-base-content/80 text-sm">Comprehensive analysis of existing systems, workflows, and performance baselines</p>
-                  </div>
-                </div>
-                
-                <div class="flex items-start gap-3">
-                  <div class="flex-shrink-0 w-10 h-10 bg-primary text-primary-content rounded-full flex items-center justify-center font-bold">
-                    2
-                  </div>
-                  <div>
-                    <h3 class="font-bold text-lg mb-1">MODEL</h3>
-                    <p class="text-base-content/80 text-sm">Architecture design and technology selection with structured content modeling</p>
-                  </div>
-                </div>
-                
-                <div class="flex items-start gap-3">
-                  <div class="flex-shrink-0 w-10 h-10 bg-primary text-primary-content rounded-full flex items-center justify-center font-bold">
-                    3
-                  </div>
-                  <div>
-                    <h3 class="font-bold text-lg mb-1">SPECIFY</h3>
-                    <p class="text-base-content/80 text-sm">Detailed implementation planning with migration strategy and testing framework</p>
-                  </div>
-                </div>
-                
-                <div class="flex items-start gap-3">
-                  <div class="flex-shrink-0 w-10 h-10 bg-primary text-primary-content rounded-full flex items-center justify-center font-bold">
-                    4
-                  </div>
-                  <div>
-                    <h3 class="font-bold text-lg mb-1">BUILD</h3>
-                    <p class="text-base-content/80 text-sm">Incremental implementation with continuous validation and performance optimization</p>
-                  </div>
-                </div>
-                
-                <div class="flex items-start gap-3">
-                  <div class="flex-shrink-0 w-10 h-10 bg-primary text-primary-content rounded-full flex items-center justify-center font-bold">
-                    5
-                  </div>
-                  <div>
-                    <h3 class="font-bold text-lg mb-1">PROVE</h3>
-                    <p class="text-base-content/80 text-sm">Impact measurement, optimization, and long-term maintenance planning</p>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <!-- Business Impact -->
-            <section class="bg-accent/5 p-6 rounded-lg shadow-lg border-2 border-accent/20">
-              <h2 class="text-2xl font-bold mb-3 text-accent">BUSINESS IMPACT</h2>
-              <p class="text-base-content/80 leading-relaxed text-sm">
-                Successfully modernized platform serving 2M+ monthly users with significant improvements in performance, 
-                authoring experience, and technical maintainability. Editorial team now focuses on content strategy 
-                rather than technical workarounds, enabling higher content quality and publication velocity.
-              </p>
-            </section>
-          </div>
-
-          <!-- Sidebar -->
-          <div class="space-y-6">
-            <!-- Technology Stack -->
-            {entry.data.stack && entry.data.stack.length > 0 && (
-              <section class="bg-base-100 p-4 rounded-lg shadow-lg border-2 border-base-300">
-                <h3 class="text-lg font-bold mb-3 text-primary">TECHNOLOGY STACK</h3>
-                <div class="flex flex-wrap gap-2">
-                  {entry.data.stack.map((tech) => (
-                    <div class={`badge ${getStackColor(tech)} badge-sm font-medium text-xs`}>
-                      {tech}
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            <!-- Project Category -->
-            {entry.data.category && (
-              <section class="bg-base-100 p-4 rounded-lg shadow-lg border-2 border-base-300">
-                <h3 class="text-lg font-bold mb-3 text-primary">PROJECT CATEGORY</h3>
-                <div class={`badge ${getCategoryColor(entry.data.category)} badge-lg font-semibold`}>
-                  {entry.data.category}
-                </div>
-              </section>
-            )}
-
-            <!-- Key Outcomes -->
-            <section class="bg-success/5 p-4 rounded-lg shadow-lg border-2 border-success/20">
-              <h3 class="text-lg font-bold mb-3 text-success">KEY OUTCOMES</h3>
-              <div class="space-y-2">
-                <div class="flex items-center gap-2">
-                  <div class="w-2 h-2 bg-success rounded-full"></div>
-                  <span class="text-sm font-semibold">40% improvement in Core Web Vitals</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <div class="w-2 h-2 bg-success rounded-full"></div>
-                  <span class="text-sm font-semibold">60% reduction in publishing time</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <div class="w-2 h-2 bg-success rounded-full"></div>
-                  <span class="text-sm font-semibold">25% increase in organic traffic</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <div class="w-2 h-2 bg-success rounded-full"></div>
-                  <span class="text-sm font-semibold">90% reduction in deployment time</span>
-                </div>
-              </div>
-            </section>
-
-            <!-- Project Tags -->
-            {entry.data.tags && entry.data.tags.length > 0 && (
-              <section class="bg-base-100 p-4 rounded-lg shadow-lg border-2 border-base-300">
-                <h3 class="text-lg font-bold mb-3 text-primary">PROJECT TAGS</h3>
-                <div class="flex flex-wrap gap-2">
-                  {entry.data.tags.map((tag) => (
-                    <div class="badge badge-outline badge-sm">
-                      {tag}
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-          </div>
-        </div>
-      </div>
+      <!-- Use WorkCard component in expanded mode -->
+      <WorkCard entry={entry} mode="expanded" />
 
       <!-- Navigation Footer -->
-      <div class="pt-6 border-t border-base-300">
+      <div class="pt-6 border-t border-base-300" transition:name="work-footer-nav">
         <div class="flex justify-between items-center">
           <a href="/work" class="btn btn-primary">
             ← View All Projects
