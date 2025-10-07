@@ -17,7 +17,7 @@ Agents and contributors can find all supplementary guides in this folder.
 **Progress**:
 - **[P0-001 Complete](./progress/p0-001.md)** ✅ – Global CSS Setup (detailed documentation)
   - [Quick Reference](./project/completed-work/p0-001-quick-reference.md) – One-page summary
-  - [Completion Summary](./project/completed-work/P0-001-COMPLETE.md) – Executive overview
+  - [Completion Summary](./project/completed-work/p0-001-complete.md) – Executive overview
 
 **Reference Docs**:
 - [Design System Guide](./design-system/guide.md) – Design philosophy, component architecture, visual principles
@@ -28,7 +28,7 @@ Agents and contributors can find all supplementary guides in this folder.
 
 **Workflows & Templates**:
 - [buildComponent2.prompt.md](../.github/prompts/buildComponent2.prompt.md) – **PRIMARY WORKFLOW** (updated with P0-001 learnings)
-- [buildComponent-streamlined.md](../.github/prompts/buildComponent-streamlined.md) – Alternative streamlined workflow
+- [buildComponent.prompt.md](../.github/prompts/buildComponent.prompt.md) – Original detailed workflow
 - [buildComponent-reference.md](../.github/prompts/buildComponent-reference.md) – Detailed reference material
 - [Task Templates](../.github/templates/) – CSS setup, component showcase, page integration
 - [Validation Checklists](../.github/VALIDATION.md) – Phase-by-phase yes/no checks
