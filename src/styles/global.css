@@ -1701,32 +1701,49 @@
                 letter-spacing: 0.05em;
             }
 
-            /* Adjust timeline layout for mobile - add minimal padding */
+            /* Adjust timeline layout for mobile - add minimal padding and override grid */
             .timeline-compact-mobile {
                 padding-left: 0.5rem;
                 padding-right: 0.5rem;
                 width: 100%;
             }
 
-            /* Reduce timeline start width on mobile */
+            /* Override daisyUI grid layout on mobile - use flexbox left-aligned */
+            .timeline-compact-mobile > li {
+                display: flex !important;
+                justify-content: flex-start;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            /* Date column - minimal width */
             .timeline-compact-mobile .timeline-start {
                 min-width: 1.5rem;
                 width: 1.5rem;
+                flex-shrink: 0;
                 text-align: center;
                 padding: 0;
-                margin-right: 0;
+                margin: 0;
             }
 
-            /* Adjust timeline middle spacing */
+            /* Status dot column - minimal width */
             .timeline-compact-mobile .timeline-middle {
-                margin-left: 0.25rem;
-                margin-right: 0.75rem;
+                flex-shrink: 0;
+                margin: 0;
+                padding: 0;
             }
 
-            /* Ensure cards take full available width */
+            /* Phase card column - take remaining space */
             .timeline-compact-mobile .timeline-end {
                 flex: 1;
                 min-width: 0;
+                margin: 0;
+                padding: 0;
+            }
+
+            /* Hide horizontal rules on mobile for cleaner look */
+            .timeline-compact-mobile hr {
+                display: none;
             }
         }
     }
