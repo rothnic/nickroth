@@ -44,21 +44,9 @@ const categories = [
       </div>
 
       <!-- Projects Grid - 2 columns on all screen sizes -->
-      <div class="grid grid-cols-2 gap-3 sm:gap-6 max-w-5xl mx-auto">
+      <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 max-w-5xl mx-auto">
         {sortedWork.map((work) => (
-          <WorkCard
-            title={work.data.title}
-            description={work.data.description}
-            company={work.data.company}
-            role={work.data.role}
-            slug={work.slug}
-            tags={work.data.tags}
-            image={work.data.image}
-            category={work.data.category}
-            impact={work.data.impact}
-            stack={work.data.stack}
-            roleCategory={work.data.roleCategory}
-          />
+          <WorkCard entry={work} mode="card" />
         ))}
       </div>
       

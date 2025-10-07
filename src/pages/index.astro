@@ -63,19 +63,7 @@ const recentNotes = notes
       {featuredWork.length > 0 ? (
         <div class="grid grid-cols-2 gap-3 sm:gap-6 max-w-5xl mx-auto mb-12">
           {featuredWork.map((project) => (
-            <WorkCard
-              title={project.data.title}
-              description={project.data.description}
-              company={project.data.company}
-              role={project.data.role}
-              slug={project.slug}
-              tags={project.data.tags}
-              image={project.data.image}
-              category={project.data.category}
-              impact={project.data.impact}
-              stack={project.data.stack}
-              roleCategory={project.data.roleCategory}
-            />
+            <WorkCard entry={project} mode="card" />
           ))}
         </div>
       ) : null}
