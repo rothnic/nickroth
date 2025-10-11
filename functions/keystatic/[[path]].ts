@@ -92,12 +92,15 @@ const createHtmlResponse = (config: unknown, appSlug: string): string => {
         console.error("Failed to initialise Keystatic admin", error);
         const container = document.getElementById("keystatic-root");
         if (container) {
-          container.innerHTML = '<main style="padding:1.5rem;max-width:40rem;margin:0 auto;">
-            <h1 style="font-size:1.5rem;margin-bottom:0.75rem;">Keystatic admin failed to load</h1>
-            <p style="line-height:1.5;">
-              Check the browser console for the detailed error message.
-            </p>
-          </main>';
+          const fallbackHtml = ${JSON.stringify(`
+            <main style="padding:1.5rem;max-width:40rem;margin:0 auto;">
+              <h1 style="font-size:1.5rem;margin-bottom:0.75rem;">Keystatic admin failed to load</h1>
+              <p style="line-height:1.5;">
+                Check the browser console for the detailed error message.
+              </p>
+            </main>
+          `)};
+          container.innerHTML = fallbackHtml.trim();
         }
       });
     </script>
