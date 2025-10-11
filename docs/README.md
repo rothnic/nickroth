@@ -34,7 +34,7 @@ Agents and contributors can find all supplementary guides in this folder.
 - [Validation Checklists](../.github/VALIDATION.md) – Phase-by-phase yes/no checks
 
 **Archive**:
-- [archive/](./archive/) – Completed fix notes and troubleshooting docs (historical reference)
+- Archive – Historical troubleshooting docs (folder to be reintroduced once legacy notes are migrated)
 
 ### Astro patterns
 

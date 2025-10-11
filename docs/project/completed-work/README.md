@@ -14,7 +14,7 @@ This folder contains completion summaries and quick references for finished task
    - Common issues & solutions
    - What's available now
 
-2. **[P0-001-COMPLETE.md](./P0-001-COMPLETE.md)** - Executive summary
+2. **[p0-001-complete.md](./p0-001-complete.md)** - Executive summary
    - What was accomplished
    - Critical technical details
    - Updated documentation list

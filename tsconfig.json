@@ -1,5 +1,8 @@
 {
-	"extends": "astro/tsconfigs/base",
-	"include": [".astro/types.d.ts", "**/*"],
-	"exclude": ["dist", "figma-export"]
+        "extends": "astro/tsconfigs/base",
+        "compilerOptions": {
+                "types": ["@cloudflare/workers-types", "astro/client"]
+        },
+        "include": [".astro/types.d.ts", "**/*"],
+        "exclude": ["dist", "figma-export"]
 }
