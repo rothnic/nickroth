@@ -19,8 +19,8 @@
    - Add polyfills (`buffer`, `process`, `undici`) configured in Vite to make the admin bundle Worker-compatible.
    - Update `astro.config.mjs` to lazily register the Keystatic integration and admin route only when `SKIP_KEYSTATIC !== 'true'`.
 2. **Cloudflare Pages Functions Scaffolding**
-   - Create `/functions/keystatic-admin.ts` Worker entry to serve the admin app.
-   - Ensure the build emits a static bundle (via `@keystatic/astro/entry-cloudflare`) to be consumed by the Worker.
+   - Create `/functions/keystatic-admin.ts` Worker entry to proxy API calls (`/api/keystatic/*`).
+   - Add `/functions/keystatic/[[path]].ts` to render the admin shell at `/keystatic` without requiring Astro to output a server-rendered page.
 3. **Secrets & OAuth Setup**
    - Register a GitHub OAuth App with callback on the Cloudflare domain, storing `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` in Pages secrets.
    - Configure `KEYSTATIC_SECRET` for signing preview sessions.
@@ -91,8 +91,9 @@ Use this checklist to move from "code merged" to a working, hosted Keystatic adm
 
 ## Phase 3 – Admin Hosting & Routing
 1. **Worker Router**
-   - Implement router that serves the Keystatic admin bundle at `/admin` and proxies API calls (`/keystatic/api/*`) to the Worker runtime functions.
-   - Add CORS-safe fetch wrappers for GitHub requests (Workers `fetch` is Web-standard, matches Keystatic's expectations).
+   - Serve the admin shell at `/keystatic` via `/functions/keystatic/[[path]].ts`, which renders a minimal HTML document that loads Keystatic from the ESM CDN.
+   - Keep `/functions/admin.ts` as a convenience redirect from `/admin` to `/keystatic` so existing bookmarks continue to work.
+   - `/functions/keystatic-admin.ts` continues to handle `/api/keystatic/*` requests for GitHub auth and content updates.
 2. **Authentication Middleware**
    - Use Cloudflare Access or GitHub OAuth gating before allowing `GET /admin`.
    - Store session in signed cookie; refresh tokens on expiry by re-running OAuth flow.
