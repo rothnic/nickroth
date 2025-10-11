@@ -152,15 +152,15 @@ const currentPath = Astro.url.pathname;
     </div>
     <script>
       // Theme selector
-      const themeSelector = document.getElementById('theme-selector') as HTMLSelectElement;
-      if (themeSelector) {
+      const themeSelector = document.getElementById('theme-selector');
+      if (themeSelector instanceof HTMLSelectElement) {
         // Set initial value from current theme
         const currentTheme = document.documentElement.getAttribute('data-theme') || 'neobrutalism-light';
         themeSelector.value = currentTheme;
-        
+
         // Listen for changes
-        themeSelector.addEventListener('change', (e) => {
-          const newTheme = (e.target as HTMLSelectElement).value;
+        themeSelector.addEventListener('change', () => {
+          const newTheme = themeSelector.value;
           document.documentElement.setAttribute('data-theme', newTheme);
           localStorage.setItem('theme', newTheme);
         });
