@@ -20,9 +20,9 @@ Progress logs covering:
 ## Usage
 - Files in this folder represent **active or recent work**
 - Once work is completed and validated, summarize in `../project/completed-work/`
-- Historical or superseded approaches should be moved to `../archive/`
+- Historical or superseded approaches should be moved to the future archive folder once reinstated
 
 ## Related
 - [Completed Work](../project/completed-work/README.md) - Validated completion summaries
-- [Archive](../archive/README.md) - Historical and obsolete documentation
+- Archive (planned) - Historical and obsolete documentation once reinstated
 - [Component Backlog](../component-backlog.md) - Task tracking
