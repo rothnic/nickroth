@@ -26,6 +26,27 @@ type KeystaticEnv = {
 
 const SLUG_ENV_NAME = "PUBLIC_KEYSTATIC_GITHUB_APP_SLUG";
 
+const ensureProcessEnv = (env: KeystaticEnv) => {
+        const runtimeProcess = globalScope.process ?? process;
+
+        if (!runtimeProcess.env) {
+                runtimeProcess.env = {} as NodeJS.ProcessEnv;
+        }
+
+        const assignments: Array<[string, string | undefined]> = [
+                ["KEYSTATIC_GITHUB_CLIENT_ID", env.KEYSTATIC_GITHUB_CLIENT_ID],
+                ["KEYSTATIC_GITHUB_CLIENT_SECRET", env.KEYSTATIC_GITHUB_CLIENT_SECRET],
+                ["KEYSTATIC_SECRET", env.KEYSTATIC_SECRET],
+                [SLUG_ENV_NAME, env.PUBLIC_KEYSTATIC_GITHUB_APP_SLUG],
+        ];
+
+        for (const [key, value] of assignments) {
+                if (value && runtimeProcess.env[key] !== value) {
+                        runtimeProcess.env[key] = value;
+                }
+        }
+};
+
 const createRequestHandler = (env: KeystaticEnv) => {
         const clientId = env.KEYSTATIC_GITHUB_CLIENT_ID;
         const clientSecret = env.KEYSTATIC_GITHUB_CLIENT_SECRET;
@@ -34,6 +55,8 @@ const createRequestHandler = (env: KeystaticEnv) => {
         if (!clientId || !clientSecret || !secret) {
                 return null;
         }
+
+        ensureProcessEnv(env);
 
         return makeGenericAPIRouteHandler(
                 {
