@@ -2,7 +2,6 @@ import { makeGenericAPIRouteHandler } from "@keystatic/core/api/generic";
 import { Buffer } from "buffer";
 import process from "process";
 import keystaticConfig from "../../../keystatic.config";
-import type { PagesFunction } from "@cloudflare/workers-types";
 
 const globalScope = globalThis as typeof globalThis & {
         Buffer?: typeof Buffer;
@@ -22,6 +21,7 @@ type KeystaticEnv = {
         KEYSTATIC_GITHUB_CLIENT_SECRET?: string;
         KEYSTATIC_SECRET?: string;
         PUBLIC_KEYSTATIC_GITHUB_APP_SLUG?: string;
+        PUBLIC_KEYSTATIC_BASE_URL?: string;
 };
 
 const SLUG_ENV_NAME = "PUBLIC_KEYSTATIC_GITHUB_APP_SLUG";
@@ -30,7 +30,7 @@ const ensureProcessEnv = (env: KeystaticEnv) => {
         const runtimeProcess = globalScope.process ?? process;
 
         if (!runtimeProcess.env) {
-                runtimeProcess.env = {} as NodeJS.ProcessEnv;
+                runtimeProcess.env = {} as Record<string, string | undefined>;
         }
 
         const assignments: Array<[string, string | undefined]> = [
@@ -137,8 +137,13 @@ const normalizeBody = (body: unknown): BodyInit | null => {
         return JSON.stringify(body);
 };
 
-type KeystaticContext = Parameters<PagesFunction<KeystaticEnv>>[0];
-type KeystaticResponse = Awaited<ReturnType<PagesFunction<KeystaticEnv>>>;
+type RouteParams = Record<string, string | string[] | undefined> | undefined;
+
+interface KeystaticContext {
+        request: Request;
+        env: KeystaticEnv;
+        params?: RouteParams;
+}
 
 const API_BASE_PATH = "/api/keystatic";
 
@@ -148,38 +153,63 @@ const joinPathSegments = (segments: string[]): string =>
                 .filter(Boolean)
                 .join("/");
 
-type WorkerRequest = KeystaticContext["request"];
-
-const cloneRequestWithPathname = (request: WorkerRequest, pathname: string): Request => {
+const cloneRequestWithPathname = (
+        request: Request,
+        pathname: string,
+        baseOverride?: URL,
+        originalHost?: string,
+): Request => {
         const targetUrl = new URL(request.url);
         targetUrl.pathname = pathname;
 
-        const standardRequest = request as unknown as Request;
-        const headers = new Headers();
-        standardRequest.headers.forEach((value, key) => {
-                headers.append(key, value);
-        });
+        if (baseOverride) {
+                targetUrl.protocol = baseOverride.protocol;
+                targetUrl.hostname = baseOverride.hostname;
+                targetUrl.port = baseOverride.port;
+        }
 
-        const method = standardRequest.method ?? "GET";
-        const hasBody = method !== "GET" && method !== "HEAD";
-        const body = hasBody ? (standardRequest.body as unknown as BodyInit | null) : null;
+        const cloned = request.clone();
+        const method = cloned.method ?? "GET";
+        const headers = new Headers(cloned.headers);
+
+        if (baseOverride) {
+                headers.set("host", baseOverride.host);
+                if (originalHost) {
+                        headers.set("x-forwarded-host", originalHost);
+                }
+        }
 
         const init: RequestInit = {
                 method,
                 headers,
         };
 
-        if (body) {
-                init.body = body;
+        if (method !== "GET" && method !== "HEAD") {
+                init.body = cloned.body;
         }
 
         return new Request(targetUrl.toString(), init);
 };
 
+const getBaseOverride = (env: KeystaticEnv): URL | null => {
+        const base = env.PUBLIC_KEYSTATIC_BASE_URL;
+
+        if (!base) {
+                return null;
+        }
+
+        try {
+                return new URL(base);
+        } catch (error) {
+                console.warn("Invalid PUBLIC_KEYSTATIC_BASE_URL provided", error);
+                return null;
+        }
+};
+
 const normaliseRequestForHandler = (context: KeystaticContext): Request => {
-        const { request, params } = context;
+        const { request, params, env } = context;
         const url = new URL(request.url);
-        const suffixParam = params?.path;
+        const suffixParam = params && "path" in params ? params.path : undefined;
         const suffix = Array.isArray(suffixParam)
                 ? joinPathSegments(suffixParam)
                 : suffixParam ?? "";
@@ -190,10 +220,13 @@ const normaliseRequestForHandler = (context: KeystaticContext): Request => {
                         ? `${API_BASE_PATH}/${suffix}`
                         : API_BASE_PATH;
 
-        return cloneRequestWithPathname(request, pathname);
+        const baseOverride = getBaseOverride(env);
+        const originalHost = url.host;
+
+        return cloneRequestWithPathname(request, pathname, baseOverride ?? undefined, originalHost);
 };
 
-const handleRequest = async (context: KeystaticContext): Promise<KeystaticResponse> => {
+const handleRequest = async (context: KeystaticContext): Promise<Response> => {
         const { env } = context;
         const request = normaliseRequestForHandler(context);
 
@@ -206,14 +239,14 @@ const handleRequest = async (context: KeystaticContext): Promise<KeystaticRespon
                                 status: 500,
                                 headers: { "Content-Type": "text/plain; charset=utf-8" },
                         },
-                ) as unknown as KeystaticResponse;
+                );
         }
 
         try {
                 const result = await handler(request);
 
                 if (result instanceof Response) {
-                        return result as unknown as KeystaticResponse;
+                        return result;
                 }
 
                 const { body, headers, status } = result ?? {};
@@ -225,14 +258,14 @@ const handleRequest = async (context: KeystaticContext): Promise<KeystaticRespon
                         init.headers = normalizedHeaders;
                 }
 
-                return new Response(responseBody, init) as unknown as KeystaticResponse;
+                return new Response(responseBody, init);
         } catch (error) {
                 console.error("Keystatic API request failed", error);
                 return new Response("Failed to process Keystatic request.", {
                         status: 500,
                         headers: { "Content-Type": "text/plain; charset=utf-8" },
-                }) as unknown as KeystaticResponse;
+                });
         }
 };
 
-export const onRequest: PagesFunction<KeystaticEnv> = (context) => handleRequest(context);
+export const onRequest = (context: KeystaticContext): Promise<Response> => handleRequest(context);

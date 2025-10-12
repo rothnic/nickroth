@@ -1,6 +1,5 @@
 import { Buffer } from "buffer";
 import process from "process";
-import type { PagesFunction, Response as WorkerResponse } from "@cloudflare/workers-types";
 
 import keystaticConfig from "../../keystatic.config";
 
@@ -30,8 +29,6 @@ const CDN_REACT = "https://esm.sh/react@19.2.0?pin=v135";
 const CDN_REACT_DOM = "https://esm.sh/react-dom@19.2.0/client?pin=v135&deps=react@19.2.0";
 const CDN_KEYSTATIC =
         "https://esm.sh/@keystatic/core@0.5.48/ui?pin=v135&bundle&deps=react@19.2.0,react-dom@19.2.0";
-
-const toWorkerResponse = (response: Response): WorkerResponse => response as unknown as WorkerResponse;
 
 const serializeConfig = (config: unknown): string => {
         try {
@@ -110,45 +107,44 @@ const createHtmlResponse = (config: unknown, appSlug: string): string => {
 
 const isAdminRequest = (pathname: string) => pathname === ADMIN_BASE_PATH || pathname.startsWith(`${ADMIN_BASE_PATH}/`);
 
-export const onRequest: PagesFunction<AdminEnv> = function onRequest({ request, env }): WorkerResponse {
+interface AdminContext {
+        request: Request;
+        env: AdminEnv;
+}
+
+export const onRequest = ({ request, env }: AdminContext): Response => {
         const url = new URL(request.url);
 
         if (!isAdminRequest(url.pathname)) {
-                return toWorkerResponse(new Response(null, { status: 404 }));
+                return new Response(null, { status: 404 });
         }
 
         if (request.method !== "GET" && request.method !== "HEAD") {
-                return toWorkerResponse(
-                        new Response("Method Not Allowed", {
-                                status: 405,
-                                headers: { Allow: "GET, HEAD" },
-                        }),
-                );
+                return new Response("Method Not Allowed", {
+                        status: 405,
+                        headers: { Allow: "GET, HEAD" },
+                });
         }
 
         const appSlug = env[APP_SLUG_ENV_NAME];
 
         if (!appSlug) {
-                return toWorkerResponse(
-                        new Response(
-                                `Missing ${APP_SLUG_ENV_NAME}. Configure the environment variable so the Keystatic admin can complete GitHub OAuth.`,
-                                {
-                                        status: 500,
-                                        headers: { "Content-Type": "text/plain; charset=utf-8" },
-                                },
-                        ),
+                return new Response(
+                        `Missing ${APP_SLUG_ENV_NAME}. Configure the environment variable so the Keystatic admin can complete GitHub OAuth.`,
+                        {
+                                status: 500,
+                                headers: { "Content-Type": "text/plain; charset=utf-8" },
+                        },
                 );
         }
 
         const body = request.method === "HEAD" ? undefined : createHtmlResponse(keystaticConfig, appSlug);
 
-        return toWorkerResponse(
-                new Response(body, {
-                        status: 200,
-                        headers: {
-                                "Content-Type": "text/html; charset=utf-8",
-                                "Cache-Control": "no-store",
-                        },
-                }),
-        );
+        return new Response(body, {
+                status: 200,
+                headers: {
+                        "Content-Type": "text/html; charset=utf-8",
+                        "Cache-Control": "no-store",
+                },
+        });
 };

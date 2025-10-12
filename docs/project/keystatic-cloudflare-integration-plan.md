@@ -41,6 +41,7 @@ Use this checklist to move from "code merged" to a working, hosted Keystatic adm
   - `KEYSTATIC_GITHUB_CLIENT_SECRET` – OAuth client secret (click “Generate new secret” if needed).
   - `KEYSTATIC_SECRET` – random 32+ character string (used to sign session cookies).
   - `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` – short slug used in Keystatic’s auth screen (e.g., `nickroth`).
+  - `PUBLIC_KEYSTATIC_BASE_URL` – canonical origin (e.g., `https://nickroth.pages.dev`) used when constructing the GitHub OAuth callback URL so branch previews can reuse the same OAuth App registration.
 - [ ] Redeploy the site after setting secrets so they propagate to the Workers runtime.
 
 ### 3. Cloudflare Pages Functions
@@ -52,6 +53,7 @@ Use this checklist to move from "code merged" to a working, hosted Keystatic adm
 - [ ] Verify that Cloudflare Pages generates preview deployments for pull requests or branches (e.g., `https://<branch>.<project>.pages.dev`).
 - [ ] Visit `https://<branch>.<project>.pages.dev/keystatic` to load the Keystatic admin UI.
 - [ ] Complete the GitHub OAuth prompt; Keystatic should redirect back to the branch preview domain once authentication succeeds.
+  - Branch previews reuse the canonical OAuth callback defined by `PUBLIC_KEYSTATIC_BASE_URL`. After the GitHub exchange finishes, the Worker redirects back to the preview origin so editors stay on the branch-specific deployment.
 
 ### 5. GitHub Permissions & Storage
 - [ ] Ensure the OAuth App has permission to access `repo` scope so Keystatic can read/write content branches.
