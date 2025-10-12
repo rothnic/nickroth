@@ -1,7 +1,7 @@
 import { makeGenericAPIRouteHandler } from "@keystatic/core/api/generic";
 import { Buffer } from "buffer";
 import process from "process";
-import keystaticConfig from "../keystatic.config";
+import keystaticConfig from "../../../keystatic.config";
 import type { PagesFunction } from "@cloudflare/workers-types";
 
 const globalScope = globalThis as typeof globalThis & {
