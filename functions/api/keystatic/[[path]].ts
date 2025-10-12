@@ -148,22 +148,49 @@ const joinPathSegments = (segments: string[]): string =>
                 .filter(Boolean)
                 .join("/");
 
+type WorkerRequest = KeystaticContext["request"];
+
+const cloneRequestWithPathname = (request: WorkerRequest, pathname: string): Request => {
+        const targetUrl = new URL(request.url);
+        targetUrl.pathname = pathname;
+
+        const standardRequest = request as unknown as Request;
+        const headers = new Headers();
+        standardRequest.headers.forEach((value, key) => {
+                headers.append(key, value);
+        });
+
+        const method = standardRequest.method ?? "GET";
+        const hasBody = method !== "GET" && method !== "HEAD";
+        const body = hasBody ? (standardRequest.body as unknown as BodyInit | null) : null;
+
+        const init: RequestInit = {
+                method,
+                headers,
+        };
+
+        if (body) {
+                init.body = body;
+        }
+
+        return new Request(targetUrl.toString(), init);
+};
+
 const normaliseRequestForHandler = (context: KeystaticContext): Request => {
         const { request, params } = context;
         const url = new URL(request.url);
-
-        if (url.pathname.startsWith(API_BASE_PATH)) {
-                return request;
-        }
-
         const suffixParam = params?.path;
         const suffix = Array.isArray(suffixParam)
                 ? joinPathSegments(suffixParam)
                 : suffixParam ?? "";
 
-        url.pathname = suffix ? `${API_BASE_PATH}/${suffix}` : API_BASE_PATH;
+        const pathname = url.pathname.startsWith(API_BASE_PATH)
+                ? url.pathname
+                : suffix
+                        ? `${API_BASE_PATH}/${suffix}`
+                        : API_BASE_PATH;
 
-        return new Request(url.toString(), request);
+        return cloneRequestWithPathname(request, pathname);
 };
 
 const handleRequest = async (context: KeystaticContext): Promise<KeystaticResponse> => {
