@@ -140,13 +140,35 @@ const normalizeBody = (body: unknown): BodyInit | null => {
 type KeystaticContext = Parameters<PagesFunction<KeystaticEnv>>[0];
 type KeystaticResponse = Awaited<ReturnType<PagesFunction<KeystaticEnv>>>;
 
-const handleRequest = async (context: KeystaticContext): Promise<KeystaticResponse> => {
-        const { request, env, next } = context;
+const API_BASE_PATH = "/api/keystatic";
+
+const joinPathSegments = (segments: string[]): string =>
+        segments
+                .map((segment) => segment.replace(/^\/+|\/+$/g, ""))
+                .filter(Boolean)
+                .join("/");
+
+const normaliseRequestForHandler = (context: KeystaticContext): Request => {
+        const { request, params } = context;
         const url = new URL(request.url);
 
-        if (!url.pathname.startsWith("/api/keystatic")) {
-                return next();
+        if (url.pathname.startsWith(API_BASE_PATH)) {
+                return request;
         }
+
+        const suffixParam = params?.path;
+        const suffix = Array.isArray(suffixParam)
+                ? joinPathSegments(suffixParam)
+                : suffixParam ?? "";
+
+        url.pathname = suffix ? `${API_BASE_PATH}/${suffix}` : API_BASE_PATH;
+
+        return new Request(url.toString(), request);
+};
+
+const handleRequest = async (context: KeystaticContext): Promise<KeystaticResponse> => {
+        const { env } = context;
+        const request = normaliseRequestForHandler(context);
 
         const handler = createRequestHandler(env);
 
