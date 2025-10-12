@@ -21,6 +21,7 @@ type KeystaticEnv = {
         KEYSTATIC_GITHUB_CLIENT_ID?: string;
         KEYSTATIC_GITHUB_CLIENT_SECRET?: string;
         KEYSTATIC_SECRET?: string;
+        PUBLIC_KEYSTATIC_GITHUB_APP_SLUG?: string;
 };
 
 const SLUG_ENV_NAME = "PUBLIC_KEYSTATIC_GITHUB_APP_SLUG";
@@ -137,14 +138,22 @@ const handleRequest = async (context: KeystaticContext): Promise<KeystaticRespon
         }
 
         try {
-                const { body, headers, status } = await handler(request);
+                const result = await handler(request);
+
+                if (result instanceof Response) {
+                        return result as unknown as KeystaticResponse;
+                }
+
+                const { body, headers, status } = result ?? {};
                 const normalizedHeaders = normalizeHeaders(headers);
                 const responseBody = normalizeBody(body);
+                const init: ResponseInit = { status: status ?? 200 };
 
-                return new Response(responseBody, {
-                        status: status ?? 200,
-                        headers: normalizedHeaders,
-                }) as unknown as KeystaticResponse;
+                if (normalizedHeaders) {
+                        init.headers = normalizedHeaders;
+                }
+
+                return new Response(responseBody, init) as unknown as KeystaticResponse;
         } catch (error) {
                 console.error("Keystatic API request failed", error);
                 return new Response("Failed to process Keystatic request.", {
