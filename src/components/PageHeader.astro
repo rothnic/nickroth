@@ -9,6 +9,10 @@ export interface Props {
 }
 
 const { title, subtitle, description } = Astro.props;
+
+// Create a slug for the subtitle to use as a transition name
+// This allows subtitles that match across pages to remain static
+const subtitleSlug = subtitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 ---
 
 <div class="text-center mb-16" transition:name="page-header">
@@ -18,7 +22,7 @@ const { title, subtitle, description } = Astro.props;
   <!-- Fluid typography: clamp(min, preferred, max) for smooth resizing -->
   <h1 class="font-black mb-4 leading-none" style="font-size: clamp(2.25rem, 5vw + 1rem, 3rem);">
     <span class="block">{title.toUpperCase()}</span>
-    <span class="block text-primary">{subtitle.toUpperCase()}</span>
+    <span class="block text-primary" transition:name={`page-subtitle-${subtitleSlug}`}>{subtitle.toUpperCase()}</span>
   </h1>
   <h2 class="font-normal opacity-75 max-w-3xl mx-auto" style="font-size: clamp(1rem, 1vw + 0.75rem, 1.125rem);">
     {description}
