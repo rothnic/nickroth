@@ -25,7 +25,7 @@ const isAllActive = activeCategory === null;
 
 <div class="relative -mx-2 sm:mx-0 group mb-8 sm:mb-12">
   <nav 
-    class="flex flex-nowrap justify-start sm:justify-center gap-2 min-w-0 overflow-x-auto px-4 sm:px-0 scrollbar-hide snap-x snap-mandatory overscroll-contain" 
+    class="flex flex-nowrap justify-start sm:justify-center gap-2 min-w-0 overflow-x-auto px-4 sm:px-0 py-2 scrollbar-hide snap-x snap-mandatory overscroll-contain" 
     transition:name="work-category-nav"
     id="work-category-nav"
   >
@@ -48,7 +48,7 @@ const isAllActive = activeCategory === null;
   </nav>
   
   <!-- Right edge fade (mobile only) -->
-  <div class="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-base-100 to-transparent pointer-events-none sm:hidden"></div>
+  <div class="absolute right-0 h-8 top-1/2 -translate-y-1/2 w-12 bg-gradient-to-l from-base-100 to-transparent pointer-events-none sm:hidden"></div>
 </div>
 
 <script>
