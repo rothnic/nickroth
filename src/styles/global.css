@@ -1310,37 +1310,24 @@
             animation: none !important;
         }
 
-        /* Work category nav - stays static during transitions (persistent element)
+        /* Work category nav - instant swap during transitions (persistent element)
            Since the filter bar appears on all work pages, we keep it visible
-           and in-place while only the content below animates. */
+           and in-place while only the content below animates.
+           Using instant swap prevents any moment where both old/new exist causing layout flicker. */
         ::view-transition-group(work-category-nav) {
             /* No animation - stays in place */
             animation: none !important;
         }
         
-        ::view-transition-old(work-category-nav),
-        ::view-transition-new(work-category-nav) {
-            /* Quick fade for smooth transitions */
-            animation: none;
-            mix-blend-mode: normal;
-        }
-        
         ::view-transition-old(work-category-nav) {
-            animation: category-nav-fade-out 0.1s ease-out forwards;
+            /* Immediately hide old - no fade */
+            animation: none !important;
+            display: none !important;
         }
         
         ::view-transition-new(work-category-nav) {
-            animation: category-nav-fade-in 0.1s ease-in forwards;
-        }
-        
-        @keyframes category-nav-fade-out {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-        
-        @keyframes category-nav-fade-in {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            /* Immediately show new - no fade */
+            animation: none !important;
         }
 
         /* Reset button hover states during view transitions to prevent shadow desync */
