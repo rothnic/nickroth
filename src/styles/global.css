@@ -1262,18 +1262,18 @@
         }
 
         /* Page header - simple fade instead of morph to avoid distracting expand/contract */
-        ::view-transition-group(page-header) {
-            /* Prevent any size/position morphing */
+        ::view-transition-group(page-header-container) {
+            /* Prevent any size/position morphing on the container */
             animation: none !important;
         }
         
-        ::view-transition-image-pair(page-header) {
+        ::view-transition-image-pair(page-header-container) {
             /* Disable default crossfade isolation */
             isolation: auto;
         }
         
-        ::view-transition-old(page-header),
-        ::view-transition-new(page-header) {
+        ::view-transition-old(page-header-container),
+        ::view-transition-new(page-header-container) {
             /* Prevent any transform animations */
             animation: none;
             mix-blend-mode: normal;
@@ -1282,11 +1282,11 @@
             overflow: clip;
         }
         
-        ::view-transition-old(page-header) {
+        ::view-transition-old(page-header-container) {
             animation: page-header-fade-out 0.1s ease-out forwards;
         }
         
-        ::view-transition-new(page-header) {
+        ::view-transition-new(page-header-container) {
             animation: page-header-fade-in 0.1s ease-in 0.05s forwards;
             opacity: 0;
         }
@@ -1299,6 +1299,15 @@
         @keyframes page-header-fade-in {
             from { opacity: 0; transform: none; }
             to { opacity: 1; transform: none; }
+        }
+        
+        /* Header title and subtitle - content-based transition names
+           When the same name appears on both pages (same content),
+           the browser morphs seamlessly making it appear static.
+           When content differs, each gets its own transition. */
+        [class*="::view-transition-group(header-title-"],
+        [class*="::view-transition-group(header-subtitle-"] {
+            animation: none !important;
         }
 
         /* Work category nav - stays static during transitions (persistent element)

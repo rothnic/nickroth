@@ -9,16 +9,23 @@ export interface Props {
 }
 
 const { title, subtitle, description } = Astro.props;
+
+// Create content-based slugs for transition names
+// When content matches across pages, the transition will be a seamless morph (invisible)
+// When content differs, it will fade between old and new
+const slugify = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').slice(0, 30);
+const titleSlug = slugify(title);
+const subtitleSlug = slugify(subtitle);
 ---
 
-<div class="text-center mb-16" transition:name="page-header">
+<div class="text-center mb-16" transition:name="page-header-container">
   <!-- Optional slot for content above heading (e.g., avatar) -->
   <slot name="above" />
   
   <!-- Fluid typography: clamp(min, preferred, max) for smooth resizing -->
   <h1 class="font-black mb-4 leading-none" style="font-size: clamp(2.25rem, 5vw + 1rem, 3rem);">
-    <span class="block">{title.toUpperCase()}</span>
-    <span class="block text-primary">{subtitle.toUpperCase()}</span>
+    <span class="block" transition:name={`header-title-${titleSlug}`}>{title.toUpperCase()}</span>
+    <span class="block text-primary" transition:name={`header-subtitle-${subtitleSlug}`}>{subtitle.toUpperCase()}</span>
   </h1>
   <h2 class="font-normal opacity-75 max-w-3xl mx-auto" style="font-size: clamp(1rem, 1vw + 0.75rem, 1.125rem);">
     {description}
