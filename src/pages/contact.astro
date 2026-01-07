@@ -9,13 +9,15 @@ const emailParts = profile.emailParts;
 ---
 
 <BaseLayout title="Contact - Nick Roth" description="Get in touch with Nick Roth">
-  <ContentLayout maxWidth="4xl">
-      <PageHeader
-        title="Let's Work"
-        subtitle="Together"
-        description="Open to consulting and fractional roles. Specializing in systematic solutions for complex product and engineering challenges."
-      />
+  <ContentLayout>
+    <PageHeader
+      title="Let's Work"
+      subtitle="Together"
+      description="Open to consulting and fractional roles. Specializing in systematic solutions for complex product and engineering challenges."
+    />
 
+    <!-- Content wrapper with narrower max-width -->
+    <div class="max-w-4xl mx-auto">
       <!-- Main Content Card - static container, no hover -->
       <div class="bg-base-100 border-2 border-base-300 shadow-brutal rounded-xl p-8 sm:p-12 mb-12">
         <!-- Contact Options Grid -->
@@ -160,7 +162,7 @@ const emailParts = profile.emailParts;
           Connect on LinkedIn
         </a>
       </div>
-      </div>
+    </div>
   </ContentLayout>
 
   <script define:vars={{ emailParts }}>

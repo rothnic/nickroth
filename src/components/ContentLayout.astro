@@ -1,30 +1,23 @@
 ---
 /**
  * ContentLayout - Wraps page content in the standard main/container structure.
- * Use this inside BaseLayout for consistent page layouts.
  * 
- * Default: py-20 padding, centered container with px-4, max-w-6xl
- * For work pages: use maxWidth="5xl" for tighter grid
- * For contact page: use maxWidth="4xl" for narrower content
+ * The outer container always uses max-w-6xl for consistent header positioning.
+ * Content can control its own max-width as needed.
  */
 
 export interface Props {
-  /** Max width class for the container (default: "6xl") */
-  maxWidth?: "4xl" | "5xl" | "6xl" | "7xl" | "full";
   /** Custom padding class (default: "py-20") */
   padding?: string;
 }
 
 const { 
-  maxWidth = "6xl",
   padding = "py-20"
 } = Astro.props;
-
-const maxWidthClass = maxWidth === "full" ? "" : `max-w-${maxWidth}`;
 ---
 
 <main class={padding}>
-  <div class={`container mx-auto px-4 ${maxWidthClass}`}>
+  <div class="container mx-auto px-4 max-w-6xl">
     <slot />
   </div>
 </main>
