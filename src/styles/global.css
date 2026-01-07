@@ -1295,36 +1295,20 @@
             to { opacity: 1; transform: none; }
         }
 
-        /* Work category nav - use fade transition to prevent wrapping during morphs */
+        /* Work category nav - stays static during transitions (persistent element)
+           Since the filter bar appears on all work pages, we keep it visible
+           and in-place while only the content below animates. */
         ::view-transition-group(work-category-nav) {
-            /* Prevent any size/position morphing */
+            /* No animation - stays in place */
             animation: none !important;
         }
         
         ::view-transition-old(work-category-nav),
         ::view-transition-new(work-category-nav) {
-            /* Prevent any transform animations */
-            animation: none;
+            /* Both old and new stay fully visible and overlapped */
+            animation: none !important;
+            opacity: 1 !important;
             mix-blend-mode: normal;
-        }
-        
-        ::view-transition-old(work-category-nav) {
-            animation: category-nav-fade-out 0.12s ease-out forwards;
-        }
-        
-        ::view-transition-new(work-category-nav) {
-            animation: category-nav-fade-in 0.12s ease-in 0.08s forwards;
-            opacity: 0;
-        }
-        
-        @keyframes category-nav-fade-out {
-            from { opacity: 1; transform: none; }
-            to { opacity: 0; transform: none; }
-        }
-        
-        @keyframes category-nav-fade-in {
-            from { opacity: 0; transform: none; }
-            to { opacity: 1; transform: none; }
         }
 
         /* Preserve cursor pointer on all interactive elements during view transitions */
