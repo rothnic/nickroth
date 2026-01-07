@@ -141,8 +141,9 @@
 
         --nr-border-color: #ffffff;
         --nr-shadow-color: var(--nr-border-color);
-        --nr-shadow-sm: 4px 4px 0px 0px var(--nr-shadow-color);
-        --nr-shadow-base: 8px 8px 0px 0px var(--nr-shadow-color);
+        /* Shadow sizes match light mode for consistency */
+        --nr-shadow-sm: 2px 2px 0px 0px var(--nr-shadow-color);
+        --nr-shadow-base: 4px 4px 0px 0px var(--nr-shadow-color);
         --nr-shadow-lg: 12px 12px 0px 0px var(--nr-shadow-color);
         --nr-shadow-xl: 20px 20px 0px 0px var(--nr-shadow-color);
         --nr-shadow-xxl: 24px 24px 0px 0px var(--nr-shadow-color);
