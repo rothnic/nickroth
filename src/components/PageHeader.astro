@@ -16,7 +16,7 @@ const { title, subtitle, description } = Astro.props;
   <slot name="above" />
   
   <!-- Fluid typography: clamp(min, preferred, max) for smooth resizing -->
-  <h1 class="font-black mb-4 leading-tight" style="font-size: clamp(2.25rem, 5vw + 1rem, 3rem);">
+  <h1 class="font-black mb-4 leading-none" style="font-size: clamp(2.25rem, 5vw + 1rem, 3rem);">
     {title.toUpperCase()}
     <br />
     <span class="text-primary">{subtitle.toUpperCase()}</span>
