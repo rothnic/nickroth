@@ -17,9 +17,8 @@ const { title, subtitle, description } = Astro.props;
   
   <!-- Fluid typography: clamp(min, preferred, max) for smooth resizing -->
   <h1 class="font-black mb-4 leading-none" style="font-size: clamp(2.25rem, 5vw + 1rem, 3rem);">
-    {title.toUpperCase()}
-    <br />
-    <span class="text-primary">{subtitle.toUpperCase()}</span>
+    <span class="block">{title.toUpperCase()}</span>
+    <span class="block text-primary">{subtitle.toUpperCase()}</span>
   </h1>
   <h2 class="font-normal opacity-75 max-w-3xl mx-auto" style="font-size: clamp(1rem, 1vw + 0.75rem, 1.125rem);">
     {description}
