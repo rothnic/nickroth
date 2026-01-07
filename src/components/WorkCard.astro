@@ -84,7 +84,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
 <!-- Card Mode -->
 {mode === "card" && (
   <div
-    class="card bg-base-100 border-2 border-base-300 overflow-hidden relative mb-6 sm:mb-12 h-full transition-shadow shadow-xs hover:shadow-md"
+    class="card bg-base-100 border-2 border-base-300 overflow-hidden relative mb-4 sm:mb-12 h-full transition-shadow shadow-xs sm:hover:shadow-md"
     data-work-card={true}
     data-category={category}
     data-card-id={slug}
@@ -99,7 +99,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
       data-astro-prefetch
     />
     
-    <figure transition:name={`work-img-${slug}`} class="relative w-full h-40 sm:h-48 overflow-hidden">
+    <figure transition:name={`work-img-${slug}`} class="relative w-full h-36 sm:h-48 overflow-hidden">
       {image && (
         <Image
           src={image}
@@ -121,13 +121,13 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
       )}
     </figure>
     
-    <div transition:name={`work-body-${slug}`} class="card-body p-4 sm:p-6 gap-2 items-start text-left">
-      <h2 transition:name={`work-title-${slug}`} class="card-title text-sm sm:text-lg leading-tight w-full">
+    <div transition:name={`work-body-${slug}`} class="card-body p-2 sm:p-6 gap-1 items-start text-left">
+      <h2 transition:name={`work-title-${slug}`} class="card-title text-sm sm:text-lg leading-tight w-full mb-0.5">
         {title}
       </h2>
       
       {impact && (
-        <div transition:name={`work-impact-${slug}`} class="mb-1 w-full">
+        <div transition:name={`work-impact-${slug}`} class="mb-0.5 w-full h-[25px] sm:h-[30px]">
           <p class="font-bold text-primary uppercase leading-tight text-[10px] sm:text-xs line-clamp-2">
             {impact}
           </p>
@@ -135,10 +135,10 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
       )}
       
       {tags.length > 0 && (
-        <div class="card-actions w-full mt-auto">
+        <div class="card-actions w-full mt-2 sm:mt-auto">
           <div class="flex flex-wrap gap-1">
             {tags.slice(0, 3).map((tag) => (
-              <span class="badge badge-outline badge-xs">
+              <span class="badge badge-outline badge-xs scale-90 sm:scale-100 origin-top-left">
                 {tag}
               </span>
             ))}
@@ -155,7 +155,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
     <!-- Hero Section -->
     <header class="mb-8">
       <!-- Hero Image -->
-      <figure transition:name={`work-img-${slug}`} class="relative w-full h-48 sm:h-64 lg:h-80 rounded-xl overflow-hidden mb-6 border-2 border-base-300">
+      <figure transition:name={`work-img-${slug}`} class="relative w-full h-48 sm:h-64 lg:h-80 rounded-none sm:rounded-xl overflow-hidden mb-6 border-y-2 border-x-0 sm:border-2 border-base-300">
         {image && (
           <Image
             src={image}
@@ -178,7 +178,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
       </figure>
       
       <!-- Title & Meta -->
-      <div transition:name={`work-body-${slug}`}>
+      <div transition:name={`work-body-${slug}`} class="px-4 sm:px-0">
         <h1 transition:name={`work-title-${slug}`} class="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 leading-tight">
           {title}
         </h1>
@@ -225,7 +225,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
       <!-- Main Content Column -->
       <div class="lg:col-span-3">
         {Content && (
-          <div class="solid-bg rounded-xl border-2 border-base-300 p-6 sm:p-10 shadow-sm">
+          <div class="solid-bg rounded-none sm:rounded-xl border-y-2 border-x-0 sm:border-2 border-base-300 p-4 sm:p-10 shadow-sm">
             <div class="prose-content">
               <Content />
             </div>
@@ -238,7 +238,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
         <div class="lg:sticky lg:top-24">
           <!-- Technology Stack -->
           {stack && stack.length > 0 && (
-            <section class="solid-bg p-5 rounded-xl border-2 border-base-300 mb-6">
+            <section class="solid-bg p-4 sm:p-5 rounded-none sm:rounded-xl border-y-2 border-x-0 sm:border-2 border-base-300 mb-6">
               <h3 class="text-sm font-bold uppercase tracking-wide text-base-content/60 mb-3">Tech Stack</h3>
               <div class="flex flex-wrap gap-2">
                 {stack.map((tech) => (
@@ -252,7 +252,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
 
           <!-- Project Tags -->
           {tags && tags.length > 0 && (
-            <section class="solid-bg p-5 rounded-xl border-2 border-base-300 mb-6">
+            <section class="solid-bg p-4 sm:p-5 rounded-none sm:rounded-xl border-y-2 border-x-0 sm:border-2 border-base-300 mb-6">
               <h3 class="text-sm font-bold uppercase tracking-wide text-base-content/60 mb-3">Tags</h3>
               <div class="flex flex-wrap gap-2">
                 {tags.map((tag) => (
@@ -265,7 +265,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
           )}
           
           <!-- Quick Info -->
-          <section class="solid-bg-muted p-5 rounded-xl border-2 border-base-300">
+          <section class="solid-bg-muted p-4 sm:p-5 rounded-none sm:rounded-xl border-y-2 border-x-0 sm:border-2 border-base-300">
             <h3 class="text-sm font-bold uppercase tracking-wide text-base-content/60 mb-3">Project Info</h3>
             <dl class="space-y-3 text-sm">
               {company && (
