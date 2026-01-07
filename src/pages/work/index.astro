@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import WorkCard from "../../components/WorkCard.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import ContentLayout from "../../components/ContentLayout.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import WorkCategoryFilter from "../../components/WorkCategoryFilter.astro";
 
@@ -17,28 +18,26 @@ const categories = [...new Set(workEntries.map((work) => work.data.category).fil
 ---
 
 <BaseLayout title="Projects Portfolio - Nick Roth" description="Case studies demonstrating systematic approach to product development from discovery through delivery">
-  <main class="py-20">
-    <div class="container mx-auto px-4">
-      <PageHeader
-        title="Projects"
-        subtitle="Portfolio"
-        description="Case studies demonstrating systematic approach to product development, from discovery through delivery with measurable outcomes."
-      />
+  <ContentLayout maxWidth="full">
+    <PageHeader
+      title="Projects"
+      subtitle="Portfolio"
+      description="Case studies demonstrating systematic approach to product development, from discovery through delivery with measurable outcomes."
+    />
 
-      <WorkCategoryFilter categories={categories} />
+    <WorkCategoryFilter categories={categories} />
 
-      <!-- Projects Grid -->
-      <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 max-w-5xl mx-auto">
-        {sortedWork.map((work) => (
-          <WorkCard entry={work} mode="card" />
-        ))}
-      </div>
-      
-      {sortedWork.length === 0 && (
-        <div class="text-center">
-          <p class="text-lg opacity-75">No projects yet. Check back soon!</p>
-        </div>
-      )}
+    <!-- Projects Grid -->
+    <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 max-w-5xl mx-auto">
+      {sortedWork.map((work) => (
+        <WorkCard entry={work} mode="card" />
+      ))}
     </div>
-  </main>
+    
+    {sortedWork.length === 0 && (
+      <div class="text-center">
+        <p class="text-lg opacity-75">No projects yet. Check back soon!</p>
+      </div>
+    )}
+  </ContentLayout>
 </BaseLayout>

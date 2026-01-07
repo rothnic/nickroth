@@ -1,12 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
+import ContentLayout from '../components/ContentLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 ---
 
 <BaseLayout title="About - Nick Roth" description="Learn more about Nick Roth - Product & Systems Director">
-  <main class="py-20">
-    <div class="container mx-auto px-4 max-w-6xl">
+  <ContentLayout>
       <PageHeader
         title="About"
         subtitle="Nick Roth"
@@ -213,6 +213,6 @@ import PageHeader from '../components/PageHeader.astro';
           </div>
         </div>
       </div>
-    </div>
-  </main>
+      </div>
+  </ContentLayout>
 </BaseLayout>

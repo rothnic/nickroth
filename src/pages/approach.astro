@@ -1,11 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ContentLayout from '../components/ContentLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 ---
 
 <BaseLayout title="Systematic Approach - Nick Roth" description="A proven 5-step method for transforming complex requirements into successful outcomes">
-  <main class="py-20">
-    <div class="container mx-auto px-4 max-w-6xl">
+  <ContentLayout>
       <PageHeader
         title="Systematic"
         subtitle="Approach"
@@ -154,6 +154,6 @@ import PageHeader from '../components/PageHeader.astro';
           🚀 START A CONVERSATION
         </a>
       </div>
-    </div>
-  </main>
+      </div>
+  </ContentLayout>
 </BaseLayout>

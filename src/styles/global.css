@@ -1257,33 +1257,42 @@
 
         /* Page header - simple fade instead of morph to avoid distracting expand/contract */
         ::view-transition-group(page-header) {
-            animation-duration: 0.25s;
+            /* Prevent any size/position morphing */
+            animation: none !important;
+        }
+        
+        ::view-transition-image-pair(page-header) {
+            /* Disable default crossfade isolation */
+            isolation: auto;
         }
         
         ::view-transition-old(page-header),
         ::view-transition-new(page-header) {
-            /* Use crossfade only, no position/size morphing */
+            /* Prevent any transform animations */
             animation: none;
             mix-blend-mode: normal;
+            /* Keep elements in place */
+            object-fit: none;
+            overflow: clip;
         }
         
         ::view-transition-old(page-header) {
-            animation: fade-out 0.15s ease-out forwards;
+            animation: page-header-fade-out 0.15s ease-out forwards;
         }
         
         ::view-transition-new(page-header) {
-            animation: fade-in 0.15s ease-in 0.1s forwards;
+            animation: page-header-fade-in 0.15s ease-in 0.1s forwards;
             opacity: 0;
         }
         
-        @keyframes fade-out {
-            from { opacity: 1; }
-            to { opacity: 0; }
+        @keyframes page-header-fade-out {
+            from { opacity: 1; transform: none; }
+            to { opacity: 0; transform: none; }
         }
         
-        @keyframes fade-in {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        @keyframes page-header-fade-in {
+            from { opacity: 0; transform: none; }
+            to { opacity: 1; transform: none; }
         }
 
         /* Ensure text in nav buttons stays above the transitioning background */
