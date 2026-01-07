@@ -32,7 +32,7 @@ const emailParts = profile.emailParts;
                 href={profile.linkedin} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                class="btn btn-outline w-full h-auto py-4 px-4 justify-start gap-4 normal-case"
+                class="btn btn-outline w-full min-h-[5.5rem] h-auto py-4 px-4 justify-start gap-4 normal-case"
               >
                 <div class="w-12 h-12 bg-[#0A66C2] rounded-xl flex items-center justify-center flex-shrink-0">
                   <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -41,7 +41,7 @@ const emailParts = profile.emailParts;
                 </div>
                 <div class="flex-1 text-left">
                   <span class="font-bold text-lg">LinkedIn</span>
-                  <p class="text-sm text-base-content/60 font-normal">Professional networking & updates</p>
+                  <p class="text-sm text-base-content/60 font-normal line-clamp-2">Professional networking & updates</p>
                 </div>
                 <svg class="w-5 h-5 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -53,7 +53,7 @@ const emailParts = profile.emailParts;
                 href={profile.github} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                class="btn btn-outline w-full h-auto py-4 px-4 justify-start gap-4 normal-case"
+                class="btn btn-outline w-full min-h-[5.5rem] h-auto py-4 px-4 justify-start gap-4 normal-case"
               >
                 <div class="w-12 h-12 bg-[#24292f] rounded-xl flex items-center justify-center flex-shrink-0">
                   <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -62,7 +62,7 @@ const emailParts = profile.emailParts;
                 </div>
                 <div class="flex-1 text-left">
                   <span class="font-bold text-lg">GitHub</span>
-                  <p class="text-sm text-base-content/60 font-normal">Code, projects & contributions</p>
+                  <p class="text-sm text-base-content/60 font-normal line-clamp-2">Code, projects & contributions</p>
                 </div>
                 <svg class="w-5 h-5 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -72,7 +72,7 @@ const emailParts = profile.emailParts;
               <!-- Email - Protected -->
               <button 
                 id="reveal-email"
-                class="btn btn-outline w-full h-auto py-4 px-4 justify-start gap-4 normal-case text-left"
+                class="btn btn-outline w-full min-h-[5.5rem] h-auto py-4 px-4 justify-start gap-4 normal-case text-left"
               >
                 <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center flex-shrink-0">
                   <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -82,7 +82,7 @@ const emailParts = profile.emailParts;
                 </div>
                 <div class="flex-1">
                   <span class="font-bold text-lg" id="email-text">Click to reveal email</span>
-                  <p class="text-sm text-base-content/60 font-normal">Direct contact</p>
+                  <p class="text-sm text-base-content/60 font-normal line-clamp-2">Direct contact</p>
                 </div>
                 <svg class="w-5 h-5 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -126,22 +126,22 @@ const emailParts = profile.emailParts;
           <h2 class="text-2xl font-bold mb-6 text-primary">Services & Rates</h2>
           
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div class="bg-base-100 border-2 border-base-300 rounded-xl p-6 text-center">
-              <div class="text-3xl font-black text-primary mb-2">$200-300</div>
+            <div class="card solid-card no-hover border-2 border-base-content/20 shadow-brutal-sm rounded-xl p-6 text-center">
+              <div class="text-3xl font-black text-primary mb-2">$120-200</div>
               <div class="text-sm font-bold uppercase tracking-wide text-base-content/60 mb-2">Per Hour</div>
-              <div class="text-sm">Strategic Consulting</div>
+              <div class="text-sm text-base-content">Strategic Consulting</div>
             </div>
             
-            <div class="bg-base-100 border-2 border-base-300 rounded-xl p-6 text-center">
+            <div class="card solid-card no-hover border-2 border-base-content/20 shadow-brutal-sm rounded-xl p-6 text-center">
               <div class="text-3xl font-black text-primary mb-2">$8-15k</div>
               <div class="text-sm font-bold uppercase tracking-wide text-base-content/60 mb-2">Per Month</div>
-              <div class="text-sm">Fractional Product Management</div>
+              <div class="text-sm text-base-content">Fractional Product Management</div>
             </div>
             
-            <div class="bg-base-100 border-2 border-base-300 rounded-xl p-6 text-center">
+            <div class="card solid-card no-hover border-2 border-base-content/20 shadow-brutal-sm rounded-xl p-6 text-center">
               <div class="text-3xl font-black text-primary mb-2">Custom</div>
               <div class="text-sm font-bold uppercase tracking-wide text-base-content/60 mb-2">By Scope</div>
-              <div class="text-sm">Project-Based Work</div>
+              <div class="text-sm text-base-content">Project-Based Work</div>
             </div>
           </div>
         </div>
