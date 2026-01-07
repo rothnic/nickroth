@@ -10,17 +10,28 @@ const sortedWork = workEntries.sort((a, b) => {
 	return bDate.getTime() - aDate.getTime();
 });
 
-// Get unique categories for filtering
-const categories = [
-	"ALL PROJECTS",
-	...new Set(workEntries.map((work) => work.data.category).filter(Boolean)),
-];
+// Get unique categories for filtering - SORTED ALPHABETICALLY for consistency
+const categories = [...new Set(workEntries.map((work) => work.data.category).filter(Boolean))].sort() as string[];
+
+// Helper to create URL-safe slugs from category names
+function slugify(text: string): string {
+	return text
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/(^-|-$)/g, '');
+}
+
+// Helper to get category URL
+function getCategoryUrl(cat: string): string {
+	return `/work/category/${slugify(cat)}`;
+}
 ---
 
 <BaseLayout title="Projects Portfolio - Nick Roth" description="Case studies demonstrating systematic approach to product development from discovery through delivery">
   <main class="py-20">
     <div class="container mx-auto px-4">
-      <div class="text-center mb-16">
+      <!-- Header with transition names to prevent flash -->
+      <div class="text-center mb-16" transition:name="work-header">
         <h1 class="text-6xl font-bold mb-6">
           PROJECTS
           <br />
@@ -31,19 +42,26 @@ const categories = [
         </p>
       </div>
 
-      <!-- Category Filter Tabs -->
-      <div class="flex flex-wrap justify-center gap-2 mb-12">
-        {categories.map((category, index) => (
-          <button 
-            class={`btn btn-sm ${index === 0 ? 'btn-accent' : 'btn-outline'} font-semibold text-xs uppercase tracking-wider`}
-            data-category={category}
+      <!-- Category Filter Tabs - Fixed width container to prevent layout shift -->
+      <nav class="flex flex-wrap justify-center gap-2 mb-12" transition:name="work-category-nav">
+        <a 
+          href="/work"
+          class="btn btn-sm btn-accent font-semibold text-xs uppercase tracking-wider"
+          aria-current="page"
+        >
+          ALL PROJECTS
+        </a>
+        {categories.map((category) => (
+          <a 
+            href={getCategoryUrl(category)}
+            class="btn btn-sm btn-outline font-semibold text-xs uppercase tracking-wider"
           >
             {category}
-          </button>
+          </a>
         ))}
-      </div>
+      </nav>
 
-      <!-- Projects Grid - 2 columns on all screen sizes -->
+      <!-- Projects Grid -->
       <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 max-w-5xl mx-auto">
         {sortedWork.map((work) => (
           <WorkCard entry={work} mode="card" />
@@ -57,40 +75,4 @@ const categories = [
       )}
     </div>
   </main>
-
-  <!-- Category filtering script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const categoryButtons = document.querySelectorAll('[data-category]') as NodeListOf<HTMLElement>;
-      const workCards = document.querySelectorAll('[data-work-card]') as NodeListOf<HTMLElement>;
-      
-      categoryButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          const category = button.getAttribute('data-category');
-          
-          // Update button states
-          categoryButtons.forEach(btn => {
-            btn.classList.remove('btn-accent');
-            btn.classList.add('btn-outline');
-          });
-          button.classList.remove('btn-outline');
-          button.classList.add('btn-accent');
-          
-          // Filter work cards
-          workCards.forEach(card => {
-            if (category === 'ALL PROJECTS') {
-              card.style.display = 'block';
-            } else {
-              const cardCategory = card.getAttribute('data-category');
-              if (cardCategory === category) {
-                card.style.display = 'block';
-              } else {
-                card.style.display = 'none';
-              }
-            }
-          });
-        });
-      });
-    });
-  </script>
 </BaseLayout>

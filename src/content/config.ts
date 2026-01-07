@@ -22,7 +22,7 @@ const capabilities = defineCollection({
 
 const work = defineCollection({
   type: 'content',
-  schema: z.object({
+  schema: ({ image }) => z.object({
     title: z.string(),
     description: z.string(),
     company: z.string(),
@@ -31,7 +31,7 @@ const work = defineCollection({
     endDate: z.date().optional(),
     featured: z.boolean().default(false),
     tags: z.array(z.string()).default([]),
-    image: z.string().optional(),
+    image: image().optional(),
     category: z.string().optional(),
     impact: z.string().optional(),
     stack: z.array(z.string()).default([]),

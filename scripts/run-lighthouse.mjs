@@ -72,11 +72,75 @@ async function runLighthouse() {
     const reportRaw = await readFile(reportPath, 'utf-8');
     const report = JSON.parse(reportRaw);
     const categories = report.categories ?? {};
+    const audits = report.audits ?? {};
 
     console.log('\nLighthouse scores:');
     for (const [key, value] of Object.entries(categories)) {
       const score = typeof value.score === 'number' ? Math.round(value.score * 100) : 'n/a';
       console.log(`  ${value.title ?? key}: ${score}`);
+    }
+
+    // Performance metrics breakdown
+    const performanceMetrics = [
+      { id: 'first-contentful-paint', name: 'FCP', weight: 10 },
+      { id: 'largest-contentful-paint', name: 'LCP', weight: 25 },
+      { id: 'total-blocking-time', name: 'TBT', weight: 30 },
+      { id: 'cumulative-layout-shift', name: 'CLS', weight: 25 },
+      { id: 'speed-index', name: 'SI', weight: 10 },
+    ];
+
+    const metricsWithScores = performanceMetrics.map(metric => {
+      const audit = audits[metric.id];
+      return {
+        ...metric,
+        score: audit?.score ?? null,
+        displayValue: audit?.displayValue ?? 'n/a',
+      };
+    }).filter(m => m.score !== null);
+
+    // Sort by score (lowest first - these are the problem areas)
+    metricsWithScores.sort((a, b) => a.score - b.score);
+
+    console.log('\nPerformance breakdown (sorted by score, lowest first):');
+    console.log('  ┌──────┬───────┬────────────┬────────────────────────────┐');
+    console.log('  │ Name │ Score │ Weight     │ Value                      │');
+    console.log('  ├──────┼───────┼────────────┼────────────────────────────┤');
+    for (const metric of metricsWithScores) {
+      const scoreNum = Math.round(metric.score * 100);
+      const scoreStr = String(scoreNum).padStart(3);
+      const weightStr = `${metric.weight}%`.padStart(4);
+      const nameStr = metric.name.padEnd(4);
+      const valueStr = metric.displayValue.padEnd(26);
+      const indicator = scoreNum < 90 ? '⚠️ ' : scoreNum === 100 ? '✅' : '  ';
+      console.log(`  │ ${nameStr} │ ${scoreStr}   │ ${weightStr}       │ ${valueStr} │ ${indicator}`);
+    }
+    console.log('  └──────┴───────┴────────────┴────────────────────────────┘');
+
+    // Identify primary driver for improvement
+    const worstMetric = metricsWithScores[0];
+    if (worstMetric && worstMetric.score < 1) {
+      console.log(`\n🎯 Primary improvement target: ${worstMetric.name} (score: ${Math.round(worstMetric.score * 100)}, weight: ${worstMetric.weight}%)`);
+      
+      // Add specific guidance based on the worst metric
+      if (worstMetric.id === 'largest-contentful-paint') {
+        const renderBlocking = audits['render-blocking-resources']?.details?.items ?? [];
+        if (renderBlocking.length > 0) {
+          console.log('   └─ Render-blocking resources:');
+          for (const item of renderBlocking.slice(0, 3)) {
+            const url = item.url?.split('/').pop() ?? item.url;
+            const wasted = item.wastedMs ? `${item.wastedMs}ms` : '';
+            console.log(`      • ${url} ${wasted}`);
+          }
+        }
+      } else if (worstMetric.id === 'speed-index') {
+        console.log('   └─ Optimize visual completeness: reduce render-blocking resources, defer non-critical CSS');
+      } else if (worstMetric.id === 'first-contentful-paint') {
+        console.log('   └─ Reduce time to first paint: inline critical CSS, preload key resources');
+      } else if (worstMetric.id === 'total-blocking-time') {
+        console.log('   └─ Reduce JavaScript execution time: code-split, defer non-critical scripts');
+      } else if (worstMetric.id === 'cumulative-layout-shift') {
+        console.log('   └─ Prevent layout shifts: set explicit dimensions on images/embeds');
+      }
     }
   } finally {
     cleanup();

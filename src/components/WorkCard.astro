@@ -1,5 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
 
 export interface Props {
 	entry: CollectionEntry<"work">;
@@ -11,10 +13,8 @@ const { entry, mode = "card" } = Astro.props;
 // Extract data from entry
 const {
 	title,
-	description,
 	company,
-	role,
-	image,
+	image: rawImage,
 	category,
 	impact,
 	stack = [],
@@ -24,14 +24,14 @@ const {
 	endDate,
 } = entry.data;
 
+// Cast image to correct type for Image component
+const image = rawImage as ImageMetadata | undefined;
+
 const slug = entry.slug;
 
 // Render markdown content if in expanded mode
 const { Content } =
 	mode === "expanded" ? await entry.render() : { Content: null };
-
-const PLACEHOLDER_IMAGE = "https://placehold.co/600x400";
-const imageSrc = image?.trim() ? image : PLACEHOLDER_IMAGE;
 
 // Define color schemes for different categories
 const getCategoryColor = (cat: string | undefined) => {
@@ -39,11 +39,13 @@ const getCategoryColor = (cat: string | undefined) => {
 		case "HEADLESS CMS":
 			return "badge-primary";
 		case "WEB PLATFORMS":
-			return "badge-secondary";
+			return "badge-primary";
 		case "MARKETING AUTOMATION":
 			return "badge-accent";
 		case "AUTOMATION & AI":
 			return "badge-warning";
+		case "AI APPLICATION":
+			return "badge-info";
 		case "CHROME EXTENSIONS":
 			return "badge-info";
 		case "SYSTEMS":
@@ -66,247 +68,217 @@ const getStackColor = (tech: string) => {
 	return "badge-outline";
 };
 
-const getTagColor = (tag: string) => {
-	const lowerTag = tag.toLowerCase();
-	if (lowerTag.includes("headless") || lowerTag.includes("cms"))
-		return "badge-primary";
-	if (lowerTag.includes("web") || lowerTag.includes("platform"))
-		return "badge-secondary";
-	if (lowerTag.includes("marketing") || lowerTag.includes("automation"))
-		return "badge-accent";
-	if (lowerTag.includes("systems")) return "badge-success";
-	return "badge-outline";
-};
+// Format date range nicely
+const formatDate = (date: Date) => date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) : 'Present'}`;
 ---
 
-<!-- Unified Work Card - same structure for both modes -->
-<div
-  class:list={[
-    "card bg-base-100 border-2 border-base-300 overflow-hidden relative mb-12 h-full transition-shadow shadow-xs hover:shadow-md",
-    mode === "expanded" ? "no-hover shadow-none border-none bg-transparent" : "",
-  ]}
-  data-work-card={mode === "card" ? true : undefined}
-  data-category={mode === "card" ? category : undefined}
-  data-card-id={mode === "card" ? slug : undefined}
-  data-scroll-target={mode === "card" ? true : undefined}
-  transition:name={`work-card-${slug}`}
->
-  {/* Overlay link for card mode - makes entire card clickable */}
-  {mode === "card" && (
+<!-- Card Mode -->
+{mode === "card" && (
+  <div
+    class="card bg-base-100 border-2 border-base-300 overflow-hidden relative mb-12 h-full transition-shadow shadow-xs hover:shadow-md"
+    data-work-card={true}
+    data-category={category}
+    data-card-id={slug}
+    data-scroll-target={true}
+    transition:name={`work-card-${slug}`}
+  >
     <a 
       href={`/work/${slug}`}
       class="absolute inset-0 z-10"
       aria-label={`View ${title} project details`}
-	  data-astro-prefetch
-    />
-  )}
-  
-  <!-- Hero Image - scales based on mode -->
-  <figure transition:name={`work-img-${slug}`} class:list={[
-    "relative w-full",
-    mode === "card" ? "h-32 sm:h-48 max-h-32" : "h-64 sm:h-96"
-  ]}>
-    <img
-      src={imageSrc} 
-      alt={title} 
-      class:list={["h-full w-full z-0 object-cover"]}
-      loading="eager" 
+      data-astro-prefetch
     />
     
-    <!-- Category Badge - positioned absolutely over image -->
-    {category && (
-      <div class="absolute top-2 left-2 z-20">
-        <span 
-        //   transition:name={`work-category-${slug}`} 
-          class:list={[
-            `badge ${getCategoryColor(category)} font-bold uppercase`,
-            mode === "card" ? "badge-sm" : "badge-lg"
-          ]}
-        >
-          {category}
-        </span>
-      </div>
-    )}
-  </figure>
-  
-  <!-- Main Content Area -->
-  <div transition:name={`work-body-${slug}`} class="card-body">
-    <!-- Title - different tag but same content -->
-    {mode === "card" ? (
-      <h2 
-        transition:name={`work-title-${slug}`} 
-        class="card-title text-sm sm:text-lg leading-tight"
-      >
+    <figure transition:name={`work-img-${slug}`} class="relative w-full h-32 sm:h-48 max-h-32">
+      {image && (
+        <Image
+          src={image}
+          alt={title}
+          class="h-full w-full z-0 object-cover"
+          widths={[400, 600]}
+          sizes="(max-width: 768px) 400px, 600px"
+          loading="eager"
+          format="webp"
+          quality={80}
+        />
+      )}
+      {category && (
+        <div class="absolute top-2 left-2 z-20">
+          <span class={`badge ${getCategoryColor(category)} font-bold uppercase badge-sm`}>
+            {category}
+          </span>
+        </div>
+      )}
+    </figure>
+    
+    <div transition:name={`work-body-${slug}`} class="card-body">
+      <h2 transition:name={`work-title-${slug}`} class="card-title text-sm sm:text-lg leading-tight">
         {title}
       </h2>
-    ) : (
-      <h1 
-        transition:name={`work-title-${slug}`} 
-        class="text-4xl md:text-5xl font-bold mb-4"
-      >
-        {title}
-      </h1>
-    )}
-    
-    <!-- Impact Statement - shown in both modes -->
-    {impact && (
-      <div transition:name={`work-impact-${slug}`} class="mb-4">
-        {mode === "expanded" && (
-          <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">
-            Impact Statement
-          </h2>
-        )}
-        <p class:list={[
-          "font-bold text-primary uppercase leading-tight",
-          mode === "card" ? "text-xs" : "text-xl"
-        ]}>
-          {impact}
-        </p>
-      </div>
-    )}
-    
-    <!-- Role & Timeline - only in expanded mode -->
-    {mode === "expanded" && roleCategory && (
-      <div class="mb-4">
-        <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">Role</h2>
-        <span class="inline-block bg-accent/10 text-accent px-4 py-2 rounded font-bold text-sm uppercase">
-          {roleCategory}
-        </span>
-      </div>
-    )}
-    
-    {mode === "expanded" && (
-      <div class="mb-4">
-        <h2 class="text-sm font-semibold text-base-content/60 uppercase tracking-wide mb-2">Timeline</h2>
-        <p class="text-base-content/80">
-          {startDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} - 
-          {endDate ? endDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Present'}
-        </p>
-      </div>
-    )}
-    
-    <!-- Tags - limited in card mode -->
-    {tags.length > 0 && mode === "card" && (
-      <div class="card-actions">
-        <div class="flex flex-wrap gap-1">
-          {tags.slice(0, 3).map((tag) => (
-            <span class="badge badge-outline badge-xs">
-              {tag}
-            </span>
-          ))}
+      
+      {impact && (
+        <div transition:name={`work-impact-${slug}`} class="mb-4">
+          <p class="font-bold text-primary uppercase leading-tight text-xs">
+            {impact}
+          </p>
         </div>
-      </div>
-    )}
+      )}
+      
+      {tags.length > 0 && (
+        <div class="card-actions">
+          <div class="flex flex-wrap gap-1">
+            {tags.slice(0, 3).map((tag) => (
+              <span class="badge badge-outline badge-xs">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   </div>
-  
-  <!-- Expanded Content Sections - only in expanded mode -->
-  {mode === "expanded" && (
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 p-6 lg:p-8 bg-base-200/30">
-      <!-- Main Content Column -->
-      <div class="lg:col-span-2 space-y-8">
-        <!-- Overview Section -->
-        <section class="bg-base-100 p-6 rounded-lg shadow-lg border-2 border-base-300">
-          <h2 class="text-2xl font-bold mb-3 text-primary">CHALLENGE & OVERVIEW</h2>
-          <div class="prose prose-lg max-w-none">
-            <p class="text-base-content/80 leading-relaxed">
-              {description}
+)}
+
+<!-- Expanded Mode - Redesigned -->
+{mode === "expanded" && (
+  <article class="max-w-6xl mx-auto" transition:name={`work-card-${slug}`}>
+    <!-- Hero Section -->
+    <header class="mb-8">
+      <!-- Hero Image -->
+      <figure transition:name={`work-img-${slug}`} class="relative w-full h-48 sm:h-64 rounded-xl overflow-hidden mb-6 border-2 border-base-300">
+        {image && (
+          <Image
+            src={image}
+            alt={title}
+            class="h-full w-full object-cover"
+            widths={[600, 800, 1200]}
+            sizes="(max-width: 768px) 600px, (max-width: 1024px) 800px, 1200px"
+            loading="eager"
+            format="webp"
+            quality={80}
+          />
+        )}
+        {category && (
+          <div class="absolute top-4 left-4">
+            <span class={`badge ${getCategoryColor(category)} font-bold uppercase badge-lg shadow-lg`}>
+              {category}
+            </span>
+          </div>
+        )}
+      </figure>
+      
+      <!-- Title & Meta -->
+      <div transition:name={`work-body-${slug}`}>
+        <h1 transition:name={`work-title-${slug}`} class="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 leading-tight">
+          {title}
+        </h1>
+        
+        <!-- Meta Bar -->
+        <div class="flex flex-wrap items-center gap-4 text-sm text-base-content/70 mb-4">
+          {company && (
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+              </svg>
+              <span class="font-medium">{company}</span>
+            </div>
+          )}
+          {roleCategory && (
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+              <span class="font-medium">{roleCategory}</span>
+            </div>
+          )}
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <span>{dateRange}</span>
+          </div>
+        </div>
+        
+        <!-- Impact Statement -->
+        {impact && (
+          <div transition:name={`work-impact-${slug}`} class="bg-primary/10 border-l-4 border-primary px-4 py-3 rounded-r-lg">
+            <p class="font-bold text-primary text-lg leading-snug">
+              {impact}
             </p>
           </div>
-        </section>
-
-        <!-- Systematic Approach -->
-        <section class="bg-base-100 p-6 rounded-lg shadow-lg border-2 border-base-300">
-          <h2 class="text-2xl font-bold mb-4 text-primary">SYSTEMATIC APPROACH</h2>
-          <div class="space-y-4">
-            {[
-              { num: 1, title: "DISCOVER", desc: "Comprehensive analysis of existing systems, workflows, and performance baselines" },
-              { num: 2, title: "MODEL", desc: "Architecture design and technology selection with structured content modeling" },
-              { num: 3, title: "SPECIFY", desc: "Detailed implementation planning with migration strategy and testing framework" },
-              { num: 4, title: "BUILD", desc: "Incremental implementation with continuous validation and performance optimization" },
-              { num: 5, title: "PROVE", desc: "Impact measurement, optimization, and long-term maintenance planning" }
-            ].map((step) => (
-              <div class="flex items-start gap-3">
-                <div class="flex-shrink-0 w-10 h-10 bg-primary text-primary-content rounded-full flex items-center justify-center font-bold">
-                  {step.num}
-                </div>
-                <div>
-                  <h3 class="font-bold text-lg mb-1">{step.title}</h3>
-                  <p class="text-base-content/80 text-sm">{step.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <!-- Business Impact -->
-        <section class="bg-accent/5 p-6 rounded-lg shadow-lg border-2 border-accent/20">
-          <h2 class="text-2xl font-bold mb-3 text-accent">BUSINESS IMPACT</h2>
-          <p class="text-base-content/80 leading-relaxed text-sm">
-            Successfully modernized platform serving 2M+ monthly users with significant improvements in performance, 
-            authoring experience, and technical maintainability. Editorial team now focuses on content strategy 
-            rather than technical workarounds, enabling higher content quality and publication velocity.
-          </p>
-        </section>
+        )}
       </div>
-
+    </header>
+    
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <!-- Main Content Column -->
+      <div class="lg:col-span-3">
+        {Content && (
+          <div class="solid-bg rounded-xl border-2 border-base-300 p-6 sm:p-10 shadow-sm">
+            <div class="prose-content">
+              <Content />
+            </div>
+          </div>
+        )}
+      </div>
+      
       <!-- Sidebar -->
-      <div class="space-y-6">
-        <!-- Technology Stack -->
-        {stack && stack.length > 0 && (
-          <section class="bg-base-100 p-4 rounded-lg shadow-lg border-2 border-base-300">
-            <h3 class="text-lg font-bold mb-3 text-primary">TECHNOLOGY STACK</h3>
-            <div class="flex flex-wrap gap-2">
-              {stack.map((tech) => (
-                <div class={`badge ${getStackColor(tech)} badge-sm font-medium text-xs`}>
-                  {tech}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        <!-- Project Category -->
-        {category && (
-          <section class="bg-base-100 p-4 rounded-lg shadow-lg border-2 border-base-300">
-            <h3 class="text-lg font-bold mb-3 text-primary">PROJECT CATEGORY</h3>
-            <div class={`badge ${getCategoryColor(category)} badge-lg font-semibold`}>
-              {category}
-            </div>
-          </section>
-        )}
-
-        <!-- Key Outcomes -->
-        <section class="bg-success/5 p-4 rounded-lg shadow-lg border-2 border-success/20">
-          <h3 class="text-lg font-bold mb-3 text-success">KEY OUTCOMES</h3>
-          <div class="space-y-2">
-            {[
-              "40% improvement in Core Web Vitals",
-              "60% reduction in publishing time",
-              "25% increase in organic traffic",
-              "90% reduction in deployment time"
-            ].map((outcome) => (
-              <div class="flex items-center gap-2">
-                <div class="w-2 h-2 bg-success rounded-full"></div>
-                <span class="text-sm font-semibold">{outcome}</span>
+      <aside class="lg:col-span-1 space-y-6">
+        <div class="lg:sticky lg:top-24">
+          <!-- Technology Stack -->
+          {stack && stack.length > 0 && (
+            <section class="solid-bg p-5 rounded-xl border-2 border-base-300 mb-6">
+              <h3 class="text-sm font-bold uppercase tracking-wide text-base-content/60 mb-3">Tech Stack</h3>
+              <div class="flex flex-wrap gap-2">
+                {stack.map((tech) => (
+                  <span class={`badge ${getStackColor(tech)} font-medium`}>
+                    {tech}
+                  </span>
+                ))}
               </div>
-            ))}
-          </div>
-        </section>
+            </section>
+          )}
 
-        <!-- Project Tags -->
-        {tags && tags.length > 0 && (
-          <section class="bg-base-100 p-4 rounded-lg shadow-lg border-2 border-base-300">
-            <h3 class="text-lg font-bold mb-3 text-primary">PROJECT TAGS</h3>
-            <div class="flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <div class="badge badge-outline badge-sm">
-                  {tag}
+          <!-- Project Tags -->
+          {tags && tags.length > 0 && (
+            <section class="solid-bg p-5 rounded-xl border-2 border-base-300 mb-6">
+              <h3 class="text-sm font-bold uppercase tracking-wide text-base-content/60 mb-3">Tags</h3>
+              <div class="flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <span class="badge badge-outline">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </section>
+          )}
+          
+          <!-- Quick Info -->
+          <section class="solid-bg-muted p-5 rounded-xl border-2 border-base-300">
+            <h3 class="text-sm font-bold uppercase tracking-wide text-base-content/60 mb-3">Project Info</h3>
+            <dl class="space-y-3 text-sm">
+              {company && (
+                <div>
+                  <dt class="text-base-content/50 font-medium">Company</dt>
+                  <dd class="text-base-content font-semibold">{company}</dd>
                 </div>
-              ))}
-            </div>
+              )}
+              {roleCategory && (
+                <div>
+                  <dt class="text-base-content/50 font-medium">Role</dt>
+                  <dd class="text-base-content font-semibold">{roleCategory}</dd>
+                </div>
+              )}
+              <div>
+                <dt class="text-base-content/50 font-medium">Timeline</dt>
+                <dd class="text-base-content font-semibold">{dateRange}</dd>
+              </div>
+            </dl>
           </section>
-        )}
-      </div>
+        </div>
+      </aside>
     </div>
-  )}
-</div>
+  </article>
+)}

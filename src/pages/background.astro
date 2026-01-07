@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
 ---
 
 <BaseLayout title="Background - Nick Roth" description="Professional background, education, and career journey of Nick Roth">
@@ -8,139 +7,269 @@ import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
     <div class="container mx-auto px-4 max-w-6xl">
       <!-- Hero Section -->
       <div class="text-center mb-16">
-        <div class="avatar mb-8">
-          <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-            <img src={avatarPlaceholder.src} width={128} height={128} alt="Nick Roth" loading="lazy" />
-          </div>
-        </div>
         <h1 class="text-5xl font-bold mb-6">
           PROFESSIONAL
           <br />
           <span class="text-primary">BACKGROUND</span>
         </h1>
         <p class="text-xl opacity-75 max-w-3xl mx-auto">
-          From systems engineering to product leadership - a journey of applying systematic thinking to complex challenges.
+          14 years spanning Product Management and Systems Engineering — bridging technical depth with product vision.
         </p>
       </div>
 
-      <!-- Timeline -->
+      <!-- Career Timeline -->
       <div class="mb-20">
         <h2 class="text-3xl font-bold text-center mb-12">Career Timeline</h2>
-        <div class="space-y-12">
+        <div class="space-y-8">
           
-          <!-- Current Role -->
-          <div class="card bg-primary text-primary-content shadow-xl">
+          <!-- DealNews: Director -->
+          <div class="card solid-card solid-card shadow-xl border-2 border-primary">
             <div class="card-body">
               <div class="flex flex-wrap justify-between items-start mb-4">
                 <div>
-                  <h3 class="card-title text-2xl">Director of Product Management</h3>
+                  <h3 class="card-title text-2xl text-primary">Director of Product Management</h3>
                   <p class="text-lg opacity-90">DealNews</p>
                 </div>
                 <div class="text-right">
-                  <div class="badge badge-secondary badge-lg">2019 - Present</div>
+                  <div class="badge badge-primary badge-lg">2019 - Present</div>
                   <div class="text-sm opacity-75 mt-1">Huntsville, AL</div>
                 </div>
               </div>
               <p class="mb-4">
-                Lead product strategy and execution for content platform serving 2M+ monthly users. 
-                Spearhead platform modernization initiatives, implement AI-assisted workflows, and 
-                optimize marketing automation systems.
+                Lead product strategy for $12-15M affiliate marketing platform. Manage product vision across web, mobile, and email while implementing AI-driven content automation.
               </p>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h4 class="font-semibold mb-2">Key Achievements:</h4>
                   <ul class="text-sm space-y-1">
-                    <li>• $35k monthly email platform cost savings</li>
-                    <li>• 400% YoY blog revenue increase</li>
+                    <li>• $35k/mo email platform cost savings (<a href="https://www.hubspot.com/" target="_blank" rel="noopener" class="link link-primary">HubSpot</a> migration)</li>
+                    <li>• 400% YoY blog revenue increase via in-house SEO</li>
                     <li>• 125% YoY mobile revenue growth</li>
-                    <li>• 150% monthly organic user growth</li>
+                    <li>• Led LAMP → <a href="https://www.datocms.com/" target="_blank" rel="noopener" class="link link-primary">DatoCMS</a> + <a href="https://nextjs.org/" target="_blank" rel="noopener" class="link link-primary">NextJS</a> modernization</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 class="font-semibold mb-2">Focus Areas:</h4>
+                  <h4 class="font-semibold mb-2">Team & Process:</h4>
                   <ul class="text-sm space-y-1">
-                    <li>• Platform modernization and architecture</li>
-                    <li>• AI-assisted content workflows</li>
-                    <li>• Marketing automation optimization</li>
-                    <li>• Cross-functional team leadership</li>
+                    <li>• Managed engineering team of up to 11</li>
+                    <li>• Direct reports: Jr. PM, Sr. SEO Strategist</li>
+                    <li>• <a href="https://www.eosworldwide.com/" target="_blank" rel="noopener" class="link link-primary">EOS</a> strategic leadership team member</li>
+                    <li>• <a href="https://www.atlassian.com/agile" target="_blank" rel="noopener" class="link link-primary">Agile</a> backlog management in <a href="https://www.atlassian.com/software/jira" target="_blank" rel="noopener" class="link link-primary">Jira</a></li>
                   </ul>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Previous Role -->
-          <div class="card bg-base-100 shadow-xl">
+          <!-- DealNews: Product Owner -->
+          <div class="card solid-card solid-card shadow-xl border-2 border-base-300">
             <div class="card-body">
               <div class="flex flex-wrap justify-between items-start mb-4">
                 <div>
-                  <h3 class="card-title text-xl">Senior Product Manager</h3>
+                  <h3 class="card-title text-xl">Product Owner - Web</h3>
                   <p class="text-lg">DealNews</p>
                 </div>
                 <div class="text-right">
                   <div class="badge badge-outline">2017 - 2019</div>
-                  <div class="text-sm opacity-75 mt-1">Huntsville, AL</div>
                 </div>
               </div>
               <p class="mb-4">
-                Drove product initiatives focused on user experience and conversion optimization. 
-                Implemented systematic A/B testing framework and established data-driven product development processes.
+                Executed product ownership for custom e-commerce platform. Implemented <a href="https://www.atlassian.com/agile" target="_blank" rel="noopener" class="link link-primary">Agile</a> methodologies and built experimentation frameworks.
               </p>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h4 class="font-semibold mb-2">Key Projects:</h4>
                   <ul class="text-sm space-y-1">
-                    <li>• Mobile conversion optimization program</li>
-                    <li>• User onboarding flow redesign</li>
-                    <li>• A/B testing framework implementation</li>
+                    <li>• Built "Prospector" automated price monitoring using Amazon API + <a href="https://keepa.com/" target="_blank" rel="noopener" class="link link-primary">Keepa API</a></li>
+                    <li>• Led <a href="https://reactnative.dev/" target="_blank" rel="noopener" class="link link-primary">React Native</a> app consolidation (iOS + Android)</li>
+                    <li>• Designed personalized email system with <a href="https://www.sailthru.com/" target="_blank" rel="noopener" class="link link-primary">Sailthru</a></li>
                   </ul>
                 </div>
                 <div>
                   <h4 class="font-semibold mb-2">Results:</h4>
                   <ul class="text-sm space-y-1">
-                    <li>• 30% improvement in user engagement</li>
-                    <li>• 25% increase in conversion rates</li>
-                    <li>• 50% reduction in support tickets</li>
+                    <li>• 125% YoY mobile revenue via <a href="https://www.optimizely.com/" target="_blank" rel="noopener" class="link link-primary">Optimizely</a> grid optimization</li>
+                    <li>• 108% YoY sales leads increase</li>
+                    <li>• 10x increase in yearly A/B tests</li>
                   </ul>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Systems Engineering -->
-          <div class="card bg-base-100 shadow-xl">
+          <!-- DealNews: Data Analyst -->
+          <div class="card solid-card solid-card shadow-xl border-2 border-base-300">
             <div class="card-body">
               <div class="flex flex-wrap justify-between items-start mb-4">
                 <div>
-                  <h3 class="card-title text-xl">Systems Engineer</h3>
-                  <p class="text-lg">Various Defense Contractors</p>
+                  <h3 class="card-title text-xl">Data Analyst</h3>
+                  <p class="text-lg">DealNews</p>
                 </div>
                 <div class="text-right">
-                  <div class="badge badge-outline">2014 - 2017</div>
-                  <div class="text-sm opacity-75 mt-1">Huntsville, AL</div>
+                  <div class="badge badge-outline">2015 - 2017</div>
                 </div>
               </div>
               <p class="mb-4">
-                Applied systems engineering principles to complex defense and aerospace projects. 
-                Specialized in requirements gathering, system modeling with SysML/BPMN, and technical specification development.
+                Built foundational data infrastructure and analytics capabilities, establishing KPI frameworks and predictive models that informed strategic product decisions.
               </p>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <h4 class="font-semibold mb-2">Key Projects:</h4>
+                  <h4 class="font-semibold mb-2">Infrastructure:</h4>
                   <ul class="text-sm space-y-1">
-                    <li>• Missile defense system requirements specification</li>
-                    <li>• Satellite communication system architecture</li>
-                    <li>• Process improvement initiatives</li>
+                    <li>• Established <a href="https://aws.amazon.com/redshift/" target="_blank" rel="noopener" class="link link-primary">Amazon Redshift</a> data warehouse</li>
+                    <li>• Replaced legacy reports with <a href="https://www.tableau.com/" target="_blank" rel="noopener" class="link link-primary">Tableau</a> dashboards</li>
+                    <li>• Optimized complex SQL queries for Redshift performance</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 class="font-semibold mb-2">Skills Developed:</h4>
+                  <h4 class="font-semibold mb-2">Custom YoY Visualization:</h4>
                   <ul class="text-sm space-y-1">
-                    <li>• Requirements analysis and specification</li>
-                    <li>• SysML modeling and system architecture</li>
-                    <li>• Technical documentation</li>
+                    <li>• Developed novel YoY alignment strategy to align years on seasonality (Black Friday) for representative comparison</li>
+                    <li>• Built trailing 52-week reports with multi-level aggregation via Tableau axis granularity</li>
+                    <li>• Worked around Tableau's lack of GA/Search Console-style YoY support</li>
                   </ul>
                 </div>
+              </div>
+              <p class="text-sm mt-4 opacity-80">
+                <strong>Tools:</strong> <a href="https://www.python.org/" target="_blank" rel="noopener" class="link link-primary">Python</a> (NumPy, Pandas, Matplotlib), SQL, <a href="https://www.tableau.com/" target="_blank" rel="noopener" class="link link-primary">Tableau</a>
+              </p>
+            </div>
+          </div>
+
+          <!-- Anaconda Contract -->
+          <div class="card solid-card solid-card shadow-xl border-2 border-base-300">
+            <div class="card-body">
+              <div class="flex flex-wrap justify-between items-start mb-4">
+                <div>
+                  <h3 class="card-title text-xl">Software Engineer (Contract)</h3>
+                  <p class="text-lg"><a href="https://www.anaconda.com/" target="_blank" rel="noopener" class="link link-primary">Anaconda</a> (Continuum Analytics)</p>
+                </div>
+                <div class="text-right">
+                  <div class="badge badge-outline">2015 - 2016</div>
+                </div>
+              </div>
+              <p class="text-sm mb-2">
+                Contributed to open-source <a href="https://bokeh.org/" target="_blank" rel="noopener" class="link link-primary">Bokeh</a> data visualization library. Developed graphics system using Grammar of Graphics patterns with Python, CoffeeScript, and JavaScript.
+              </p>
+              <a href="https://github.com/bokeh/bokeh/pull/2986" target="_blank" rel="noopener" class="link link-primary text-sm mt-2 inline-block">
+                View Example PR →
+              </a>
+            </div>
+          </div>
+
+          <!-- nou Systems -->
+          <div class="card solid-card solid-card shadow-xl border-2 border-base-300">
+            <div class="card-body">
+              <div class="flex flex-wrap justify-between items-start mb-4">
+                <div>
+                  <h3 class="card-title text-xl">Systems Engineer/Analyst</h3>
+                  <p class="text-lg">nou Systems, Inc.</p>
+                </div>
+                <div class="text-right">
+                  <div class="badge badge-outline">2014 - 2015</div>
+                </div>
+              </div>
+              <p class="mb-4 text-sm">
+                Defense contractor focused on data analysis, interactive visualization, and SBIR proposal management for missile defense programs.
+              </p>
+              <ul class="text-sm space-y-1">
+                <li>• Led SBIR proposals from concept through Phase I/II execution</li>
+                <li>• BMDS test data analysis with 50% resource reduction through custom tooling</li>
+                <li>• Built interactive missile flight visualization using <a href="https://cesium.com/platform/cesiumjs/" target="_blank" rel="noopener" class="link link-primary">Cesium.js</a>, Python, JavaScript</li>
+                <li>• Created SysML system architecture models for defense systems</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- MDA: Lead Engineer -->
+          <div class="card solid-card solid-card shadow-xl border-2 border-base-300">
+            <div class="card-body">
+              <div class="flex flex-wrap justify-between items-start mb-4">
+                <div>
+                  <h3 class="card-title text-xl">Lead Engineer for Spiral Architecture</h3>
+                  <p class="text-lg"><a href="https://www.mda.mil/" target="_blank" rel="noopener" class="link link-primary">Missile Defense Agency</a></p>
+                </div>
+                <div class="text-right">
+                  <div class="badge badge-outline">2011 - 2014</div>
+                </div>
+              </div>
+              <p class="mb-4 text-sm">
+                Led system architecture for C2BMC (Command and Control, Battle Management, Communications) across multiple spiral increments.
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <ul class="text-sm space-y-1">
+                    <li>• Pioneered <a href="https://www.omg.org/spec/SysML/" target="_blank" rel="noopener" class="link link-primary">MBSE</a> adoption with custom <a href="https://www.omg.org/spec/SysML/" target="_blank" rel="noopener" class="link link-primary">SysML</a> profile</li>
+                    <li>• Managed 8-engineer GTRI team on modeling/simulation framework</li>
+                    <li>• Led US/NATO interoperability initiatives</li>
+                  </ul>
+                </div>
+                <div>
+                  <ul class="text-sm space-y-1">
+                    <li>• Authored technical white papers for senior stakeholders</li>
+                    <li>• Led recurring architecture coordination between govt and contractors</li>
+                    <li>• Executed PDR/CDR design reviews</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MDA: Advanced Concepts -->
+          <div class="card solid-card solid-card shadow-xl border-2 border-base-300">
+            <div class="card-body">
+              <div class="flex flex-wrap justify-between items-start mb-4">
+                <div>
+                  <h3 class="card-title text-xl">Systems Engineer - Advanced Concepts</h3>
+                  <p class="text-lg"><a href="https://www.mda.mil/" target="_blank" rel="noopener" class="link link-primary">Missile Defense Agency</a></p>
+                </div>
+                <div class="text-right">
+                  <div class="badge badge-outline">2010 - 2011</div>
+                </div>
+              </div>
+              <ul class="text-sm space-y-1">
+                <li>• Led University Outreach initiatives for MDA's future capabilities</li>
+                <li>• Developed briefings for senior leadership on advanced concepts</li>
+                <li>• Led Future Networks Bandwidth and Latency Trade Study</li>
+                <li>• Contributed to Enhanced C2BMC advanced concepts development</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- MDA: C2BMC Development -->
+          <div class="card solid-card solid-card shadow-xl border-2 border-base-300">
+            <div class="card-body">
+              <div class="flex flex-wrap justify-between items-start mb-4">
+                <div>
+                  <h3 class="card-title text-xl">Systems Engineer - C2BMC Development</h3>
+                  <p class="text-lg"><a href="https://www.mda.mil/" target="_blank" rel="noopener" class="link link-primary">Missile Defense Agency</a></p>
+                </div>
+                <div class="text-right">
+                  <div class="badge badge-outline">2009 - 2010</div>
+                </div>
+              </div>
+              <p class="mb-3 text-sm">
+                Developed foundational C2BMC capabilities and established first missile defense APIs while leading international interoperability.
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <ul class="text-sm space-y-1">
+                    <li>• Led development of C2BMC Planner Adapter specs and testing</li>
+                    <li>• Developed Net-Centric C2 Interface Control Document</li>
+                    <li>• Created first API for missile defense data</li>
+                  </ul>
+                </div>
+                <div>
+                  <ul class="text-sm space-y-1">
+                    <li>• Conducted demonstration in Netherlands with warfighters</li>
+                    <li>• XML schema standards CCB voting member</li>
+                    <li>• Led US-NATO planner interface project</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="mt-4 p-3 bg-success/10 rounded-lg">
+                <h4 class="font-semibold text-success text-sm mb-2">Recognition:</h4>
+                <p class="text-sm">🏆 <strong>Career Development Professional of the Year</strong> (2010) — Largest agency contributions for entry-level engineer</p>
               </div>
             </div>
           </div>
@@ -151,112 +280,96 @@ import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
       <div class="mb-20">
         <h2 class="text-3xl font-bold text-center mb-12">Education</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div class="card bg-secondary text-secondary-content shadow-xl">
+          <!-- Master's Degree -->
+          <div class="card solid-card shadow-xl border-2 border-primary">
             <div class="card-body">
-              <h3 class="card-title text-xl">Master of Science</h3>
-              <p class="text-lg mb-2">Systems Engineering (PMASE Program)</p>
-              <p class="mb-4">Georgia Institute of Technology</p>
-              <div class="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <strong>Duration:</strong> 2014-2016
-                </div>
-                <div>
-                  <strong>GPA:</strong> 3.8/4.0
-                </div>
+              <div class="flex justify-between items-start mb-2">
+                <div class="badge badge-primary">2014</div>
+                <div class="badge badge-secondary">GPA: 4.0</div>
               </div>
-              <div class="mt-4">
-                <h4 class="font-semibold mb-2">Key Coursework:</h4>
-                <ul class="text-sm space-y-1">
-                  <li>• Systems Architecture and Design</li>
-                  <li>• Requirements Engineering</li>
-                  <li>• Project Management</li>
-                  <li>• Systems Integration and Testing</li>
-                </ul>
+              <h3 class="card-title text-xl text-primary mb-1">Master of Science</h3>
+              <p class="text-lg font-semibold mb-2">Systems Engineering</p>
+              <p class="mb-4">
+                <a href="https://www.gatech.edu/" target="_blank" rel="noopener" class="link link-primary font-medium">Georgia Institute of Technology</a>
+              </p>
+              <p class="text-sm opacity-80 mb-4">
+                Focus on systems optimization, project management, risk analysis, and leadership development. Complex "system-of-systems" product management for large-scale integrations.
+              </p>
+              <div class="mt-auto">
+                <a href="https://pe.gatech.edu/degrees/systems-engineering" target="_blank" rel="noopener" class="btn btn-sm btn-outline btn-primary">
+                  PMASE Program →
+                </a>
               </div>
             </div>
           </div>
 
-          <div class="card bg-accent text-accent-content shadow-xl">
+          <!-- Bachelor's Degree -->
+          <div class="card solid-card shadow-xl border-2 border-base-300">
             <div class="card-body">
-              <h3 class="card-title text-xl">Bachelor of Science</h3>
-              <p class="text-lg mb-2">Computer Science</p>
-              <p class="mb-4">Auburn University</p>
-              <div class="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <strong>Duration:</strong> 2008-2012
-                </div>
-                <div>
-                  <strong>GPA:</strong> 3.6/4.0
-                </div>
+              <div class="flex justify-between items-start mb-2">
+                <div class="badge badge-neutral">2009</div>
+                <div class="badge badge-ghost">GPA: 3.2</div>
               </div>
-              <div class="mt-4">
-                <h4 class="font-semibold mb-2">Focus Areas:</h4>
-                <ul class="text-sm space-y-1">
-                  <li>• Software Engineering</li>
-                  <li>• Database Design</li>
-                  <li>• Algorithms and Data Structures</li>
-                  <li>• Human-Computer Interaction</li>
-                </ul>
-              </div>
+              <h3 class="card-title text-xl mb-1">Bachelor of Science</h3>
+              <p class="text-lg font-semibold mb-2">Electrical Engineering (Wireless)</p>
+              <p class="mb-4">
+                <a href="https://www.auburn.edu/" target="_blank" rel="noopener" class="link link-primary font-medium">Auburn University</a>
+              </p>
+              <p class="text-sm opacity-80">
+                Specialization in wireless communication systems, circuit design, signal processing, and networking.
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Skills Evolution -->
+      <!-- Core Competencies -->
       <div class="mb-20">
-        <h2 class="text-3xl font-bold text-center mb-12">Skills Evolution</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="card bg-base-200">
+        <h2 class="text-3xl font-bold text-center mb-12">Core Competencies</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="card solid-card border-2 border-base-300">
             <div class="card-body">
-              <h3 class="card-title text-lg text-primary">Systems Thinking</h3>
-              <p class="text-sm mb-4">Foundation from engineering background</p>
-              <div class="space-y-2">
-                <div class="badge badge-outline badge-sm">SysML</div>
-                <div class="badge badge-outline badge-sm">BPMN</div>
-                <div class="badge badge-outline badge-sm">Architecture Design</div>
-                <div class="badge badge-outline badge-sm">Requirements Analysis</div>
+              <h3 class="card-title text-lg text-primary">AI & Automation</h3>
+              <div class="flex flex-wrap gap-1 mt-2">
+                <span class="badge badge-outline badge-sm">LLMs & Vector Embeddings</span>
+                <span class="badge badge-outline badge-sm">Content Automation</span>
+                <span class="badge badge-outline badge-sm">Workflow Orchestration</span>
+                <span class="badge badge-outline badge-sm"><a href="https://www.langchain.com/" target="_blank" rel="noopener">LangChain</a></span>
+                <span class="badge badge-outline badge-sm"><a href="https://mastra.ai/" target="_blank" rel="noopener">Mastra</a></span>
               </div>
             </div>
           </div>
 
-          <div class="card bg-base-200">
+          <div class="card solid-card border-2 border-base-300">
             <div class="card-body">
               <h3 class="card-title text-lg text-primary">Product Management</h3>
-              <p class="text-sm mb-4">Strategic product development</p>
-              <div class="space-y-2">
-                <div class="badge badge-outline badge-sm">Roadmap Planning</div>
-                <div class="badge badge-outline badge-sm">A/B Testing</div>
-                <div class="badge badge-outline badge-sm">User Research</div>
-                <div class="badge badge-outline badge-sm">Agile</div>
+              <div class="flex flex-wrap gap-1 mt-2">
+                <span class="badge badge-outline badge-sm">Roadmap Planning</span>
+                <span class="badge badge-outline badge-sm">A/B Testing & CRO</span>
+                <span class="badge badge-outline badge-sm"><a href="https://www.atlassian.com/agile" target="_blank" rel="noopener">Agile</a></span>
+                <span class="badge badge-outline badge-sm"><a href="https://www.eosworldwide.com/" target="_blank" rel="noopener">EOS</a></span>
+                <span class="badge badge-outline badge-sm">Platform Modernization</span>
               </div>
             </div>
           </div>
 
-          <div class="card bg-base-200">
+          <div class="card solid-card border-2 border-base-300">
             <div class="card-body">
-              <h3 class="card-title text-lg text-primary">Technical Leadership</h3>
-              <p class="text-sm mb-4">AI, automation, and modern platforms</p>
-              <div class="space-y-2">
-                <div class="badge badge-outline badge-sm">AI Integration</div>
-                <div class="badge badge-outline badge-sm">Automation</div>
-                <div class="badge badge-outline badge-sm">Platform Architecture</div>
-                <div class="badge badge-outline badge-sm">Team Leadership</div>
+              <h3 class="card-title text-lg text-primary">Systems Engineering</h3>
+              <div class="flex flex-wrap gap-1 mt-2">
+                <span class="badge badge-outline badge-sm"><a href="https://www.omg.org/spec/SysML/" target="_blank" rel="noopener">MBSE / SysML</a></span>
+                <span class="badge badge-outline badge-sm">Requirements Analysis</span>
+                <span class="badge badge-outline badge-sm">Architecture Design</span>
+                <span class="badge badge-outline badge-sm">Integration & Testing</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Philosophy -->
+      <!-- CTA -->
       <div class="text-center bg-gradient-to-r from-primary/10 to-secondary/10 p-12 rounded-lg">
-        <h2 class="text-3xl font-bold mb-6">Professional Philosophy</h2>
-        <blockquote class="text-lg max-w-4xl mx-auto leading-relaxed">
-          "The best solutions emerge when systematic thinking meets practical execution. 
-          My engineering background provides the framework for breaking down complex problems, 
-          while product management experience ensures solutions deliver real business value. 
-          This combination enables transforming requirements into measurable outcomes."
-        </blockquote>
+        <h2 class="text-3xl font-bold mb-6">Let's Connect</h2>
         <div class="mt-8">
           <a href="/approach" class="btn btn-primary btn-lg mr-4">
             Learn My Approach

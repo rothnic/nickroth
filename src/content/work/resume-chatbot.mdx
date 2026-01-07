@@ -1,0 +1,77 @@
+---
+title: "AI-Powered Resume Builder with Real-Time Streaming"
+description: "Building an intelligent resume editor using Next.js, Vercel AI SDK, and surgical JSON patching for real-time collaborative editing."
+company: "Personal Project"
+role: "Full-Stack Developer"
+startDate: 2024-11-01
+featured: true
+tags: ["AI", "Next.js", "Streaming", "Real-time"]
+image: "../../assets/images/projects/resume-chatbot.png"
+category: "AI APPLICATION"
+impact: "REAL-TIME COLLABORATIVE EDITING WITH AI-POWERED RESUME OPTIMIZATION."
+stack: ["NEXT.JS", "VERCEL AI SDK", "DRIZZLE ORM", "+4"]
+roleCategory: "FULL-STACK DEVELOPER"
+---
+
+# AI-Powered Resume Builder with Real-Time Streaming
+
+## Impact Statement
+A sophisticated AI resume editor featuring real-time streaming updates and surgical JSON patching for seamless collaborative editing.
+
+## Overview
+
+A sophisticated AI-powered resume editor that enables real-time, chat-based resume creation and optimization. The system uses surgical JSON patching (RFC 6902) to apply incremental updates as the AI generates content, creating a collaborative editing experience similar to Google Docs.
+
+## Key Features
+
+- **Real-time streaming** - Watch content appear as the AI generates it
+- **Surgical updates** - Only modified fields update, preserving context
+- **Intelligent suggestions** - AI understands resume best practices
+- **Artifact system** - Side-by-side chat and resume preview
+
+## Technical Stack
+
+- **Frontend**: Next.js 15 with React 19 and App Router
+- **AI Integration**: Vercel AI SDK with multi-provider support
+- **Styling**: Tailwind CSS 4 with Framer Motion animations
+- **Database**: Postgres (Neon Serverless) via Drizzle ORM
+- **Authentication**: Auth.js (NextAuth.js) v5 Beta
+- **Observability**: OpenTelemetry with Vercel/SigNoz integration
+
+## Core Architecture
+
+### Surgical JSON Patching
+Instead of replacing entire document content on each update, the system generates RFC 6902 JSON Patches that target specific fields. This enables:
+- Minimal UI re-renders for better performance
+- Precise scroll-to-edit behavior highlighting changes
+- Efficient undo/redo operations
+
+### Deterministic Tool Governance
+In multi-tool AI systems, overlapping capabilities create ambiguity. This project implements hard blocking at the code level:
+- `createDocument` owns initialization
+- `patchResume` owns resume modifications (surgical)
+- `updateDocument` owns generic documents (text, code)
+
+### Streaming Infrastructure
+The system leverages Vercel AI SDK's `partialObjectStream` to emit partial JSON objects as the model generates tokens. Custom filtering ensures patches are only applied once values have stabilized.
+
+## Development Patterns
+
+### E2E Testing Strategy
+Playwright tests are the source of truth, implementing:
+- **Synchronized readiness** via `body.hydrated` markers
+- **Streaming completion detection** through status attributes
+- **Animation vs. functional separation** for reliable tests
+
+### Prompt Engineering
+The AI uses structured prompts with:
+- Dynamic context injection for resume sections
+- Verbatim formatting rules for consistency
+- Task aggregation to batch related updates
+
+## Lessons Learned
+
+- **Partial object streaming** enables typewriter-style UX without custom infrastructure
+- **Tool governance** at code level is more reliable than prompt engineering alone
+- **JSON Patch** provides surgical precision that full-document updates cannot match
+- **End-state verification** in tests is more stable than intermediate checks
