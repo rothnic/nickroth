@@ -1255,6 +1255,37 @@
             contain: layout;
         }
 
+        /* Page header - simple fade instead of morph to avoid distracting expand/contract */
+        ::view-transition-group(page-header) {
+            animation-duration: 0.25s;
+        }
+        
+        ::view-transition-old(page-header),
+        ::view-transition-new(page-header) {
+            /* Use crossfade only, no position/size morphing */
+            animation: none;
+            mix-blend-mode: normal;
+        }
+        
+        ::view-transition-old(page-header) {
+            animation: fade-out 0.15s ease-out forwards;
+        }
+        
+        ::view-transition-new(page-header) {
+            animation: fade-in 0.15s ease-in 0.1s forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fade-out {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         /* Ensure text in nav buttons stays above the transitioning background */
         .navbar .btn-group .btn {
             z-index: 1;
