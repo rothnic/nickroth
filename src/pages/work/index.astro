@@ -2,6 +2,8 @@
 import { getCollection } from "astro:content";
 import WorkCard from "../../components/WorkCard.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import WorkCategoryFilter from "../../components/WorkCategoryFilter.astro";
 
 const workEntries = await getCollection("work");
 const sortedWork = workEntries.sort((a, b) => {
@@ -12,54 +14,18 @@ const sortedWork = workEntries.sort((a, b) => {
 
 // Get unique categories for filtering - SORTED ALPHABETICALLY for consistency
 const categories = [...new Set(workEntries.map((work) => work.data.category).filter(Boolean))].sort() as string[];
-
-// Helper to create URL-safe slugs from category names
-function slugify(text: string): string {
-	return text
-		.toLowerCase()
-		.replace(/[^a-z0-9]+/g, '-')
-		.replace(/(^-|-$)/g, '');
-}
-
-// Helper to get category URL
-function getCategoryUrl(cat: string): string {
-	return `/work/category/${slugify(cat)}`;
-}
 ---
 
 <BaseLayout title="Projects Portfolio - Nick Roth" description="Case studies demonstrating systematic approach to product development from discovery through delivery">
   <main class="py-20">
     <div class="container mx-auto px-4">
-      <!-- Header with transition names to prevent flash -->
-      <div class="text-center mb-16" transition:name="page-header">
-        <h1 class="text-4xl sm:text-5xl font-black mb-4">
-          PROJECTS
-          <br />
-          <span class="text-primary">PORTFOLIO</span>
-        </h1>
-        <p class="text-xl opacity-75 max-w-4xl mx-auto">
-          CASE STUDIES DEMONSTRATING SYSTEMATIC APPROACH TO PRODUCT DEVELOPMENT, FROM DISCOVERY THROUGH DELIVERY WITH MEASURABLE OUTCOMES.
-        </p>
-      </div>
+      <PageHeader
+        title="Projects"
+        subtitle="Portfolio"
+        description="Case studies demonstrating systematic approach to product development, from discovery through delivery with measurable outcomes."
+      />
 
-      <!-- Category Filter Tabs - Fixed width container to prevent layout shift -->
-      <nav class="flex flex-wrap justify-center gap-2 mb-12" transition:name="work-category-nav">
-        <a 
-          href="/work"
-          class="btn btn-sm btn-accent font-semibold text-xs uppercase tracking-wider"
-          aria-current="page"
-        >
-          ALL PROJECTS
-        </a>
-        {categories.map((category) => (
-          <a 
-            href={getCategoryUrl(category)}
-            class="btn btn-sm btn-outline font-semibold text-xs uppercase tracking-wider"
-          >
-            {category}
-          </a>
-        ))}
-      </nav>
+      <WorkCategoryFilter categories={categories} />
 
       <!-- Projects Grid -->
       <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 max-w-5xl mx-auto">

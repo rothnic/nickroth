@@ -1,0 +1,43 @@
+---
+export interface Props {
+  /** All available categories (sorted alphabetically) */
+  categories: string[];
+  /** Currently active category (null for "all projects" view) */
+  activeCategory?: string | null;
+}
+
+const { categories, activeCategory = null } = Astro.props;
+
+// Helper to create URL-safe slugs from category names
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+function getCategoryUrl(cat: string): string {
+  return `/work/category/${slugify(cat)}`;
+}
+
+const isAllActive = activeCategory === null;
+---
+
+<nav class="flex flex-wrap justify-center gap-2 mb-12" transition:name="work-category-nav">
+  <a 
+    href="/work"
+    class={`btn btn-sm font-semibold text-xs uppercase tracking-wider ${isAllActive ? 'btn-accent' : 'btn-outline'}`}
+    aria-current={isAllActive ? 'page' : undefined}
+  >
+    ALL PROJECTS
+  </a>
+  {categories.map((category) => (
+    <a 
+      href={getCategoryUrl(category)}
+      class={`btn btn-sm font-semibold text-xs uppercase tracking-wider ${category === activeCategory ? 'btn-accent' : 'btn-outline'}`}
+      aria-current={category === activeCategory ? 'page' : undefined}
+    >
+      {category}
+    </a>
+  ))}
+</nav>

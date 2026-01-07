@@ -1,21 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
 ---
 
 <BaseLayout title="Systematic Approach - Nick Roth" description="A proven 5-step method for transforming complex requirements into successful outcomes">
   <main class="py-20">
     <div class="container mx-auto px-4 max-w-6xl">
-      <!-- Hero Section -->
-      <div class="text-center mb-16" transition:name="page-header">
-        <h1 class="text-4xl sm:text-5xl font-black mb-4">
-          SYSTEMATIC
-          <br />
-          <span class="text-primary">APPROACH</span>
-        </h1>
-        <p class="text-xl opacity-75 max-w-3xl mx-auto">
-          A proven 5-step method for transforming complex requirements into successful outcomes.
-        </p>
-      </div>
+      <PageHeader
+        title="Systematic"
+        subtitle="Approach"
+        description="A proven 5-step method for transforming complex requirements into successful outcomes."
+      />
 
       <!-- 5-Step Process -->
       <div class="mb-20">

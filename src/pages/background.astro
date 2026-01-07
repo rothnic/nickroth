@@ -1,21 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
 ---
 
 <BaseLayout title="Background - Nick Roth" description="Professional background, education, and career journey of Nick Roth">
   <main class="py-20">
     <div class="container mx-auto px-4 max-w-6xl">
-      <!-- Hero Section -->
-      <div class="text-center mb-16" transition:name="page-header">
-        <h1 class="text-4xl sm:text-5xl font-black mb-4">
-          PROFESSIONAL
-          <br />
-          <span class="text-primary">BACKGROUND</span>
-        </h1>
-        <p class="text-xl opacity-75 max-w-3xl mx-auto">
-          14 years spanning Product Management and Systems Engineering — bridging technical depth with product vision.
-        </p>
-      </div>
+      <PageHeader
+        title="Professional"
+        subtitle="Background"
+        description="14 years spanning Product Management and Systems Engineering — bridging technical depth with product vision."
+      />
 
       <!-- Career Timeline -->
       <div class="mb-20">

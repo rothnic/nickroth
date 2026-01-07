@@ -1,26 +1,20 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { profile } from '../config/profile';
+import PageHeader from '../components/PageHeader.astro';
 
 // Use centralized email obfuscation from profile
 const emailParts = profile.emailParts;
 ---
 
 <BaseLayout title="Contact - Nick Roth" description="Get in touch with Nick Roth">
-  <main class="py-16">
+  <main class="py-20">
     <div class="container mx-auto px-4 max-w-4xl">
-      <!-- Header -->
-      <header class="text-center mb-16" transition:name="page-header">
-        <h1 class="text-4xl sm:text-5xl font-black mb-4">
-          LET'S WORK
-          <br />
-          <span class="text-primary">TOGETHER</span>
-        </h1>
-        <p class="text-lg sm:text-xl text-base-content/70 max-w-2xl mx-auto">
-          Open to consulting and fractional roles. Specializing in systematic solutions 
-          for complex product and engineering challenges.
-        </p>
-      </header>
+      <PageHeader
+        title="Let's Work"
+        subtitle="Together"
+        description="Open to consulting and fractional roles. Specializing in systematic solutions for complex product and engineering challenges."
+      />
 
       <!-- Main Content Card - static container, no hover -->
       <div class="bg-base-100 border-2 border-base-300 shadow-brutal rounded-xl p-8 sm:p-12 mb-12">

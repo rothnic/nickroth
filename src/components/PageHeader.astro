@@ -1,0 +1,26 @@
+---
+export interface Props {
+  /** First line of the h1 (uppercase) */
+  title: string;
+  /** Second line of the h1, displayed in primary color (uppercase) */
+  subtitle: string;
+  /** Description text shown as h2 below the title */
+  description: string;
+}
+
+const { title, subtitle, description } = Astro.props;
+---
+
+<div class="text-center mb-16" transition:name="page-header">
+  <!-- Optional slot for content above heading (e.g., avatar) -->
+  <slot name="above" />
+  
+  <h1 class="text-4xl sm:text-5xl font-black mb-4">
+    {title.toUpperCase()}
+    <br />
+    <span class="text-primary">{subtitle.toUpperCase()}</span>
+  </h1>
+  <h2 class="text-lg sm:text-xl font-normal opacity-75 max-w-3xl mx-auto">
+    {description}
+  </h2>
+</div>

@@ -2,14 +2,8 @@
 import { type CollectionEntry, getCollection } from "astro:content";
 import WorkCard from "../../../components/WorkCard.astro";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-
-// Helper to create URL-safe slugs from category names
-function slugify(text: string): string {
-	return text
-		.toLowerCase()
-		.replace(/[^a-z0-9]+/g, '-')
-		.replace(/(^-|-$)/g, '');
-}
+import PageHeader from "../../../components/PageHeader.astro";
+import WorkCategoryFilter from "../../../components/WorkCategoryFilter.astro";
 
 // Generate static paths for each category
 export async function getStaticPaths() {
@@ -50,11 +44,6 @@ const sortedWork = entries.sort((a, b) => {
 // Get all unique categories - SORTED ALPHABETICALLY for consistency across all pages
 const workEntries = await getCollection("work");
 const allCategories = [...new Set(workEntries.map((work) => work.data.category).filter(Boolean))].sort() as string[];
-
-// Helper to get category URL
-function getCategoryUrl(cat: string): string {
-	return `/work/category/${slugify(cat)}`;
-}
 ---
 
 <BaseLayout 
@@ -63,43 +52,13 @@ function getCategoryUrl(cat: string): string {
 >
   <main class="py-20">
     <div class="container mx-auto px-4">
-      <!-- Header with transition names to prevent flash -->
-      <div class="text-center mb-16" transition:name="page-header">
-        <h1 class="text-4xl sm:text-5xl font-black mb-4">
-          PROJECTS
-          <br />
-          <span class="text-primary">PORTFOLIO</span>
-        </h1>
-        <p class="text-xl opacity-75 max-w-4xl mx-auto">
-          CASE STUDIES DEMONSTRATING SYSTEMATIC APPROACH TO PRODUCT DEVELOPMENT, FROM DISCOVERY THROUGH DELIVERY WITH MEASURABLE OUTCOMES.
-        </p>
-      </div>
+      <PageHeader
+        title={category}
+        subtitle="Projects"
+        description={`Case studies in ${category.toLowerCase()} demonstrating systematic approach to product development.`}
+      />
 
-      <!-- Category Filter Tabs - Same order as index page -->
-      <nav class="flex flex-wrap justify-center gap-2 mb-12" transition:name="work-category-nav">
-        <a 
-          href="/work"
-          class="btn btn-sm btn-outline font-semibold text-xs uppercase tracking-wider"
-        >
-          ALL PROJECTS
-        </a>
-        {allCategories.map((cat) => (
-          <a 
-            href={getCategoryUrl(cat)}
-            class={`btn btn-sm font-semibold text-xs uppercase tracking-wider ${cat === category ? 'btn-accent' : 'btn-outline'}`}
-          >
-            {cat}
-          </a>
-        ))}
-      </nav>
-
-      <!-- Breadcrumb showing current filter -->
-      <div class="text-center mb-8">
-        <span class="badge badge-lg badge-primary gap-2">
-          Showing: {category}
-          <a href="/work" class="hover:text-primary-content/70">✕</a>
-        </span>
-      </div>
+      <WorkCategoryFilter categories={allCategories} activeCategory={category} />
 
       <!-- Projects Grid -->
       <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 max-w-5xl mx-auto">
