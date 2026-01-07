@@ -23,21 +23,53 @@ function getCategoryUrl(cat: string): string {
 const isAllActive = activeCategory === null;
 ---
 
-<nav class="flex flex-nowrap justify-start sm:justify-center gap-2 mb-8 sm:mb-12 min-w-0 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x" transition:name="work-category-nav">
-  <a 
-    href="/work"
-    class={`btn btn-sm font-semibold text-xs uppercase tracking-wider flex-shrink-0 snap-start ${isAllActive ? 'btn-accent' : 'btn-outline'}`}
-    aria-current={isAllActive ? 'page' : undefined}
+<div class="relative -mx-4 sm:mx-0 group mb-8 sm:mb-12">
+  <nav 
+    class="flex flex-nowrap justify-start sm:justify-center gap-2 min-w-0 overflow-x-auto px-4 sm:px-0 scrollbar-hide snap-x" 
+    transition:name="work-category-nav"
+    id="work-category-nav"
   >
-    ALL PROJECTS
-  </a>
-  {categories.map((category) => (
     <a 
-      href={getCategoryUrl(category)}
-      class={`btn btn-sm font-semibold text-xs uppercase tracking-wider flex-shrink-0 snap-start ${category === activeCategory ? 'btn-accent' : 'btn-outline'}`}
-      aria-current={category === activeCategory ? 'page' : undefined}
+      href="/work"
+      class={`btn btn-sm font-semibold text-xs uppercase tracking-wider flex-shrink-0 snap-start ${isAllActive ? 'btn-accent' : 'btn-outline'}`}
+      aria-current={isAllActive ? 'page' : undefined}
     >
-      {category}
+      ALL PROJECTS
     </a>
-  ))}
-</nav>
+    {categories.map((category) => (
+      <a 
+        href={getCategoryUrl(category)}
+        class={`btn btn-sm font-semibold text-xs uppercase tracking-wider flex-shrink-0 snap-start ${category === activeCategory ? 'btn-accent' : 'btn-outline'}`}
+        aria-current={category === activeCategory ? 'page' : undefined}
+      >
+        {category}
+      </a>
+    ))}
+  </nav>
+  
+  <!-- Right edge fade (mobile only) -->
+  <div class="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-base-100 to-transparent pointer-events-none sm:hidden"></div>
+</div>
+
+<script>
+  function setupHorizontalScroll() {
+    const nav = document.getElementById('work-category-nav');
+    if (!nav) return;
+
+    // Convert vertical scroll to horizontal
+    nav.addEventListener('wheel', (e) => {
+      if (e.deltaY !== 0) {
+        // If scrolling vertically, scroll horizontally instead
+        // But only if we are at a breakpoint where it scrolls (mobile)
+        if (window.innerWidth < 640) {
+           e.preventDefault();
+           nav.scrollLeft += e.deltaY;
+        }
+      }
+    }, { passive: false });
+  }
+
+  // Run on initial load and after swaps
+  setupHorizontalScroll();
+  document.addEventListener('astro:page-load', setupHorizontalScroll);
+</script>

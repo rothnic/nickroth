@@ -66,8 +66,8 @@ test.describe('Visual Regression - Components', () => {
     await page.goto('/work');
     await page.waitForLoadState('networkidle');
     
-    // Use stable transition attribute
-    const filter = page.locator('nav[transition\\:name="work-category-nav"]').first();
+    // Use stable transition attribute and select parent wrapper to capture blur/fade
+    const filter = page.locator('div', { has: page.locator('nav[transition\\:name="work-category-nav"]') }).first();
     await expect(filter).toHaveScreenshot('work-category-filter.png');
   });
 });
