@@ -1305,10 +1305,36 @@
         
         ::view-transition-old(work-category-nav),
         ::view-transition-new(work-category-nav) {
-            /* Both old and new stay fully visible and overlapped */
-            animation: none !important;
-            opacity: 1 !important;
+            /* Quick fade for smooth transitions */
+            animation: none;
             mix-blend-mode: normal;
+        }
+        
+        ::view-transition-old(work-category-nav) {
+            animation: category-nav-fade-out 0.1s ease-out forwards;
+        }
+        
+        ::view-transition-new(work-category-nav) {
+            animation: category-nav-fade-in 0.1s ease-in forwards;
+        }
+        
+        @keyframes category-nav-fade-out {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        @keyframes category-nav-fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Reset button hover states during view transitions to prevent shadow desync */
+        html:has(::view-transition) .btn {
+            /* Disable transitions during view transition to prevent animation desync */
+            transition: none !important;
+            /* Reset to non-hovered state */
+            transform: translate(0, 0) rotate(0deg) !important;
+            box-shadow: var(--btn-shadow) !important;
         }
 
         /* Preserve cursor pointer on all interactive elements during view transitions */
