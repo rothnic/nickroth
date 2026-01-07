@@ -48,3 +48,8 @@ package-lock.json
 # Optional REPL history
 .node_repl_history
 docs/archive
+
+# Playwright test outputs (baselines in tests/snapshots are tracked)
+test-results/
+playwright-report/
+playwright/.cache/

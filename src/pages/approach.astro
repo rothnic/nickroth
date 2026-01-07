@@ -4,138 +4,297 @@ import ContentLayout from '../components/ContentLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 ---
 
-<BaseLayout title="Systematic Approach - Nick Roth" description="A proven 5-step method for transforming complex requirements into successful outcomes">
+<BaseLayout title="Systematic Approach - Nick Roth" description="AI-enhanced systems engineering methodology: from user needs to verified implementation">
   <ContentLayout>
       <PageHeader
         title="Systematic"
         subtitle="Approach"
-        description="A proven 5-step method for transforming complex requirements into successful outcomes."
+        description="Bridging systems engineering rigor with AI-enhanced development for traceable, verifiable outcomes."
       />
 
-      <!-- 5-Step Process -->
+      <!-- Philosophy Banner -->
       <div class="max-w-5xl mx-auto">
+      <div class="mb-16 text-center">
+        <div class="card solid-card no-hover border-2 border-base-content/20 shadow-brutal p-8">
+          <p class="text-lg leading-relaxed">
+            Traditional software development often loses the thread between <strong>user needs</strong> and <strong>delivered code</strong>. 
+            My approach applies <span class="text-primary font-bold">systems engineering principles</span> to maintain complete traceability—from 
+            initial requirements through functional decomposition to implementation—while leveraging <span class="text-accent font-bold">AI assistance</span> 
+            to accelerate the rigorous specification work that makes this possible.
+          </p>
+        </div>
+      </div>
+
+      <!-- 5-Step Process Overview -->
       <div class="mb-20">
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-8 mb-12">
+        <h2 class="text-3xl font-bold text-center mb-12">THE FIVE-PHASE CYCLE</h2>
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-12">
           <div class="text-center">
-            <div class="bg-secondary text-secondary-content w-20 h-20 rounded-lg flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">
+            <div class="bg-secondary text-secondary-content w-16 h-16 rounded-lg flex items-center justify-center text-xl font-bold mx-auto mb-4 shadow-lg">
               1
             </div>
-            <h3 class="text-xl font-bold mb-2">DISCOVER</h3>
-            <p class="text-sm opacity-75">Extract true objectives through stakeholder interviews and constraint identification</p>
+            <h3 class="text-lg font-bold mb-2">DISCOVER</h3>
+            <p class="text-xs opacity-75">User needs & use cases</p>
           </div>
           
           <div class="text-center">
-            <div class="bg-secondary text-secondary-content w-20 h-20 rounded-lg flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">
+            <div class="bg-secondary text-secondary-content w-16 h-16 rounded-lg flex items-center justify-center text-xl font-bold mx-auto mb-4 shadow-lg">
               2
             </div>
-            <h3 class="text-xl font-bold mb-2">MODEL</h3>
-            <p class="text-sm opacity-75">Create visual models using SysML, BPMN, and architectural diagrams</p>
+            <h3 class="text-lg font-bold mb-2">MODEL</h3>
+            <p class="text-xs opacity-75">Functional decomposition</p>
           </div>
           
           <div class="text-center">
-            <div class="bg-secondary text-secondary-content w-20 h-20 rounded-lg flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">
+            <div class="bg-secondary text-secondary-content w-16 h-16 rounded-lg flex items-center justify-center text-xl font-bold mx-auto mb-4 shadow-lg">
               3
             </div>
-            <h3 class="text-xl font-bold mb-2">SPECIFY</h3>
-            <p class="text-sm opacity-75">Transform models into detailed technical specifications with clear acceptance criteria</p>
+            <h3 class="text-lg font-bold mb-2">SPECIFY</h3>
+            <p class="text-xs opacity-75">Behavioral requirements</p>
           </div>
           
           <div class="text-center">
-            <div class="bg-secondary text-secondary-content w-20 h-20 rounded-lg flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">
+            <div class="bg-secondary text-secondary-content w-16 h-16 rounded-lg flex items-center justify-center text-xl font-bold mx-auto mb-4 shadow-lg">
               4
             </div>
-            <h3 class="text-xl font-bold mb-2">BUILD</h3>
-            <p class="text-sm opacity-75">Execute systematic implementation with continuous validation and automated testing</p>
+            <h3 class="text-lg font-bold mb-2">BUILD</h3>
+            <p class="text-xs opacity-75">AI-assisted implementation</p>
           </div>
           
           <div class="text-center">
-            <div class="bg-secondary text-secondary-content w-20 h-20 rounded-lg flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">
+            <div class="bg-secondary text-secondary-content w-16 h-16 rounded-lg flex items-center justify-center text-xl font-bold mx-auto mb-4 shadow-lg">
               5
             </div>
-            <h3 class="text-xl font-bold mb-2">PROVE</h3>
-            <p class="text-sm opacity-75">Validate outcomes against original objectives through metrics and performance analysis</p>
+            <h3 class="text-lg font-bold mb-2">VERIFY</h3>
+            <p class="text-xs opacity-75">End-to-end validation</p>
           </div>
         </div>
 
-        <!-- Hidden for now - no method content yet
-        <div class="text-center">
-          <button class="btn btn-accent btn-lg">
-            📘 LEARN THE METHOD
-          </button>
+        <!-- Feedback Loop Indicator -->
+        <div class="text-center mb-8">
+          <div class="inline-flex items-center gap-4 bg-base-200 px-6 py-3 rounded-full">
+            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span class="font-semibold">Continuous Feedback Loop</span>
+            <span class="text-sm opacity-75">— Verification informs next iteration</span>
+          </div>
         </div>
-        -->
+      </div>
 
       <!-- Detailed Process -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
-        <div>
-          <h2 class="text-3xl font-bold mb-8">Process Deep Dive</h2>
-          
-          <!-- Step 1 -->
-          <div class="mb-8">
-            <div class="flex items-center mb-4">
-              <div class="bg-primary text-primary-content w-12 h-12 rounded flex items-center justify-center text-lg font-bold mr-4">
-                1
-              </div>
-              <h3 class="text-xl font-bold">Discovery & Analysis</h3>
+      <div class="mb-20">
+        <h2 class="text-3xl font-bold text-center mb-12">PHASE DETAILS</h2>
+        
+        <!-- Phase 1: Discover -->
+        <div class="mb-12 card solid-card no-hover border-2 border-base-content/20 shadow-brutal-sm p-8">
+          <div class="flex items-start gap-6">
+            <div class="bg-primary text-primary-content w-14 h-14 rounded-lg flex items-center justify-center text-2xl font-bold flex-shrink-0">
+              1
             </div>
-            <ul class="list-disc list-inside space-y-2 text-sm ml-16">
-              <li>Stakeholder interview sessions</li>
-              <li>Current state process mapping</li>
-              <li>Constraint and risk identification</li>
-              <li>Success criteria definition</li>
-            </ul>
-          </div>
-
-          <!-- Step 2 -->
-          <div class="mb-8">
-            <div class="flex items-center mb-4">
-              <div class="bg-primary text-primary-content w-12 h-12 rounded flex items-center justify-center text-lg font-bold mr-4">
-                2
+            <div class="flex-1">
+              <h3 class="text-2xl font-bold mb-4">Discovery & Needs Analysis</h3>
+              <p class="mb-4 opacity-80">
+                Start with the <strong>user perspective</strong>—not technical solutions. Through stakeholder interviews and 
+                domain analysis, identify the actors who interact with the system and the outcomes they need to achieve.
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 class="font-semibold text-primary mb-2">Key Activities</h4>
+                  <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li>Stakeholder identification & interviews</li>
+                    <li>Use case scenario development</li>
+                    <li>Constraint & assumption capture</li>
+                    <li>Success criteria definition</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-primary mb-2">SysML Techniques</h4>
+                  <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li>Use Case Diagrams (actor relationships)</li>
+                    <li>Context Diagrams (system boundaries)</li>
+                    <li>Requirements capture (user needs)</li>
+                  </ul>
+                </div>
               </div>
-              <h3 class="text-xl font-bold">System Modeling</h3>
             </div>
-            <ul class="list-disc list-inside space-y-2 text-sm ml-16">
-              <li>System architecture modeling</li>
-              <li>Process flow documentation (BPMN)</li>
-              <li>Integration point mapping</li>
-              <li>Data flow analysis</li>
-            </ul>
-          </div>
-
-          <!-- Step 3 -->
-          <div class="mb-8">
-            <div class="flex items-center mb-4">
-              <div class="bg-primary text-primary-content w-12 h-12 rounded flex items-center justify-center text-lg font-bold mr-4">
-                3
-              </div>
-              <h3 class="text-xl font-bold">Technical Specification</h3>
-            </div>
-            <ul class="list-disc list-inside space-y-2 text-sm ml-16">
-              <li>Technical specification writing</li>
-              <li>Acceptance criteria definition</li>
-              <li>Implementation planning</li>
-              <li>Risk mitigation strategies</li>
-            </ul>
           </div>
         </div>
 
-        <div>
-          <div class="bg-base-200 p-8 rounded-lg">
-            <h3 class="text-2xl font-bold mb-6">Why This Works</h3>
-            <div class="space-y-6">
-              <div>
-                <h4 class="font-semibold text-primary mb-2">Reduces Scope Creep</h4>
-                <p class="text-sm">Objective-first discovery ensures everyone understands the true goals before implementation begins.</p>
-              </div>
-              <div>
-                <h4 class="font-semibold text-primary mb-2">Improves Communication</h4>
-                <p class="text-sm">Visual models and clear specifications eliminate ambiguity between stakeholders and technical teams.</p>
-              </div>
-              <div>
-                <h4 class="font-semibold text-primary mb-2">Delivers Results</h4>
-                <p class="text-sm">Systematic validation ensures measurable outcomes that align with original objectives.</p>
+        <!-- Phase 2: Model -->
+        <div class="mb-12 card solid-card no-hover border-2 border-base-content/20 shadow-brutal-sm p-8">
+          <div class="flex items-start gap-6">
+            <div class="bg-primary text-primary-content w-14 h-14 rounded-lg flex items-center justify-center text-2xl font-bold flex-shrink-0">
+              2
+            </div>
+            <div class="flex-1">
+              <h3 class="text-2xl font-bold mb-4">Functional Decomposition</h3>
+              <p class="mb-4 opacity-80">
+                Transform user needs into <strong>functional system requirements</strong>—still technology-agnostic at this stage. 
+                Model the system's behavior through flows, sequences, and structural decomposition.
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 class="font-semibold text-primary mb-2">Key Activities</h4>
+                  <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li>Functional flow analysis</li>
+                    <li>Sequence modeling (interactions)</li>
+                    <li>Block decomposition (structure)</li>
+                    <li>Interface identification</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-primary mb-2">SysML Techniques</h4>
+                  <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li>Activity Diagrams (functional flows)</li>
+                    <li>Sequence Diagrams (interactions)</li>
+                    <li>Block Definition Diagrams (structure)</li>
+                    <li>Internal Block Diagrams (interfaces)</li>
+                  </ul>
+                </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Phase 3: Specify -->
+        <div class="mb-12 card solid-card no-hover border-2 border-base-content/20 shadow-brutal-sm p-8">
+          <div class="flex items-start gap-6">
+            <div class="bg-primary text-primary-content w-14 h-14 rounded-lg flex items-center justify-center text-2xl font-bold flex-shrink-0">
+              3
+            </div>
+            <div class="flex-1">
+              <h3 class="text-2xl font-bold mb-4">Behavioral Specification</h3>
+              <p class="mb-4 opacity-80">
+                Derive <strong>testable behavioral requirements</strong> using AI-assisted workflows. This phase bridges 
+                the gap between abstract functional requirements and concrete, executable specifications.
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 class="font-semibold text-primary mb-2">Key Activities</h4>
+                  <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li>AI-assisted requirement derivation</li>
+                    <li>Behavior-Driven Development (BDD) scenarios</li>
+                    <li>Acceptance criteria formalization</li>
+                    <li>Traceability matrix creation</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-accent mb-2">AI Enhancement</h4>
+                  <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li>Automated scenario generation from models</li>
+                    <li>Gap analysis for missing requirements</li>
+                    <li>Consistency checking across specs</li>
+                    <li>Natural language to Gherkin translation</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 4: Build -->
+        <div class="mb-12 card solid-card no-hover border-2 border-base-content/20 shadow-brutal-sm p-8">
+          <div class="flex items-start gap-6">
+            <div class="bg-primary text-primary-content w-14 h-14 rounded-lg flex items-center justify-center text-2xl font-bold flex-shrink-0">
+              4
+            </div>
+            <div class="flex-1">
+              <h3 class="text-2xl font-bold mb-4">AI-Assisted Implementation</h3>
+              <p class="mb-4 opacity-80">
+                With rigorous specifications in place, implementation becomes <strong>guided and verifiable</strong>. 
+                AI agents implement against the behavioral specs, with human oversight ensuring intent is preserved.
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 class="font-semibold text-primary mb-2">Key Activities</h4>
+                  <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li>Spec-driven implementation</li>
+                    <li>Continuous integration testing</li>
+                    <li>Incremental validation</li>
+                    <li>Documentation generation</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-accent mb-2">AI Enhancement</h4>
+                  <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li>Code generation from BDD scenarios</li>
+                    <li>Test stub scaffolding</li>
+                    <li>Implementation review against specs</li>
+                    <li>Refactoring suggestions</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 5: Verify -->
+        <div class="mb-12 card solid-card no-hover border-2 border-base-content/20 shadow-brutal-sm p-8">
+          <div class="flex items-start gap-6">
+            <div class="bg-primary text-primary-content w-14 h-14 rounded-lg flex items-center justify-center text-2xl font-bold flex-shrink-0">
+              5
+            </div>
+            <div class="flex-1">
+              <h3 class="text-2xl font-bold mb-4">End-to-End Verification</h3>
+              <p class="mb-4 opacity-80">
+                Validate that implementation <strong>fulfills the original intent</strong>—not just passes tests. 
+                AI reviews test coverage against requirements and identifies gaps in the traceability chain.
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 class="font-semibold text-primary mb-2">Key Activities</h4>
+                  <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li>E2E test execution</li>
+                    <li>Traceability verification</li>
+                    <li>Intent-vs-implementation review</li>
+                    <li>Gap analysis & feedback loop</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-accent mb-2">AI Enhancement</h4>
+                  <ul class="list-disc list-inside space-y-1 text-sm">
+                    <li>Coverage analysis vs requirements</li>
+                    <li>Intent preservation validation</li>
+                    <li>Regression identification</li>
+                    <li>Feedback for next iteration</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Why This Works Section -->
+      <div class="mb-20">
+        <h2 class="text-3xl font-bold text-center mb-12">WHY THIS APPROACH WORKS</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="card solid-card no-hover border-2 border-base-content/20 shadow-brutal-sm p-6">
+            <div class="text-4xl mb-4">🔗</div>
+            <h3 class="text-xl font-bold mb-3 text-primary">Complete Traceability</h3>
+            <p class="text-sm">
+              Every line of code traces back through behavioral specs, functional requirements, 
+              and user needs. Nothing is built without a clear "why."
+            </p>
+          </div>
+          
+          <div class="card solid-card no-hover border-2 border-base-content/20 shadow-brutal-sm p-6">
+            <div class="text-4xl mb-4">🎯</div>
+            <h3 class="text-xl font-bold mb-3 text-primary">Technology Agnostic</h3>
+            <p class="text-sm">
+              Functional decomposition happens before technology selection. This clarifies 
+              requirements and prevents implementation from driving architecture.
+            </p>
+          </div>
+          
+          <div class="card solid-card no-hover border-2 border-base-content/20 shadow-brutal-sm p-6">
+            <div class="text-4xl mb-4">🤖</div>
+            <h3 class="text-xl font-bold mb-3 text-primary">AI-Accelerated</h3>
+            <p class="text-sm">
+              AI handles the tedious specification work—generating scenarios, checking consistency, 
+              scaffolding tests—while humans maintain control over intent and direction.
+            </p>
           </div>
         </div>
       </div>
@@ -145,12 +304,10 @@ import PageHeader from '../components/PageHeader.astro';
         <h2 class="text-4xl font-bold mb-4">
           READY TO BUILD
           <br />
-          <span class="text-accent">SOMETHING</span>
-          <br />
-          GREAT?
+          <span class="text-accent">WITH RIGOR?</span>
         </h2>
         <p class="text-lg mb-8 max-w-2xl mx-auto">
-          Let's discuss how systematic product development can deliver measurable results for your next project.
+          Let's discuss how systematic, AI-enhanced product development can bring clarity and confidence to your next project.
         </p>
         <a href="/contact" class="btn btn-primary btn-lg">
           🚀 START A CONVERSATION
