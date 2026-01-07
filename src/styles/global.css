@@ -409,6 +409,11 @@
             z-index: 100; /* Ensure navbar stays above scrolling content */
         }
         
+        /* Dropdown menus need solid backgrounds to be readable */
+        .dropdown-content {
+            background-color: var(--color-base-100) !important;
+        }
+        
         /* Base section - transparent by default, shows graph paper, handles vertical spacing */
         section {
             background: transparent !important;

@@ -101,7 +101,7 @@ const desktopLinkClass = (href: string) =>
 					<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
 				</svg>
 			</div>
-			<ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 bg-base-100 rounded-box w-52 border-2 border-[var(--nr-border-color)] shadow-[4px_4px_0px_0px_var(--nr-shadow-color)]">
+			<ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 bg-base-100 rounded-box w-52 border-2 border-base-content shadow-brutal-sm">
 				{allNavItems.map((item: NavItem) => (
 					<li>
 						<a href={item.href} class={mobileLinkClass(item.href)}>{item.label}</a>
