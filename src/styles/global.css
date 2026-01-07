@@ -1283,11 +1283,11 @@
         }
         
         ::view-transition-old(page-header) {
-            animation: page-header-fade-out 0.15s ease-out forwards;
+            animation: page-header-fade-out 0.1s ease-out forwards;
         }
         
         ::view-transition-new(page-header) {
-            animation: page-header-fade-in 0.15s ease-in 0.1s forwards;
+            animation: page-header-fade-in 0.1s ease-in 0.05s forwards;
             opacity: 0;
         }
         
@@ -1299,22 +1299,6 @@
         @keyframes page-header-fade-in {
             from { opacity: 0; transform: none; }
             to { opacity: 1; transform: none; }
-        }
-
-        /* Page subtitle - stays static when matched across pages
-           Dynamic transition names like page-subtitle-projects will
-           persist without animation when navigating between pages
-           that share the same subtitle (e.g., work category pages) */
-        [class*="::view-transition-group(page-subtitle-"] {
-            animation: none !important;
-        }
-        
-        ::view-transition-old(page-subtitle-projects),
-        ::view-transition-new(page-subtitle-projects),
-        ::view-transition-old(page-subtitle-portfolio),
-        ::view-transition-new(page-subtitle-portfolio) {
-            animation: none !important;
-            mix-blend-mode: normal;
         }
 
         /* Work category nav - stays static during transitions (persistent element)
