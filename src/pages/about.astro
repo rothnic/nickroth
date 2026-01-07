@@ -6,13 +6,17 @@ import avatarPlaceholder from '../assets/images/avatar-placeholder.svg';
 <BaseLayout title="About - Nick Roth" description="Learn more about Nick Roth - Product & Systems Director">
   <main class="py-20">
     <div class="container mx-auto px-4 max-w-6xl">
-      <div class="text-center mb-16">
+      <div class="text-center mb-16" transition:name="page-header">
         <div class="avatar mb-8">
           <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
             <img src={avatarPlaceholder.src} width={128} height={128} alt="Nick Roth" loading="lazy" />
           </div>
         </div>
-        <h1 class="text-4xl sm:text-5xl font-black mb-4">About Nick Roth</h1>
+        <h1 class="text-4xl sm:text-5xl font-black mb-4">
+          ABOUT
+          <br />
+          <span class="text-primary">NICK ROTH</span>
+        </h1>
         <p class="text-xl opacity-75 max-w-3xl mx-auto">
           Product & Systems Director specializing in automation, AI integration, and platform modernization. 
           Systematic solutions through objective-first discovery and measurable outcomes.
