@@ -66,8 +66,8 @@ test.describe('Visual Regression - Components', () => {
     await page.goto('/work');
     await page.waitForLoadState('networkidle');
     
-    // Use nav element with specific classes
-    const filter = page.locator('nav.flex.justify-center').first();
+    // Use stable transition attribute
+    const filter = page.locator('nav[transition\\:name="work-category-nav"]').first();
     await expect(filter).toHaveScreenshot('work-category-filter.png');
   });
 });

@@ -23,10 +23,10 @@ function getCategoryUrl(cat: string): string {
 const isAllActive = activeCategory === null;
 ---
 
-<nav class="flex flex-nowrap justify-center gap-2 mb-12 min-w-0 overflow-x-auto pb-2" transition:name="work-category-nav">
+<nav class="flex flex-nowrap justify-start sm:justify-center gap-2 mb-8 sm:mb-12 min-w-0 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x" transition:name="work-category-nav">
   <a 
     href="/work"
-    class={`btn btn-sm font-semibold text-xs uppercase tracking-wider ${isAllActive ? 'btn-accent' : 'btn-outline'}`}
+    class={`btn btn-sm font-semibold text-xs uppercase tracking-wider flex-shrink-0 snap-start ${isAllActive ? 'btn-accent' : 'btn-outline'}`}
     aria-current={isAllActive ? 'page' : undefined}
   >
     ALL PROJECTS
@@ -34,7 +34,7 @@ const isAllActive = activeCategory === null;
   {categories.map((category) => (
     <a 
       href={getCategoryUrl(category)}
-      class={`btn btn-sm font-semibold text-xs uppercase tracking-wider ${category === activeCategory ? 'btn-accent' : 'btn-outline'}`}
+      class={`btn btn-sm font-semibold text-xs uppercase tracking-wider flex-shrink-0 snap-start ${category === activeCategory ? 'btn-accent' : 'btn-outline'}`}
       aria-current={category === activeCategory ? 'page' : undefined}
     >
       {category}

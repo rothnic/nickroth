@@ -84,7 +84,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
 <!-- Card Mode -->
 {mode === "card" && (
   <div
-    class="card bg-base-100 border-2 border-base-300 overflow-hidden relative mb-12 h-full transition-shadow shadow-xs hover:shadow-md"
+    class="card bg-base-100 border-2 border-base-300 overflow-hidden relative mb-6 sm:mb-12 h-full transition-shadow shadow-xs hover:shadow-md"
     data-work-card={true}
     data-category={category}
     data-card-id={slug}
@@ -99,7 +99,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
       data-astro-prefetch
     />
     
-    <figure transition:name={`work-img-${slug}`} class="relative w-full h-32 sm:h-48 max-h-32 overflow-hidden">
+    <figure transition:name={`work-img-${slug}`} class="relative w-full h-40 sm:h-48 overflow-hidden">
       {image && (
         <Image
           src={image}
@@ -121,21 +121,21 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
       )}
     </figure>
     
-    <div transition:name={`work-body-${slug}`} class="card-body">
-      <h2 transition:name={`work-title-${slug}`} class="card-title text-sm sm:text-lg leading-tight">
+    <div transition:name={`work-body-${slug}`} class="card-body p-4 sm:p-6 gap-2 items-start text-left">
+      <h2 transition:name={`work-title-${slug}`} class="card-title text-base sm:text-lg leading-tight w-full">
         {title}
       </h2>
       
       {impact && (
-        <div transition:name={`work-impact-${slug}`} class="mb-4">
-          <p class="font-bold text-primary uppercase leading-tight text-xs">
+        <div transition:name={`work-impact-${slug}`} class="mb-1 w-full">
+          <p class="font-bold text-primary uppercase leading-tight text-[10px] sm:text-xs line-clamp-2">
             {impact}
           </p>
         </div>
       )}
       
       {tags.length > 0 && (
-        <div class="card-actions">
+        <div class="card-actions w-full mt-auto">
           <div class="flex flex-wrap gap-1">
             {tags.slice(0, 3).map((tag) => (
               <span class="badge badge-outline badge-xs">
