@@ -1295,6 +1295,51 @@
             to { opacity: 1; transform: none; }
         }
 
+        /* Work category nav - use fade transition to prevent wrapping during morphs */
+        ::view-transition-group(work-category-nav) {
+            /* Prevent any size/position morphing */
+            animation: none !important;
+        }
+        
+        ::view-transition-old(work-category-nav),
+        ::view-transition-new(work-category-nav) {
+            /* Prevent any transform animations */
+            animation: none;
+            mix-blend-mode: normal;
+        }
+        
+        ::view-transition-old(work-category-nav) {
+            animation: category-nav-fade-out 0.12s ease-out forwards;
+        }
+        
+        ::view-transition-new(work-category-nav) {
+            animation: category-nav-fade-in 0.12s ease-in 0.08s forwards;
+            opacity: 0;
+        }
+        
+        @keyframes category-nav-fade-out {
+            from { opacity: 1; transform: none; }
+            to { opacity: 0; transform: none; }
+        }
+        
+        @keyframes category-nav-fade-in {
+            from { opacity: 0; transform: none; }
+            to { opacity: 1; transform: none; }
+        }
+
+        /* Preserve cursor pointer on all interactive elements during view transitions */
+        ::view-transition-old(*),
+        ::view-transition-new(*),
+        ::view-transition-image-pair(*) {
+            cursor: inherit;
+        }
+        
+        /* Ensure navbar and buttons maintain pointer during transitions */
+        ::view-transition-group(nav-active-bg),
+        ::view-transition-group(work-category-nav) {
+            cursor: pointer;
+        }
+
         /* Ensure text in nav buttons stays above the transitioning background */
         .navbar .btn-group .btn {
             z-index: 1;

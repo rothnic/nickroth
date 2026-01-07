@@ -23,7 +23,7 @@ function getCategoryUrl(cat: string): string {
 const isAllActive = activeCategory === null;
 ---
 
-<nav class="flex flex-wrap justify-center gap-2 mb-12" transition:name="work-category-nav">
+<nav class="flex flex-wrap justify-center gap-2 mb-12 min-w-0" transition:name="work-category-nav">
   <a 
     href="/work"
     class={`btn btn-sm font-semibold text-xs uppercase tracking-wider ${isAllActive ? 'btn-accent' : 'btn-outline'}`}
