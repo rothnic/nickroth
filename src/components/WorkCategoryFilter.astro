@@ -56,6 +56,14 @@ const isAllActive = activeCategory === null;
     const nav = document.getElementById('work-category-nav');
     if (!nav) return;
 
+    // Scroll active category into view
+    const activeLink = nav.querySelector('.btn-accent');
+    if (activeLink) {
+      // Use instant behavior for initial load to prevent jumpiness, or smooth if preferred
+      // For layout shifts, instant is often better.
+      activeLink.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+
     // Convert vertical scroll to horizontal
     nav.addEventListener('wheel', (e) => {
       if (e.deltaY !== 0) {
