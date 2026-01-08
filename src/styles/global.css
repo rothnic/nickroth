@@ -1041,6 +1041,13 @@
             color: oklch(0.35 0 0);
         }
         
+        /* Bold text at start of list items (list headings) */
+        .prose-content li strong:first-child,
+        .prose-content li > strong {
+            color: oklch(0.2 0 0);
+            font-weight: 700;
+        }
+        
         /* Remove margin from last item in list */
         .prose-content ul li:last-child {
             margin-bottom: 0;
@@ -1154,10 +1161,12 @@
         /* Tables */
         .prose-content table {
             width: 100%;
-            margin: 2rem 0;
+            margin: 1.5rem 0;
             border-collapse: collapse;
             font-size: 0.9375rem;
             border: 3px solid oklch(0.2 0 0);
+            display: block;
+            overflow-x: auto;
         }
         
         .prose-content thead {
@@ -1165,19 +1174,26 @@
         }
         
         .prose-content th {
-            padding: 0.875rem 1rem;
+            padding: 0.75rem 1rem;
             text-align: left;
             font-weight: 700;
             color: white;
             text-transform: uppercase;
-            font-size: 0.75rem;
+            font-size: 0.8125rem;
             letter-spacing: 0.05em;
+            white-space: nowrap;
         }
         
         .prose-content td {
-            padding: 0.875rem 1rem;
+            padding: 0.75rem 1rem;
             border-top: 1px solid oklch(0.9 0.01 280);
             color: oklch(0.35 0 0);
+        }
+        
+        /* First column: prevent wrapping for labels */
+        .prose-content td:first-child {
+            white-space: nowrap;
+            font-weight: 500;
         }
         
         .prose-content tbody tr:nth-child(even) {
