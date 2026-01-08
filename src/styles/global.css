@@ -687,14 +687,45 @@
            This class prevents any transform/shadow changes on hover while preserving existing transforms
         */
         .no-hover {
-            transition: none;
-            
             &:hover {
-                transform: inherit;
-                box-shadow: inherit;
-                translate: inherit;
-                scale: inherit;
-                rotate: inherit;
+                transform: translate(0, 0) rotate(0deg) !important;
+                box-shadow: var(--btn-shadow) !important;
+            }
+        }
+        
+        /* Stable hover lift - provides visual lift effect without shifting siblings
+           Only uses transform (which doesn't affect layout) and shadow changes
+           
+           States:
+           - Default: Normal position with standard shadow (8px)
+           - Hover (desktop): Lifts up (-2px, -2px) with larger shadow (10px)
+           - Active while hovering (desktop): Returns to resting (0, 0)
+           - Active without hover (mobile): Presses down (+2px, +2px) with smaller shadow
+           
+           Note: No CSS transition to prevent layout shift during state changes.
+           The instant state change feels snappy and intentional for neobrutalism.
+        */
+        .hover-lift-stable {
+            &:hover {
+                transform: translate(-2px, -2px) !important;
+                box-shadow: 10px 10px 0px 0px var(--nr-shadow-color) !important;
+            }
+            
+            /* Desktop: Return to resting when clicking while hovering */
+            &:hover:active {
+                transform: translate(0, 0) !important;
+                box-shadow: 8px 8px 0px 0px var(--nr-shadow-color) !important;
+            }
+            
+            /* Mobile/touch: Press down from resting position for tactile feedback */
+            &:active:not(:hover) {
+                transform: translate(2px, 2px) !important;
+                box-shadow: 4px 4px 0px 0px var(--nr-shadow-color) !important;
+            }
+            
+            &:focus-visible {
+                outline: 3px solid var(--color-primary);
+                outline-offset: 2px;
             }
         }
         

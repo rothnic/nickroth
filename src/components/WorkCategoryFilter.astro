@@ -1,4 +1,46 @@
 ---
+/**
+ * WorkCategoryFilter.astro
+ * 
+ * A horizontally-scrollable filter bar for work project categories.
+ * 
+ * ## Key Features:
+ * - Full viewport width container with edge-to-edge scroll
+ * - Dynamic fade effects on both edges when content overflows
+ * - Smooth hover effects without layout shifts
+ * - Proper Astro View Transition integration
+ * 
+ * ## View Transition Patterns (Important!):
+ * 
+ * When using Astro View Transitions with elements that need immediate visibility
+ * (like these fade overlays), you must handle the transition lifecycle carefully:
+ * 
+ * 1. **transition:animate="none"** - Prevents Astro from animating the element
+ *    during page transitions. Without this, new elements fade in by default.
+ * 
+ * 2. **transition:name="unique-name"** - Gives the element a stable identity
+ *    across page navigations. Elements with matching names "morph" instead of
+ *    fading in/out.
+ * 
+ * 3. **astro:after-swap event** - Fires AFTER DOM swap but BEFORE the page
+ *    becomes visible. Use this to set initial state for elements that need
+ *    to appear immediately (not astro:page-load which fires after visible).
+ * 
+ * ## Layout Stability Patterns:
+ * 
+ * 1. **hover-lift-stable class** - Provides visual hover feedback using only
+ *    CSS transform (which doesn't affect document flow), preventing layout
+ *    shifts to sibling elements.
+ * 
+ * 2. **w-screen left-1/2 -translate-x-1/2** - CSS pattern to break an element
+ *    out of its container to full viewport width.
+ * 
+ * 3. **scroll-px-* classes** - Tailwind's scroll-padding utilities ensure
+ *    snap-scrolling respects container padding.
+ * 
+ * @see https://docs.astro.build/en/guides/view-transitions/#lifecycle-events
+ * @see /docs/patterns/view-transitions.md
+ */
 export interface Props {
   /** All available categories (sorted alphabetically) */
   categories: string[];
@@ -23,15 +65,50 @@ function getCategoryUrl(cat: string): string {
 const isAllActive = activeCategory === null;
 ---
 
-<div class="relative -mx-2 sm:mx-0 group mb-8 sm:mb-12">
+<!-- 
+  FILTER BAR CONTAINER
+  ====================
+  Uses w-screen + left-1/2 + -translate-x-1/2 to break out of parent container
+  and span full viewport width. This allows fade effects to reach viewport edges.
+-->
+<div 
+  class="relative mb-8 sm:mb-12 w-screen left-1/2 -translate-x-1/2" 
+  id="work-category-filter-container"
+>
+  <!-- 
+    LEFT FADE OVERLAY
+    =================
+    - Starts hidden (opacity-0), shown via JS when scrolled past start
+    - transition:name prevents default fade-in animation during page nav
+    - transition:animate="none" ensures instant appearance
+  -->
+  <div 
+    id="filter-fade-left"
+    class="absolute left-0 h-12 top-1/2 -translate-y-1/2 w-12 bg-gradient-to-r from-base-100 to-transparent pointer-events-none z-10 opacity-0"
+    transition:name="filter-fade-left"
+    transition:animate="none"
+  ></div>
+  
+  <!-- 
+    SCROLLABLE NAV
+    ==============
+    - gap-3: Extra gap prevents neobrutalist shadow overlaps
+    - scroll-px-*: Ensures snap-scroll respects padding
+    - scrollbar-hide: Custom utility to hide scrollbar
+    - hover-lift-stable: Custom class for layout-stable hover effects
+  -->
   <nav 
-    class="flex flex-nowrap justify-start sm:justify-center gap-2 min-w-0 overflow-x-auto px-4 sm:px-0 py-2 scrollbar-hide snap-x snap-mandatory overscroll-contain" 
+    class="
+      flex flex-nowrap gap-3 min-w-0 overflow-x-auto py-2 scrollbar-hide overscroll-contain
+      justify-start px-2 scroll-px-2
+      sm:px-4 sm:scroll-px-4
+    " 
     transition:name="work-category-nav"
     id="work-category-nav"
   >
     <a 
       href="/work"
-      class={`btn btn-sm font-semibold text-xs uppercase tracking-wider flex-shrink-0 snap-start ${isAllActive ? 'btn-accent' : 'btn-outline'}`}
+      class={`btn btn-sm font-semibold text-xs uppercase tracking-wider flex-shrink-0 hover-lift-stable ${isAllActive ? 'btn-accent' : 'btn-outline'}`}
       aria-current={isAllActive ? 'page' : undefined}
     >
       ALL PROJECTS
@@ -39,7 +116,7 @@ const isAllActive = activeCategory === null;
     {categories.map((category) => (
       <a 
         href={getCategoryUrl(category)}
-        class={`btn btn-sm font-semibold text-xs uppercase tracking-wider flex-shrink-0 snap-start ${category === activeCategory ? 'btn-accent' : 'btn-outline'}`}
+        class={`btn btn-sm font-semibold text-xs uppercase tracking-wider flex-shrink-0 hover-lift-stable ${category === activeCategory ? 'btn-accent' : 'btn-outline'}`}
         aria-current={category === activeCategory ? 'page' : undefined}
       >
         {category}
@@ -47,37 +124,247 @@ const isAllActive = activeCategory === null;
     ))}
   </nav>
   
-  <!-- Right edge fade (mobile only) -->
-  <div class="absolute right-0 h-8 top-1/2 -translate-y-1/2 w-12 bg-gradient-to-l from-base-100 to-transparent pointer-events-none sm:hidden"></div>
+  <!-- 
+    RIGHT FADE OVERLAY
+    ==================
+    - Starts visible (opacity-100) since there's usually overflow
+    - JS updates based on actual scroll state
+  -->
+  <div 
+    id="filter-fade-right"
+    class="absolute right-0 h-12 top-1/2 -translate-y-1/2 w-12 bg-gradient-to-l from-base-100 to-transparent pointer-events-none z-10 opacity-100"
+    transition:name="filter-fade-right"
+    transition:animate="none"
+  ></div>
 </div>
 
 <script>
-  function setupHorizontalScroll() {
+  /**
+   * Sets up the filter bar's interactive features:
+   * - Fade visibility based on scroll position
+   * - Auto-scroll active filter into view
+   * - Horizontal scroll from vertical mouse wheel
+   * - Resize handling
+   * 
+   * @param useSmooth - If true, scrolls to active filter with smooth animation
+   */
+  function setupFilterBar(useSmooth = false) {
     const nav = document.getElementById('work-category-nav');
-    if (!nav) return;
+    const container = document.getElementById('work-category-filter-container');
+    const fadeLeft = document.getElementById('filter-fade-left');
+    const fadeRight = document.getElementById('filter-fade-right');
+    
+    if (!nav || !container || !fadeLeft || !fadeRight) return;
 
-    // Scroll active category into view
-    const activeLink = nav.querySelector('.btn-accent');
-    if (activeLink) {
-      // Use instant behavior for initial load to prevent jumpiness, or smooth if preferred
-      // For layout shifts, instant is often better.
-      activeLink.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    /**
+     * Updates fade overlay visibility based on current scroll position.
+     * - Left fade: visible when scrolled past start
+     * - Right fade: visible when more content to scroll
+     * - Both hidden when no overflow
+     */
+    function updateFades() {
+      const scrollLeft = nav.scrollLeft;
+      const scrollWidth = nav.scrollWidth;
+      const clientWidth = nav.clientWidth;
+      const maxScroll = scrollWidth - clientWidth;
+      
+      // No overflow - hide both fades
+      if (maxScroll <= 0) {
+        fadeLeft.style.opacity = '0';
+        fadeRight.style.opacity = '0';
+        return;
+      }
+      
+      // Show left fade if scrolled past the start (5px threshold)
+      fadeLeft.style.opacity = scrollLeft > 5 ? '1' : '0';
+      
+      // Show right fade if there's more content to scroll
+      fadeRight.style.opacity = scrollLeft < maxScroll - 5 ? '1' : '0';
     }
 
-    // Convert vertical scroll to horizontal
+    /**
+     * Calculates scroll position for the filter bar.
+     * 
+     * Math:
+     * - anchorPosition = first filter's offsetLeft (where ALL PROJECTS sits)
+     * - targetScroll = activeFilterOffset - anchorPosition - peekOffset
+     * - Clamp to [0, maxScroll]
+     * - Skip if within threshold of current position
+     * 
+     * @see /src/utils/filterScrollUtils.ts for tested standalone version
+     */
+    function scrollActiveIntoView(smooth = true) {
+      const activeLink = nav.querySelector('.btn-accent') as HTMLElement;
+      const firstFilter = nav.querySelector('a') as HTMLElement;
+      if (!activeLink || !firstFilter) return;
+      
+      // Constants
+      const PEEK_OFFSET = 30;  // Show ~30px of previous filter
+      const THRESHOLD = 10;   // Skip scrolling if within this many pixels
+      
+      // Measurements
+      const maxScroll = Math.max(0, nav.scrollWidth - nav.clientWidth);
+      const currentScroll = nav.scrollLeft;
+      const anchorPosition = firstFilter.offsetLeft;
+      const activePosition = activeLink.offsetLeft;
+      
+      // No overflow - nothing to scroll
+      if (maxScroll === 0) {
+        requestAnimationFrame(updateFades);
+        return;
+      }
+      
+      // Special case: first filter is active - scroll to start
+      if (activePosition <= anchorPosition) {
+        if (currentScroll < THRESHOLD) {
+          // Already at start, skip
+          requestAnimationFrame(updateFades);
+          return;
+        }
+        nav.scrollTo({ left: 0, behavior: smooth ? 'smooth' : 'instant' });
+        requestAnimationFrame(updateFades);
+        return;
+      }
+      
+      // Calculate target: position active filter at anchor, with peek offset
+      let targetScroll = activePosition - anchorPosition - PEEK_OFFSET;
+      
+      // Clamp to valid range
+      targetScroll = Math.max(0, Math.min(targetScroll, maxScroll));
+      
+      // Skip if already at or near target position (increased threshold for smoother UX)
+      const difference = Math.abs(currentScroll - targetScroll);
+      
+      // Special case: if both are at or near maxScroll, skip (no more room to scroll)
+      const bothAtMax = currentScroll >= maxScroll - 5 && targetScroll >= maxScroll - 5;
+      
+      if (difference < THRESHOLD || bothAtMax) {
+        requestAnimationFrame(updateFades);
+        return;
+      }
+      
+      // Apply scroll
+      nav.scrollTo({
+        left: targetScroll,
+        behavior: smooth ? 'smooth' : 'instant'
+      });
+      
+      requestAnimationFrame(updateFades);
+    }
+
+    // Initial setup - set fades and scroll to active
+    updateFades();
+    scrollActiveIntoView(useSmooth);
+
+    // Update fades on scroll
+    nav.addEventListener('scroll', updateFades, { passive: true });
+
+    // Re-check on resize (debounced to 100ms)
+    let resizeTimeout: ReturnType<typeof setTimeout>;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        scrollActiveIntoView(false);
+        updateFades();
+      }, 100);
+    });
+
+    /**
+     * Converts vertical mouse wheel to horizontal scroll.
+     * Capped at 80px per event for smoother scrolling on trackpads.
+     */
     nav.addEventListener('wheel', (e) => {
       if (e.deltaY !== 0) {
-        // If scrolling vertically, scroll horizontally instead
-        // But only if we are at a breakpoint where it scrolls (mobile)
-        if (window.innerWidth < 640) {
-           e.preventDefault();
-           nav.scrollLeft += e.deltaY;
-        }
+        e.preventDefault();
+        const scrollAmount = Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY), 80);
+        nav.scrollLeft += scrollAmount;
       }
     }, { passive: false });
   }
 
-  // Run on initial load and after swaps
-  setupHorizontalScroll();
-  document.addEventListener('astro:page-load', setupHorizontalScroll);
+  // === ASTRO VIEW TRANSITION LIFECYCLE ===
+  // 
+  // Event order during navigation:
+  // 1. astro:before-preparation - Before new page fetched
+  // 2. astro:after-preparation - New page loaded, before swap
+  // 3. astro:before-swap - Just before DOM replacement
+  // 4. astro:after-swap - DOM replaced, BEFORE visible to user ← Fades set here
+  // 5. astro:page-load - Page fully loaded and visible ← Smooth scroll here (if filter changed)
+  //
+  // Strategy:
+  // - Use sessionStorage to track previous filter (survives view transitions)
+  // - astro:after-swap: Set fade visibility instantly (before page visible)
+  // - astro:page-load: Smooth scroll only if active filter changed
+  
+  const PREV_FILTER_KEY = 'workCategoryFilterPrevActive';
+  const SCROLL_POSITION_KEY = 'workCategoryFilterScrollPos';
+  
+  // Get current active filter href
+  function getActiveFilterHref(): string | null {
+    return document.querySelector('#work-category-nav .btn-accent')?.getAttribute('href') || null;
+  }
+  
+  // Save current scroll position before starting navigation
+  function saveScrollPosition() {
+    const nav = document.getElementById('work-category-nav');
+    if (nav) {
+      sessionStorage.setItem(SCROLL_POSITION_KEY, String(nav.scrollLeft));
+    }
+  }
+  
+  // Initial page load - instant scroll, set fades
+  setupFilterBar(false);
+  sessionStorage.setItem(PREV_FILTER_KEY, getActiveFilterHref() || '');
+  
+  // Before navigation starts - save current scroll position
+  document.addEventListener('astro:before-preparation', saveScrollPosition);
+  
+  // Also save on link click (for browsers that don't fire before-preparation)
+  document.getElementById('work-category-nav')?.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).tagName === 'A') {
+      saveScrollPosition();
+    }
+  });
+  
+  // After view transition swap - restore scroll position instantly (before page visible)
+  document.addEventListener('astro:after-swap', () => {
+    const nav = document.getElementById('work-category-nav');
+    const fadeLeft = document.getElementById('filter-fade-left');
+    const fadeRight = document.getElementById('filter-fade-right');
+    
+    if (!nav || !fadeLeft || !fadeRight) return;
+    
+    // Restore previous scroll position to prevent "jump from 0" animation
+    const savedScroll = sessionStorage.getItem(SCROLL_POSITION_KEY);
+    if (savedScroll !== null) {
+      nav.scrollLeft = parseInt(savedScroll, 10);
+    }
+    
+    // Update fades based on restored scroll position
+    const scrollLeft = nav.scrollLeft;
+    const maxScroll = nav.scrollWidth - nav.clientWidth;
+    
+    if (maxScroll <= 0) {
+      fadeLeft.style.opacity = '0';
+      fadeRight.style.opacity = '0';
+    } else {
+      fadeLeft.style.opacity = scrollLeft > 5 ? '1' : '0';
+      fadeRight.style.opacity = scrollLeft < maxScroll - 5 ? '1' : '0';
+    }
+  });
+  
+  // After page is visible - smooth scroll to active filter if changed
+  document.addEventListener('astro:page-load', () => {
+    requestAnimationFrame(() => {
+      const currentActiveHref = getActiveFilterHref();
+      const previousActiveHref = sessionStorage.getItem(PREV_FILTER_KEY);
+      
+      // Only animate scroll if the active filter actually changed
+      const filterChanged = currentActiveHref !== previousActiveHref;
+      setupFilterBar(filterChanged); // true = smooth scroll, false = instant
+      
+      // Update stored value
+      sessionStorage.setItem(PREV_FILTER_KEY, currentActiveHref || '');
+    });
+  });
 </script>

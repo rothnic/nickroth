@@ -53,6 +53,7 @@ _Add additional entries here whenever new instruction files are added under `.gi
 
 ### Guides
 - [`docs/astro/view-transitions.md`](docs/astro/view-transitions.md) – Enabling and customizing view transitions
+- [`docs/patterns/view-transitions.md`](docs/patterns/view-transitions.md) – **View transition patterns** (instant visibility, lifecycle events, layout stability)
 - [`docs/astro/auditing.md`](docs/astro/auditing.md) – Running Lighthouse audits and manual QA checklists
 - [`docs/project/tooling-roadmap.md`](docs/project/tooling-roadmap.md) – Tooling alignment plan covering Volta, pnpm, Biome, tests, and CI/CD
 - [`docs/README.md`](docs/README.md) – Complete documentation index

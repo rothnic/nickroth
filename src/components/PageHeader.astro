@@ -18,16 +18,24 @@ const titleSlug = slugify(title);
 const subtitleSlug = slugify(subtitle);
 ---
 
-<div class="text-center mb-16" transition:name="page-header-container">
+<div class="text-center mb-8" transition:name="page-header-container">
   <!-- Optional slot for content above heading (e.g., avatar) -->
   <slot name="above" />
   
-  <!-- Fluid typography: clamp(min, preferred, max) for smooth resizing -->
-  <h1 class="font-black mb-4 leading-none" style="font-size: clamp(2.25rem, 5vw + 1rem, 3rem);">
-    <span class="block" transition:name={`header-title-${titleSlug}`}>{title.toUpperCase()}</span>
-    <span class="block text-primary" transition:name={`header-subtitle-${subtitleSlug}`}>{subtitle.toUpperCase()}</span>
-  </h1>
-  <h2 class="font-normal opacity-75 max-w-3xl mx-auto" style="font-size: clamp(1rem, 1vw + 0.75rem, 1.125rem);">
+  <!-- Fixed height container for h1 - SAME height on all pages for consistent layout -->
+  <!-- Height: 7rem mobile (fits 3-line titles), 5rem desktop (fits 2-line titles) -->
+  <div class="h-[7rem] sm:h-[5rem] flex flex-col justify-center mb-6">
+    <!-- Fluid typography: clamp(min, preferred, max) for smooth resizing -->
+    <h1 class="font-black leading-tight" style="font-size: clamp(2.25rem, 5vw + 1rem, 3rem);">
+      <span class="block" transition:name={`header-title-${titleSlug}`}>{title.toUpperCase()}</span>
+      <span class="block text-primary" transition:name={`header-subtitle-${subtitleSlug}`}>{subtitle.toUpperCase()}</span>
+    </h1>
+  </div>
+  <!-- Fixed height for description: exactly 3 lines, truncated with ellipsis if longer -->
+  <h2 
+    class="font-normal opacity-75 max-w-3xl mx-auto h-[4.5rem] line-clamp-3 leading-normal" 
+    style="font-size: clamp(1rem, 1vw + 0.75rem, 1.125rem);"
+  >
     {description}
   </h2>
 </div>
