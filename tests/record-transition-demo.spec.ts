@@ -1,8 +1,8 @@
 /**
- * Record View Transition Demo - Mobile
+ * Record View Transition Demo - Synchronized Timing
  * 
- * Shows labels BEFORE actions so viewer knows what to watch for.
- * Visible cursor, touch scrolling, hamburger menu.
+ * Both recordings use the same timeline of fixed timestamps
+ * to ensure identical duration for side-by-side comparison.
  */
 
 import { test, chromium, type Page } from '@playwright/test';
@@ -14,7 +14,37 @@ const BASE_URL = 'http://localhost:4321';
 const VIEWPORT = { width: 390, height: 844 };
 
 test.describe.configure({ mode: 'serial' });
-test.setTimeout(90000);
+test.setTimeout(120000);
+
+// Timeline timestamps (ms from start)
+// Each action happens at these fixed times in both recordings
+const TIMELINE = {
+  START: 0,
+  SHOW_INTRO: 500,
+  NAV_BACKGROUND_LABEL: 3000,
+  NAV_BACKGROUND_ACTION: 5500,
+  NAV_WORK_LABEL: 9000,
+  NAV_WORK_ACTION: 11500,
+  WORK_PAGE_LABEL: 15000,
+  AI_FILTER_LABEL: 18000,
+  AI_FILTER_ACTION: 20500,
+  MARKETING_LABEL: 24000,
+  MARKETING_ACTION: 27500,
+  MARKETING_RESULT: 30000,
+  ALL_PROJECTS_LABEL: 33000,
+  ALL_PROJECTS_ACTION: 35500,
+  FINAL_LABEL: 39000,
+  END: 42000,
+};
+
+// Wait until specific timestamp from startTime
+async function waitUntil(startTime: number, targetTime: number) {
+  const elapsed = Date.now() - startTime;
+  const remaining = targetTime - elapsed;
+  if (remaining > 0) {
+    await new Promise(resolve => setTimeout(resolve, remaining));
+  }
+}
 
 // Inject visible pink cursor
 async function injectCursor(page: Page) {
@@ -43,12 +73,11 @@ async function injectCursor(page: Page) {
       if (c) c.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
     });
   });
-  // Move cursor to center to trigger the event
   await page.mouse.move(195, 400);
 }
 
-// Show two-line label: title (bold) + description (smaller)
-async function showLabel(page: Page, title: string, description: string, duration: number = 2500) {
+// Show two-line label
+async function showLabel(page: Page, title: string, description: string) {
   await page.evaluate(({ title, description }) => {
     document.getElementById('demo-label')?.remove();
     
@@ -75,45 +104,93 @@ async function showLabel(page: Page, title: string, description: string, duratio
     `;
     document.body.appendChild(label);
   }, { title, description });
+}
+
+/**
+ * Animate cursor smoothly from current position to target.
+ * Uses explicit step-by-step movement with delays for visibility.
+ */
+async function animateCursorTo(page: Page, targetX: number, targetY: number) {
+  // Get current cursor position via page evaluation
+  const currentPos = await page.evaluate(() => {
+    const cursor = document.getElementById('demo-cursor');
+    if (!cursor) return { x: 195, y: 400 };
+    const transform = cursor.style.transform;
+    const match = transform.match(/translate\((\d+(?:\.\d+)?)px,\s*(\d+(?:\.\d+)?)px\)/);
+    if (match) {
+      return { x: parseFloat(match[1]), y: parseFloat(match[2]) };
+    }
+    return { x: 195, y: 400 };
+  });
   
-  await page.waitForTimeout(duration);
-  await page.evaluate(() => document.getElementById('demo-label')?.remove());
+  const startX = currentPos.x;
+  const startY = currentPos.y;
+  const steps = 40; // More steps for smoother animation
+  const stepDelay = 12; // ms between each step
+  
+  for (let i = 1; i <= steps; i++) {
+    const progress = i / steps;
+    // Ease out for natural deceleration
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const x = startX + (targetX - startX) * eased;
+    const y = startY + (targetY - startY) * eased;
+    
+    await page.mouse.move(x, y);
+    if (i < steps) {
+      await page.waitForTimeout(stepDelay);
+    }
+  }
+  
+  // Final pause at destination
+  await page.waitForTimeout(200);
 }
 
-// Move cursor smoothly
-async function moveCursor(page: Page, x: number, y: number) {
-  await page.mouse.move(x, y, { steps: 25 });
-  await page.waitForTimeout(100);
-}
-
-// Click element with cursor movement
+/**
+ * Click an element with visible cursor animation
+ */
 async function clickElement(page: Page, locator: ReturnType<Page['locator']>) {
   const box = await locator.boundingBox();
   if (box) {
-    await moveCursor(page, box.x + box.width / 2, box.y + box.height / 2);
-    await page.waitForTimeout(150);
-    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    const targetX = box.x + box.width / 2;
+    const targetY = box.y + box.height / 2;
+    
+    await animateCursorTo(page, targetX, targetY);
+    await page.mouse.click(targetX, targetY);
     await page.waitForTimeout(200);
   }
 }
 
-// Touch scroll filter nav
-async function touchDragScroll(page: Page, scrollAmount: number) {
-  const navBox = await page.locator('#work-category-nav').boundingBox();
+// Scroll filter bar visibly with cursor drag
+async function scrollFilterTo(page: Page, targetSelector: string) {
+  const nav = page.locator('#work-category-nav');
+  const navBox = await nav.boundingBox();
+  const target = page.locator(targetSelector);
+  
   if (navBox) {
-    const startX = navBox.x + navBox.width * 0.8;
+    // Animate cursor to filter bar
+    const startX = navBox.x + navBox.width * 0.7;
     const startY = navBox.y + navBox.height / 2;
+    await animateCursorTo(page, startX, startY);
     
-    await moveCursor(page, startX, startY);
-    await page.waitForTimeout(150);
+    // Drag to scroll with visible animation
+    await page.mouse.down();
     
-    await page.evaluate(({ scrollAmount }) => {
-      const nav = document.getElementById('work-category-nav');
-      if (nav) nav.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }, { scrollAmount });
+    // Animate the drag
+    const endX = startX - 150;
+    const dragSteps = 20;
+    for (let i = 1; i <= dragSteps; i++) {
+      const x = startX + (endX - startX) * (i / dragSteps);
+      await page.mouse.move(x, startY);
+      await page.waitForTimeout(15);
+    }
     
-    await page.waitForTimeout(400);
+    await page.mouse.up();
+    await page.waitForTimeout(200);
   }
+  
+  // Ensure target is visible
+  await target.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(200);
 }
 
 test.describe('Record View Transition Demo', () => {
@@ -125,72 +202,75 @@ test.describe('Record View Transition Demo', () => {
       hasTouch: true,
       recordVideo: { dir: OUTPUT_DIR, size: VIEWPORT },
     });
-
     const page = await context.newPage();
+    const startTime = Date.now();
     
-    // Home
-    console.log('Loading home...');
+    // Load home
     await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle', timeout: 10000 });
     await injectCursor(page);
-    await page.waitForTimeout(500);
-    await showLabel(page, '🏠 Starting Demo', 'View transitions make navigation smooth');
     
-    // Navigate to Background
-    console.log('Clicking hamburger...');
+    // INTRO
+    await waitUntil(startTime, TIMELINE.SHOW_INTRO);
+    await showLabel(page, '🏠 With View Transitions', 'Smooth navigation experience');
+    
+    // NAV TO BACKGROUND
+    await waitUntil(startTime, TIMELINE.NAV_BACKGROUND_LABEL);
     await showLabel(page, 'Navigate: Home → Background', 'Watch title fade transition');
-    const hamburger = page.locator('[aria-label="Open navigation menu"]');
-    await clickElement(page, hamburger);
-    await page.waitForTimeout(300);
-    const bgLink = page.locator('.dropdown-content a[href="/background"]');
-    await clickElement(page, bgLink);
-    await injectCursor(page);
-    await page.waitForTimeout(600);
     
-    // Navigate to Work
-    console.log('Clicking hamburger for Work...');
-    await showLabel(page, 'Navigate: Background → Work', 'Filter bar will smoothly appear');
+    await waitUntil(startTime, TIMELINE.NAV_BACKGROUND_ACTION);
     await clickElement(page, page.locator('[aria-label="Open navigation menu"]'));
     await page.waitForTimeout(300);
-    const workLink = page.locator('.dropdown-content a[href="/work"]');
-    await clickElement(page, workLink);
+    await clickElement(page, page.locator('.dropdown-content a[href="/background"]'));
     await injectCursor(page);
-    await page.waitForTimeout(600);
+    
+    // NAV TO WORK
+    await waitUntil(startTime, TIMELINE.NAV_WORK_LABEL);
+    await showLabel(page, 'Navigate: Background → Work', 'Filter bar smoothly appears');
+    
+    await waitUntil(startTime, TIMELINE.NAV_WORK_ACTION);
+    await clickElement(page, page.locator('[aria-label="Open navigation menu"]'));
+    await page.waitForTimeout(300);
+    await clickElement(page, page.locator('.dropdown-content a[href="/work"]'));
+    await injectCursor(page);
+    
+    // WORK PAGE
+    await waitUntil(startTime, TIMELINE.WORK_PAGE_LABEL);
     await showLabel(page, '💼 Work Page', 'Filter bar uses transition:persist');
     
-    // Click AI APPLICATION
-    console.log('Clicking AI APPLICATION...');
-    await showLabel(page, 'Click: AI APPLICATION', 'Filter bar stays stable, title morphs');
-    const aiFilter = page.locator('#work-category-nav a[href="/work/category/ai-application"]');
-    await clickElement(page, aiFilter);
+    // AI FILTER
+    await waitUntil(startTime, TIMELINE.AI_FILTER_LABEL);
+    await showLabel(page, 'Click: AI APPLICATION', 'Filter bar stays stable');
+    
+    await waitUntil(startTime, TIMELINE.AI_FILTER_ACTION);
+    await clickElement(page, page.locator('#work-category-nav a[href="/work/category/ai-application"]'));
     await injectCursor(page);
-    await page.waitForTimeout(600);
     
-    // MARKETING - the key demo!
-    console.log('Scrolling to MARKETING AUTOMATION...');
-    await showLabel(page, 'Click: MARKETING AUTOMATION', '"PROJECTS" will animate DOWN (title wraps)', 3000);
+    // MARKETING
+    await waitUntil(startTime, TIMELINE.MARKETING_LABEL);
+    await showLabel(page, 'Click: MARKETING AUTOMATION', '"PROJECTS" will animate DOWN');
     
-    // Scroll MARKETING into view first
-    const marketingFilter = page.locator('#work-category-nav a[href="/work/category/marketing-automation"]');
-    await marketingFilter.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(400);
-    
-    // Now click it
-    await clickElement(page, marketingFilter);
+    await waitUntil(startTime, TIMELINE.MARKETING_ACTION);
+    await scrollFilterTo(page, '#work-category-nav a[href="/work/category/marketing-automation"]');
+    await clickElement(page, page.locator('#work-category-nav a[href="/work/category/marketing-automation"]'));
     await injectCursor(page);
-    await page.waitForTimeout(800);
+    
+    await waitUntil(startTime, TIMELINE.MARKETING_RESULT);
     await showLabel(page, '✨ Text Morphing', '"PROJECTS" smoothly moved down!');
     
     // ALL PROJECTS
-    console.log('Clicking ALL PROJECTS...');
-    await showLabel(page, 'Click: ALL PROJECTS', 'Watch "PROJECTS" animate back UP');
-    await touchDragScroll(page, -200);
-    const allFilter = page.locator('#work-category-nav a:has-text("ALL PROJECTS")');
-    await clickElement(page, allFilter);
-    await injectCursor(page);
-    await page.waitForTimeout(600);
-    await showLabel(page, '✓ MPA + SPA Experience', 'Smooth transitions, no page reloads');
+    await waitUntil(startTime, TIMELINE.ALL_PROJECTS_LABEL);
+    await showLabel(page, 'Click: ALL PROJECTS', 'Watch "PROJECTS" animate UP');
     
-    await page.waitForTimeout(500);
+    await waitUntil(startTime, TIMELINE.ALL_PROJECTS_ACTION);
+    await scrollFilterTo(page, '#work-category-nav a:has-text("ALL PROJECTS")');
+    await clickElement(page, page.locator('#work-category-nav a:has-text("ALL PROJECTS")'));
+    await injectCursor(page);
+    
+    // FINAL
+    await waitUntil(startTime, TIMELINE.FINAL_LABEL);
+    await showLabel(page, '✓ MPA + SPA Experience', 'Smooth transitions, no reloads');
+    
+    await waitUntil(startTime, TIMELINE.END);
     await context.close();
     await browser.close();
     console.log('📹 WITH transitions saved');
@@ -203,54 +283,69 @@ test.describe('Record View Transition Demo', () => {
       hasTouch: true,
       recordVideo: { dir: OUTPUT_DIR, size: VIEWPORT },
     });
-
     const page = await context.newPage();
+    const startTime = Date.now();
     
-    // Home - match WITH timing
-    console.log('Recording WITHOUT...');
+    // Load home
     await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle', timeout: 10000 });
     await injectCursor(page);
-    await page.waitForTimeout(500);
-    await showLabel(page, '🏠 Without Transitions', 'Direct navigation (full page reloads)');
     
-    // Background - simulate click timing
-    await page.waitForTimeout(800); // Match hamburger interaction time
+    // INTRO
+    await waitUntil(startTime, TIMELINE.SHOW_INTRO);
+    await showLabel(page, '🏠 Without View Transitions', 'Full page reloads');
+    
+    // NAV TO BACKGROUND
+    await waitUntil(startTime, TIMELINE.NAV_BACKGROUND_LABEL);
+    await showLabel(page, 'Navigate: Home → Background', 'Jarring flash on reload');
+    
+    await waitUntil(startTime, TIMELINE.NAV_BACKGROUND_ACTION);
     await page.goto(`${BASE_URL}/background`, { waitUntil: 'networkidle' });
     await injectCursor(page);
-    await page.waitForTimeout(600);
     
-    // Work - simulate hamburger + click
+    // NAV TO WORK  
+    await waitUntil(startTime, TIMELINE.NAV_WORK_LABEL);
     await showLabel(page, 'Navigate: Background → Work', 'Full page reload');
-    await page.waitForTimeout(800);
+    
+    await waitUntil(startTime, TIMELINE.NAV_WORK_ACTION);
     await page.goto(`${BASE_URL}/work`, { waitUntil: 'networkidle' });
     await injectCursor(page);
-    await page.waitForTimeout(600);
-    await showLabel(page, '💼 Work', 'Filter bar reloads completely');
     
-    // AI APPLICATION
+    // WORK PAGE
+    await waitUntil(startTime, TIMELINE.WORK_PAGE_LABEL);
+    await showLabel(page, '💼 Work Page', 'Filter bar reloads completely');
+    
+    // AI FILTER
+    await waitUntil(startTime, TIMELINE.AI_FILTER_LABEL);
     await showLabel(page, 'Click: AI APPLICATION', 'Filter bar reloads');
-    await page.waitForTimeout(600);
+    
+    await waitUntil(startTime, TIMELINE.AI_FILTER_ACTION);
     await page.goto(`${BASE_URL}/work/category/ai-application`, { waitUntil: 'networkidle' });
     await injectCursor(page);
-    await page.waitForTimeout(600);
     
-    // MARKETING AUTOMATION - key comparison
-    await showLabel(page, 'Click: MARKETING AUTOMATION', 'No animation — just jumps', 3000);
-    await page.waitForTimeout(400);
+    // MARKETING
+    await waitUntil(startTime, TIMELINE.MARKETING_LABEL);
+    await showLabel(page, 'Click: MARKETING AUTOMATION', 'No animation — just jumps');
+    
+    await waitUntil(startTime, TIMELINE.MARKETING_ACTION);
     await page.goto(`${BASE_URL}/work/category/marketing-automation`, { waitUntil: 'networkidle' });
     await injectCursor(page);
-    await page.waitForTimeout(800);
+    
+    await waitUntil(startTime, TIMELINE.MARKETING_RESULT);
     await showLabel(page, '✗ No Text Morphing', 'Layout just jumps instantly');
     
     // ALL PROJECTS
-    await showLabel(page, 'Navigate: ALL PROJECTS', 'Another reload');
-    await page.waitForTimeout(600);
+    await waitUntil(startTime, TIMELINE.ALL_PROJECTS_LABEL);
+    await showLabel(page, 'Navigate: ALL PROJECTS', 'Another flash');
+    
+    await waitUntil(startTime, TIMELINE.ALL_PROJECTS_ACTION);
     await page.goto(`${BASE_URL}/work`, { waitUntil: 'networkidle' });
     await injectCursor(page);
-    await page.waitForTimeout(600);
-    await showLabel(page, '✗ Traditional MPA', 'Jarring experience without transitions');
     
-    await page.waitForTimeout(500);
+    // FINAL
+    await waitUntil(startTime, TIMELINE.FINAL_LABEL);
+    await showLabel(page, '✗ Traditional MPA', 'Jarring experience');
+    
+    await waitUntil(startTime, TIMELINE.END);
     await context.close();
     await browser.close();
     console.log('📹 WITHOUT transitions saved');
