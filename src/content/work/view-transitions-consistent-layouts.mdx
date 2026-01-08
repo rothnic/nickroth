@@ -33,12 +33,19 @@ SPAs solve this with JavaScript frameworks that maintain a virtual DOM, but at t
 
 Astro's View Transitions API offers a middle ground: **MPA architecture with SPA-like navigation**. The key insight is that elements with the same `transition:name` across pages will **morph** rather than disappear and reappear.
 
-{/* Demo video showing the navigation */}
-<LazyGif 
-  src="/demos/filter-transitions.webm"
-  alt="Filter navigation showing smooth transitions"
-  caption="Notice how 'PROJECTS' stays perfectly still while the category name morphs above it"
-/>
+{/* Demo videos comparing WITH and WITHOUT view transitions */}
+<div class="grid sm:grid-cols-2 gap-4">
+  <LazyGif 
+    src="/demos/with-view-transitions.webm"
+    alt="Navigation WITH view transitions"
+    caption="✓ WITH View Transitions — smooth morphing between pages"
+  />
+  <LazyGif 
+    src="/demos/without-view-transitions.webm"
+    alt="Navigation WITHOUT view transitions"  
+    caption="✗ WITHOUT View Transitions — jarring full-page reloads"
+  />
+</div>
 
 ## Pattern: The Stable Anchor
 
