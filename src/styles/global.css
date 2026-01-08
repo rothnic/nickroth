@@ -1174,6 +1174,39 @@
             border: 3px solid oklch(0.2 0 0);
             display: block;
             overflow-x: auto;
+            /* Fade scroll indicator on right edge */
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Table scroll fade indicator (mobile) */
+        @media (max-width: 640px) {
+            .prose-content table {
+                /* Right edge gradient to indicate scrollable */
+                mask-image: linear-gradient(
+                    to right,
+                    black calc(100% - 2rem),
+                    transparent 100%
+                );
+                -webkit-mask-image: linear-gradient(
+                    to right,
+                    black calc(100% - 2rem),
+                    transparent 100%
+                );
+            }
+            
+            /* Remove fade when scrolled to the end */
+            .prose-content table::-webkit-scrollbar {
+                height: 4px;
+            }
+            
+            .prose-content table::-webkit-scrollbar-track {
+                background: oklch(0.95 0 0);
+            }
+            
+            .prose-content table::-webkit-scrollbar-thumb {
+                background: oklch(0.7 0 0);
+                border-radius: 2px;
+            }
         }
         
         .prose-content thead {

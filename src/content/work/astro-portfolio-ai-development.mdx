@@ -24,13 +24,15 @@ This personal portfolio site is itself a case study in modern web development pr
 
 ## What Makes This Site Different
 
-### Figma Make → Agent-Assisted Development
-The site started as a prototype generated with **Figma Make**, which exported a React codebase. Rather than using the React export directly, AI coding agents used it as a **reference implementation** to convert the design into Astro components while preserving the neobrutalism aesthetic.
+### AI-Assisted Design Evolution
 
-This workflow enabled:
-- Rapid design iteration without manual CSS translation
-- Consistent component structure derived from visual design
-- Agent-assisted pattern extraction from prototype code
+This site's design workflow has evolved through multiple AI design tools:
+
+**Initial Approach (Figma Make)**: The site started as a prototype generated with Figma Make, which exported a React codebase. AI coding agents converted this to Astro components.
+
+**Current Approach (Google Stitch)**: Design iteration now uses [Google Stitch](https://stitch.withgoogle.com/), which generates framework-agnostic HTML/CSS. This eliminates the React-to-Astro conversion step and enables faster iteration on visual designs.
+
+For a detailed comparison of AI design tools, see [AI-Assisted Design: From Prompt to Production](/work/ai-assisted-design).
 
 ### Astro View Transitions
 The site uses Astro's ClientRouter for smooth, app-like navigation without JavaScript frameworks:
@@ -198,5 +200,6 @@ This site was primarily built using AI coding agents (Cursor, Claude, Antigravit
 
 For more technical detail on specific components:
 
+- [AI-Assisted Design: From Prompt to Production](/work/ai-assisted-design) — Comparing Stitch, v0, and Figma AI for design workflows
 - [Persistent Filter Bar with View Transitions](/work/view-transitions-filter-bar) — Scroll position restoration, hover state persistence, and the `transition:persist` pattern
 - [Navbar Active State Morphing](/work/view-transitions-navbar) — Sliding active indicator, animation direction control, and entry/exit animations

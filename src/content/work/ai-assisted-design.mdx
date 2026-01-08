@@ -1,0 +1,162 @@
+---
+title: "AI-Assisted Design: From Prompt to Production"
+description: "A practical comparison of AI design tools like Google Stitch, Vercel v0, and Figma Make—and how to choose the right tool for your framework and workflow."
+company: "Personal Project"
+role: "Designer & Developer"
+startDate: 2024-12-20
+featured: false
+tags: ["AI Design", "Stitch", "v0", "Figma", "Prototyping"]
+image: "../../assets/images/projects/personal-site.png"
+category: "WEB PLATFORMS"
+impact: "RAPID DESIGN ITERATION USING AI TOOLS THAT GENERATE USABLE CODE—NOT JUST MOCKUPS."
+stack: ["GOOGLE STITCH", "VERCEL V0", "FIGMA", "TAILWIND CSS"]
+roleCategory: "DESIGNER & DEVELOPER"
+parentProject: "astro-portfolio-ai-development"
+---
+
+# AI-Assisted Design: From Prompt to Production
+
+## The Landscape in 2025
+
+AI-powered design tools have matured beyond generating static mockups. The current generation produces **usable code**—components that can be integrated directly into production applications or used as authoritative references for implementation.
+
+Three tools dominate the space, each with distinct strengths:
+
+| Tool | Primary Output | Best For |
+|------|----------------|----------|
+| Google Stitch | UI designs + code export | Framework-agnostic prototyping |
+| Vercel v0 | React/Next.js components | Shadcn/Tailwind projects |
+| Figma AI (Make) | Design mockups + prototypes | Designer-developer handoff |
+
+## Google Stitch
+
+[Stitch](https://stitch.withgoogle.com/) (from Google Labs) generates web and mobile UI designs from text prompts or images.
+
+### Strengths
+
+- **Framework-agnostic export** — Generates HTML/CSS that works with any framework
+- **Multi-screen generation** — Creates entire application flows, not just single components
+- **Style modification** — Tweak colors, typography, and layout after generation
+- **Figma export** — Send designs to Figma for refinement with your team
+- **Rapid iteration** — Generate multiple variants quickly to explore design directions
+
+### Workflow Integration
+
+Stitch excels at the **ideation phase**. Use it to:
+
+1. Generate initial component layouts from rough descriptions
+2. Export as code for reference implementation
+3. Adapt the generated patterns to your design system
+
+The export is framework-agnostic, making it suitable for Astro sites that avoid React dependencies.
+
+## Vercel v0
+
+[v0](https://v0.dev/) from Vercel generates production-ready React components from natural language prompts.
+
+### Strengths
+
+- **Production-ready code** — Components work immediately
+- **Tailwind CSS styling** — Consistent with modern styling approaches
+- **Shadcn UI integration** — Pre-built component patterns
+- **Conversational refinement** — Iterate on designs through dialogue
+
+### Limitations for Non-React Projects
+
+v0's output is tightly coupled to its ecosystem:
+
+- **React-specific** — Components require React runtime
+- **Shadcn dependency** — Assumes Shadcn UI component library
+- **Next.js patterns** — File structure assumes Next.js conventions
+
+For Astro sites aiming for minimal JavaScript, v0's output requires significant adaptation:
+
+```javascript
+// v0 output (React)
+export function Card({ title, children }) {
+  return (
+    <div className="rounded-lg border bg-card p-6">
+      <h3 className="font-semibold">{title}</h3>
+      {children}
+    </div>
+  )
+}
+
+// Astro adaptation
+---
+const { title } = Astro.props;
+---
+<div class="rounded-lg border bg-card p-6">
+  <h3 class="font-semibold">{title}</h3>
+  <slot />
+</div>
+```
+
+Use v0 when you need **design inspiration** or are working within the React/Next.js ecosystem. For Astro projects, treat v0 output as a reference implementation rather than copy-paste code.
+
+## Figma AI (Make Designs)
+
+Figma's AI features integrate directly into the design tool, generating mockups and automating repetitive tasks.
+
+### Strengths
+
+- **Native integration** — Works within your existing Figma workflow
+- **Team collaboration** — Generated designs are immediately shareable
+- **Prototype wiring** — Connects screens into interactive prototypes
+- **Content generation** — Real copy instead of lorem ipsum
+
+### When to Use
+
+Figma AI is ideal when:
+- Your team already uses Figma as the source of truth
+- You need stakeholder-ready mockups
+- Designer-developer handoff is a bottleneck
+
+For solo developer projects, Stitch often provides faster iteration since it outputs code directly.
+
+## Choosing the Right Tool
+
+### For Framework-Agnostic Projects (Astro, Hugo, 11ty)
+
+**Google Stitch** — Framework-agnostic output means less adaptation work. Export as HTML/CSS and integrate into your static site generator.
+
+### For React/Next.js Projects
+
+**Vercel v0** — Components work immediately. The Shadcn integration provides consistent patterns.
+
+### For Team-Based Design Workflows
+
+**Figma AI** — Keeps everything in your existing design system. Designers and developers share a single source of truth.
+
+## The Evolution from Figma Make
+
+This portfolio site originally used **Figma Make** (the code export feature) as a starting point. The workflow was:
+
+1. Generate a React prototype with Figma Make
+2. Use AI coding agents to convert React → Astro
+3. Manually extract patterns and adapt to DaisyUI
+
+With **Google Stitch**, the workflow becomes:
+
+1. Generate UI concepts from prompts
+2. Export as HTML/CSS or send to Figma
+3. Adapt styling to your design system (DaisyUI, Tailwind, etc.)
+
+The key improvement: Stitch's output is **framework-agnostic**, eliminating the React-to-Astro conversion step.
+
+## Practical Tips
+
+**Start with constraints** — Provide specific requirements in your prompt:
+> "Category filter bar, horizontal scroll, pill-shaped buttons, active state with accent color, neobrutalism style with hard shadows"
+
+**Iterate in the tool** — Use multi-turn prompts to refine:
+> "Make the shadow offset larger, use a magenta accent color, uppercase text"
+
+**Export early** — Don't over-polish in the AI tool. Export once you have the general structure, then refine in code where you have precise control.
+
+**Maintain design tokens** — Whatever tool you use, map AI-generated colors and spacing to your design system variables. This ensures consistency as you iterate.
+
+## Related
+
+- [Building an Astro Portfolio with AI-Assisted Development](/work/astro-portfolio-ai-development) — Parent project overview
+- [Persistent Filter Bar with View Transitions](/work/view-transitions-filter-bar) — Component implementation patterns
