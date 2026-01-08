@@ -1,0 +1,210 @@
+---
+title: "Consistent Layouts Make MPAs Feel Like SPAs"
+description: "How strategic use of transition:name on shared elements creates seamless navigation without JavaScript frameworks—the 'PROJECTS' stays put while categories morph."
+company: "Personal Project"
+role: "Frontend Developer"
+startDate: 2024-12-28
+featured: false
+tags: ["View Transitions", "Astro", "Layout", "UX"]
+image: "../../assets/images/projects/personal-site.png"
+category: "WEB PLATFORMS"
+impact: "SEAMLESS MPA NAVIGATION THROUGH CONSISTENT LAYOUT STRUCTURE AND STRATEGIC VIEW TRANSITION NAMING."
+stack: ["ASTRO", "VIEW TRANSITIONS API", "CSS"]
+roleCategory: "DEVELOPER"
+parentProject: "astro-portfolio-ai-development"
+---
+
+import LazyGif from '../../components/LazyGif.astro';
+
+# Consistent Layouts Make MPAs Feel Like SPAs
+
+## The Challenge
+
+Multi-page applications (MPAs) traditionally feel "clunky" compared to single-page applications (SPAs). Every navigation triggers a full page reload, causing:
+
+- **White flash** between pages
+- **Layout shift** as elements re-render
+- **Lost scroll position** and component state
+- **No visual continuity** between related pages
+
+SPAs solve this with JavaScript frameworks that maintain a virtual DOM, but at the cost of bundle size, complexity, and SEO challenges.
+
+## The Solution: Shared Element Transitions
+
+Astro's View Transitions API offers a middle ground: **MPA architecture with SPA-like navigation**. The key insight is that elements with the same `transition:name` across pages will **morph** rather than disappear and reappear.
+
+{/* <LazyGif 
+  src="/demos/filter-transitions.gif"
+  poster="/demos/filter-transitions-poster.webp"
+  alt="Filter navigation showing smooth transitions"
+  caption="Notice how 'PROJECTS' stays perfectly still while the category name morphs above it"
+/> */}
+
+## Pattern: The Stable Anchor
+
+On the category filter pages, the heading structure is:
+
+```astro
+<h1 class="text-center">
+  <span transition:name="category-title">
+    {categoryName.toUpperCase()}
+  </span>
+  <span transition:name="projects-title" class="text-primary">
+    PROJECTS
+  </span>
+</h1>
+```
+
+The critical insight: **"PROJECTS" has the same `transition:name` on every category page**, so it never animates—it simply stays in place. Meanwhile, the category name (WEB PLATFORMS, HEADLESS CMS, etc.) morphs between values.
+
+This creates a visual anchor that grounds the user during navigation.
+
+## Layout Structure for Seamless Transitions
+
+### Consistent Wrapper Elements
+
+Every category page uses the same layout structure:
+
+```astro
+<!-- /work/category/[category].astro -->
+<BaseLayout>
+  <main class="pt-24 pb-16">
+    <!-- Hero section with category title -->
+    <section class="text-center mb-12" transition:name="work-hero">
+      <h1>
+        <span transition:name="category-title">{category}</span>
+        <span transition:name="projects-title">PROJECTS</span>
+      </h1>
+      <p transition:name="category-description">{description}</p>
+    </section>
+    
+    <!-- Filter bar (persisted) -->
+    <WorkCategoryFilter transition:persist />
+    
+    <!-- Project cards -->
+    <section transition:name="work-grid">
+      {projects.map(project => <WorkCard entry={project} />)}
+    </section>
+  </main>
+</BaseLayout>
+```
+
+### Naming Convention
+
+| Element | transition:name | Behavior |
+|---------|-----------------|----------|
+| Hero section | `work-hero` | Container morphs (size changes) |
+| Category name | `category-title` | Text morphs between values |
+| "PROJECTS" | `projects-title` | **Stays perfectly still** |
+| Description | `category-description` | Text morphs |
+| Filter bar | Uses `persist` | DOM preserved entirely |
+| Card grid | `work-grid` | Container morphs |
+
+## Why This Works
+
+### 1. Visual Continuity
+
+When elements share a `transition:name`, the browser:
+1. Captures a snapshot of the old element
+2. Captures a snapshot of the new element  
+3. Animates between them using CSS transitions
+
+For identical elements (like "PROJECTS"), the animation is invisible—the element appears to never move.
+
+### 2. Cognitive Grounding
+
+Users process navigation by tracking stable reference points. When "PROJECTS" stays fixed:
+- The user knows they're still in the projects section
+- Only the **changing** information draws attention
+- Navigation feels like **filtering**, not **page jumping**
+
+### 3. Performance
+
+Unlike SPAs, there's:
+- No JavaScript framework overhead
+- Full page caching by the browser
+- True URL-based navigation (works with back/forward buttons)
+- SEO-friendly static HTML
+
+## Implementation Details
+
+### The ClientRouter
+
+Enable view transitions in your layout:
+
+```astro
+---
+import { ClientRouter } from 'astro:transitions';
+---
+<html>
+  <head>
+    <ClientRouter />
+  </head>
+  <!-- ... -->
+</html>
+```
+
+### Transition Timing
+
+Customize animation duration in CSS:
+
+```css
+::view-transition-group(category-title) {
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Keep stable elements instant */
+::view-transition-group(projects-title) {
+  animation-duration: 0ms;
+}
+```
+
+### Handling Dynamic Content
+
+For elements that should **not** animate (like truly new content), use unique names:
+
+```astro
+{projects.map(project => (
+  <article transition:name={`card-${project.slug}`}>
+    <!-- Card content -->
+  </article>
+))}
+```
+
+Each card has a unique transition name, so cards that exist on both pages morph, while new cards fade in.
+
+## Common Pitfalls
+
+### Pitfall 1: Inconsistent Layout Structure
+
+**Problem**: Hero section has different HTML structure on different pages.
+
+**Solution**: Use the same wrapper elements and class names across all related pages. The transition:name must be on elements with matching structure.
+
+### Pitfall 2: Conflicting Names
+
+**Problem**: Two unrelated elements share a transition:name.
+
+**Solution**: Use namespaced names like `work-hero-title` vs `about-hero-title`.
+
+### Pitfall 3: Overusing Transitions
+
+**Problem**: Every element animates, creating visual chaos.
+
+**Solution**: Only transition elements that represent the **same conceptual entity** across pages. Let new/removed elements use default fade.
+
+## The Result
+
+Navigation between category pages feels instantaneous and app-like:
+- No page flash
+- "PROJECTS" anchors the experience
+- Category name morphs smoothly
+- Filter bar state persists (scroll position, hover states)
+- Cards animate into their new positions
+
+## Related
+
+- [Building an Astro Portfolio with AI-Assisted Development](/work/astro-portfolio-ai-development) — Parent project overview
+- [Persistent Filter Bar with View Transitions](/work/view-transitions-filter-bar) — Filter component deep dive
+- [Navbar Active State Morphing](/work/view-transitions-navbar) — Navigation indicator patterns

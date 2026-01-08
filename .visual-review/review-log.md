@@ -26,8 +26,26 @@ This file tracks visual reviews performed before pushing code. Each review sessi
 - [x] Inline code too tall - FIXED (reduced padding)
 - [x] Expressive Code theme selector wrong - FIXED (neobrutalism-light/dark)
 - [x] Footer buttons too close on mobile - FIXED (btn-sm on mobile, flex-wrap)
+- [ ] **Dark mode work cards**: Right side spacing lost, shadow color wrong - PENDING
+- [ ] **Filter bar shift**: Bar shifts up when navigating /work → /work/category/* - PENDING (needs Playwright regression test)
 
-**Status:** ✅ All issues addressed
+**Status:** ⏳ Two issues remaining
+
+---
+
+## Outstanding Issues for Playwright Tests
+
+### Filter Bar Position Stability
+- **Pages**: `/work` → `/work/category/ai-application`
+- **Expected**: Filter bar Y position should remain stable during view transition
+- **Actual**: Filter bar shifts up slightly
+- **Test idea**: Capture filter bar bounding rect before/after navigation, assert Y position unchanged
+
+### Dark Mode Card Shadow
+- **Page**: `/work` in dark mode
+- **Expected**: Card shadows use appropriate dark mode color
+- **Actual**: Black shadow on dark background loses right-side visual spacing
+- **Fix needed**: Update shadow color for dark theme
 
 ---
 

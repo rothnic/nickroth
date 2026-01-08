@@ -1,0 +1,205 @@
+---
+/**
+ * LazyGif Component
+ * 
+ * Displays an optimized still image initially, then lazy-loads the GIF
+ * when the element enters the viewport. Includes a play button overlay.
+ * 
+ * Usage in MDX:
+ * <LazyGif 
+ *   src="/demos/filter-transitions.gif" 
+ *   poster="/demos/filter-transitions-poster.webp"
+ *   alt="Filter navigation animation"
+ *   caption="View transitions keep 'PROJECTS' stable while the category morphs"
+ * />
+ */
+
+interface Props {
+  src: string;
+  poster: string;
+  alt: string;
+  caption?: string;
+  width?: number;
+  height?: number;
+}
+
+const { src, poster, alt, caption, width, height } = Astro.props;
+---
+
+<figure class="lazy-gif-container">
+  <div class="lazy-gif-wrapper" data-gif-src={src}>
+    <!-- Poster image (optimized still) -->
+    <img 
+      src={poster} 
+      alt={alt}
+      width={width}
+      height={height}
+      loading="lazy"
+      class="lazy-gif-poster"
+    />
+    
+    <!-- Play button overlay -->
+    <button class="lazy-gif-play" aria-label="Play animation">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+    </button>
+    
+    <!-- GIF (hidden until loaded) -->
+    <img 
+      data-src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      class="lazy-gif-animation"
+      style="display: none;"
+    />
+    
+    <!-- Loading indicator -->
+    <div class="lazy-gif-loading" style="display: none;">
+      <span>Loading...</span>
+    </div>
+  </div>
+  
+  {caption && <figcaption class="lazy-gif-caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .lazy-gif-container {
+    margin: 2rem 0;
+  }
+  
+  .lazy-gif-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    border: 3px solid oklch(0.2 0 0);
+    overflow: hidden;
+    cursor: pointer;
+  }
+  
+  .lazy-gif-poster,
+  .lazy-gif-animation {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  
+  .lazy-gif-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: var(--color-primary);
+    border: 3px solid oklch(0.2 0 0);
+    border-radius: 0;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 4px 4px 0 0 oklch(0.2 0 0);
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  
+  .lazy-gif-play:hover {
+    transform: translate(calc(-50% - 2px), calc(-50% - 2px));
+    box-shadow: 6px 6px 0 0 oklch(0.2 0 0);
+  }
+  
+  .lazy-gif-play:active {
+    transform: translate(-50%, -50%);
+    box-shadow: 2px 2px 0 0 oklch(0.2 0 0);
+  }
+  
+  .lazy-gif-play svg {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .lazy-gif-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--color-primary);
+    color: white;
+    padding: 1rem 2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border: 3px solid oklch(0.2 0 0);
+  }
+  
+  .lazy-gif-caption {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: oklch(0.5 0 0);
+    font-style: italic;
+    text-align: center;
+  }
+  
+  /* Playing state */
+  .lazy-gif-wrapper.playing .lazy-gif-poster,
+  .lazy-gif-wrapper.playing .lazy-gif-play {
+    display: none;
+  }
+  
+  .lazy-gif-wrapper.playing .lazy-gif-animation {
+    display: block !important;
+  }
+  
+  /* Loading state */
+  .lazy-gif-wrapper.loading .lazy-gif-play {
+    display: none;
+  }
+  
+  .lazy-gif-wrapper.loading .lazy-gif-loading {
+    display: block !important;
+  }
+</style>
+
+<script>
+  // Initialize all lazy GIF components
+  function initLazyGifs() {
+    document.querySelectorAll('.lazy-gif-wrapper').forEach((wrapper) => {
+      const playButton = wrapper.querySelector('.lazy-gif-play');
+      const gifImg = wrapper.querySelector('.lazy-gif-animation') as HTMLImageElement;
+      const gifSrc = gifImg?.dataset.src;
+      
+      if (!playButton || !gifImg || !gifSrc) return;
+      
+      // Already initialized
+      if (wrapper.classList.contains('initialized')) return;
+      wrapper.classList.add('initialized');
+      
+      playButton.addEventListener('click', () => {
+        // Show loading state
+        wrapper.classList.add('loading');
+        
+        // Load the GIF
+        gifImg.onload = () => {
+          wrapper.classList.remove('loading');
+          wrapper.classList.add('playing');
+        };
+        
+        gifImg.onerror = () => {
+          wrapper.classList.remove('loading');
+          console.error('Failed to load GIF:', gifSrc);
+        };
+        
+        gifImg.src = gifSrc;
+      });
+      
+      // Click to pause (toggle back to poster)
+      gifImg.addEventListener('click', () => {
+        wrapper.classList.remove('playing');
+      });
+    });
+  }
+  
+  // Initialize on page load and after view transitions
+  initLazyGifs();
+  document.addEventListener('astro:after-swap', initLazyGifs);
+</script>
