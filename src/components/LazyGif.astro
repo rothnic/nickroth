@@ -2,19 +2,20 @@
 /**
  * LazyGif Component
  * 
- * Displays a placeholder with play button, then lazy-loads the GIF/video
- * when clicked. Automatically extracts first frame as poster if not provided.
+ * Shows a still poster image initially. When the element enters the viewport,
+ * it preloads and auto-plays the animation. By the time the user scrolls to it,
+ * the content is typically already loaded and playing seamlessly.
  * 
  * Usage in MDX:
  * <LazyGif 
- *   src="/demos/filter-transitions.gif" 
+ *   src="/demos/filter-transitions.webm" 
  *   alt="Filter navigation animation"
- *   caption="View transitions keep 'PROJECTS' stable while the category morphs"
+ *   caption="View transitions keep 'PROJECTS' stable"
  * />
  * 
  * Or with explicit poster:
  * <LazyGif 
- *   src="/demos/filter-transitions.gif" 
+ *   src="/demos/filter-transitions.webm" 
  *   poster="/demos/filter-transitions-poster.webp"
  *   alt="Filter navigation animation"
  * />
@@ -25,7 +26,7 @@ interface Props {
   src: string;
   /** Alt text for accessibility */
   alt: string;
-  /** Optional poster image - if not provided, uses canvas extraction for GIF or video poster */
+  /** Optional poster image - if not provided for video, extracts first frame */
   poster?: string;
   /** Optional caption below the animation */
   caption?: string;
@@ -48,8 +49,8 @@ const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
     data-is-video={isVideo.toString()}
     data-poster={poster || ''}
   >
-    {/* Poster image - shown initially if provided */}
-    {poster && (
+    {/* Poster image - shown until animation loads */}
+    {poster ? (
       <img 
         src={poster} 
         alt={alt}
@@ -58,19 +59,22 @@ const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
         loading="lazy"
         class="lazy-gif-poster"
       />
+    ) : (
+      /* For video without poster, show first frame via video element */
+      isVideo ? (
+        <video 
+          src={src}
+          class="lazy-gif-poster"
+          muted
+          preload="metadata"
+        ></video>
+      ) : (
+        /* For GIF without poster, show placeholder */
+        <div class="lazy-gif-placeholder" aria-hidden="true">
+          <span>Loading preview...</span>
+        </div>
+      )
     )}
-    
-    {/* Canvas for extracting first frame when no poster provided */}
-    {!poster && (
-      <canvas class="lazy-gif-poster lazy-gif-canvas" aria-hidden="true"></canvas>
-    )}
-    
-    {/* Play button overlay */}
-    <button class="lazy-gif-play" aria-label="Play animation">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M8 5v14l11-7z"/>
-      </svg>
-    </button>
     
     {/* Animation container (hidden until loaded) */}
     {isVideo ? (
@@ -93,7 +97,7 @@ const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
       />
     )}
     
-    {/* Loading indicator */}
+    {/* Loading indicator - shows during load */}
     <div class="lazy-gif-loading" style="display: none;">
       <span>Loading...</span>
     </div>
@@ -113,9 +117,7 @@ const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
     width: 100%;
     border: 3px solid oklch(0.2 0 0);
     overflow: hidden;
-    cursor: pointer;
     background: oklch(0.95 0 0);
-    min-height: 200px;
   }
   
   .lazy-gif-poster,
@@ -125,44 +127,15 @@ const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
     height: auto;
   }
   
-  .lazy-gif-canvas {
+  .lazy-gif-placeholder {
     width: 100%;
-    min-height: 200px;
-    background: linear-gradient(135deg, oklch(0.95 0 0) 0%, oklch(0.9 0.02 280) 100%);
-  }
-  
-  .lazy-gif-play {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80px;
-    height: 80px;
-    background: var(--color-primary);
-    border: 3px solid oklch(0.2 0 0);
-    border-radius: 0;
-    color: white;
-    cursor: pointer;
+    min-height: 300px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 4px 4px 0 0 oklch(0.2 0 0);
-    transition: transform 0.1s, box-shadow 0.1s;
-  }
-  
-  .lazy-gif-play:hover {
-    transform: translate(calc(-50% - 2px), calc(-50% - 2px));
-    box-shadow: 6px 6px 0 0 oklch(0.2 0 0);
-  }
-  
-  .lazy-gif-play:active {
-    transform: translate(-50%, -50%);
-    box-shadow: 2px 2px 0 0 oklch(0.2 0 0);
-  }
-  
-  .lazy-gif-play svg {
-    width: 40px;
-    height: 40px;
+    background: linear-gradient(135deg, oklch(0.95 0 0) 0%, oklch(0.9 0.02 280) 100%);
+    font-weight: 500;
+    color: oklch(0.5 0 0);
   }
   
   .lazy-gif-loading {
@@ -172,9 +145,10 @@ const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
     transform: translate(-50%, -50%);
     background: var(--color-primary);
     color: white;
-    padding: 1rem 2rem;
+    padding: 0.75rem 1.5rem;
     font-weight: 700;
     text-transform: uppercase;
+    font-size: 0.875rem;
     border: 3px solid oklch(0.2 0 0);
   }
   
@@ -186,9 +160,9 @@ const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
     text-align: center;
   }
   
-  /* Playing state */
+  /* Playing state - show animation, hide poster */
   .lazy-gif-wrapper.playing .lazy-gif-poster,
-  .lazy-gif-wrapper.playing .lazy-gif-play {
+  .lazy-gif-wrapper.playing .lazy-gif-placeholder {
     display: none !important;
   }
   
@@ -197,10 +171,6 @@ const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
   }
   
   /* Loading state */
-  .lazy-gif-wrapper.loading .lazy-gif-play {
-    display: none;
-  }
-  
   .lazy-gif-wrapper.loading .lazy-gif-loading {
     display: block !important;
   }
@@ -208,94 +178,88 @@ const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
   /* Dark mode */
   [data-theme="neobrutalism-dark"] .lazy-gif-wrapper {
     background: oklch(0.2 0 0);
+    border-color: oklch(0.4 0 0);
   }
   
-  [data-theme="neobrutalism-dark"] .lazy-gif-canvas {
+  [data-theme="neobrutalism-dark"] .lazy-gif-placeholder {
     background: linear-gradient(135deg, oklch(0.2 0 0) 0%, oklch(0.25 0.02 280) 100%);
+    color: oklch(0.6 0 0);
+  }
+  
+  [data-theme="neobrutalism-dark"] .lazy-gif-caption {
+    color: oklch(0.6 0 0);
   }
 </style>
 
 <script>
-  // Initialize all lazy GIF/video components
+  // IntersectionObserver for auto-loading when visible
   function initLazyGifs() {
-    document.querySelectorAll('.lazy-gif-wrapper').forEach((wrapper) => {
-      const el = wrapper as HTMLElement;
-      const playButton = el.querySelector('.lazy-gif-play') as HTMLButtonElement;
-      const animation = el.querySelector('.lazy-gif-animation') as HTMLImageElement | HTMLVideoElement;
-      const canvas = el.querySelector('.lazy-gif-canvas') as HTMLCanvasElement | null;
-      const src = el.dataset.src;
-      const isVideo = el.dataset.isVideo === 'true';
-      const hasPoster = el.dataset.poster !== '';
-      
-      if (!playButton || !animation || !src) return;
-      
-      // Already initialized
-      if (el.classList.contains('initialized')) return;
-      el.classList.add('initialized');
-      
-      // For videos without poster, extract first frame
-      if (isVideo && !hasPoster && canvas) {
-        const video = document.createElement('video');
-        video.crossOrigin = 'anonymous';
-        video.muted = true;
-        video.preload = 'metadata';
-        
-        video.onloadeddata = () => {
-          video.currentTime = 0.1; // Slight offset to ensure frame is loaded
-        };
-        
-        video.onseeked = () => {
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            ctx.drawImage(video, 0, 0);
-          }
-        };
-        
-        video.src = src;
-      }
-      
-      // Handle play button click
-      playButton.addEventListener('click', () => {
-        el.classList.add('loading');
-        
-        if (isVideo) {
-          const videoEl = animation as HTMLVideoElement;
-          videoEl.oncanplay = () => {
-            el.classList.remove('loading');
-            el.classList.add('playing');
-            videoEl.play();
-          };
-          videoEl.onerror = () => {
-            el.classList.remove('loading');
-            console.error('Failed to load video:', src);
-          };
-          videoEl.src = src;
-        } else {
-          const imgEl = animation as HTMLImageElement;
-          imgEl.onload = () => {
-            el.classList.remove('loading');
-            el.classList.add('playing');
-          };
-          imgEl.onerror = () => {
-            el.classList.remove('loading');
-            console.error('Failed to load GIF:', src);
-          };
-          imgEl.src = src;
+    const wrappers = document.querySelectorAll('.lazy-gif-wrapper:not(.initialized)');
+    
+    if (!wrappers.length) return;
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const wrapper = entry.target as HTMLElement;
+          loadAndPlayAnimation(wrapper);
+          observer.unobserve(wrapper);
         }
       });
-      
-      // Click animation to pause/stop
-      animation.addEventListener('click', () => {
-        if (isVideo) {
-          const videoEl = animation as HTMLVideoElement;
-          videoEl.pause();
-          videoEl.currentTime = 0;
-        }
-        el.classList.remove('playing');
-      });
+    }, {
+      rootMargin: '200px', // Start loading 200px before it enters viewport
+      threshold: 0
     });
+    
+    wrappers.forEach((wrapper) => {
+      wrapper.classList.add('initialized');
+      observer.observe(wrapper);
+    });
+  }
+  
+  function loadAndPlayAnimation(wrapper: HTMLElement) {
+    const animation = wrapper.querySelector('.lazy-gif-animation') as HTMLImageElement | HTMLVideoElement;
+    const src = wrapper.dataset.src;
+    const isVideo = wrapper.dataset.isVideo === 'true';
+    
+    if (!animation || !src) return;
+    
+    // Show loading indicator
+    wrapper.classList.add('loading');
+    
+    if (isVideo) {
+      const videoEl = animation as HTMLVideoElement;
+      
+      videoEl.oncanplay = () => {
+        wrapper.classList.remove('loading');
+        wrapper.classList.add('playing');
+        videoEl.play().catch(() => {
+          // Autoplay might be blocked - that's ok, video will show
+        });
+      };
+      
+      videoEl.onerror = () => {
+        wrapper.classList.remove('loading');
+        console.error('Failed to load video:', src);
+      };
+      
+      videoEl.src = src;
+      videoEl.load();
+    } else {
+      const imgEl = animation as HTMLImageElement;
+      
+      imgEl.onload = () => {
+        wrapper.classList.remove('loading');
+        wrapper.classList.add('playing');
+      };
+      
+      imgEl.onerror = () => {
+        wrapper.classList.remove('loading');
+        console.error('Failed to load GIF:', src);
+      };
+      
+      imgEl.src = src;
+    }
   }
   
   // Initialize on page load and after view transitions

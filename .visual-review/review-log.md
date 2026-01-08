@@ -6,9 +6,32 @@ This file tracks visual reviews performed before pushing code. Each review sessi
 
 1. Run `pnpm run visual-review` to capture screenshots
 2. Review screenshots in `.visual-review/screenshots/`
-3. Document findings below
-4. Fix issues and re-run if needed
-5. Commit this log with your changes
+3. **Check against Review Criteria below**
+4. Document findings in this log
+5. Fix issues and re-run if needed
+6. Commit this log with your changes
+
+## Review Criteria Checklist
+
+Each visual review should verify:
+
+### Contrast & Readability
+- [ ] Dark mode text has sufficient contrast against background
+- [ ] Inline code is readable in both light and dark mode
+- [ ] Links are distinguishable from surrounding text
+- [ ] Table text and borders are visible in dark mode
+
+### Spacing & Layout
+- [ ] Elements have proper padding from viewport edges
+- [ ] Card shadows don't clip against container edges
+- [ ] No unexpected layout shifts during navigation
+
+### Components
+- [ ] Filter bar position stays stable during navigation
+- [ ] Buttons are appropriately sized on mobile
+- [ ] Tables scroll horizontally on mobile with visible affordance
+
+---
 
 ## Reviews
 
@@ -26,10 +49,11 @@ This file tracks visual reviews performed before pushing code. Each review sessi
 - [x] Inline code too tall - FIXED (reduced padding)
 - [x] Expressive Code theme selector wrong - FIXED (neobrutalism-light/dark)
 - [x] Footer buttons too close on mobile - FIXED (btn-sm on mobile, flex-wrap)
+- [ ] **Dark mode overall contrast** - PENDING (review needed)
 - [ ] **Dark mode work cards**: Right side spacing lost, shadow color wrong - PENDING
-- [ ] **Filter bar shift**: Bar shifts up when navigating /work → /work/category/* - PENDING (needs Playwright regression test)
+- [ ] **Filter bar shift**: Bar shifts up when navigating /work → /work/category/* - PENDING
 
-**Status:** ⏳ Two issues remaining
+**Status:** ⏳ Three issues remaining
 
 ---
 
@@ -40,6 +64,14 @@ This file tracks visual reviews performed before pushing code. Each review sessi
 - **Expected**: Filter bar Y position should remain stable during view transition
 - **Actual**: Filter bar shifts up slightly
 - **Test idea**: Capture filter bar bounding rect before/after navigation, assert Y position unchanged
+
+### Dark Mode Contrast Review
+- **Areas to audit**: 
+  - Table text color
+  - Link text color
+  - Body text color against background
+  - Card shadow color (should be lighter for visibility)
+- **Fix approach**: Increase lightness values for dark mode text colors
 
 ### Dark Mode Card Shadow
 - **Page**: `/work` in dark mode
