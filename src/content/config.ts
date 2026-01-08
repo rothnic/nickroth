@@ -36,6 +36,8 @@ const work = defineCollection({
     impact: z.string().optional(),
     stack: z.array(z.string()).default([]),
     roleCategory: z.string().optional(),
+    // Optional parent project slug for focused sub-articles
+    parentProject: z.string().optional(),
   }),
 });
 
