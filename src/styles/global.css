@@ -1142,8 +1142,15 @@
         
         /* Code - blocks (Expressive Code handles most styling) */
         .prose-content .expressive-code {
-            margin: 2rem 0;
+            margin: 1.5rem 0;
             font-family: var(--font-mono), ui-monospace, monospace;
+        }
+        
+        /* Reduce top margin when code follows a heading */
+        .prose-content h3 + .expressive-code,
+        .prose-content h4 + .expressive-code,
+        .prose-content p + .expressive-code {
+            margin-top: 0.75rem;
         }
         
         .prose-content pre code {
