@@ -2342,6 +2342,42 @@
         /* Let the browser handle the default cross-fade - no custom opacity animations needed */
         /* The view transition API automatically morphs position/size between old and new states */
         
+        /* Spring animations for cards appearing/disappearing during filter changes */
+        @keyframes card-spring-in {
+            0% {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.02);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes card-spring-out {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+        }
+        
+        /* Class-based card animations for filter transitions */
+        .card-entering {
+            animation: card-spring-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        
+        .card-exiting {
+            animation: card-spring-out 0.2s ease-out both;
+        }
+        
         /* Work page header - stays put during category navigation */
         ::view-transition-group(work-header) {
             animation-duration: 0.25s;
