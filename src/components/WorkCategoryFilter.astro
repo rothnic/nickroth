@@ -298,35 +298,66 @@ const isAllActive = activeCategory === null;
   
   const PREV_FILTER_KEY = 'workCategoryFilterPrevActive';
   const SCROLL_POSITION_KEY = 'workCategoryFilterScrollPos';
+  const PAGE_SCROLL_KEY = 'workPageVerticalScroll';
   
   // Get current active filter href
   function getActiveFilterHref(): string | null {
     return document.querySelector('#work-category-nav .btn-accent')?.getAttribute('href') || null;
   }
   
-  // Save current scroll position before starting navigation
-  function saveScrollPosition() {
+  // Save current scroll positions (horizontal filter bar + vertical page)
+  function saveScrollPositions() {
     const nav = document.getElementById('work-category-nav');
     if (nav) {
       sessionStorage.setItem(SCROLL_POSITION_KEY, String(nav.scrollLeft));
     }
+    // Save vertical page scroll for work pages
+    sessionStorage.setItem(PAGE_SCROLL_KEY, String(window.scrollY));
   }
   
   // Initial page load - instant scroll, set fades
   setupFilterBar(false);
   sessionStorage.setItem(PREV_FILTER_KEY, getActiveFilterHref() || '');
   
-  // Before navigation starts - save current scroll position
-  document.addEventListener('astro:before-preparation', saveScrollPosition);
+  // Before navigation starts - save current scroll positions
+  document.addEventListener('astro:before-preparation', saveScrollPositions);
   
-  // Also save on link click (for browsers that don't fire before-preparation)
+  // Track clicked button to remove hover-lock after transition
+  let clickedButton: HTMLElement | null = null;
+  
+  // Handle filter button clicks: save scroll positions + add click animation + lock hover
   document.getElementById('work-category-nav')?.addEventListener('click', (e) => {
-    if ((e.target as HTMLElement).tagName === 'A') {
-      saveScrollPosition();
+    const target = e.target as HTMLElement;
+    const link = target.closest('a') as HTMLElement | null;
+    
+    if (link) {
+      saveScrollPositions();
+      
+      // Mark this as a filter-to-filter navigation (for scroll restoration)
+      sessionStorage.setItem('workFilterNavigation', 'true');
+      
+      // Lock hover state during transition
+      clickedButton = link;
+      link.classList.add('filter-btn-clicked');
+      
+      // Add pulse animation for visual feedback
+      link.classList.add('filter-btn-animate');
+      // Remove animation class after animation completes
+      link.addEventListener('animationend', () => {
+        link.classList.remove('filter-btn-animate');
+      }, { once: true });
     }
   });
   
-  // After view transition swap - restore scroll position instantly (before page visible)
+  // Remove hover-lock after page transition completes
+  document.addEventListener('astro:page-load', () => {
+    if (clickedButton) {
+      clickedButton.classList.remove('filter-btn-clicked');
+      clickedButton = null;
+    }
+  });
+  
+  // After view transition swap - restore scroll positions instantly (before page visible)
   document.addEventListener('astro:after-swap', () => {
     const nav = document.getElementById('work-category-nav');
     const fadeLeft = document.getElementById('filter-fade-left');
@@ -334,13 +365,26 @@ const isAllActive = activeCategory === null;
     
     if (!nav || !fadeLeft || !fadeRight) return;
     
-    // Restore previous scroll position to prevent "jump from 0" animation
+    // Check if this is a filter-to-filter navigation (flag was set on click)
+    const isFilterNavigation = sessionStorage.getItem('workFilterNavigation') === 'true';
+    sessionStorage.removeItem('workFilterNavigation'); // Clear the flag
+    
+    // Always restore horizontal filter bar scroll (prevents animation from 0)
     const savedScroll = sessionStorage.getItem(SCROLL_POSITION_KEY);
     if (savedScroll !== null) {
       nav.scrollLeft = parseInt(savedScroll, 10);
     }
     
-    // Update fades based on restored scroll position
+    // Only restore vertical page scroll for filter-to-filter navigation
+    // (let browser handle back-button scroll restoration)
+    if (isFilterNavigation) {
+      const savedPageScroll = sessionStorage.getItem(PAGE_SCROLL_KEY);
+      if (savedPageScroll !== null) {
+        window.scrollTo(0, parseInt(savedPageScroll, 10));
+      }
+    }
+    
+    // Update fades based on current scroll position
     const scrollLeft = nav.scrollLeft;
     const maxScroll = nav.scrollWidth - nav.clientWidth;
     

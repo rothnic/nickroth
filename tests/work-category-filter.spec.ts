@@ -156,18 +156,42 @@ test.describe('WorkCategoryFilter', () => {
     });
   });
   
-  test.describe('Fade overlays', () => {
+  test.describe('Scroll depth preservation', () => {
     
-    test('fade elements should exist', async ({ page }) => {
+    test('scroll position should be preserved after clicking work card and using browser back', async ({ page }) => {
       await page.setViewportSize(VIEWPORT_SIZES.mobile);
       await page.goto('/work');
       await waitForFilterBar(page);
       
-      const fadeLeft = await page.$('#filter-fade-left');
-      const fadeRight = await page.$('#filter-fade-right');
+      // Scroll down to a specific position
+      const targetScrollY = 300;
+      await page.evaluate((y) => window.scrollTo(0, y), targetScrollY);
+      await page.waitForTimeout(100);
       
-      expect(fadeLeft).not.toBeNull();
-      expect(fadeRight).not.toBeNull();
+      // Verify we're scrolled
+      const scrollYBefore = await page.evaluate(() => window.scrollY);
+      expect(scrollYBefore).toBeGreaterThanOrEqual(targetScrollY - 10);
+      
+      // Click on a work card
+      const workCard = page.locator('[data-work-card] a').first();
+      await workCard.click();
+      
+      // Wait for navigation to detail page
+      await page.waitForURL(/\/work\/[^/]+$/);
+      await page.waitForTimeout(300);
+      
+      // Use browser back button
+      await page.goBack();
+      
+      // Wait for navigation back to work listing
+      await page.waitForURL('/work');
+      await waitForFilterBar(page);
+      
+      // Check scroll position is preserved (within tolerance)
+      const scrollYAfter = await page.evaluate(() => window.scrollY);
+      expect(scrollYAfter).toBeGreaterThanOrEqual(targetScrollY - 50);
+      expect(scrollYAfter).toBeLessThanOrEqual(targetScrollY + 50);
     });
   });
+  
 });

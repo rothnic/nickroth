@@ -136,7 +136,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
       
       {tags.length > 0 && (
         <div class="card-actions w-full mt-2 sm:mt-auto">
-          <div class="flex flex-wrap gap-1">
+          <div class="flex flex-wrap gap-2">
             {tags.slice(0, 3).map((tag) => (
               <span class="badge badge-outline badge-xs scale-90 sm:scale-100 origin-top-left">
                 {tag}
@@ -240,7 +240,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
           {stack && stack.length > 0 && (
             <section class="solid-bg p-4 sm:p-5 rounded-none sm:rounded-xl border-y-2 border-x-0 sm:border-2 border-base-300 mb-6">
               <h3 class="text-sm font-bold uppercase tracking-wide text-base-content/60 mb-3">Tech Stack</h3>
-              <div class="flex flex-wrap gap-2">
+              <div class="flex flex-wrap gap-3">
                 {stack.map((tech) => (
                   <span class={`badge ${getStackColor(tech)} font-medium`}>
                     {tech}
@@ -254,7 +254,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
           {tags && tags.length > 0 && (
             <section class="solid-bg p-4 sm:p-5 rounded-none sm:rounded-xl border-y-2 border-x-0 sm:border-2 border-base-300 mb-6">
               <h3 class="text-sm font-bold uppercase tracking-wide text-base-content/60 mb-3">Tags</h3>
-              <div class="flex flex-wrap gap-2">
+              <div class="flex flex-wrap gap-3">
                 {tags.map((tag) => (
                   <span class="badge badge-outline">
                     {tag}

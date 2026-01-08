@@ -16,15 +16,44 @@ type Props = {
 };
 
 const { entry } = Astro.props as Props;
+
+// Helper to create URL-friendly slug
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+const category = entry.data.category;
+const categorySlug = category ? slugify(category) : null;
 ---
 
 <BaseLayout title={`${entry.data.title} - Nick Roth`} description={entry.data.description}>
-  <main class="py-4" data-card-ref={entry.slug}>
+  <main class="py-4">
+    <!-- Card reference for scroll restoration when returning to work list -->
+    <div data-card-ref={entry.slug} class="hidden"></div>
     <div class="container mx-auto px-0 sm:px-4 max-w-6xl">
-      <!-- Navigation -->
-      <div class="mb-6 px-4 sm:px-0" transition:name="work-back-nav">
-        <a href="/work" class="btn btn-ghost hover:bg-transparent text-lg">&larr; Back to Projects</a>
-      </div>
+      <!-- Breadcrumb Navigation - flat text styling like filter tags -->
+      <nav class="mb-6 px-4 sm:px-0 flex items-center gap-1.5 text-sm font-black uppercase tracking-wide" transition:name="work-back-nav" aria-label="Breadcrumb">
+        <a 
+          href="/work" 
+          class="text-base-content/70 hover:text-primary transition-colors"
+        >
+          Work
+        </a>
+        {category && categorySlug && (
+          <>
+            <span class="text-base-content/40">/</span>
+            <a 
+              href={`/work/category/${categorySlug}`}
+              class="text-base-content/70 hover:text-primary transition-colors"
+            >
+              {category}
+            </a>
+          </>
+        )}
+      </nav>
 
       <!-- Use WorkCard component in expanded mode -->
       <WorkCard entry={entry} mode="expanded" />

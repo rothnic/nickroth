@@ -62,8 +62,9 @@ function isBackNavigation(navigation) {
  */
 function getCardReference() {
 	// Check if current page has a card reference (e.g., detail page)
-	const cardRef = document.body.getAttribute("data-card-ref");
-	if (cardRef) {
+	// Look anywhere in the document, not just body
+	const cardRefElement = document.querySelector('[data-card-ref]');
+	if (cardRefElement) {
 		// If we're on a detail page, don't return anything (no scrolling needed)
 		return null;
 	}
@@ -128,6 +129,15 @@ function setupViewTransitionHandlers() {
  * Main handler for scroll-to-card logic
  */
 function handleScrollToCard() {
+	// Skip on work listing pages - they have their own scroll management
+	// and we want browser's native back-button scroll restoration to work
+	const isWorkListingPage = window.location.pathname === '/work' || 
+		window.location.pathname.startsWith('/work/category/');
+	if (isWorkListingPage) {
+		console.debug("Skipping scroll-to-card on work listing page");
+		return;
+	}
+	
 	// Get card reference
 	const cardId = getCardReference();
 	console.debug(`handleScrollToCard: cardId=${cardId}`);

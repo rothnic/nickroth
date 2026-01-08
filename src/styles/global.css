@@ -743,6 +743,24 @@
         .hover-rotate {
             --hover-rotate: -3deg;
         }
+        
+        /* Filter button click animation - brief pulse effect for visual feedback */
+        @keyframes filter-btn-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); filter: brightness(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .filter-btn-animate {
+            animation: filter-btn-pulse 0.2s ease-out;
+        }
+        
+        /* Lock hover state during page transition to prevent flicker */
+        .filter-btn-clicked {
+            /* Mirror the hover-lift-stable:hover styles */
+            transform: translate(-2px, -2px) !important;
+            box-shadow: 10px 10px 0px 0px var(--nr-shadow-color) !important;
+        }
 
         /* Sticker positioning */
         .sticker-container { position: relative; }
