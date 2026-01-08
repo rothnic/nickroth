@@ -642,12 +642,15 @@
             --hover-scale: 1;
             --hover-rotate: 0deg;
             
-            &:hover {
-                transform: 
-                    translate(var(--hover-translate-x), var(--hover-translate-y)) 
-                    scale(var(--hover-scale)) 
-                    rotate(var(--hover-rotate));
-                box-shadow: var(--hover-shadow, var(--nr-shadow-base));
+            /* Only apply hover effect on devices with real hover capability */
+            @media (hover: hover) {
+                &:hover {
+                    transform: 
+                        translate(var(--hover-translate-x), var(--hover-translate-y)) 
+                        scale(var(--hover-scale)) 
+                        rotate(var(--hover-rotate));
+                    box-shadow: var(--hover-shadow, var(--nr-shadow-base));
+                }
             }
         }
         
@@ -706,19 +709,22 @@
            The instant state change feels snappy and intentional for neobrutalism.
         */
         .hover-lift-stable {
-            &:hover {
-                transform: translate(-2px, -2px) !important;
-                box-shadow: 10px 10px 0px 0px var(--nr-shadow-color) !important;
+            /* Only apply hover effect on devices with real hover capability (not touch) */
+            @media (hover: hover) {
+                &:hover {
+                    transform: translate(-2px, -2px) !important;
+                    box-shadow: 10px 10px 0px 0px var(--nr-shadow-color) !important;
+                }
+                
+                /* Desktop: Return to resting when clicking while hovering */
+                &:hover:active {
+                    transform: translate(0, 0) !important;
+                    box-shadow: 8px 8px 0px 0px var(--nr-shadow-color) !important;
+                }
             }
             
-            /* Desktop: Return to resting when clicking while hovering */
-            &:hover:active {
-                transform: translate(0, 0) !important;
-                box-shadow: 8px 8px 0px 0px var(--nr-shadow-color) !important;
-            }
-            
-            /* Mobile/touch: Press down from resting position for tactile feedback */
-            &:active:not(:hover) {
+            /* Touch/mobile: Press down on active for tactile feedback */
+            &:active {
                 transform: translate(2px, 2px) !important;
                 box-shadow: 4px 4px 0px 0px var(--nr-shadow-color) !important;
             }
