@@ -1134,7 +1134,7 @@
             font-size: 0.875em;
             background-color: oklch(0.95 0.01 280);
             color: var(--color-accent);
-            padding: 0.2em 0.4em;
+            padding: 0.1em 0.35em;
             border-radius: 0;
             border: 1px solid oklch(0.9 0.02 280);
             font-weight: 500;
