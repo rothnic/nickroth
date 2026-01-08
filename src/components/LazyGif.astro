@@ -2,60 +2,98 @@
 /**
  * LazyGif Component
  * 
- * Displays an optimized still image initially, then lazy-loads the GIF
- * when the element enters the viewport. Includes a play button overlay.
+ * Displays a placeholder with play button, then lazy-loads the GIF/video
+ * when clicked. Automatically extracts first frame as poster if not provided.
  * 
  * Usage in MDX:
  * <LazyGif 
  *   src="/demos/filter-transitions.gif" 
- *   poster="/demos/filter-transitions-poster.webp"
  *   alt="Filter navigation animation"
  *   caption="View transitions keep 'PROJECTS' stable while the category morphs"
+ * />
+ * 
+ * Or with explicit poster:
+ * <LazyGif 
+ *   src="/demos/filter-transitions.gif" 
+ *   poster="/demos/filter-transitions-poster.webp"
+ *   alt="Filter navigation animation"
  * />
  */
 
 interface Props {
+  /** Path to GIF or WebM video */
   src: string;
-  poster: string;
+  /** Alt text for accessibility */
   alt: string;
+  /** Optional poster image - if not provided, uses canvas extraction for GIF or video poster */
+  poster?: string;
+  /** Optional caption below the animation */
   caption?: string;
+  /** Optional width */
   width?: number;
+  /** Optional height */  
   height?: number;
 }
 
 const { src, poster, alt, caption, width, height } = Astro.props;
+
+// Determine if source is a video (webm/mp4) or GIF
+const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
 ---
 
 <figure class="lazy-gif-container">
-  <div class="lazy-gif-wrapper" data-gif-src={src}>
-    <!-- Poster image (optimized still) -->
-    <img 
-      src={poster} 
-      alt={alt}
-      width={width}
-      height={height}
-      loading="lazy"
-      class="lazy-gif-poster"
-    />
+  <div 
+    class="lazy-gif-wrapper" 
+    data-src={src}
+    data-is-video={isVideo.toString()}
+    data-poster={poster || ''}
+  >
+    {/* Poster image - shown initially if provided */}
+    {poster && (
+      <img 
+        src={poster} 
+        alt={alt}
+        width={width}
+        height={height}
+        loading="lazy"
+        class="lazy-gif-poster"
+      />
+    )}
     
-    <!-- Play button overlay -->
+    {/* Canvas for extracting first frame when no poster provided */}
+    {!poster && (
+      <canvas class="lazy-gif-poster lazy-gif-canvas" aria-hidden="true"></canvas>
+    )}
+    
+    {/* Play button overlay */}
     <button class="lazy-gif-play" aria-label="Play animation">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
         <path d="M8 5v14l11-7z"/>
       </svg>
     </button>
     
-    <!-- GIF (hidden until loaded) -->
-    <img 
-      data-src={src}
-      alt={alt}
-      width={width}
-      height={height}
-      class="lazy-gif-animation"
-      style="display: none;"
-    />
+    {/* Animation container (hidden until loaded) */}
+    {isVideo ? (
+      <video 
+        data-src={src}
+        class="lazy-gif-animation"
+        muted
+        loop
+        playsinline
+        style="display: none;"
+      ></video>
+    ) : (
+      <img 
+        data-src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        class="lazy-gif-animation"
+        style="display: none;"
+      />
+    )}
     
-    <!-- Loading indicator -->
+    {/* Loading indicator */}
     <div class="lazy-gif-loading" style="display: none;">
       <span>Loading...</span>
     </div>
@@ -71,11 +109,13 @@ const { src, poster, alt, caption, width, height } = Astro.props;
   
   .lazy-gif-wrapper {
     position: relative;
-    display: inline-block;
+    display: block;
     width: 100%;
     border: 3px solid oklch(0.2 0 0);
     overflow: hidden;
     cursor: pointer;
+    background: oklch(0.95 0 0);
+    min-height: 200px;
   }
   
   .lazy-gif-poster,
@@ -83,6 +123,12 @@ const { src, poster, alt, caption, width, height } = Astro.props;
     display: block;
     width: 100%;
     height: auto;
+  }
+  
+  .lazy-gif-canvas {
+    width: 100%;
+    min-height: 200px;
+    background: linear-gradient(135deg, oklch(0.95 0 0) 0%, oklch(0.9 0.02 280) 100%);
   }
   
   .lazy-gif-play {
@@ -143,7 +189,7 @@ const { src, poster, alt, caption, width, height } = Astro.props;
   /* Playing state */
   .lazy-gif-wrapper.playing .lazy-gif-poster,
   .lazy-gif-wrapper.playing .lazy-gif-play {
-    display: none;
+    display: none !important;
   }
   
   .lazy-gif-wrapper.playing .lazy-gif-animation {
@@ -158,43 +204,96 @@ const { src, poster, alt, caption, width, height } = Astro.props;
   .lazy-gif-wrapper.loading .lazy-gif-loading {
     display: block !important;
   }
+  
+  /* Dark mode */
+  [data-theme="neobrutalism-dark"] .lazy-gif-wrapper {
+    background: oklch(0.2 0 0);
+  }
+  
+  [data-theme="neobrutalism-dark"] .lazy-gif-canvas {
+    background: linear-gradient(135deg, oklch(0.2 0 0) 0%, oklch(0.25 0.02 280) 100%);
+  }
 </style>
 
 <script>
-  // Initialize all lazy GIF components
+  // Initialize all lazy GIF/video components
   function initLazyGifs() {
     document.querySelectorAll('.lazy-gif-wrapper').forEach((wrapper) => {
-      const playButton = wrapper.querySelector('.lazy-gif-play');
-      const gifImg = wrapper.querySelector('.lazy-gif-animation') as HTMLImageElement;
-      const gifSrc = gifImg?.dataset.src;
+      const el = wrapper as HTMLElement;
+      const playButton = el.querySelector('.lazy-gif-play') as HTMLButtonElement;
+      const animation = el.querySelector('.lazy-gif-animation') as HTMLImageElement | HTMLVideoElement;
+      const canvas = el.querySelector('.lazy-gif-canvas') as HTMLCanvasElement | null;
+      const src = el.dataset.src;
+      const isVideo = el.dataset.isVideo === 'true';
+      const hasPoster = el.dataset.poster !== '';
       
-      if (!playButton || !gifImg || !gifSrc) return;
+      if (!playButton || !animation || !src) return;
       
       // Already initialized
-      if (wrapper.classList.contains('initialized')) return;
-      wrapper.classList.add('initialized');
+      if (el.classList.contains('initialized')) return;
+      el.classList.add('initialized');
       
+      // For videos without poster, extract first frame
+      if (isVideo && !hasPoster && canvas) {
+        const video = document.createElement('video');
+        video.crossOrigin = 'anonymous';
+        video.muted = true;
+        video.preload = 'metadata';
+        
+        video.onloadeddata = () => {
+          video.currentTime = 0.1; // Slight offset to ensure frame is loaded
+        };
+        
+        video.onseeked = () => {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(video, 0, 0);
+          }
+        };
+        
+        video.src = src;
+      }
+      
+      // Handle play button click
       playButton.addEventListener('click', () => {
-        // Show loading state
-        wrapper.classList.add('loading');
+        el.classList.add('loading');
         
-        // Load the GIF
-        gifImg.onload = () => {
-          wrapper.classList.remove('loading');
-          wrapper.classList.add('playing');
-        };
-        
-        gifImg.onerror = () => {
-          wrapper.classList.remove('loading');
-          console.error('Failed to load GIF:', gifSrc);
-        };
-        
-        gifImg.src = gifSrc;
+        if (isVideo) {
+          const videoEl = animation as HTMLVideoElement;
+          videoEl.oncanplay = () => {
+            el.classList.remove('loading');
+            el.classList.add('playing');
+            videoEl.play();
+          };
+          videoEl.onerror = () => {
+            el.classList.remove('loading');
+            console.error('Failed to load video:', src);
+          };
+          videoEl.src = src;
+        } else {
+          const imgEl = animation as HTMLImageElement;
+          imgEl.onload = () => {
+            el.classList.remove('loading');
+            el.classList.add('playing');
+          };
+          imgEl.onerror = () => {
+            el.classList.remove('loading');
+            console.error('Failed to load GIF:', src);
+          };
+          imgEl.src = src;
+        }
       });
       
-      // Click to pause (toggle back to poster)
-      gifImg.addEventListener('click', () => {
-        wrapper.classList.remove('playing');
+      // Click animation to pause/stop
+      animation.addEventListener('click', () => {
+        if (isVideo) {
+          const videoEl = animation as HTMLVideoElement;
+          videoEl.pause();
+          videoEl.currentTime = 0;
+        }
+        el.classList.remove('playing');
       });
     });
   }
