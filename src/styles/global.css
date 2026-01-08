@@ -1276,9 +1276,15 @@
             color: oklch(0.95 0.01 280);
         }
         
+        /* Dark mode: list item strong text (list headings) */
+        [data-theme="neobrutalism-dark"] .prose-content li strong {
+            color: oklch(0.95 0.01 280);
+        }
+        
         [data-theme="neobrutalism-dark"] .prose-content code {
             background-color: oklch(0.25 0.02 280);
             border-color: oklch(0.35 0.02 280);
+            color: oklch(0.95 0.2 330); /* Light magenta for visibility */
         }
         
         [data-theme="neobrutalism-dark"] .prose-content table {

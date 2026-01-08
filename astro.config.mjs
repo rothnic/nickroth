@@ -12,8 +12,11 @@ export default defineConfig({
 		expressiveCode({
 			// Dual themes for light/dark mode
 			themes: ['github-light', 'github-dark'],
-			// Use CSS class for theme switching (matches our data-theme approach)
-			themeCssSelector: (theme) => `[data-theme="${theme.type}"]`,
+			// Map to our neobrutalism theme names
+			themeCssSelector: (theme) => 
+				theme.type === 'light' 
+					? '[data-theme="neobrutalism-light"]' 
+					: '[data-theme="neobrutalism-dark"]',
 			// Default word wrap enabled
 			defaultProps: {
 				wrap: true,

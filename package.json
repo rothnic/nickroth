@@ -15,6 +15,7 @@
 		"test:visual": "playwright test",
 		"test:visual:update": "playwright test --update-snapshots",
 		"test:visual:ui": "playwright test --ui",
+		"visual-review": "playwright test tests/visual-review.spec.ts --reporter=list",
 		"audit": "node ./scripts/run-lighthouse.mjs",
 		"audit:check": "node ./scripts/run-lighthouse.mjs && node ./scripts/check-lighthouse-thresholds.mjs",
 		"docs:validate": "node ./scripts/validate-docs.mjs",

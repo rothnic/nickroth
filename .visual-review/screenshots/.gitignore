@@ -1,0 +1,4 @@
+# Visual Review Screenshots
+# These are generated for review but not committed to git
+# Run: pnpm run visual-review
+*.png
