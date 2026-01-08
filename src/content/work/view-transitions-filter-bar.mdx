@@ -15,19 +15,24 @@ parentProject: "astro-portfolio-ai-development"
 
 # Persistent Filter Bar with View Transitions
 
-## The Challenge
+## What Makes a Filter Bar Feel Professional
 
-Category filter bars are deceptively complex. Users expect:
-- **Scroll position memory** — Don't reset to the left when changing categories
-- **Smooth active state transitions** — The selected filter should feel interactive
-- **Hover state continuity** — Clicks shouldn't cause visual "drops" during navigation
-- **Vertical scroll preservation** — The page shouldn't jump to top when filtering
+Category filter bars appear simple but require careful attention to preserve user context during navigation:
 
-With traditional MPAs, each category is a new page load—scroll positions reset, hover states vanish, and the experience feels disconnected. With Astro's View Transitions API, we can achieve SPA-like polish while retaining static route benefits.
+| User Expectation | Common Failure Mode |
+|------------------|---------------------|
+| Scroll position persists | Resets to left on each page |
+| Hover state continues through click | Drops and re-applies, causing flicker |
+| Page depth maintained when filtering | Jumps to top on every filter change |
+| Click feels responsive | No feedback during navigation delay |
 
-## Key Insight: `transition:persist`
+This guide covers the patterns required to deliver a polished filtering experience with Astro's View Transitions API.
 
-The breakthrough came from using Astro's `transition:persist` directive. Instead of swapping the filter bar element during page transitions, we keep the **actual DOM element** alive:
+## Pattern 1: DOM Persistence with `transition:persist`
+
+The standard View Transition behavior swaps DOM elements—capturing a snapshot of the old element, replacing it with the new one, and crossfading between them. For interactive components like filter bars, this breaks continuity.
+
+Use `transition:persist` to keep the **actual DOM element** alive across navigations:
 
 ```astro
 <nav 
@@ -45,18 +50,18 @@ The breakthrough came from using Astro's `transition:persist` directive. Instead
 </nav>
 ```
 
-### What This Preserves
+### What Persistence Preserves
 
-| State | Without `persist` | With `persist` |
-|-------|-------------------|----------------|
-| Scroll position | Resets to 0 | Maintained |
-| `:hover` state | Lost | Maintained |
-| Ongoing animations | Interrupted | Continue |
-| Event listeners | Need re-binding | Already bound |
+| State | Standard Transition | With `persist` |
+|-------|---------------------|----------------|
+| `scrollLeft` position | Resets to 0 | Maintained |
+| `:hover` pseudo-class | Lost on swap | Maintained |
+| Ongoing CSS animations | Interrupted | Continue |
+| Event listeners | Require re-binding | Already bound |
 
-### The Trade-off: Manual State Sync
+### Required Trade-off: Manual State Sync
 
-Since the DOM element persists, it **doesn't update from server rendering**. We must manually sync which button appears active:
+Persisted elements bypass server rendering on navigation. The active button styling must be updated via JavaScript:
 
 ```javascript
 document.addEventListener('astro:after-swap', () => {
@@ -70,34 +75,27 @@ document.addEventListener('astro:after-swap', () => {
     
     btn.classList.toggle('btn-accent', isActive);
     btn.classList.toggle('btn-outline', !isActive);
-    
-    if (isActive) {
-      btn.setAttribute('aria-current', 'page');
-    } else {
-      btn.removeAttribute('aria-current');
-    }
+    btn.toggleAttribute('aria-current', isActive);
   });
 });
 ```
 
-## Scroll Position Strategy: The Delta-Restoration Pattern
+## Pattern 2: The Delta-Restoration Scroll Strategy
 
-For filter bar scroll positions, we use a dual-layered approach:
+Even without `transition:persist`, scroll positions require explicit handling. Astro resets scroll to the top during page transitions.
 
-### 1. Horizontal Scroll (Always Restore)
+### Horizontal Scroll: Always Restore
 
-The filter bar's `scrollLeft` should always be restored—whether navigating between filters or returning from a detail page:
+The filter bar's `scrollLeft` should be restored on every navigation—whether switching filters or returning from a detail page:
 
 ```javascript
 const SCROLL_KEY = 'filterScrollPos';
 
-// Save on any navigation
 document.addEventListener('astro:before-preparation', () => {
   const nav = document.getElementById('work-category-nav');
   if (nav) sessionStorage.setItem(SCROLL_KEY, nav.scrollLeft);
 });
 
-// Restore in after-swap (before visible)
 document.addEventListener('astro:after-swap', () => {
   const nav = document.getElementById('work-category-nav');
   const saved = sessionStorage.getItem(SCROLL_KEY);
@@ -105,15 +103,17 @@ document.addEventListener('astro:after-swap', () => {
 });
 ```
 
-### 2. Vertical Scroll (Conditional)
+### Vertical Scroll: Conditional Restoration
 
-Vertical page scroll should only be restored for filter-to-filter navigation. For browser back button, let the browser's native restoration handle it:
+Vertical page scroll requires a different approach. Browser history navigation (back/forward) has its own scroll restoration—overriding it creates a worse experience.
+
+The solution: only restore vertical scroll for explicit filter clicks, not all navigations.
 
 ```javascript
 const PAGE_SCROLL_KEY = 'pageVerticalScroll';
 const NAV_FLAG_KEY = 'isFilterNavigation';
 
-// Mark filter clicks
+// Mark filter clicks explicitly
 nav.addEventListener('click', (e) => {
   if (e.target.closest('a')) {
     sessionStorage.setItem(NAV_FLAG_KEY, 'true');
@@ -121,7 +121,6 @@ nav.addEventListener('click', (e) => {
   }
 });
 
-// Restore conditionally
 document.addEventListener('astro:after-swap', () => {
   const isFilterNav = sessionStorage.getItem(NAV_FLAG_KEY) === 'true';
   sessionStorage.removeItem(NAV_FLAG_KEY);
@@ -130,12 +129,13 @@ document.addEventListener('astro:after-swap', () => {
     const saved = sessionStorage.getItem(PAGE_SCROLL_KEY);
     if (saved) window.scrollTo(0, parseInt(saved, 10));
   }
+  // Browser handles history navigation scroll automatically
 });
 ```
 
-## Visual Feedback: Click Animation
+## Pattern 3: Tactile Click Feedback
 
-Add tactile feedback when users click filters:
+View transitions introduce a delay between click and visible change. Without feedback, the interface feels unresponsive. Add a brief pulse animation on click:
 
 ```css
 @keyframes filter-btn-pulse {
@@ -161,27 +161,29 @@ nav.addEventListener('click', (e) => {
 });
 ```
 
-## Edge Fade Indicators
+The animation completes regardless of navigation timing, providing immediate acknowledgment.
 
-Show scroll affordance with fade overlays:
+## Pattern 4: Scroll Affordance with Edge Fades
+
+Long filter lists require overflow scrolling. Gradient fades at the edges signal that more content exists:
 
 ```astro
 <div class="relative">
-  <!-- Left fade -->
   <div 
     id="filter-fade-left"
     class="absolute left-0 w-12 h-full bg-gradient-to-r 
            from-base-100 to-transparent pointer-events-none z-10"
+    transition:animate="none"
     style="opacity: 0"
   />
   
   <nav id="work-category-nav">...</nav>
   
-  <!-- Right fade -->
   <div 
     id="filter-fade-right"
     class="absolute right-0 w-12 h-full bg-gradient-to-l 
            from-base-100 to-transparent pointer-events-none z-10"
+    transition:animate="none"
     style="opacity: 1"
   />
 </div>
@@ -205,18 +207,23 @@ function updateFades() {
 nav.addEventListener('scroll', updateFades);
 ```
 
-## Why Not Client-Side Filtering?
+Note the `transition:animate="none"` on fade elements—this prevents them from fading in during page transitions when they should already be visible.
 
-Static routes (`/work/category/automation-ai`) provide:
+## Architecture: Static Routes vs Client-Side Filtering
 
-- **SEO-friendly URLs** — Each category is crawlable
-- **Shareable links** — Users can share filtered views
-- **No JavaScript required** — Works with JS disabled
-- **Browser history integration** — Back button works naturally
+This implementation uses static routes (`/work/category/automation-ai`) rather than client-side filtering. The trade-offs favor static routing for most use cases:
 
-The View Transitions API gives us SPA-like polish without sacrificing these benefits.
+| Concern | Static Routes | Client-Side |
+|---------|---------------|-------------|
+| SEO | Category pages are indexable | Requires additional configuration |
+| Shareability | URLs are meaningful and shareable | Query params or hash fragments |
+| JS Dependency | Works without JavaScript | Requires JavaScript |
+| Initial Load | Each category pre-rendered | Filter logic runs client-side |
+| View Transitions | Natural integration | Manual animation handling |
+
+View Transitions make static routes feel as fluid as client-side filtering while preserving the architectural benefits.
 
 ## Related
 
-- [Building an Astro Portfolio with AI-Assisted Development](/work/astro-portfolio-ai-development) — Parent project
-- [Navbar Active State Morphing](/work/view-transitions-navbar) — Navigation animation patterns
+- [Building an Astro Portfolio with AI-Assisted Development](/work/astro-portfolio-ai-development) — Parent project overview
+- [Navbar Active State Morphing](/work/view-transitions-navbar) — Shared element transitions for navigation

@@ -15,15 +15,18 @@ parentProject: "astro-portfolio-ai-development"
 
 # Navbar Active State Morphing with View Transitions
 
-## The Vision
+## The Active State Problem
 
-Most navigation bars update instantly—click a link, and the active state jumps. But what if the active indicator could **slide** from one nav item to another during the page transition? This creates a sense of spatial continuity that reinforces the user's mental model of the site structure.
+Standard navigation updates instantly—click a link, and the active indicator jumps to its new position. This works, but misses an opportunity: the View Transitions API can make the indicator **slide** between positions during page navigation, reinforcing spatial relationships in the interface.
 
-## The Core Technique: Shared Element Transitions
+This guide covers the implementation patterns for shared-element navbar transitions.
 
-The key insight is that View Transitions API can morph elements that share the same `transition:name`—even if they exist in different DOM positions on different pages.
+## Pattern 1: Shared Element Identity
 
-### Structure
+The View Transitions API morphs elements that share the same `transition:name` across pages. For a sliding active indicator, we need:
+
+1. **Unique names for each nav link** — Allows the browser to track each link's position
+2. **A shared name for the active background** — The background "moves" to whichever link is active
 
 ```astro
 <nav class="flex items-center gap-4">
@@ -41,62 +44,65 @@ The key insight is that View Transitions API can morph elements that share the s
 </nav>
 ```
 
-### How It Works
+### How the Morph Works
 
-1. **Each link has a unique `transition:name`** — `nav-link-work`, `nav-link-approach`, etc.
-2. **The active background has a SHARED name** — `nav-active-bg` appears on whichever link is currently active
-3. **On navigation**: The old page's `nav-active-bg` and the new page's `nav-active-bg` have the same name, so the browser **morphs** between their positions
+On navigation from `/work` to `/background`:
 
-The result: the pink/accent background appears to slide from the old active link to the new one.
+1. Old page snapshot captures `nav-active-bg` at the "Work" link position
+2. New page renders `nav-active-bg` at the "Background" link position
+3. Browser detects matching `transition:name` and creates a geometry morph
+4. The background animates from old position/size to new position/size
 
-## Animation Direction Control
+No manual position calculations needed—the browser handles the interpolation.
 
-The default morph animation may not move in the direction you expect. For left-to-right navigation, you want a clear sense of "sliding right." Control this with CSS:
+## Pattern 2: Animation Timing Control
 
-### Scale-Based Transitions
+The default morph animation uses a linear interpolation that may not match your design language. Override with CSS:
+
+### Position Morphing (Automatic)
+
+The browser automatically animates:
+- X/Y position
+- Width/height
+- Border-radius
+
+### Opacity and Scale (Manual)
+
+Add polish with custom entry/exit animations:
 
 ```css
 @keyframes scale-up {
-  from { transform: scale(0.8); opacity: 0; }
+  from { transform: scale(0.85); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
 
 @keyframes scale-down {
   from { transform: scale(1); opacity: 1; }
-  to { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(0.85); opacity: 0; }
 }
 
-::view-transition-old(nav-active-bg),
-::view-transition-new(nav-active-bg) {
-  /* The browser handles position morphing automatically */
-  /* We just add a subtle scale effect for polish */
-  animation-duration: 0.25s;
-  animation-timing-function: ease-out;
+::view-transition-group(nav-active-bg) {
+  animation-duration: 0.35s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 50;
 }
 
 ::view-transition-old(nav-active-bg) {
-  animation-name: scale-down;
+  animation: scale-down 0.2s ease-out;
 }
 
 ::view-transition-new(nav-active-bg) {
-  animation-name: scale-up;
+  animation: scale-up 0.3s ease-out;
 }
 ```
 
-### Position Morphing
+This creates a subtle shrink-grow effect layered on top of the position morph.
 
-The browser automatically interpolates:
-- **x/y position** — The element slides from old to new location
-- **width/height** — If the active items have different sizes
-- **border-radius** — Smoothly morphs between shapes
+## Pattern 3: Entry and Exit Animations
 
-We don't need to manually animate position—the View Transition API handles this geometry morphing.
+When navigating to/from pages without the navbar, the element appears or disappears rather than morphing. The `:only-child` pseudo-selector targets these cases:
 
-## Handling Edge Cases
-
-### Entry-Only (Navbar Appears)
-
-When navigating from a page without the navbar to one with it:
+### Navbar Entry (Appearing for First Time)
 
 ```css
 ::view-transition-new(main-navbar):only-child {
@@ -109,9 +115,9 @@ When navigating from a page without the navbar to one with it:
 }
 ```
 
-The `:only-child` selector means "there is no old snapshot"—the element is appearing for the first time.
+The `:only-child` condition means "there is no corresponding old snapshot"—the element exists only on the destination page.
 
-### Exit-Only (Navbar Disappears)
+### Navbar Exit (Disappearing)
 
 ```css
 ::view-transition-old(main-navbar):only-child {
@@ -124,21 +130,37 @@ The `:only-child` selector means "there is no old snapshot"—the element is app
 }
 ```
 
-## Preventing Visual Glitches
+### Active Indicator Entry/Exit
+
+The same pattern applies to the active background when navigating to a page with no active nav item:
+
+```css
+::view-transition-old(nav-active-bg):only-child {
+  animation: scale-down 0.2s ease-out;
+}
+
+::view-transition-new(nav-active-bg):only-child {
+  animation: scale-up 0.3s ease-out;
+}
+```
+
+## Pattern 4: Visual Stability Preservation
+
+View transitions can introduce visual glitches if not carefully managed.
 
 ### The Flex-Wrap Shiver
 
-If your navbar uses `flex-wrap`, the browser may briefly recalculate wrap points during the snapshot phase, causing a "shiver." Solution:
+Navigation bars using `flex-wrap` may briefly recalculate wrap points during the snapshot phase, causing a visible "shiver." Force horizontal layout:
 
 ```astro
 <nav class="flex flex-nowrap overflow-x-auto">
-  <!-- Force horizontal layout -->
+  <!-- Prevents mid-transition reflow -->
 </nav>
 ```
 
-### Cursor State Preservation
+### Cursor State Inheritance
 
-By default, cursor styling doesn't inherit to transition snapshots:
+Transition snapshots don't inherit cursor styling by default. Interactive elements lose their pointer cursor during the animation:
 
 ```css
 ::view-transition-old(*),
@@ -148,9 +170,9 @@ By default, cursor styling doesn't inherit to transition snapshots:
 }
 ```
 
-### Button State Resets
+### Button State Reset
 
-Interactive elements may capture hover/active states in the snapshot. Reset them during transitions:
+If clicking a nav item while it's in hover/active state, the snapshot captures that state. This can cause the button to appear "stuck" during the transition:
 
 ```css
 html:has(::view-transition) .btn {
@@ -160,9 +182,11 @@ html:has(::view-transition) .btn {
 }
 ```
 
-## Z-Index Layering
+This forces buttons to their neutral visual state during transitions.
 
-Ensure the active background sits behind the text:
+## Pattern 5: Z-Index Layering
+
+The active background must sit behind the link text:
 
 ```css
 .nav-active-bg {
@@ -171,18 +195,23 @@ Ensure the active background sits behind the text:
   z-index: 0;
   background-color: var(--accent-color);
   border-radius: inherit;
+  pointer-events: none;
 }
 
-nav a span:last-child {
+nav a {
+  position: relative;
+}
+
+nav a > span:last-child {
   position: relative;
   z-index: 10;
 }
 ```
 
-## The Complete CSS
+## Complete CSS Reference
 
 ```css
-/* Navigation link positioning */
+/* Per-link transition groups */
 ::view-transition-group(nav-link-work),
 ::view-transition-group(nav-link-approach),
 ::view-transition-group(nav-link-background),
@@ -191,14 +220,14 @@ nav a span:last-child {
   animation-timing-function: ease-out;
 }
 
-/* Active background morphing */
+/* Active background morph */
 ::view-transition-group(nav-active-bg) {
   animation-duration: 0.35s;
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 50;
 }
 
-/* Entry animations */
+/* Entry/exit animations */
 ::view-transition-old(nav-active-bg),
 ::view-transition-new(nav-active-bg) {
   mix-blend-mode: normal;
@@ -211,18 +240,40 @@ nav a span:last-child {
 ::view-transition-new(nav-active-bg):only-child {
   animation: scale-up 0.3s ease-out;
 }
+
+/* Navbar entry */
+::view-transition-new(main-navbar):only-child {
+  animation: navbar-snap-down 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+/* Navbar exit */
+::view-transition-old(main-navbar):only-child {
+  animation: navbar-snap-up 0.3s ease-in forwards;
+}
 ```
 
-## Why This Matters
+## UX Considerations
 
-Navigation is one of the most frequently used UI elements. A morphing active indicator:
+A morphing active indicator provides:
 
-1. **Reinforces spatial relationships** — Users understand "Background is to the right of Work"
-2. **Reduces cognitive load** — The eye tracks the moving element naturally
-3. **Feels premium** — Small polish details compound into perceived quality
-4. **Works without JavaScript** — Pure CSS + View Transitions API
+| Benefit | Mechanism |
+|---------|-----------|
+| Spatial orientation | Users understand "Background is to the right of Work" |
+| Reduced cognitive load | Eye naturally tracks the moving element |
+| Perceived quality | Small polish details compound into premium feel |
+| Accessibility | Motion respects `prefers-reduced-motion` |
+
+For users with `prefers-reduced-motion`, disable the morph:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*) {
+    animation-duration: 0.01ms !important;
+  }
+}
+```
 
 ## Related
 
-- [Building an Astro Portfolio with AI-Assisted Development](/work/astro-portfolio-ai-development) — Parent project
-- [Persistent Filter Bar with View Transitions](/work/view-transitions-filter-bar) — Scroll preservation patterns
+- [Building an Astro Portfolio with AI-Assisted Development](/work/astro-portfolio-ai-development) — Parent project overview
+- [Persistent Filter Bar with View Transitions](/work/view-transitions-filter-bar) — Scroll position and hover state preservation
