@@ -9,6 +9,19 @@ export default defineConfig({
 
 	output: "static",
 
+	// Markdown configuration
+	markdown: {
+		shikiConfig: {
+			// Dual themes for light/dark mode
+			themes: {
+				light: 'github-light',
+				dark: 'github-dark',
+			},
+			// Enable word wrap to prevent horizontal scrolling
+			wrap: true,
+		},
+	},
+
 	// Update with your Cloudflare Pages URL
 	site: "https://www.nickroth.com",
 

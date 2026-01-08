@@ -1120,13 +1120,17 @@
         .prose-content pre {
             margin: 2rem 0;
             padding: 1.5rem;
-            background-color: oklch(0.15 0.01 280);
-            color: oklch(0.95 0.01 280);
             border-radius: 0;
             border: 3px solid oklch(0.2 0.01 280);
-            overflow-x: auto;
             font-size: 0.875rem;
             line-height: 1.6;
+        }
+        
+        /* Shiki dual theme support - switch colors based on theme */
+        [data-theme="dark"] .astro-code,
+        [data-theme="dark"] .astro-code span {
+            color: var(--shiki-dark) !important;
+            background-color: var(--shiki-dark-bg) !important;
         }
         
         .prose-content pre code {
