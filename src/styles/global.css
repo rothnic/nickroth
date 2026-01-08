@@ -1116,29 +1116,15 @@
             font-weight: 500;
         }
         
-        /* Code - blocks */
-        .prose-content pre {
+        /* Code - blocks (Expressive Code handles most styling) */
+        .prose-content .expressive-code {
             margin: 2rem 0;
-            padding: 1.5rem;
-            border-radius: 0;
-            border: 3px solid oklch(0.2 0.01 280);
-            font-size: 0.875rem;
-            line-height: 1.6;
-        }
-        
-        /* Shiki dual theme support - switch colors based on theme */
-        [data-theme="dark"] .astro-code,
-        [data-theme="dark"] .astro-code span {
-            color: var(--shiki-dark) !important;
-            background-color: var(--shiki-dark-bg) !important;
+            font-family: var(--font-mono), ui-monospace, monospace;
         }
         
         .prose-content pre code {
-            background: none;
-            border: none;
-            padding: 0;
-            color: inherit;
-            font-size: inherit;
+            font-size: 0.875rem;
+            line-height: 1.6;
         }
         
         /* Tables */

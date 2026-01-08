@@ -1,26 +1,36 @@
 import mdx from "@astrojs/mdx";
 import tailwindcss from "@tailwindcss/vite";
+import expressiveCode from "astro-expressive-code";
 import { defineConfig, fontProviders } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
 	prefetch: true,
-	integrations: [mdx()],
+	
+	// Expressive Code must come BEFORE mdx()
+	integrations: [
+		expressiveCode({
+			// Dual themes for light/dark mode
+			themes: ['github-light', 'github-dark'],
+			// Use CSS class for theme switching (matches our data-theme approach)
+			themeCssSelector: (theme) => `[data-theme="${theme.type}"]`,
+			// Default word wrap enabled
+			defaultProps: {
+				wrap: true,
+			},
+			// Style frames to match neobrutalism
+			styleOverrides: {
+				borderRadius: '0',
+				borderWidth: '3px',
+				frames: {
+					shadowColor: 'transparent',
+				},
+			},
+		}),
+		mdx(),
+	],
 
 	output: "static",
-
-	// Markdown configuration
-	markdown: {
-		shikiConfig: {
-			// Dual themes for light/dark mode
-			themes: {
-				light: 'github-light',
-				dark: 'github-dark',
-			},
-			// Enable word wrap to prevent horizontal scrolling
-			wrap: true,
-		},
-	},
 
 	// Update with your Cloudflare Pages URL
 	site: "https://www.nickroth.com",
