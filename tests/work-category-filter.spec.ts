@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 /**
  * WorkCategoryFilter Playwright Tests
@@ -12,14 +12,14 @@ const VIEWPORT_SIZES = {
 };
 
 // Helper to wait for filter bar to be ready
-async function waitForFilterBar(page: ReturnType<typeof test['_pageType']>) {
+async function waitForFilterBar(page: Page) {
   await page.waitForSelector('#work-category-nav', { state: 'attached' });
   // Wait for JS to initialize
   await page.waitForTimeout(300);
 }
 
 // Helper to get filter nav scroll info
-async function getNavScrollInfo(page: ReturnType<typeof test['_pageType']>) {
+async function getNavScrollInfo(page: Page) {
   return page.evaluate(() => {
     const nav = document.getElementById('work-category-nav');
     if (!nav) return null;
@@ -41,8 +41,8 @@ async function getNavScrollInfo(page: ReturnType<typeof test['_pageType']>) {
 }
 
 // Helper to check if element is fully visible within container
-async function isFilterVisible(page: ReturnType<typeof test['_pageType']>, filterText: string) {
-  return page.evaluate((text) => {
+async function isFilterVisible(page: Page, filterText: string) {
+  return page.evaluate((text: string) => {
     const nav = document.getElementById('work-category-nav');
     if (!nav) return false;
     
@@ -59,8 +59,8 @@ async function isFilterVisible(page: ReturnType<typeof test['_pageType']>, filte
 }
 
 // Helper to manually scroll the nav
-async function scrollNavTo(page: ReturnType<typeof test['_pageType']>, scrollLeft: number) {
-  await page.evaluate((left) => {
+async function scrollNavTo(page: Page, scrollLeft: number) {
+  await page.evaluate((left: number) => {
     const nav = document.getElementById('work-category-nav');
     if (nav) nav.scrollLeft = left;
   }, scrollLeft);

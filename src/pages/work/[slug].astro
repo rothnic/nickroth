@@ -1,6 +1,7 @@
 ---
 import { type CollectionEntry, getCollection } from "astro:content";
 import WorkCard from "../../components/WorkCard.astro";
+import OutlineBottomSheet from "../../components/OutlineBottomSheet.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
@@ -71,4 +72,7 @@ const categorySlug = category ? slugify(category) : null;
       </div>
     </div>
   </main>
+  
+  <!-- Mobile outline bottom sheet -->
+  <OutlineBottomSheet />
 </BaseLayout>

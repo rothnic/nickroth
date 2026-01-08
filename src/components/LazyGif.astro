@@ -198,12 +198,13 @@ const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
     
     if (!wrappers.length) return;
     
-    const observer = new IntersectionObserver((entries) => {
+    // Observer for initial load (with margin for preloading)
+    const loadObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const wrapper = entry.target as HTMLElement;
           loadAndPlayAnimation(wrapper);
-          observer.unobserve(wrapper);
+          loadObserver.unobserve(wrapper);
         }
       });
     }, {
@@ -211,9 +212,39 @@ const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
       threshold: 0
     });
     
+    // Observer for play/pause based on visibility
+    const visibilityObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const wrapper = entry.target as HTMLElement;
+        const isVideo = wrapper.dataset.isVideo === 'true';
+        
+        if (!wrapper.classList.contains('loaded')) return;
+        
+        const animation = wrapper.querySelector('.lazy-gif-animation') as HTMLVideoElement;
+        
+        if (entry.isIntersecting) {
+          // Entering viewport - play
+          wrapper.classList.add('playing');
+          if (isVideo && animation) {
+            animation.play().catch(() => {});
+          }
+        } else {
+          // Exiting viewport - pause and show poster
+          wrapper.classList.remove('playing');
+          if (isVideo && animation) {
+            animation.pause();
+            animation.currentTime = 0;
+          }
+        }
+      });
+    }, {
+      threshold: 0.1 // Trigger when 10% visible/hidden
+    });
+    
     wrappers.forEach((wrapper) => {
       wrapper.classList.add('initialized');
-      observer.observe(wrapper);
+      loadObserver.observe(wrapper);
+      visibilityObserver.observe(wrapper);
     });
   }
   
@@ -232,7 +263,7 @@ const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
       
       videoEl.oncanplay = () => {
         wrapper.classList.remove('loading');
-        wrapper.classList.add('playing');
+        wrapper.classList.add('loaded', 'playing');
         videoEl.play().catch(() => {
           // Autoplay might be blocked - that's ok, video will show
         });
@@ -250,7 +281,7 @@ const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
       
       imgEl.onload = () => {
         wrapper.classList.remove('loading');
-        wrapper.classList.add('playing');
+        wrapper.classList.add('loaded', 'playing');
       };
       
       imgEl.onerror = () => {

@@ -1168,14 +1168,31 @@
         /* Tables */
         .prose-content table {
             width: 100%;
+            min-width: 100%;
             margin: 1.5rem 0;
             border-collapse: collapse;
             font-size: 0.9375rem;
             border: 3px solid oklch(0.2 0 0);
             display: block;
             overflow-x: auto;
-            /* Fade scroll indicator on right edge */
             -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Ensure thead/tbody display properly with block table */
+        .prose-content thead,
+        .prose-content tbody,
+        .prose-content tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        
+        .prose-content thead {
+            display: table-header-group;
+        }
+        
+        .prose-content tbody {
+            display: table-row-group;
         }
         
         /* Table scroll fade indicator (mobile) */
@@ -1194,7 +1211,6 @@
                 );
             }
             
-            /* Remove fade when scrolled to the end */
             .prose-content table::-webkit-scrollbar {
                 height: 4px;
             }
@@ -1263,32 +1279,56 @@
         
         [data-theme="neobrutalism-dark"] .prose-content p,
         [data-theme="neobrutalism-dark"] .prose-content li {
-            color: oklch(0.8 0.01 280);
+            color: oklch(0.85 0.01 280); /* Increased from 0.8 for better contrast */
         }
         
         [data-theme="neobrutalism-dark"] .prose-content h2,
         [data-theme="neobrutalism-dark"] .prose-content h3,
         [data-theme="neobrutalism-dark"] .prose-content h4 {
-            color: oklch(0.95 0.01 280);
+            color: oklch(0.97 0.01 280);
+            border-color: oklch(0.4 0 0);
         }
         
         [data-theme="neobrutalism-dark"] .prose-content strong {
-            color: oklch(0.95 0.01 280);
+            color: oklch(0.97 0.01 280);
         }
         
         /* Dark mode: list item strong text (list headings) */
         [data-theme="neobrutalism-dark"] .prose-content li strong {
-            color: oklch(0.95 0.01 280);
+            color: oklch(0.97 0.01 280);
+        }
+        
+        /* Dark mode: links need high contrast */
+        [data-theme="neobrutalism-dark"] .prose-content a {
+            color: oklch(0.75 0.25 330); /* Bright magenta */
+        }
+        
+        [data-theme="neobrutalism-dark"] .prose-content a:hover {
+            color: oklch(0.85 0.25 330);
         }
         
         [data-theme="neobrutalism-dark"] .prose-content code {
             background-color: oklch(0.25 0.02 280);
-            border-color: oklch(0.35 0.02 280);
-            color: oklch(0.95 0.2 330); /* Light magenta for visibility */
+            border-color: oklch(0.4 0.02 280);
+            color: oklch(0.9 0.15 330); /* Light magenta for visibility */
+        }
+        
+        /* Dark mode: blockquotes */
+        [data-theme="neobrutalism-dark"] .prose-content blockquote {
+            background-color: oklch(0.22 0.02 280);
+            border-left-color: var(--color-primary);
         }
         
         [data-theme="neobrutalism-dark"] .prose-content table {
-            border-color: oklch(0.9 0.01 280);
+            border-color: oklch(0.5 0.01 280);
+        }
+        
+        [data-theme="neobrutalism-dark"] .prose-content thead {
+            background-color: oklch(0.25 0 0);
+        }
+        
+        [data-theme="neobrutalism-dark"] .prose-content th {
+            color: oklch(0.95 0 0);
         }
         
         [data-theme="neobrutalism-dark"] .prose-content tbody tr:nth-child(even) {
@@ -1296,8 +1336,13 @@
         }
         
         [data-theme="neobrutalism-dark"] .prose-content td {
-            border-top-color: oklch(0.3 0.01 280);
-            color: oklch(0.8 0.01 280);
+            border-top-color: oklch(0.35 0.01 280);
+            color: oklch(0.85 0.01 280);
+        }
+        
+        /* Dark mode: first column (labels) */
+        [data-theme="neobrutalism-dark"] .prose-content td:first-child {
+            color: oklch(0.9 0.01 280);
         }
 
         /* ========================================

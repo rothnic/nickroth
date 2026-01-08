@@ -1,0 +1,275 @@
+---
+/**
+ * ArticleOutline Component
+ * 
+ * Displays a table of contents generated from the page's H2 headings.
+ * Can be used in both desktop sticky sidebar and mobile bottom-sheet contexts.
+ * 
+ * This is a "view-only" component - the actual heading detection and
+ * navigation logic is handled by client-side JavaScript in the parent container.
+ * 
+ * Usage:
+ * <ArticleOutline />
+ * 
+ * The component renders an empty container that gets populated client-side
+ * by scanning for .prose-content h2 elements.
+ */
+
+interface Props {
+  /** Optional class name for custom styling */
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<nav 
+  class:list={["article-outline", className]}
+  aria-label="Article outline"
+>
+  <h3 class="text-sm font-bold uppercase tracking-wide text-base-content/60 mb-3">
+    Contents
+  </h3>
+  <ul class="article-outline-list space-y-1" role="list">
+    <!-- Populated by client-side JavaScript -->
+    <li class="article-outline-placeholder text-sm text-base-content/40 italic">
+      <span>Loading outline...</span>
+    </li>
+  </ul>
+</nav>
+
+<style>
+  .article-outline-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .article-outline-list li {
+    padding: 0;
+    margin: 0;
+  }
+  
+  .article-outline-list a {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: oklch(0.45 0 0);
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+  }
+  
+  .article-outline-list a:hover {
+    color: var(--color-primary);
+    background-color: oklch(0.97 0.01 280);
+  }
+  
+  .article-outline-list a.active {
+    color: var(--color-primary);
+    border-left-color: var(--color-primary);
+    font-weight: 600;
+    background-color: oklch(0.95 0.02 280);
+  }
+  
+  /* Dark mode */
+  [data-theme="neobrutalism-dark"] .article-outline-list a {
+    color: oklch(0.65 0 0);
+  }
+  
+  [data-theme="neobrutalism-dark"] .article-outline-list a:hover {
+    color: var(--color-primary);
+    background-color: oklch(0.22 0.01 280);
+  }
+  
+  [data-theme="neobrutalism-dark"] .article-outline-list a.active {
+    color: var(--color-primary);
+    background-color: oklch(0.2 0.02 280);
+  }
+  
+  /* H3 nested items - slightly indented */
+  .article-outline-list li[data-level="3"] a {
+    padding-left: 1.25rem;
+    font-size: 0.8125rem;
+    font-weight: 400;
+  }
+</style>
+
+<script>
+  /**
+   * Initialize the article outline by scanning for headings
+   */
+  function initArticleOutline() {
+    const outlines = document.querySelectorAll('.article-outline:not(.initialized)');
+    
+    outlines.forEach((outline) => {
+      outline.classList.add('initialized');
+      
+      const list = outline.querySelector('.article-outline-list');
+      if (!list) return;
+      
+      // Find all headings in prose content
+      const proseContent = document.querySelector('.prose-content');
+      if (!proseContent) {
+        // No prose content found - show empty state
+        list.innerHTML = '<li class="text-sm text-base-content/40 italic px-3 py-2">No sections found</li>';
+        return;
+      }
+      
+      const headings = proseContent.querySelectorAll('h2, h3');
+      
+      if (headings.length === 0) {
+        list.innerHTML = '<li class="text-sm text-base-content/40 italic px-3 py-2">No sections found</li>';
+        return;
+      }
+      
+      // Generate outline items
+      const items: string[] = [];
+      let h2Count = 0;
+      
+      headings.forEach((heading, index) => {
+        const level = heading.tagName.toLowerCase() === 'h2' ? 2 : 3;
+        
+        // Skip the first H2 if it's "Impact Statement" (usually duplicates header info)
+        if (level === 2) {
+          h2Count++;
+          if (h2Count === 1 && heading.textContent?.trim().toLowerCase() === 'impact statement') {
+            return;
+          }
+        }
+        
+        // Ensure heading has an ID for navigation
+        let id = heading.id;
+        if (!id) {
+          id = `heading-${index}`;
+          heading.id = id;
+        }
+        
+        const text = heading.textContent?.trim() || 'Untitled';
+        items.push(`
+          <li data-level="${level}">
+            <a href="#${id}" data-outline-link="${id}">${text}</a>
+          </li>
+        `);
+      });
+      
+      if (items.length === 0) {
+        list.innerHTML = '<li class="text-sm text-base-content/40 italic px-3 py-2">No sections found</li>';
+        return;
+      }
+      
+      list.innerHTML = items.join('');
+      
+      // Set up intersection observer for active state
+      setupActiveStateTracking(outline, headings);
+      
+      // Set up click handlers for smooth scrolling and bottom-sheet closing
+      setupClickHandlers(outline);
+    });
+  }
+  
+  /**
+   * Track which heading is currently in view and update active state
+   */
+  function setupActiveStateTracking(outline: Element, headings: NodeListOf<Element>) {
+    const links = outline.querySelectorAll('[data-outline-link]');
+    
+    // Create intersection observer for headings
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            
+            // Update active state
+            links.forEach((link) => {
+              const linkId = link.getAttribute('data-outline-link');
+              if (linkId === id) {
+                link.classList.add('active');
+              } else {
+                link.classList.remove('active');
+              }
+            });
+          }
+        });
+      },
+      {
+        rootMargin: '-20% 0% -60% 0%', // Trigger when heading is in top portion of viewport
+        threshold: 0
+      }
+    );
+    
+    headings.forEach((heading) => {
+      if (heading.id) {
+        observer.observe(heading);
+      }
+    });
+    
+    // Store observer reference for cleanup
+    (outline as any)._outlineObserver = observer;
+  }
+  
+  /**
+   * Set up click handlers for outline links
+   */
+  function setupClickHandlers(outline: Element) {
+    const links = outline.querySelectorAll('[data-outline-link]');
+    
+    links.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        const targetId = link.getAttribute('data-outline-link');
+        if (!targetId) return;
+        
+        const targetElement = document.getElementById(targetId);
+        if (!targetElement) return;
+        
+        // Check user's motion preference
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        
+        // Close any open bottom sheet (mobile)
+        const bottomSheet = document.querySelector('.outline-bottom-sheet');
+        if (bottomSheet?.classList.contains('open')) {
+          bottomSheet.classList.remove('open');
+          // Small delay to let the sheet close before scrolling
+          setTimeout(() => {
+            scrollToTarget(targetElement, prefersReducedMotion);
+          }, 200);
+        } else {
+          scrollToTarget(targetElement, prefersReducedMotion);
+        }
+      });
+    });
+  }
+  
+  /**
+   * Smooth scroll to target element
+   */
+  function scrollToTarget(element: Element, instant: boolean = false) {
+    element.scrollIntoView({
+      behavior: instant ? 'auto' : 'smooth',
+      block: 'start'
+    });
+    
+    // Update URL hash without triggering scroll
+    const id = element.id;
+    if (id) {
+      history.pushState(null, '', `#${id}`);
+    }
+  }
+  
+  // Initialize on load and after view transitions
+  initArticleOutline();
+  document.addEventListener('astro:page-load', initArticleOutline);
+  document.addEventListener('astro:after-swap', () => {
+    // Clean up any observers from old page
+    document.querySelectorAll('.article-outline.initialized').forEach((outline) => {
+      const observer = (outline as any)._outlineObserver;
+      if (observer) {
+        observer.disconnect();
+      }
+    });
+  });
+</script>

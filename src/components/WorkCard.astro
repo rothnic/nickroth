@@ -2,6 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 import type { ImageMetadata } from "astro";
 import { Image, getImage } from "astro:assets";
+import ArticleOutline from "./ArticleOutline.astro";
 
 export interface Props {
 	entry: CollectionEntry<"work">;
@@ -265,7 +266,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
           )}
           
           <!-- Quick Info -->
-          <section class="solid-bg-muted p-4 sm:p-5 rounded-none sm:rounded-xl border-y-2 border-x-0 sm:border-2 border-base-300">
+          <section class="solid-bg-muted p-4 sm:p-5 rounded-none sm:rounded-xl border-y-2 border-x-0 sm:border-2 border-base-300 mb-6">
             <h3 class="text-sm font-bold uppercase tracking-wide text-base-content/60 mb-3">Project Info</h3>
             <dl class="space-y-3 text-sm">
               {company && (
@@ -285,6 +286,11 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
                 <dd class="text-base-content font-semibold">{dateRange}</dd>
               </div>
             </dl>
+          </section>
+          
+          <!-- Article Outline (desktop only) -->
+          <section class="hidden lg:block solid-bg p-4 sm:p-5 rounded-xl border-2 border-base-300">
+            <ArticleOutline />
           </section>
         </div>
       </aside>

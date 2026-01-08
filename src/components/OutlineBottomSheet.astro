@@ -1,0 +1,355 @@
+---
+/**
+ * OutlineBottomSheet Component
+ * 
+ * Mobile-only component that provides a sticky "Contents" button at the bottom-right
+ * of the screen. When clicked, it expands into a bottom-sheet with the article outline.
+ * 
+ * This component is lazy-loaded using client:idle and is only rendered on work detail pages.
+ * 
+ * Features:
+ * - Minimal sticky tag at bottom-right (mobile only)
+ * - Slides up as bottom-sheet when clicked
+ * - Scrollable content if outline is taller than viewport
+ * - Auto-minimizes after selecting a section
+ * - Smooth scroll to selected section
+ * 
+ * Usage (in [slug].astro):
+ * <OutlineBottomSheet client:idle />
+ */
+
+import ArticleOutline from './ArticleOutline.astro';
+---
+
+<!-- Mobile bottom sheet (hidden on lg: screens where sidebar is visible) -->
+<div class="outline-bottom-sheet-container lg:hidden">
+  <!-- Sticky trigger button -->
+  <button 
+    class="outline-trigger"
+    aria-label="Open article outline"
+    aria-expanded="false"
+    aria-controls="outline-sheet"
+  >
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
+    </svg>
+    <span class="outline-trigger-text">Contents</span>
+  </button>
+  
+  <!-- Backdrop overlay -->
+  <div class="outline-backdrop" aria-hidden="true"></div>
+  
+  <!-- Bottom sheet panel -->
+  <div 
+    id="outline-sheet"
+    class="outline-bottom-sheet"
+    role="dialog"
+    aria-label="Article contents"
+    aria-modal="true"
+  >
+    <!-- Handle bar -->
+    <div class="outline-sheet-handle" aria-hidden="true">
+      <span class="handle-bar"></span>
+    </div>
+    
+    <!-- Header -->
+    <div class="outline-sheet-header">
+      <h2 class="text-lg font-bold uppercase tracking-wide">Contents</h2>
+      <button 
+        class="outline-close"
+        aria-label="Close outline"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Scrollable content -->
+    <div class="outline-sheet-content">
+      <ArticleOutline class="outline-in-sheet" />
+    </div>
+  </div>
+</div>
+
+<style>
+  .outline-bottom-sheet-container {
+    /* Container is always position fixed at the bottom */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    pointer-events: none; /* Allow clicks through when closed */
+  }
+  
+  /* Sticky trigger button */
+  .outline-trigger {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 1001;
+    pointer-events: auto;
+    
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    
+    padding: 0.625rem 0.875rem;
+    background-color: var(--color-primary);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    
+    border: 3px solid oklch(0.2 0 0);
+    box-shadow: 4px 4px 0px 0px oklch(0.2 0 0);
+    
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  }
+  
+  .outline-trigger:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px oklch(0.2 0 0);
+  }
+  
+  .outline-trigger:active {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0px 0px oklch(0.2 0 0);
+  }
+  
+  /* Hide trigger when sheet is open */
+  .outline-bottom-sheet-container.open .outline-trigger {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px);
+  }
+  
+  /* Backdrop overlay */
+  .outline-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: oklch(0.1 0 0 / 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  
+  .outline-bottom-sheet-container.open .outline-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  /* Bottom sheet panel */
+  .outline-bottom-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1002;
+    pointer-events: auto;
+    
+    max-height: 70vh;
+    min-height: 200px;
+    
+    background-color: var(--color-base-100);
+    border-top: 4px solid oklch(0.2 0 0);
+    border-left: 4px solid oklch(0.2 0 0);
+    border-right: 4px solid oklch(0.2 0 0);
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    
+    box-shadow: 0 -8px 32px oklch(0.1 0 0 / 0.3);
+    
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .outline-bottom-sheet-container.open .outline-bottom-sheet {
+    transform: translateY(0);
+  }
+  
+  /* Handle bar for touch affordance */
+  .outline-sheet-handle {
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem 0;
+    cursor: grab;
+  }
+  
+  .handle-bar {
+    width: 40px;
+    height: 4px;
+    background-color: oklch(0.7 0 0);
+    border-radius: 2px;
+  }
+  
+  /* Header */
+  .outline-sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem 0.75rem;
+    border-bottom: 2px solid var(--color-base-300);
+  }
+  
+  .outline-close {
+    padding: 0.5rem;
+    color: oklch(0.5 0 0);
+    transition: color 0.15s ease;
+  }
+  
+  .outline-close:hover {
+    color: oklch(0.2 0 0);
+  }
+  
+  /* Scrollable content area */
+  .outline-sheet-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem 0.5rem 1.5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Safe area padding for notched phones */
+  @supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .outline-sheet-content {
+      padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+    }
+  }
+  
+  /* Override some ArticleOutline styles inside sheet */
+  .outline-in-sheet :global(h3) {
+    display: none; /* Hide the "Contents" heading in sheet since we have header */
+  }
+  
+  /* Dark mode */
+  [data-theme="neobrutalism-dark"] .outline-trigger {
+    border-color: oklch(0.4 0 0);
+    box-shadow: 4px 4px 0px 0px oklch(0.4 0 0);
+  }
+  
+  [data-theme="neobrutalism-dark"] .outline-trigger:hover {
+    box-shadow: 6px 6px 0px 0px oklch(0.4 0 0);
+  }
+  
+  [data-theme="neobrutalism-dark"] .outline-trigger:active {
+    box-shadow: 2px 2px 0px 0px oklch(0.4 0 0);
+  }
+  
+  [data-theme="neobrutalism-dark"] .outline-bottom-sheet {
+    border-color: oklch(0.4 0 0);
+    box-shadow: 0 -8px 32px oklch(0 0 0 / 0.5);
+  }
+  
+  [data-theme="neobrutalism-dark"] .handle-bar {
+    background-color: oklch(0.5 0 0);
+  }
+  
+  [data-theme="neobrutalism-dark"] .outline-close:hover {
+    color: oklch(0.85 0 0);
+  }
+</style>
+
+<script>
+  /**
+   * Initialize bottom sheet interactions
+   */
+  function initBottomSheet() {
+    const containers = document.querySelectorAll('.outline-bottom-sheet-container:not(.js-initialized)');
+    
+    containers.forEach((container) => {
+      container.classList.add('js-initialized');
+      
+      const trigger = container.querySelector('.outline-trigger') as HTMLButtonElement;
+      const closeBtn = container.querySelector('.outline-close') as HTMLButtonElement;
+      const backdrop = container.querySelector('.outline-backdrop') as HTMLElement;
+      const sheet = container.querySelector('.outline-bottom-sheet') as HTMLElement;
+      
+      if (!trigger || !closeBtn || !backdrop || !sheet) return;
+      
+      // Open sheet
+      function openSheet() {
+        container.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden'; // Prevent body scroll
+      }
+      
+      // Close sheet
+      function closeSheet() {
+        container.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = ''; // Restore body scroll
+      }
+      
+      // Event listeners
+      trigger.addEventListener('click', openSheet);
+      closeBtn.addEventListener('click', closeSheet);
+      backdrop.addEventListener('click', closeSheet);
+      
+      // ESC key to close
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && container.classList.contains('open')) {
+          closeSheet();
+        }
+      });
+      
+      // Close when clicking an outline link (the outline handles smooth scroll)
+      const outlineLinks = container.querySelectorAll('[data-outline-link]');
+      outlineLinks.forEach((link) => {
+        link.addEventListener('click', () => {
+          // The ArticleOutline script handles the actual navigation
+          // We just need to close the sheet
+          setTimeout(() => {
+            closeSheet();
+          }, 50);
+        });
+      });
+      
+      // Handle touch gestures (swipe down to close)
+      let startY = 0;
+      let currentY = 0;
+      let isDragging = false;
+      
+      sheet.addEventListener('touchstart', (e) => {
+        const touch = e.touches[0];
+        startY = touch.clientY;
+        isDragging = true;
+      }, { passive: true });
+      
+      sheet.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        
+        const touch = e.touches[0];
+        currentY = touch.clientY;
+        const delta = currentY - startY;
+        
+        // Only allow dragging down
+        if (delta > 0) {
+          sheet.style.transform = `translateY(${delta}px)`;
+        }
+      }, { passive: true });
+      
+      sheet.addEventListener('touchend', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        
+        const delta = currentY - startY;
+        sheet.style.transform = '';
+        
+        // If dragged more than 100px down, close
+        if (delta > 100) {
+          closeSheet();
+        }
+      }, { passive: true });
+    });
+  }
+  
+  // Initialize on load and after view transitions
+  initBottomSheet();
+  document.addEventListener('astro:page-load', initBottomSheet);
+</script>
