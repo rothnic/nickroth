@@ -47,14 +47,17 @@ async function injectCursor(page: Page) {
   await page.mouse.move(195, 400);
 }
 
-// Show label - stays visible until next label or explicit removal
-async function showLabel(page: Page, text: string, duration: number = 2000) {
-  await page.evaluate(({ text }) => {
+// Show two-line label: title (bold) + description (smaller)
+async function showLabel(page: Page, title: string, description: string, duration: number = 2500) {
+  await page.evaluate(({ title, description }) => {
     document.getElementById('demo-label')?.remove();
     
     const label = document.createElement('div');
     label.id = 'demo-label';
-    label.textContent = text;
+    label.innerHTML = `
+      <div style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">${title}</div>
+      <div style="font-size: 12px; font-weight: 400; opacity: 0.9;">${description}</div>
+    `;
     label.style.cssText = `
       position: fixed;
       bottom: 50px;
@@ -62,19 +65,16 @@ async function showLabel(page: Page, text: string, duration: number = 2000) {
       transform: translateX(-50%);
       background: rgba(0, 0, 0, 0.95);
       color: white;
-      padding: 14px 24px;
-      font-size: 13px;
-      font-weight: 600;
+      padding: 12px 20px;
       font-family: system-ui, sans-serif;
       border-radius: 8px;
       z-index: 99999999;
       text-align: center;
-      max-width: 95%;
-      line-height: 1.4;
+      max-width: 360px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     `;
     document.body.appendChild(label);
-  }, { text });
+  }, { title, description });
   
   await page.waitForTimeout(duration);
   await page.evaluate(() => document.getElementById('demo-label')?.remove());
@@ -133,11 +133,11 @@ test.describe('Record View Transition Demo', () => {
     await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle', timeout: 10000 });
     await injectCursor(page);
     await page.waitForTimeout(500);
-    await showLabel(page, '🏠 Home Page — starting demo', 2000);
+    await showLabel(page, '🏠 Starting Demo', 'View transitions make navigation smooth');
     
     // Navigate to Background
     console.log('Clicking hamburger...');
-    await showLabel(page, '➡️ Click BACKGROUND — watch fade transition', 2000);
+    await showLabel(page, 'Navigate: Home → Background', 'Watch title fade transition');
     const hamburger = page.locator('[aria-label="Open navigation menu"]');
     await clickElement(page, hamburger);
     await page.waitForTimeout(300);
@@ -148,18 +148,18 @@ test.describe('Record View Transition Demo', () => {
     
     // Navigate to Work
     console.log('Clicking hamburger for Work...');
-    await showLabel(page, '➡️ Click WORK — filter bar will persist', 2000);
+    await showLabel(page, 'Navigate: Background → Work', 'Filter bar will smoothly appear');
     await clickElement(page, page.locator('[aria-label="Open navigation menu"]'));
     await page.waitForTimeout(300);
     const workLink = page.locator('.dropdown-content a[href="/work"]');
     await clickElement(page, workLink);
     await injectCursor(page);
     await page.waitForTimeout(600);
-    await showLabel(page, '💼 Work Page — filter bar uses transition:persist', 2000);
+    await showLabel(page, '💼 Work Page', 'Filter bar uses transition:persist');
     
     // Click AI APPLICATION
     console.log('Clicking AI APPLICATION...');
-    await showLabel(page, '🔍 Clicking filter — bar stays stable!', 2000);
+    await showLabel(page, 'Click: AI APPLICATION', 'Filter bar stays stable, title morphs');
     const aiFilter = page.locator('#work-category-nav a[href="/work/category/ai-application"]');
     await clickElement(page, aiFilter);
     await injectCursor(page);
@@ -167,7 +167,7 @@ test.describe('Record View Transition Demo', () => {
     
     // MARKETING - the key demo!
     console.log('Scrolling to MARKETING AUTOMATION...');
-    await showLabel(page, '➡️ MARKETING wraps to 2 lines — watch "PROJECTS" animate DOWN', 3000);
+    await showLabel(page, 'Click: MARKETING AUTOMATION', '"PROJECTS" will animate DOWN (title wraps)', 3000);
     
     // Scroll MARKETING into view first
     const marketingFilter = page.locator('#work-category-nav a[href="/work/category/marketing-automation"]');
@@ -178,17 +178,17 @@ test.describe('Record View Transition Demo', () => {
     await clickElement(page, marketingFilter);
     await injectCursor(page);
     await page.waitForTimeout(800);
-    await showLabel(page, '✨ "PROJECTS" smoothly morphed down!', 2000);
+    await showLabel(page, '✨ Text Morphing', '"PROJECTS" smoothly moved down!');
     
     // ALL PROJECTS
     console.log('Clicking ALL PROJECTS...');
-    await showLabel(page, '➡️ Now watch "PROJECTS" animate back UP', 2500);
+    await showLabel(page, 'Click: ALL PROJECTS', 'Watch "PROJECTS" animate back UP');
     await touchDragScroll(page, -200);
     const allFilter = page.locator('#work-category-nav a:has-text("ALL PROJECTS")');
     await clickElement(page, allFilter);
     await injectCursor(page);
     await page.waitForTimeout(600);
-    await showLabel(page, '✓ MPA with SPA-like transitions!', 2500);
+    await showLabel(page, '✓ MPA + SPA Experience', 'Smooth transitions, no page reloads');
     
     await page.waitForTimeout(500);
     await context.close();
@@ -200,35 +200,55 @@ test.describe('Record View Transition Demo', () => {
     const browser = await chromium.launch();
     const context = await browser.newContext({
       viewport: VIEWPORT,
+      hasTouch: true,
       recordVideo: { dir: OUTPUT_DIR, size: VIEWPORT },
     });
 
     const page = await context.newPage();
     
+    // Home - match WITH timing
     console.log('Recording WITHOUT...');
     await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle', timeout: 10000 });
+    await injectCursor(page);
     await page.waitForTimeout(500);
-    await showLabel(page, '🏠 Home — direct navigation (no transitions)', 2000);
+    await showLabel(page, '🏠 Without Transitions', 'Direct navigation (full page reloads)');
     
+    // Background - simulate click timing
+    await page.waitForTimeout(800); // Match hamburger interaction time
     await page.goto(`${BASE_URL}/background`, { waitUntil: 'networkidle' });
-    await page.waitForTimeout(500);
-    await showLabel(page, '📋 Background — jarring flash on reload', 2000);
+    await injectCursor(page);
+    await page.waitForTimeout(600);
     
+    // Work - simulate hamburger + click
+    await showLabel(page, 'Navigate: Background → Work', 'Full page reload');
+    await page.waitForTimeout(800);
     await page.goto(`${BASE_URL}/work`, { waitUntil: 'networkidle' });
-    await page.waitForTimeout(500);
-    await showLabel(page, '💼 Work — full page reload', 2000);
+    await injectCursor(page);
+    await page.waitForTimeout(600);
+    await showLabel(page, '💼 Work', 'Filter bar reloads completely');
     
+    // AI APPLICATION
+    await showLabel(page, 'Click: AI APPLICATION', 'Filter bar reloads');
+    await page.waitForTimeout(600);
     await page.goto(`${BASE_URL}/work/category/ai-application`, { waitUntil: 'networkidle' });
-    await page.waitForTimeout(500);
-    await showLabel(page, '🔍 AI APPLICATION — flash, filter bar reloads', 2000);
+    await injectCursor(page);
+    await page.waitForTimeout(600);
     
+    // MARKETING AUTOMATION - key comparison
+    await showLabel(page, 'Click: MARKETING AUTOMATION', 'No animation — just jumps', 3000);
+    await page.waitForTimeout(400);
     await page.goto(`${BASE_URL}/work/category/marketing-automation`, { waitUntil: 'networkidle' });
-    await page.waitForTimeout(500);
-    await showLabel(page, '➡️ MARKETING — no smooth animation, just jumps', 2500);
+    await injectCursor(page);
+    await page.waitForTimeout(800);
+    await showLabel(page, '✗ No Text Morphing', 'Layout just jumps instantly');
     
+    // ALL PROJECTS
+    await showLabel(page, 'Navigate: ALL PROJECTS', 'Another reload');
+    await page.waitForTimeout(600);
     await page.goto(`${BASE_URL}/work`, { waitUntil: 'networkidle' });
-    await page.waitForTimeout(500);
-    await showLabel(page, '✗ No smooth transitions — jarring experience', 2500);
+    await injectCursor(page);
+    await page.waitForTimeout(600);
+    await showLabel(page, '✗ Traditional MPA', 'Jarring experience without transitions');
     
     await page.waitForTimeout(500);
     await context.close();
