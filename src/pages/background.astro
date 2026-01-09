@@ -349,7 +349,7 @@ import PageHeader from '../components/PageHeader.astro';
                     <span class="font-semibold">Published in:</span> Procedia Computer Science
                   </p>
                   <a 
-                    href="https://www.sciencedirect.com/science/article/pii/S1877050915002860" 
+                    href="https://www.sciencedirect.com/science/article/pii/S1877050915003026" 
                     target="_blank" 
                     rel="noopener"
                     class="btn btn-sm btn-outline btn-primary"
@@ -390,7 +390,7 @@ import PageHeader from '../components/PageHeader.astro';
                     <span class="font-semibold">Published in:</span> Procedia Computer Science
                   </p>
                   <a 
-                    href="https://www.sciencedirect.com/science/article/pii/S1877050915002872" 
+                    href="https://www.sciencedirect.com/science/article/pii/S1877050915002379" 
                     target="_blank" 
                     rel="noopener"
                     class="btn btn-sm btn-outline btn-secondary"
@@ -404,6 +404,133 @@ import PageHeader from '../components/PageHeader.astro';
               </div>
             </div>
           </article>
+        </div>
+      </div>
+
+      <!-- DatoCMS Community Contributions -->
+      <div class="mb-20">
+        <h2 class="text-3xl font-bold text-center mb-4">Community Contributions</h2>
+        <p class="text-center text-base-content/70 mb-12 max-w-2xl mx-auto">
+          Advanced DatoCMS plugin development pushing the platform's capabilities—recognized by DatoCMS staff for robust architectural patterns.
+        </p>
+        
+        <!-- Staff Quote Callout -->
+        <div class="bg-gradient-to-r from-primary/5 to-secondary/5 border-l-4 border-primary p-6 rounded-r-lg mb-10 max-w-3xl mx-auto">
+          <blockquote class="text-lg italic text-base-content/80 mb-2">
+            "I think by this point you are definitely pushing our plugin system to its limits (in a good way! thank you for using them so robustly), and you probably know them better than many of our staff."
+          </blockquote>
+          <cite class="text-sm text-base-content/60">— Roger, DatoCMS Developer</cite>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Multi-Hook Plugin Architecture -->
+          <article class="card solid-card shadow-xl border-2 border-base-300 group hover:border-primary transition-colors">
+            <div class="card-body">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="badge badge-primary badge-sm">Plugin Architecture</span>
+                <span class="badge badge-ghost badge-sm">Advanced</span>
+              </div>
+              <h3 class="card-title text-lg mb-2 group-hover:text-primary transition-colors">
+                High-Performance Multi-Hook Plugin System
+              </h3>
+              <p class="text-sm text-base-content/80 mb-4">
+                Single-plugin architecture sharing core functionality and state across Form Outlets, Field Extensions, and Sidebar Panels—minimizing performance overhead of multiple plugin instances.
+              </p>
+              <a 
+                href="https://community.datocms.com/t/plugin-lifecycle-documentation-and-questions/7715" 
+                target="_blank" 
+                rel="noopener"
+                class="btn btn-sm btn-outline btn-primary"
+              >
+                View Discussion →
+              </a>
+            </div>
+          </article>
+
+          <!-- HubSpot Integration -->
+          <article class="card solid-card shadow-xl border-2 border-base-300 group hover:border-secondary transition-colors">
+            <div class="card-body">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="badge badge-secondary badge-sm">Integration</span>
+                <span class="badge badge-ghost badge-sm">HubSpot</span>
+              </div>
+              <h3 class="card-title text-lg mb-2 group-hover:text-secondary transition-colors">
+                Configurable HubSpot Object Sidebar
+              </h3>
+              <p class="text-sm text-base-content/80 mb-4">
+                Flexible sidebar component previewing HubSpot objects within DatoCMS, with custom configuration querying record types and mapping fields to sections.
+              </p>
+              <a 
+                href="https://community.datocms.com/t/sidebar-field-extension/8117" 
+                target="_blank" 
+                rel="noopener"
+                class="btn btn-sm btn-outline btn-secondary"
+              >
+                View Discussion →
+              </a>
+            </div>
+          </article>
+
+          <!-- Real-Time Structured Text Preview -->
+          <article class="card solid-card shadow-xl border-2 border-base-300 group hover:border-accent transition-colors">
+            <div class="card-body">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="badge badge-accent badge-sm">Real-Time Preview</span>
+              </div>
+              <h3 class="card-title text-lg mb-2 group-hover:text-accent transition-colors">
+                Live Structured Text Previewer
+              </h3>
+              <p class="text-sm text-base-content/80 mb-4">
+                Solved transforming unsaved form values to valid Structured Text in real-time, enabling accurate live preview of editor changes without saving.
+              </p>
+              <a 
+                href="https://community.datocms.com/t/convert-structured-text-field-form-value-to-valid-structured-text/5227" 
+                target="_blank" 
+                rel="noopener"
+                class="btn btn-sm btn-outline"
+              >
+                View Discussion →
+              </a>
+            </div>
+          </article>
+
+          <!-- Asset Source Plugin -->
+          <article class="card solid-card shadow-xl border-2 border-base-300 group hover:border-info transition-colors">
+            <div class="card-body">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="badge badge-info badge-sm">Asset Management</span>
+              </div>
+              <h3 class="card-title text-lg mb-2 group-hover:text-info transition-colors">
+                Custom "Upload from URL" Tool
+              </h3>
+              <p class="text-sm text-base-content/80 mb-4">
+                Asset Source plugin extending the DatoCMS media library with URL import functionality, streamlining content team workflows.
+              </p>
+              <a 
+                href="https://community.datocms.com/t/asset-source-plugin-broken-dropdown-styling/5322" 
+                target="_blank" 
+                rel="noopener"
+                class="btn btn-sm btn-outline"
+              >
+                View Discussion →
+              </a>
+            </div>
+          </article>
+        </div>
+
+        <!-- View All Activity Link -->
+        <div class="text-center mt-8">
+          <a 
+            href="https://community.datocms.com/u/nroth/activity" 
+            target="_blank" 
+            rel="noopener"
+            class="btn btn-outline"
+          >
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+            </svg>
+            View All DatoCMS Activity
+          </a>
         </div>
       </div>
 

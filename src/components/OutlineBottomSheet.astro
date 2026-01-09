@@ -314,15 +314,35 @@ import ArticleOutline from './ArticleOutline.astro';
         }
       });
       
-      // Close when clicking an outline link (the outline handles smooth scroll)
+      // Close when clicking an outline link - don't restore scroll position
+      // The link's href will handle scrolling to the correct position
       const outlineLinks = container.querySelectorAll('[data-outline-link]');
       outlineLinks.forEach((link) => {
-        link.addEventListener('click', () => {
-          // The ArticleOutline script handles the actual navigation
-          // We just need to close the sheet
-          setTimeout(() => {
-            closeSheet();
-          }, 50);
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const href = (link as HTMLAnchorElement).getAttribute('href');
+          
+          // Close sheet without restoring scroll position
+          container.classList.remove('open');
+          trigger.setAttribute('aria-expanded', 'false');
+          
+          // Restore body styles but don't scroll back
+          document.body.style.position = '';
+          document.body.style.top = '';
+          document.body.style.left = '';
+          document.body.style.right = '';
+          document.body.style.overflow = '';
+          
+          // After body is unlocked, scroll to the target
+          if (href) {
+            const target = document.querySelector(href);
+            if (target) {
+              // Wait for body to unlock, then smooth scroll
+              requestAnimationFrame(() => {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              });
+            }
+          }
         });
       });
       
