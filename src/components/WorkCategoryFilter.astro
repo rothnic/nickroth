@@ -382,14 +382,14 @@ const isAllActive = activeCategory === null;
     if (!nav || !fadeLeft || !fadeRight) return;
     
     // Since nav is persisted, we need to update active button styling based on current URL
-    const currentPath = window.location.pathname;
+    const currentPath = window.location.pathname.replace(/\/$/, ''); // Normalize: remove trailing slash
     const buttons = nav.querySelectorAll('a');
     
     buttons.forEach(btn => {
-      const href = btn.getAttribute('href');
-      const isActive = href === currentPath || 
-        (currentPath === '/work' && href === '/work') ||
-        (currentPath.startsWith('/work/category/') && href === currentPath);
+      const href = (btn.getAttribute('href') || '').replace(/\/$/, ''); // Normalize href too
+      
+      // Match: exact path OR /work matches /work OR category URLs match
+      const isActive = href === currentPath;
       
       if (isActive) {
         btn.classList.remove('btn-outline');
