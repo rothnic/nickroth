@@ -35,9 +35,9 @@ This site's design workflow has evolved through multiple AI design tools:
 For a detailed comparison of AI design tools, see [AI-Assisted Design: From Prompt to Production](/work/ai-assisted-design).
 
 ### Astro View Transitions
-The site uses Astro's ClientRouter for smooth, app-like navigation without JavaScript frameworks:
+The site uses Astro's [ClientRouter](https://docs.astro.build/en/guides/view-transitions/) for smooth, app-like navigation without JavaScript frameworks. Astro provides [transition directives](https://docs.astro.build/en/guides/view-transitions/#transition-directives) like `transition:name`, `transition:animate`, and `transition:persist` to control how elements behave during navigation.
 
-**Navbar Persistence**: The navigation bar uses `transition:name="main-navbar"` to remain stable during page transitions, with individual nav links animated via `transition:name` for active state morphing.
+**Navbar Persistence**: The navigation bar uses [`transition:name="main-navbar"`](https://docs.astro.build/en/guides/view-transitions/#naming-a-transition) to remain stable during page transitions, with individual nav links animated via `transition:name` for active state morphing.
 
 **Work Card Animations**: Project cards on `/work` use coordinated transitions:
 - `transition:name="work-card-{slug}"` - Card container morphs to detail page

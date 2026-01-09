@@ -1,0 +1,102 @@
+---
+/**
+ * Schema.org Structured Data Component
+ * 
+ * Generates JSON-LD structured data for better SEO.
+ * Supports Article, BreadcrumbList, and Person schemas.
+ */
+
+export interface Props {
+  type: 'Article' | 'BreadcrumbList' | 'WebSite';
+  // Article props
+  title?: string;
+  description?: string;
+  image?: string;
+  datePublished?: Date;
+  dateModified?: Date;
+  author?: {
+    name: string;
+    url?: string;
+  };
+  // Breadcrumb props
+  breadcrumbs?: Array<{
+    name: string;
+    url: string;
+  }>;
+  // Website props
+  siteName?: string;
+  siteUrl?: string;
+}
+
+const { 
+  type, 
+  title,
+  description,
+  image,
+  datePublished,
+  dateModified,
+  author = { name: 'Nick Roth', url: 'https://www.nickroth.com/' },
+  breadcrumbs,
+  siteName = 'Nick Roth',
+  siteUrl = 'https://www.nickroth.com'
+} = Astro.props;
+
+function generateSchema() {
+  if (type === 'Article') {
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: title,
+      description: description,
+      image: image,
+      datePublished: datePublished?.toISOString(),
+      dateModified: dateModified?.toISOString() || datePublished?.toISOString(),
+      author: {
+        '@type': 'Person',
+        name: author.name,
+        url: author.url
+      },
+      publisher: {
+        '@type': 'Person',
+        name: 'Nick Roth',
+        url: 'https://www.nickroth.com/'
+      }
+    };
+  }
+  
+  if (type === 'BreadcrumbList' && breadcrumbs) {
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: breadcrumbs.map((crumb, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: crumb.name,
+        item: crumb.url
+      }))
+    };
+  }
+  
+  if (type === 'WebSite') {
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: siteName,
+      url: siteUrl,
+      author: {
+        '@type': 'Person',
+        name: 'Nick Roth',
+        url: 'https://www.nickroth.com/'
+      }
+    };
+  }
+  
+  return null;
+}
+
+const schema = generateSchema();
+---
+
+{schema && (
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+)}

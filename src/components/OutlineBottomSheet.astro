@@ -67,7 +67,7 @@ import ArticleOutline from './ArticleOutline.astro';
     
     <!-- Scrollable content -->
     <div class="outline-sheet-content">
-      <ArticleOutline class="outline-in-sheet" />
+      <ArticleOutline class="outline-in-sheet" showHeading={false} />
     </div>
   </div>
 </div>
@@ -191,9 +191,9 @@ import ArticleOutline from './ArticleOutline.astro';
   /* Header */
   .outline-sheet-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    padding: 0.5rem 1rem 0.75rem;
+    padding: 0.25rem 0.75rem 0.75rem;
     border-bottom: 2px solid var(--color-base-300);
   }
   

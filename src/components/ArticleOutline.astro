@@ -18,18 +18,21 @@
 interface Props {
   /** Optional class name for custom styling */
   class?: string;
+  showHeading?: boolean;
 }
 
-const { class: className = "" } = Astro.props;
+const { class: className = '', showHeading = true } = Astro.props;
 ---
 
 <nav 
   class:list={["article-outline", className]}
   aria-label="Article outline"
 >
-  <h3 class="text-sm font-bold uppercase tracking-wide text-base-content/60 mb-3">
-    Contents
-  </h3>
+  {showHeading && (
+    <h3 class="text-sm font-bold uppercase tracking-wide text-base-content/60 mb-3">
+      Contents
+    </h3>
+  )}
   <ul class="article-outline-list space-y-1" role="list">
     <!-- Populated by client-side JavaScript -->
     <li class="article-outline-placeholder text-sm text-base-content/40 italic">
