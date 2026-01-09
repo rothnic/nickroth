@@ -641,16 +641,16 @@
             --hover-translate-y: 0px;
             --hover-scale: 1;
             --hover-rotate: 0deg;
-            
-            /* Only apply hover effect on devices with real hover capability */
-            @media (hover: hover) {
-                &:hover {
-                    transform: 
-                        translate(var(--hover-translate-x), var(--hover-translate-y)) 
-                        scale(var(--hover-scale)) 
-                        rotate(var(--hover-rotate));
-                    box-shadow: var(--hover-shadow, var(--nr-shadow-base));
-                }
+        }
+        
+        /* Only apply hover effect on devices with real hover capability */
+        @media (hover: hover) {
+            .hover-effect:hover {
+                transform: 
+                    translate(var(--hover-translate-x), var(--hover-translate-y)) 
+                    scale(var(--hover-scale)) 
+                    rotate(var(--hover-rotate));
+                box-shadow: var(--hover-shadow, var(--nr-shadow-base));
             }
         }
         
@@ -703,35 +703,32 @@
            - Default: Normal position with standard shadow (8px)
            - Hover (desktop): Lifts up (-2px, -2px) with larger shadow (10px)
            - Active while hovering (desktop): Returns to resting (0, 0)
-           - Active without hover (mobile): Presses down (+2px, +2px) with smaller shadow
+           - Active (all): Presses down (+2px, +2px) with smaller shadow
            
            Note: No CSS transition to prevent layout shift during state changes.
            The instant state change feels snappy and intentional for neobrutalism.
         */
-        .hover-lift-stable {
-            /* Only apply hover effect on devices with real hover capability (not touch) */
-            @media (hover: hover) {
-                &:hover {
-                    transform: translate(-2px, -2px) !important;
-                    box-shadow: 10px 10px 0px 0px var(--nr-shadow-color) !important;
-                }
-                
-                /* Desktop: Return to resting when clicking while hovering */
-                &:hover:active {
-                    transform: translate(0, 0) !important;
-                    box-shadow: 8px 8px 0px 0px var(--nr-shadow-color) !important;
-                }
+        .hover-lift-stable:active {
+            transform: translate(2px, 2px) !important;
+            box-shadow: 4px 4px 0px 0px var(--nr-shadow-color) !important;
+        }
+        
+        .hover-lift-stable:focus-visible {
+            outline: 3px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+        
+        /* Only apply hover effect on devices with real hover capability (not touch) */
+        @media (hover: hover) {
+            .hover-lift-stable:hover {
+                transform: translate(-2px, -2px) !important;
+                box-shadow: 10px 10px 0px 0px var(--nr-shadow-color) !important;
             }
             
-            /* Touch/mobile: Press down on active for tactile feedback */
-            &:active {
-                transform: translate(2px, 2px) !important;
-                box-shadow: 4px 4px 0px 0px var(--nr-shadow-color) !important;
-            }
-            
-            &:focus-visible {
-                outline: 3px solid var(--color-primary);
-                outline-offset: 2px;
+            /* Desktop: Return to resting when clicking while hovering */
+            .hover-lift-stable:hover:active {
+                transform: translate(0, 0) !important;
+                box-shadow: 8px 8px 0px 0px var(--nr-shadow-color) !important;
             }
         }
         
