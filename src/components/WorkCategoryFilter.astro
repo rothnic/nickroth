@@ -102,7 +102,6 @@ const isAllActive = activeCategory === null;
       flex flex-nowrap gap-3 min-w-0 overflow-x-auto py-2 scrollbar-hide overscroll-contain
       justify-start px-2 scroll-px-2
       sm:px-4 sm:scroll-px-4
-      xl:justify-center
     " 
     transition:name="work-category-nav"
     transition:persist
@@ -197,17 +196,15 @@ const isAllActive = activeCategory === null;
      */
     function scrollActiveIntoView(smooth = true) {
       const activeLink = nav.querySelector('.btn-accent') as HTMLElement;
-      const firstFilter = nav.querySelector('a') as HTMLElement;
-      if (!activeLink || !firstFilter) return;
+      if (!activeLink) return;
       
       // Constants
-      const PEEK_OFFSET = 30;  // Show ~30px of previous filter
       const THRESHOLD = 10;   // Skip scrolling if within this many pixels
       
       // Measurements
       const maxScroll = Math.max(0, nav.scrollWidth - nav.clientWidth);
       const currentScroll = nav.scrollLeft;
-      const anchorPosition = firstFilter.offsetLeft;
+      const containerPadding = parseFloat(getComputedStyle(nav).paddingLeft) || 0;
       const activePosition = activeLink.offsetLeft;
       
       // No overflow - nothing to scroll
@@ -216,25 +213,13 @@ const isAllActive = activeCategory === null;
         return;
       }
       
-      // Special case: first filter is active - scroll to start
-      if (activePosition <= anchorPosition) {
-        if (currentScroll < THRESHOLD) {
-          // Already at start, skip
-          requestAnimationFrame(updateFades);
-          return;
-        }
-        nav.scrollTo({ left: 0, behavior: smooth ? 'smooth' : 'instant' });
-        requestAnimationFrame(updateFades);
-        return;
-      }
-      
-      // Calculate target: position active filter at anchor, with peek offset
-      let targetScroll = activePosition - anchorPosition - PEEK_OFFSET;
+      // Calculate target: align active filter with left edge (accounting for container padding)
+      let targetScroll = activePosition - containerPadding;
       
       // Clamp to valid range
       targetScroll = Math.max(0, Math.min(targetScroll, maxScroll));
       
-      // Skip if already at or near target position (increased threshold for smoother UX)
+      // Skip if already at or near target position
       const difference = Math.abs(currentScroll - targetScroll);
       
       // Special case: if both are at or near maxScroll, skip (no more room to scroll)
