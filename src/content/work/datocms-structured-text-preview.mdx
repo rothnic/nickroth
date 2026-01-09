@@ -1,0 +1,140 @@
+---
+title: "Real-Time Structured Text Preview in DatoCMS"
+description: "Solving the challenge of transforming unsaved form values into valid Structured Text for live preview, enabling content editors to see accurate previews without saving."
+company: "DealNews"
+role: "Director of Product Management"
+startDate: 2024-03-01
+featured: false
+tags: ["DatoCMS", "React", "Content Preview", "TypeScript"]
+image: "../../assets/images/projects/content-platform.png"
+category: "WEB PLATFORMS"
+impact: "REAL-TIME PREVIEW ENABLING CONTENT EDITORS TO SEE CHANGES INSTANTLY."
+stack: ["DATOCMS", "REACT", "TYPESCRIPT", "GRAPHQL"]
+roleCategory: "TECHNICAL LEAD"
+parentProject: "content-platform-modernization"
+---
+
+# Real-Time Structured Text Preview in DatoCMS
+
+## Impact Statement
+Enabled content editors to see accurate live previews of Structured Text content without needing to save the record first.
+
+## The Problem
+
+DatoCMS's Structured Text field is powerful for rich content editing, but there's a fundamental challenge: **the data format differs between "form state" and "saved state"**.
+
+When building a sidebar preview panel, I discovered:
+- The `ctx.formValues` object contains the current unsaved field values
+- This format differs from what the GraphQL API returns
+- DatoCMS rendering libraries expect the GraphQL format
+
+Attempting to render form values directly resulted in:
+```
+Error: Invalid Structured Text format
+Expected 'document' node type, received form value object
+```
+
+## Understanding the Format Difference
+
+### Form Value Format (Unsaved)
+```json
+{
+  "type": "dast",
+  "document": {
+    "type": "root",
+    "children": [...]
+  },
+  "schema": "draft-07"
+}
+```
+
+### GraphQL Response Format (Saved)
+```json
+{
+  "value": {
+    "document": {
+      "type": "root",
+      "children": [...]
+    }
+  },
+  "blocks": [],
+  "links": []
+}
+```
+
+## The Solution
+
+I created a transformation layer that converts form values to the expected GraphQL format in real-time:
+
+```typescript
+function transformFormValueToStructuredText(
+  formValue: FormValue,
+  ctx: RenderFieldExtensionCtx
+): StructuredText {
+  // Handle null/empty cases
+  if (!formValue || !formValue.document) {
+    return null;
+  }
+
+  // Transform to expected format
+  return {
+    value: {
+      document: formValue.document,
+      schema: 'dast'
+    },
+    blocks: resolveBlocks(formValue.blocks, ctx),
+    links: resolveLinks(formValue.links, ctx)
+  };
+}
+
+// Resolve inline blocks to full records
+function resolveBlocks(
+  blockIds: string[], 
+  ctx: RenderFieldExtensionCtx
+): BlockRecord[] {
+  return blockIds.map(id => {
+    // Access block data from form context
+    const blockData = ctx.formValues[`block_${id}`];
+    return transformBlockToRecord(blockData);
+  });
+}
+```
+
+### Real-Time Updates with Watchers
+
+To update the preview as editors type, I used DatoCMS field watchers:
+
+```typescript
+useEffect(() => {
+  const unsubscribe = ctx.addFieldWatcher(
+    fieldPath,
+    (newValue) => {
+      const transformed = transformFormValueToStructuredText(newValue, ctx);
+      updatePreview(transformed);
+    }
+  );
+  
+  return () => unsubscribe();
+}, [ctx, fieldPath]);
+```
+
+## The Result
+
+The sidebar panel now shows a pixel-perfect preview that updates within milliseconds of editor input:
+
+- **Typography** renders correctly with all formatting
+- **Embedded blocks** appear with proper styling
+- **Internal links** show as they would on the live site
+- **Images** display with appropriate sizing
+
+## Key Learnings
+
+1. **Form vs GraphQL formats** - Always verify the data format at each stage of the data flow
+2. **Watch for performance** - Debounce rapid updates to prevent jank
+3. **Block resolution is tricky** - Inline blocks require special handling to access their full data
+4. **Error boundaries are essential** - Malformed content shouldn't crash the entire sidebar
+
+## Related Work
+
+- [High-Performance Multi-Hook Plugin](/work/datocms-multi-hook-plugin) — The plugin architecture enabling this preview
+- [DatoCMS Community Discussion](https://community.datocms.com/t/convert-structured-text-field-form-value-to-valid-structured-text/5227) — Original thread with community input

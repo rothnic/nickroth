@@ -436,38 +436,48 @@ import PageHeader from '../components/PageHeader.astro';
               <p class="text-sm text-base-content/80 mb-4">
                 Single-plugin architecture sharing core functionality and state across Form Outlets, Field Extensions, and Sidebar Panels—minimizing performance overhead of multiple plugin instances.
               </p>
-              <a 
-                href="https://community.datocms.com/t/plugin-lifecycle-documentation-and-questions/7715" 
-                target="_blank" 
-                rel="noopener"
-                class="btn btn-sm btn-outline btn-primary"
-              >
-                View Discussion →
-              </a>
+              <div class="flex flex-wrap gap-2">
+                <a href="/work/datocms-multi-hook-plugin" class="btn btn-sm btn-primary">
+                  Read Case Study
+                </a>
+                <a 
+                  href="https://community.datocms.com/t/plugin-lifecycle-documentation-and-questions/7715" 
+                  target="_blank" 
+                  rel="noopener"
+                  class="btn btn-sm btn-outline btn-primary"
+                >
+                  Community →
+                </a>
+              </div>
             </div>
           </article>
 
-          <!-- HubSpot Integration -->
+          <!-- React Performance Analysis -->
           <article class="card solid-card shadow-xl border-2 border-base-300 group hover:border-secondary transition-colors">
             <div class="card-body">
               <div class="flex items-center gap-2 mb-3">
-                <span class="badge badge-secondary badge-sm">Integration</span>
-                <span class="badge badge-ghost badge-sm">HubSpot</span>
+                <span class="badge badge-secondary badge-sm">Performance</span>
+                <span class="badge badge-ghost badge-sm">Key Finding</span>
               </div>
               <h3 class="card-title text-lg mb-2 group-hover:text-secondary transition-colors">
-                Configurable HubSpot Object Sidebar
+                React Reference Equality in iFrames
               </h3>
               <p class="text-sm text-base-content/80 mb-4">
-                Flexible sidebar component previewing HubSpot objects within DatoCMS, with custom configuration querying record types and mapping fields to sections.
+                Discovered that iframe bridging breaks React's reference equality, causing excessive re-renders. Developed deep-comparison wrappers and optimization patterns.
               </p>
-              <a 
-                href="https://community.datocms.com/t/sidebar-field-extension/8117" 
-                target="_blank" 
-                rel="noopener"
-                class="btn btn-sm btn-outline btn-secondary"
-              >
-                View Discussion →
-              </a>
+              <div class="flex flex-wrap gap-2">
+                <a href="/work/datocms-react-performance" class="btn btn-sm btn-secondary">
+                  Read Case Study
+                </a>
+                <a 
+                  href="https://community.datocms.com/t/formvalues-in-plugin-context-object-triggers-updates-for-all-objects/4986" 
+                  target="_blank" 
+                  rel="noopener"
+                  class="btn btn-sm btn-outline btn-secondary"
+                >
+                  Community →
+                </a>
+              </div>
             </div>
           </article>
 
@@ -483,37 +493,48 @@ import PageHeader from '../components/PageHeader.astro';
               <p class="text-sm text-base-content/80 mb-4">
                 Solved transforming unsaved form values to valid Structured Text in real-time, enabling accurate live preview of editor changes without saving.
               </p>
-              <a 
-                href="https://community.datocms.com/t/convert-structured-text-field-form-value-to-valid-structured-text/5227" 
-                target="_blank" 
-                rel="noopener"
-                class="btn btn-sm btn-outline"
-              >
-                View Discussion →
-              </a>
+              <div class="flex flex-wrap gap-2">
+                <a href="/work/datocms-structured-text-preview" class="btn btn-sm btn-accent">
+                  Read Case Study
+                </a>
+                <a 
+                  href="https://community.datocms.com/t/convert-structured-text-field-form-value-to-valid-structured-text/5227" 
+                  target="_blank" 
+                  rel="noopener"
+                  class="btn btn-sm btn-outline"
+                >
+                  Community →
+                </a>
+              </div>
             </div>
           </article>
 
-          <!-- Asset Source Plugin -->
+          <!-- Form Outlet Space Optimization -->
           <article class="card solid-card shadow-xl border-2 border-base-300 group hover:border-info transition-colors">
             <div class="card-body">
               <div class="flex items-center gap-2 mb-3">
-                <span class="badge badge-info badge-sm">Asset Management</span>
+                <span class="badge badge-info badge-sm">UI Optimization</span>
+                <span class="badge badge-ghost badge-sm">Workaround</span>
               </div>
               <h3 class="card-title text-lg mb-2 group-hover:text-info transition-colors">
-                Custom "Upload from URL" Tool
+                Form Outlet Space Optimization
               </h3>
               <p class="text-sm text-base-content/80 mb-4">
-                Asset Source plugin extending the DatoCMS media library with URL import functionality, streamlining content team workflows.
+                Innovative workaround using Form Outlets to bypass field extension space constraints (20-55px penalty per field), enabling fully dynamic height.
               </p>
-              <a 
-                href="https://community.datocms.com/t/asset-source-plugin-broken-dropdown-styling/5322" 
-                target="_blank" 
-                rel="noopener"
-                class="btn btn-sm btn-outline"
-              >
-                View Discussion →
-              </a>
+              <div class="flex flex-wrap gap-2">
+                <a href="/work/datocms-form-outlet-optimization" class="btn btn-sm btn-info">
+                  Read Case Study
+                </a>
+                <a 
+                  href="https://community.datocms.com/t/control-canvas-height/4931" 
+                  target="_blank" 
+                  rel="noopener"
+                  class="btn btn-sm btn-outline"
+                >
+                  Community →
+                </a>
+              </div>
             </div>
           </article>
         </div>

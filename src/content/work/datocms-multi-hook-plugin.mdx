@@ -1,0 +1,115 @@
+---
+title: "Building a High-Performance Multi-Hook DatoCMS Plugin Architecture"
+description: "How I developed a sophisticated single-plugin architecture that shares core functionality across Form Outlets, Field Extensions, and Sidebar Panels—minimizing performance overhead while maximizing flexibility."
+company: "DealNews"
+role: "Director of Product Management"
+startDate: 2024-05-01
+featured: false
+tags: ["DatoCMS", "Plugin Development", "React", "TypeScript", "Architecture"]
+image: "../../assets/images/projects/content-platform.png"
+category: "WEB PLATFORMS"
+impact: "ADVANCED PLUGIN ARCHITECTURE RECOGNIZED BY DATOCMS STAFF FOR ROBUSTNESS."
+stack: ["DATOCMS", "REACT", "TYPESCRIPT", "ZUSTAND"]
+roleCategory: "TECHNICAL LEAD"
+parentProject: "content-platform-modernization"
+---
+
+# Building a High-Performance Multi-Hook DatoCMS Plugin Architecture
+
+## Impact Statement
+Developed a sophisticated plugin architecture that DatoCMS staff recognized as "pushing our plugin system to its limits (in a good way)."
+
+## The Challenge
+
+When migrating DealNews from a legacy LAMP stack to DatoCMS + Next.js, I needed to build custom functionality across multiple plugin hooks:
+
+- **Form Outlets** - Custom UI elements within the record editing form
+- **Field Extensions** - Enhanced field editors with validation
+- **Sidebar Panels** - Real-time previews and integrations
+
+The naive approach would create separate plugins for each hook, but this introduces problems:
+- Multiple plugin instances running simultaneously
+- No shared state between components
+- Performance overhead from isolated bundle loading
+- Duplicated code and logic
+
+## The Solution: Unified Plugin Architecture
+
+I developed a single-plugin architecture that registers multiple hooks while sharing core functionality:
+
+### State Management with Zustand
+
+Instead of prop drilling or context providers across iframe boundaries, I used Zustand stores that could be shared:
+
+```typescript
+// Shared store accessible across all hooks
+const usePluginStore = create<PluginState>((set, get) => ({
+  currentRecord: null,
+  previewData: null,
+  hubspotObjects: [],
+  
+  setCurrentRecord: (record) => set({ currentRecord: record }),
+  fetchPreview: async () => {
+    const record = get().currentRecord;
+    if (!record) return;
+    // Fetch preview data for sidebar
+  }
+}));
+```
+
+### Multi-Hook Registration
+
+The plugin entry point registers all hooks in a single configuration:
+
+```typescript
+connect({
+  renderFieldExtension(fieldExtensionId, ctx) {
+    return render(
+      <FieldExtension id={fieldExtensionId} ctx={ctx} />
+    );
+  },
+  
+  renderSidebarPanel(sidebarPanelId, ctx) {
+    return render(
+      <SidebarPanel id={sidebarPanelId} ctx={ctx} />
+    );
+  },
+  
+  renderFormOutlet(formOutletId, ctx) {
+    return render(
+      <FormOutlet id={formOutletId} ctx={ctx} />
+    );
+  }
+});
+```
+
+### Lifecycle Management
+
+One key challenge was understanding when hooks mount/unmount and how to persist state:
+
+- **Form lifecycle** - Tracked via `astro:before-swap` and form field watchers
+- **State persistence** - Used Zustand's `persist` middleware with sessionStorage
+- **Cleanup** - Proper event listener cleanup to prevent memory leaks
+
+## DatoCMS Staff Recognition
+
+When discussing the architecture on the DatoCMS community forums, Roger (DatoCMS Developer) responded:
+
+> "I think by this point you are definitely pushing our plugin system to its limits (in a good way! thank you for using them so robustly), and you probably know them better than many of our staff."
+
+This validation confirmed the approach was both novel and valuable to the platform.
+
+## Key Learnings
+
+1. **Shared stores work across hooks** - Zustand stores can be imported by any component regardless of which hook rendered it.
+
+2. **Bundle optimization matters** - Tree-shaking and code splitting reduce initial load times for each hook.
+
+3. **DatoCMS SDK quirks** - Some behaviors around `asSidebarPanel` and hook ranking required experimentation to understand.
+
+4. **Documentation gaps exist** - The community forums are essential for discovering undocumented patterns.
+
+## Related Work
+
+- [Content Platform Modernization](/work/content-platform-modernization) — The larger migration project this plugin supports
+- [DatoCMS Community Discussion](https://community.datocms.com/t/plugin-lifecycle-documentation-and-questions/7715) — Original thread with full technical details

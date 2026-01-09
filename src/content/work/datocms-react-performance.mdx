@@ -1,0 +1,133 @@
+---
+title: "Solving React Performance Issues in DatoCMS Plugin iFrames"
+description: "Deep analysis of how iframe bridging breaks React reference equality in DatoCMS plugins, causing excessive re-renders and performance bottlenecks—with solutions."
+company: "DealNews"
+role: "Director of Product Management"
+startDate: 2024-02-01
+featured: false
+tags: ["DatoCMS", "React", "Performance", "TypeScript", "Optimization"]
+image: "../../assets/images/projects/content-platform.png"
+category: "WEB PLATFORMS"
+impact: "IDENTIFIED CRITICAL PERFORMANCE BOTTLENECK IN DATOCMS PLUGIN SDK."
+stack: ["DATOCMS", "REACT", "TYPESCRIPT"]
+roleCategory: "TECHNICAL LEAD"
+parentProject: "content-platform-modernization"
+---
+
+# Solving React Performance Issues in DatoCMS Plugin iFrames
+
+## Impact Statement
+Identified that iframe message bridging breaks React's reference equality, causing all hooks depending on the `ctx` object to re-render on every field change—even unrelated fields.
+
+## The Discovery
+
+While building complex DatoCMS plugins, I noticed severe performance degradation:
+- Typing in one field caused lag across the entire form
+- React DevTools showed constant re-renders
+- `useEffect` dependencies on `ctx` triggered on every keystroke
+
+## Root Cause Analysis
+
+DatoCMS plugins run in iframes and communicate with the parent CMS via a message bridge. I discovered this fundamental issue:
+
+```typescript
+// In a traditional React app, this works:
+useEffect(() => {
+  // Only runs when formValues actually changes
+}, [ctx.formValues]);
+
+// In DatoCMS plugins, this breaks:
+useEffect(() => {
+  // Runs on EVERY update because ctx is a new object each time
+}, [ctx.formValues]);
+```
+
+**Why does this happen?**
+
+When data crosses the iframe boundary via `postMessage`, it's serialized and deserialized. This creates *new JavaScript objects* on each message, breaking reference equality:
+
+```typescript
+// Parent sends: { type: 'update', formValues: { title: 'Hello' } }
+// Plugin receives: { type: 'update', formValues: { title: 'Hello' } }
+
+// These are DIFFERENT objects in memory:
+previousFormValues === newFormValues // false, even if content is identical
+```
+
+## Solutions Developed
+
+### 1. Deep Comparison Wrapper
+
+Created a custom hook that performs deep comparison before triggering updates:
+
+```typescript
+function useDeepCompareEffect(
+  callback: EffectCallback,
+  dependencies: DependencyList
+) {
+  const previousDeps = useRef<DependencyList>();
+  
+  if (!isDeepEqual(previousDeps.current, dependencies)) {
+    previousDeps.current = dependencies;
+  }
+  
+  useEffect(callback, [previousDeps.current]);
+}
+
+// Usage in plugin:
+useDeepCompareEffect(() => {
+  // Only runs when formValues actually changes
+  processFormValues(ctx.formValues);
+}, [ctx.formValues]);
+```
+
+### 2. Selective Field Watchers
+
+Instead of depending on the entire `ctx.formValues`, use DatoCMS's field watcher API:
+
+```typescript
+useEffect(() => {
+  const unsubscribe = ctx.addFieldWatcher(
+    'title', // Only watch specific fields
+    (newValue) => {
+      setTitle(newValue);
+    }
+  );
+  
+  return () => unsubscribe();
+}, [ctx]);
+```
+
+### 3. Memoization with Stable Keys
+
+For components that need the full context, extract only what's needed:
+
+```typescript
+const memoizedData = useMemo(() => ({
+  recordId: ctx.item?.id,
+  slug: ctx.formValues.slug,
+  status: ctx.formValues.status,
+}), [
+  ctx.item?.id,
+  ctx.formValues.slug,
+  ctx.formValues.status
+]);
+```
+
+## CTO Engagement
+
+This analysis sparked a discussion with DatoCMS's CTO (Stefano Verna) about potential SDK improvements:
+
+> "This is a known limitation of the iframe architecture. We're exploring ways to provide stable references or built-in deep comparison utilities."
+
+## Key Learnings
+
+1. **Iframe communication breaks reference equality** - Always use deep comparison when depending on iframe-bridged data
+2. **Field watchers are more performant** - Prefer granular subscriptions over broad dependencies
+3. **Memoize extracted data** - Create stable references for child components
+4. **Profile with React DevTools** - Use the Highlight Updates feature to catch excessive re-renders
+
+## Related Work
+
+- [High-Performance Multi-Hook Plugin](/work/datocms-multi-hook-plugin) — Architecture designed with these performance constraints in mind
+- [DatoCMS Community Discussion](https://community.datocms.com/t/formvalues-in-plugin-context-object-triggers-updates-for-all-objects/4986) — Original thread with CTO response

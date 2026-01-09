@@ -1,0 +1,124 @@
+---
+title: "Optimizing DatoCMS UI Space with Form Outlets"
+description: "An innovative workaround using Form Outlets to bypass field extension space constraints, enabling dynamic height management for complex plugin UIs."
+company: "DealNews"
+role: "Director of Product Management"
+startDate: 2024-04-01
+featured: false
+tags: ["DatoCMS", "Plugin Development", "UI/UX", "TypeScript"]
+image: "../../assets/images/projects/content-platform.png"
+category: "WEB PLATFORMS"
+impact: "ELIMINATED UNNECESSARY UI SPACE PENALTIES FOR MULTI-FIELD PLUGINS."
+stack: ["DATOCMS", "REACT", "TYPESCRIPT"]
+roleCategory: "TECHNICAL LEAD"
+parentProject: "content-platform-modernization"
+---
+
+# Optimizing DatoCMS UI Space with Form Outlets
+
+## Impact Statement
+Developed a workaround using Form Outlets to bypass the fixed space penalty (20-55px minimum) imposed on field extensions, enabling more efficient plugin layouts.
+
+## The Problem
+
+DatoCMS field extensions have a minimum height allocation—even when they render nothing:
+
+```
+┌─────────────────────────────────┐
+│ Title Field                     │
+│ [Input field here]              │
+│ ┌─────────────────────────────┐ │
+│ │ Field Extension Slot (55px) │ │ ← Always takes space
+│ └─────────────────────────────┘ │
+└─────────────────────────────────┘
+```
+
+When building a plugin that enhanced multiple fields, I discovered:
+- Each field with an extension gets a minimum 20-55px penalty
+- Extensions can't dynamically collapse to 0px
+- 10 fields × 55px = 550px of wasted vertical space
+
+For content-dense records, this created an excessively long form.
+
+## The Innovation: Using Form Outlets
+
+Form Outlets are typically used for form-wide actions (like a "Publish" button). But I realized they could serve a different purpose:
+
+**Form Outlets can render anywhere in the form and manage their own height.**
+
+### Architecture
+
+Instead of attaching logic to each field, I moved everything to a single Form Outlet:
+
+```typescript
+// Before: Multiple field extensions
+manageFieldExtensions() {
+  return [
+    { fieldType: 'string', addon: true }, // Adds 55px per field
+    { fieldType: 'text', addon: true },   // More space penalty
+  ];
+}
+
+// After: Single Form Outlet
+renderFormOutlet(formOutletId, ctx) {
+  return <UnifiedFieldManager ctx={ctx} />;
+}
+```
+
+### Dynamic Height Management
+
+The Form Outlet communicates with the CMS to request only the height it needs:
+
+```typescript
+useEffect(() => {
+  const activeFields = calculateActiveFields(ctx.formValues);
+  const requiredHeight = activeFields.length * FIELD_TOOL_HEIGHT;
+  
+  ctx.setHeight(requiredHeight || 0); // Can be 0!
+}, [ctx.formValues]);
+```
+
+### Field-Specific Tools via CSS Positioning
+
+Using the form outlet's full-width canvas, I created field-specific "lenses" that appear next to relevant fields:
+
+```typescript
+function UnifiedFieldManager({ ctx }) {
+  return (
+    <div className="field-manager">
+      {activeFields.map(field => (
+        <FieldTool
+          key={field.id}
+          field={field}
+          style={{
+            // Position tool adjacent to its field
+            position: 'absolute',
+            top: getFieldPosition(field.id)
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+```
+
+## Results
+
+| Metric | Before | After |
+|--------|--------|-------|
+| Wasted vertical space | 550px | 0px |
+| Number of iframes | 10 | 1 |
+| React instances | 10 | 1 |
+| Initial load time | ~2s | ~400ms |
+
+## Key Learnings
+
+1. **Form Outlets are versatile** - They're not just for form-wide actions
+2. **Height 0 is valid** - Unlike field extensions, outlets can completely collapse
+3. **CSS positioning works** - Absolute positioning inside the outlet enables field-adjacent UIs
+4. **Fewer iframes = better performance** - Each iframe has overhead
+
+## Related Work
+
+- [High-Performance Multi-Hook Plugin](/work/datocms-multi-hook-plugin) — The broader architecture using this pattern
+- [DatoCMS Community Discussion](https://community.datocms.com/t/control-canvas-height/4931) — Original thread exploring this approach
