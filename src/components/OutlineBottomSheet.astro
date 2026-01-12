@@ -338,18 +338,19 @@ import ArticleOutline from './ArticleOutline.astro';
         
         if (!targetId) return;
         
-        // Close sheet first
+        // Get the current scroll position BEFORE making any changes
+        // The body is locked with position:fixed and top:-XXXpx
+        const bodyTop = document.body.style.top;
+        const savedScrollY = bodyTop ? Math.abs(parseInt(bodyTop)) : 0;
+        
+        // Close sheet
         container.classList.remove('open');
         const trigger = container.querySelector('.outline-trigger') as HTMLButtonElement;
         if (trigger) {
           trigger.setAttribute('aria-expanded', 'false');
         }
         
-        // Get the current scroll position before unlocking
-        const bodyTop = document.body.style.top;
-        const savedScrollY = bodyTop ? parseInt(bodyTop) * -1 : window.scrollY;
-        
-        // Restore body styles
+        // Restore body styles (unlock the body)
         document.body.style.position = '';
         document.body.style.top = '';
         document.body.style.left = '';
@@ -358,7 +359,7 @@ import ArticleOutline from './ArticleOutline.astro';
         
         // Use requestAnimationFrame to let browser process style changes
         requestAnimationFrame(() => {
-          // Restore scroll position first (this prevents the jump to top)
+          // Restore scroll position first (prevents jump to top)
           window.scrollTo(0, savedScrollY);
           
           // Now scroll to the target element
@@ -380,6 +381,28 @@ import ArticleOutline from './ArticleOutline.astro';
         });
       });
     });
+  }
+  
+  /**
+   * Scroll to heading based on URL hash
+   * Called on page load and when using browser back/forward buttons
+   */
+  function scrollToHashIfPresent() {
+    const hash = window.location.hash;
+    if (hash && hash.length > 1) {
+      const targetId = hash.substring(1); // Remove '#'
+      const target = document.getElementById(targetId);
+      if (target) {
+        // Small delay to ensure page is fully rendered
+        setTimeout(() => {
+          const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          target.scrollIntoView({ 
+            behavior: prefersReducedMotion ? 'auto' : 'smooth', 
+            block: 'start' 
+          });
+        }, 100);
+      }
+    }
   }
   
   /**
@@ -528,9 +551,17 @@ import ArticleOutline from './ArticleOutline.astro';
   // Initialize on load
   setupScrollListener();
   
+  // Scroll to hash on initial load (if present)
+  scrollToHashIfPresent();
+  
+  // Listen for browser back/forward navigation
+  window.addEventListener('popstate', scrollToHashIfPresent);
+  
   // Reset and reinitialize after view transitions
   document.addEventListener('astro:page-load', () => {
     resetState();
     setupScrollListener();
+    // Scroll to hash after page transition (if present)
+    scrollToHashIfPresent();
   });
 </script>
