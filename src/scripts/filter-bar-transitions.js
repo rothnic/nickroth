@@ -1,29 +1,85 @@
 /**
  * filter-bar-transitions.js
  * 
- * Handles filter bar visibility during Astro view transitions.
+ * Handles filter bar visibility AND z-index stacking during Astro view transitions.
  * 
  * This script runs globally (in BaseLayout) instead of inside the WorkCategoryFilter
  * component because the component uses transition:persist. Event listeners added
  * inside a persisted component's script only run once on initial load and don't
  * reliably fire on subsequent navigations.
  * 
- * Problem:
+ * Problem 1 - Filter Bar Visibility:
  * - Filter bar uses transition:persist to maintain state across navigations
  * - Persisted elements remain visible and animate during view transitions
  * - This causes filter bar to immediately appear when navigating from detail pages
  * 
- * Solution Strategy:
+ * Solution 1 - Conditional Persistence:
  * - CONDITIONALLY DISABLE transition:persist when navigating from detail pages
  * - When persist is removed, element is treated like any other (swapped normally)
  * - This prevents the "immediate visibility" problem entirely
  * - Re-enable persist after the transition for future navigations
+ * 
+ * Problem 2 - Z-Index Stacking:
+ * - CSS wildcards don't work with pseudo-elements (::view-transition-group(work-card-*) is invalid)
+ * - Each work card has dynamic slug-based transition groups
+ * - Without explicit z-index, filter bar can overlay transitioning work cards
+ * 
+ * Solution 2 - Dynamic Z-Index Injection:
+ * - Detect which work card is transitioning by checking data attributes
+ * - Dynamically inject <style> tag with explicit z-index for that card's groups
+ * - Remove injected styles after transition completes
+ * - Ensures proper stacking: filter (1) < root (5) < work cards (100)
  */
 
 export function initFilterBarTransitions() {
   console.log('[Filter Bar Transitions] Initializing global handlers');
 
-  // Track navigation flags and manage transition:persist directive
+  let injectedStyleElement = null;
+
+  // Helper: Inject z-index styles for specific work card transition groups
+  function injectWorkCardStyles(slug) {
+    if (!slug) return;
+    
+    // Remove any existing injected styles
+    if (injectedStyleElement) {
+      injectedStyleElement.remove();
+      injectedStyleElement = null;
+    }
+    
+    // Create style element with explicit z-index for this card's groups
+    const style = document.createElement('style');
+    style.id = 'work-card-transition-z-index';
+    style.textContent = `
+      /* Dynamically injected z-index for work card: ${slug} */
+      ::view-transition-group(work-card-${slug}),
+      ::view-transition-group(work-img-${slug}),
+      ::view-transition-group(work-body-${slug}),
+      ::view-transition-group(work-title-${slug}),
+      ::view-transition-group(work-impact-${slug}) {
+        z-index: 100 !important;
+      }
+      
+      /* Root content sits between filter and work cards */
+      ::view-transition-group(root) {
+        z-index: 5 !important;
+      }
+    `;
+    
+    document.head.appendChild(style);
+    injectedStyleElement = style;
+    console.log(`[Filter Bar] Injected z-index styles for work card: ${slug}`);
+  }
+
+  // Helper: Remove injected styles
+  function removeInjectedStyles() {
+    if (injectedStyleElement) {
+      injectedStyleElement.remove();
+      injectedStyleElement = null;
+      console.log('[Filter Bar] Removed injected z-index styles');
+    }
+  }
+
+  // Track navigation flags and manage transition:persist directive + z-index injection
   document.addEventListener('astro:before-preparation', (event) => {
     console.log('[Filter Bar] astro:before-preparation - Navigation starting');
     
@@ -31,6 +87,22 @@ export function initFilterBarTransitions() {
     if (!nav) {
       console.log('[Filter Bar] Nav element not found');
       return;
+    }
+    
+    // Detect which work card is being clicked (if any)
+    const targetUrl = event.to?.pathname || window.location.pathname;
+    const workCardMatch = targetUrl.match(/\/work\/([^/]+)/);
+    const targetSlug = workCardMatch ? workCardMatch[1] : null;
+    
+    // Check if clicking FROM a work card by looking for the clicked element
+    const clickedCard = document.querySelector('[data-card-id]');
+    const sourceSlug = clickedCard?.getAttribute('data-card-id') || null;
+    
+    // Inject z-index styles for transitioning work card
+    if (targetSlug && targetSlug !== 'index') {
+      injectWorkCardStyles(targetSlug);
+    } else if (sourceSlug) {
+      injectWorkCardStyles(sourceSlug);
     }
     
     // Check if this is a filter-to-filter navigation
@@ -121,11 +193,14 @@ export function initFilterBarTransitions() {
     }
   });
   
-  // After page fully loaded: Ensure filter bar is visible with fade-in
+  // After page fully loaded: Ensure filter bar is visible with fade-in + cleanup injected styles
   document.addEventListener('astro:page-load', () => {
     const showAfter = sessionStorage.getItem('filterBarShowAfterTransition') === 'true';
     console.log(`[Filter Bar] astro:page-load - Show after: ${showAfter}`);
     sessionStorage.removeItem('filterBarShowAfterTransition');
+    
+    // Remove injected z-index styles after transition completes
+    removeInjectedStyles();
     
     const container = document.getElementById('work-category-filter-container');
     if (container && showAfter) {

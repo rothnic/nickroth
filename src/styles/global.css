@@ -2506,13 +2506,17 @@
            Clean, snappy card-to-detail morphing
            ======================================== */
         
-        /* Work card transitions - smooth morphing from card to detail */
-        ::view-transition-group(work-card-*),
-        ::view-transition-group(work-img-*),
-        ::view-transition-group(work-title-*),
-        ::view-transition-group(work-body-*),
-        ::view-transition-group(work-impact-*) {
-            z-index: 100;
+        /* Work card transitions - smooth morphing from card to detail
+           
+           CRITICAL: CSS doesn't support wildcards in pseudo-element selectors.
+           ::view-transition-group(work-card-*) is INVALID and ignored by browsers.
+           
+           Solution: JavaScript dynamically injects z-index for each specific work card group.
+           See src/scripts/filter-bar-transitions.js for implementation.
+           
+           Default animation timing (applies to all groups):
+        */
+        ::view-transition-group(*) {
             animation-duration: 0.35s;
             animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
         }
