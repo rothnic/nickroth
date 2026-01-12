@@ -333,10 +333,11 @@ const isAllActive = activeCategory === null;
   // Problem: transition:persist elements remain visible during view transition animations
   // 
   // Two-layer solution:
-  // 1. Z-INDEX CONTROL (CSS): Ensures work cards are always on top layer during transitions
+  // 1. Z-INDEX CONTROL (CSS): Ensures filter bar is on lowest layer during transitions
   //    - ::view-transition-group(work-category-nav) { z-index: 1 } (filter bar - lowest)
-  //    - ::view-transition-group(work-card-*) { z-index: 100 } (work cards - highest)
-  //    - This prevents any visual overlap regardless of opacity
+  //    - All other transition groups use default z-index (work cards, root, etc.)
+  //    - NOTE: CSS doesn't support wildcards like work-card-*, so we can't set specific
+  //      z-index for individual work card groups. Only setting filter bar to low z-index.
   // 
   // 2. OPACITY HIDING (JS + CSS): Hides filter bar for detail page transitions
   //    - JavaScript: Forces opacity: 0 in astro:before-swap (right before animation)

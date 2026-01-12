@@ -1534,23 +1534,21 @@
            This ensures work cards scale animation is always visible on top, regardless of
            opacity values or DOM order. */
         
-        /* Filter bar persisted element - lowest layer */
+        /* Filter bar transition group - lowest layer (never overlays content)
+           
+           NOTE: CSS doesn't support wildcards in pseudo-element selectors like 
+           ::view-transition-group(work-card-*). These selectors are ignored by the browser,
+           breaking all view transitions.
+           
+           SOLUTION: Only set the filter bar to a low z-index (1). All other transition
+           groups (work cards, root, etc.) use default z-index values, which naturally
+           stack correctly. The filter bar just needs to be explicitly behind everything.
+           
+           This prevents the filter bar from overlaying work cards during scale animations
+           without breaking the entire View Transitions API rendering.
+        */
         ::view-transition-group(work-category-nav) {
             z-index: 1 !important;
-        }
-        
-        /* Work card transition groups - highest layer (cards scale on top of everything) */
-        ::view-transition-group(work-card-*),
-        ::view-transition-group(work-img-*),
-        ::view-transition-group(work-title-*),
-        ::view-transition-group(work-body-*),
-        ::view-transition-group(work-impact-*) {
-            z-index: 100 !important;
-        }
-        
-        /* Root page layer - middle layer */
-        ::view-transition-group(root) {
-            z-index: 10 !important;
         }
 
         /* Reset button hover states during view transitions to prevent shadow desync */
