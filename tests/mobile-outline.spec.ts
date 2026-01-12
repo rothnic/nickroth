@@ -146,6 +146,51 @@ test.describe('Mobile Outline Bottom Sheet', () => {
     expect(url).toContain('#google-stitch');
   });
   
+  test('clicking different outline items navigates to correct headings', async ({ page }) => {
+    await page.setViewportSize(VIEWPORT_SIZES.mobile);
+    await page.goto('/work/ai-assisted-design');
+    await waitForPage(page);
+    
+    // Test clicking on "Practical Tips" heading (near bottom of page)
+    await scrollPage(page, 400);
+    await page.locator('.outline-trigger').click();
+    await page.waitForTimeout(500);
+    
+    // Get position of "Practical Tips" heading
+    const practicalTipsY = await getElementScrollY(page, '#practical-tips');
+    expect(practicalTipsY).not.toBeNull();
+    expect(practicalTipsY).toBeGreaterThan(1000); // Should be far down the page
+    
+    // Click on "Practical Tips" in outline
+    const practicalTipsLink = page.locator('.outline-bottom-sheet a[data-outline-link="practical-tips"]');
+    await practicalTipsLink.click();
+    await page.waitForTimeout(1000);
+    
+    // Should scroll near the target (within tolerance)
+    const scrollAfterPracticalTips = await page.evaluate(() => window.scrollY);
+    expect(Math.abs(scrollAfterPracticalTips - practicalTipsY!)).toBeLessThan(100);
+    expect(page.url()).toContain('#practical-tips');
+    
+    // Now test clicking a heading near the top (Google Stitch)
+    await page.locator('.outline-trigger').click();
+    await page.waitForTimeout(500);
+    
+    const googleStitchY = await getElementScrollY(page, '#google-stitch');
+    expect(googleStitchY).not.toBeNull();
+    expect(googleStitchY).toBeLessThan(practicalTipsY!); // Should be higher up the page
+    
+    // Click on "Google Stitch" in outline
+    const googleStitchLink = page.locator('.outline-bottom-sheet a[data-outline-link="google-stitch"]');
+    await googleStitchLink.click();
+    await page.waitForTimeout(1000);
+    
+    // Should scroll back UP to the target
+    const scrollAfterGoogleStitch = await page.evaluate(() => window.scrollY);
+    expect(scrollAfterGoogleStitch).toBeLessThan(scrollAfterPracticalTips); // Scrolled back up
+    expect(Math.abs(scrollAfterGoogleStitch - googleStitchY!)).toBeLessThan(100);
+    expect(page.url()).toContain('#google-stitch');
+  });
+  
   test('bottom sheet can be closed by clicking backdrop', async ({ page }) => {
     await page.setViewportSize(VIEWPORT_SIZES.mobile);
     await page.goto('/work/ai-assisted-design');
