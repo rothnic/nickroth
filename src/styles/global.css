@@ -1199,22 +1199,8 @@
             display: table-row-group;
         }
         
-        /* Table scroll fade indicator (mobile) */
+        /* Table scrollbar styling (mobile) */
         @media (max-width: 640px) {
-            .prose-content table {
-                /* Right edge gradient to indicate scrollable */
-                mask-image: linear-gradient(
-                    to right,
-                    black calc(100% - 2rem),
-                    transparent 100%
-                );
-                -webkit-mask-image: linear-gradient(
-                    to right,
-                    black calc(100% - 2rem),
-                    transparent 100%
-                );
-            }
-            
             .prose-content table::-webkit-scrollbar {
                 height: 4px;
             }
