@@ -359,6 +359,21 @@ const isAllActive = activeCategory === null;
     }
   });
   
+  // Keep filter bar hidden during the entire view transition animation
+  // This prevents the persisted element from appearing during the work card scaling
+  document.addEventListener('astro:before-swap', () => {
+    const wasHidden = sessionStorage.getItem('filterBarHidden') === 'true';
+    if (!wasHidden) return;
+    
+    const container = document.getElementById('work-category-filter-container');
+    if (container) {
+      // Ensure it stays hidden during swap (persisted elements are visible during transition)
+      container.style.transition = 'none';
+      container.style.opacity = '0';
+      container.style.pointerEvents = 'none';
+    }
+  });
+  
   // Show filter bar after view transition completes with a quick fade
   document.addEventListener('astro:page-load', () => {
     // Only restore filter bar if it was hidden
