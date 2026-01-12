@@ -21,14 +21,24 @@
  * 
  * Problem 2 - Z-Index Stacking:
  * - CSS wildcards don't work with pseudo-elements (::view-transition-group(work-card-*) is invalid)
- * - Each work card has dynamic slug-based transition groups
+ * - Each work card has dynamic slug-based transition groups (work-card-{slug}, work-img-{slug}, etc.)
  * - Without explicit z-index, filter bar can overlay transitioning work cards
  * 
  * Solution 2 - Dynamic Z-Index Injection:
- * - Detect which work card is transitioning by checking data attributes
- * - Dynamically inject <style> tag with explicit z-index for that card's groups
- * - Remove injected styles after transition completes
+ * - Detect which work card is transitioning in astro:before-preparation
+ * - Store slug for injection in astro:before-swap (when pseudo-elements exist)
+ * - CRITICAL: Inject in astro:before-swap, NOT before-preparation
+ *   - View transition pseudo-elements only exist after before-swap fires
+ *   - Injecting earlier = styles exist but have no targets yet
+ * - Inject <style> tag with explicit z-index for ALL that card's transition groups
+ * - Remove injected styles after transition completes (astro:page-load)
  * - Ensures proper stacking: filter (1) < root (5) < work cards (100)
+ * 
+ * View Transitions API Structure:
+ * - ::view-transition-group(name) = Container for the transition (SET Z-INDEX HERE)
+ * - ::view-transition-image-pair(name) = Contains old/new snapshots (inherits z-index)
+ * - ::view-transition-old(name) = Old page snapshot
+ * - ::view-transition-new(name) = New page snapshot
  */
 
 export function initFilterBarTransitions() {
@@ -79,7 +89,10 @@ export function initFilterBarTransitions() {
     }
   }
 
-  // Track navigation flags and manage transition:persist directive + z-index injection
+  // Helper: Store slug for use in astro:before-swap
+  let pendingSlug = null;
+
+  // Track navigation flags and manage transition:persist directive
   document.addEventListener('astro:before-preparation', (event) => {
     console.log('[Filter Bar] astro:before-preparation - Navigation starting');
     
@@ -89,20 +102,19 @@ export function initFilterBarTransitions() {
       return;
     }
     
-    // Detect which work card is being clicked (if any)
+    // Detect which work card is transitioning
     const targetUrl = event.to?.pathname || window.location.pathname;
     const workCardMatch = targetUrl.match(/\/work\/([^/]+)/);
     const targetSlug = workCardMatch ? workCardMatch[1] : null;
     
     // Check if clicking FROM a work card by looking for the clicked element
-    const clickedCard = document.querySelector('[data-card-id]');
+    const clickedCard = document.activeElement?.closest('[data-card-id]') || document.querySelector('[data-card-id]:hover');
     const sourceSlug = clickedCard?.getAttribute('data-card-id') || null;
     
-    // Inject z-index styles for transitioning work card
-    if (targetSlug && targetSlug !== 'index') {
-      injectWorkCardStyles(targetSlug);
-    } else if (sourceSlug) {
-      injectWorkCardStyles(sourceSlug);
+    // Store slug for injection in astro:before-swap (when pseudo-elements exist)
+    pendingSlug = targetSlug && targetSlug !== 'index' ? targetSlug : sourceSlug;
+    if (pendingSlug) {
+      console.log(`[Filter Bar] Detected transitioning work card slug: ${pendingSlug}`);
     }
     
     // Check if this is a filter-to-filter navigation
@@ -141,9 +153,29 @@ export function initFilterBarTransitions() {
     }
   });
   
-  // Before DOM swap: Handle element based on whether persist was removed
+  // Before DOM swap: Inject z-index styles + handle filter bar visibility
   document.addEventListener('astro:before-swap', () => {
     console.log('[Filter Bar] astro:before-swap - Handling transition');
+    
+    // CRITICAL: Inject z-index styles HERE (not in before-preparation)
+    // Reason: View transition pseudo-elements (::view-transition-group) only exist
+    // after astro:before-swap fires. Injecting earlier means styles exist but
+    // have no targets to apply to yet.
+    if (pendingSlug) {
+      console.log(`[Filter Bar] Injecting z-index styles for slug: ${pendingSlug}`);
+      injectWorkCardStyles(pendingSlug);
+      
+      // Verify injection worked
+      const injectedStyle = document.getElementById('work-card-transition-z-index');
+      if (injectedStyle) {
+        console.log('[Filter Bar] ✓ Styles injected and visible in DOM');
+        console.log('[Filter Bar] ✓ Styles will apply to ::view-transition-group pseudo-elements');
+      } else {
+        console.error('[Filter Bar] ✗ Style injection failed');
+      }
+      
+      pendingSlug = null; // Clear after injection
+    }
     
     const persistRemoved = sessionStorage.getItem('filterBarPersistRemoved') === 'true';
     
