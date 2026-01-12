@@ -106,38 +106,47 @@ Or with Tailwind:
 
 ## View Transition Stacking Context
 
-### The Problem: Regular DOM Elements Over View Transitions
+### The Problem: Persisted Elements Appearing During Transitions
 
-View transitions create `::view-transition-group` pseudo-elements that should appear above regular content during animations. However, regular DOM elements with z-index can still appear on top of these pseudo-elements if not properly managed.
+When using `transition:persist` on elements like the filter bar, they remain in the DOM during view transitions and appear immediately at the start of the animation. This can cause them to overlay transitioning work cards even if the work card's `::view-transition-group` has a higher z-index.
 
-### Solution: Lower Z-Index During Active Transitions
+### Solution: Hide Persisted Elements During Transitions
 
-Use the `html:has(::view-transition)` selector to target elements only during active view transitions:
+Use Astro's lifecycle events to hide persisted elements at the start of navigation and show them after the transition completes:
 
-```css
-/* Lower z-index during view transitions */
-html:has(::view-transition) #element-id {
-    z-index: 0 !important;
-}
+```javascript
+// Hide filter bar during work card view transitions
+document.addEventListener('astro:before-preparation', () => {
+  const container = document.getElementById('work-category-filter-container');
+  if (container) {
+    container.style.opacity = '0';
+    container.style.pointerEvents = 'none';
+  }
+});
+
+// Show filter bar after view transition completes
+document.addEventListener('astro:page-load', () => {
+  const container = document.getElementById('work-category-filter-container');
+  if (container) {
+    requestAnimationFrame(() => {
+      container.style.opacity = '1';
+      container.style.pointerEvents = 'auto';
+    });
+  }
+});
 ```
 
-### Example: Filter Bar Fix
+Add transition-opacity to the container for smooth fade in/out:
 
-The filter bar fade overlays (z-10) were appearing over work card transitions (z-index: 100 in ::view-transition-group). The fix:
-
-```css
-html:has(::view-transition) #work-category-filter-container,
-html:has(::view-transition) #filter-fade-left,
-html:has(::view-transition) #filter-fade-right {
-    z-index: 0 !important;
-}
+```html
+<div class="transition-opacity duration-200" id="work-category-filter-container">
+  <!-- filter bar content -->
+</div>
 ```
-
-This ensures the work card view transition remains the top-most layer during scaling animations.
 
 ### When to Use
 
 Apply this pattern when:
-- Regular DOM elements appear over view transition animations
-- Fixed or absolute positioned elements interfere with transitions
-- You need to temporarily lower z-index only during transitions
+- Using `transition:persist` on elements that could interfere with view transitions
+- Fixed or absolute positioned elements appear over transitioning content
+- You need elements to fade out during navigation and fade back in after

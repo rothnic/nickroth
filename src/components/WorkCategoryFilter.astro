@@ -72,7 +72,7 @@ const isAllActive = activeCategory === null;
   and span full viewport width. This allows fade effects to reach viewport edges.
 -->
 <div 
-  class="relative mb-8 sm:mb-12 w-screen left-1/2 -translate-x-1/2" 
+  class="relative mb-8 sm:mb-12 w-screen left-1/2 -translate-x-1/2 transition-opacity duration-200" 
   id="work-category-filter-container"
 >
   <!-- 
@@ -318,8 +318,31 @@ const isAllActive = activeCategory === null;
   setupFilterBar(false);
   sessionStorage.setItem(PREV_FILTER_KEY, getActiveFilterHref() || '');
   
-  // Before navigation starts - save current scroll positions
-  document.addEventListener('astro:before-preparation', saveScrollPositions);
+  // Hide filter bar during work card view transitions to prevent overlay
+  document.addEventListener('astro:before-preparation', () => {
+    saveScrollPositions();
+    
+    // Hide filter bar at the start of navigation to prevent it from appearing
+    // during work card scale animations (detail → listing page)
+    const container = document.getElementById('work-category-filter-container');
+    if (container) {
+      container.style.opacity = '0';
+      container.style.pointerEvents = 'none';
+    }
+  });
+  
+  // Show filter bar after view transition completes
+  document.addEventListener('astro:page-load', () => {
+    // Restore filter bar visibility after transition completes
+    const container = document.getElementById('work-category-filter-container');
+    if (container) {
+      // Small delay to ensure work card animation is complete
+      requestAnimationFrame(() => {
+        container.style.opacity = '1';
+        container.style.pointerEvents = 'auto';
+      });
+    }
+  });
   
   // Track clicked button href to maintain hover state across DOM swap
   const CLICKED_BTN_KEY = 'workFilterClickedHref';
