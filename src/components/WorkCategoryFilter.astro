@@ -328,68 +328,68 @@ const isAllActive = activeCategory === null;
   setupFilterBar(false);
   sessionStorage.setItem(PREV_FILTER_KEY, getActiveFilterHref() || '');
   
-  // Hide filter bar during work card view transitions to prevent overlay
-  // Quick and snappy animations - immediate hide, fast fade in
+  // Filter bar visibility during view transitions
+  // 
+  // CSS hides filter bar during ALL view transitions using: 
+  //   html:has(::view-transition) #work-category-filter-container { opacity: 0 !important; }
+  // 
+  // JavaScript's job: Restore visibility ONLY for filter-to-filter navigation
+  // For detail page transitions, let it stay hidden (CSS handles it)
+  
   document.addEventListener('astro:before-preparation', () => {
+    console.log('[Filter Bar] astro:before-preparation - Navigation starting');
     saveScrollPositions();
     
     // Check if this is a filter-to-filter navigation
-    // If so, DON'T hide the filter bar to avoid flicker
     const isFilterNavigation = sessionStorage.getItem('workFilterNavigation') === 'true';
+    console.log(`[Filter Bar] Is filter navigation: ${isFilterNavigation}`);
     
     if (isFilterNavigation) {
-      // Filter-to-filter navigation - keep filter bar visible
-      // Clear the flag immediately since we're handling it now
+      // Filter-to-filter: Mark that we should restore visibility immediately after swap
+      console.log('[Filter Bar] Filter-to-filter nav - will keep visible');
+      sessionStorage.setItem('filterBarKeepVisible', 'true');
       sessionStorage.removeItem('workFilterNavigation');
-      return;
-    }
-    
-    // Not a filter navigation, so we're either:
-    // 1. Navigating from a page with filter bar TO a detail page (hide it)
-    // 2. Navigating from a detail page TO a page with filter bar (hide it, will show after transition)
-    // In either case, hide the filter bar if it exists
-    const container = document.getElementById('work-category-filter-container');
-    if (container) {
-      container.style.transition = 'none'; // Disable transition for instant hide
-      container.style.opacity = '0';
-      container.style.pointerEvents = 'none';
-      
-      // Mark that we hid the filter bar (so we know to show it later)
-      sessionStorage.setItem('filterBarHidden', 'true');
+    } else {
+      // Detail page navigation: CSS will hide it, we'll show it after transition
+      console.log('[Filter Bar] Detail page nav - will show after transition');
+      sessionStorage.setItem('filterBarShowAfterTransition', 'true');
     }
   });
   
-  // Keep filter bar hidden during the entire view transition animation
-  // This prevents the persisted element from appearing during the work card scaling
-  document.addEventListener('astro:before-swap', () => {
-    const wasHidden = sessionStorage.getItem('filterBarHidden') === 'true';
-    if (!wasHidden) return;
+  // For filter-to-filter navigation: restore visibility immediately after swap (before animation)
+  document.addEventListener('astro:after-swap', () => {
+    const keepVisible = sessionStorage.getItem('filterBarKeepVisible') === 'true';
+    console.log(`[Filter Bar] astro:after-swap - Keep visible: ${keepVisible}`);
+    sessionStorage.removeItem('filterBarKeepVisible');
     
-    const container = document.getElementById('work-category-filter-container');
-    if (container) {
-      // Ensure it stays hidden during swap (persisted elements are visible during transition)
-      container.style.transition = 'none';
-      container.style.opacity = '0';
-      container.style.pointerEvents = 'none';
-    }
-  });
-  
-  // Show filter bar after view transition completes with a quick fade
-  document.addEventListener('astro:page-load', () => {
-    // Only restore filter bar if it was hidden
-    const wasHidden = sessionStorage.getItem('filterBarHidden') === 'true';
-    sessionStorage.removeItem('filterBarHidden');
-    
-    if (!wasHidden) return;
-    
-    const container = document.getElementById('work-category-filter-container');
-    if (container) {
-      // Enable fast transition for fade in
-      requestAnimationFrame(() => {
-        container.style.transition = 'opacity 0.1s ease-out'; // Quick 100ms fade
+    if (keepVisible) {
+      const container = document.getElementById('work-category-filter-container');
+      if (container) {
+        console.log('[Filter Bar] Restoring visibility for filter-to-filter navigation');
+        // Override CSS hiding for filter-to-filter navigation
         container.style.opacity = '1';
         container.style.pointerEvents = 'auto';
-      });
+      }
+    }
+  });
+  
+  // For detail page navigation: show filter bar after transition completes
+  document.addEventListener('astro:page-load', () => {
+    const showAfter = sessionStorage.getItem('filterBarShowAfterTransition') === 'true';
+    console.log(`[Filter Bar] astro:page-load - Show after: ${showAfter}`);
+    sessionStorage.removeItem('filterBarShowAfterTransition');
+    
+    if (showAfter) {
+      const container = document.getElementById('work-category-filter-container');
+      if (container) {
+        console.log('[Filter Bar] Fading in after detail page transition');
+        // Quick 100ms fade in after detail page transition
+        requestAnimationFrame(() => {
+          container.style.transition = 'opacity 0.1s ease-out';
+          container.style.opacity = '1';
+          container.style.pointerEvents = 'auto';
+        });
+      }
     }
   });
   

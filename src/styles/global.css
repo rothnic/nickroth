@@ -1504,6 +1504,15 @@
             animation: none !important;
         }
 
+        /* Hide persisted filter bar during view transitions (except filter-to-filter navigation)
+           The filter bar uses transition:persist to maintain scroll state during filter navigation.
+           However, during detail page transitions, it should be hidden to avoid overlaying the work card.
+           We use CSS to hide it during ALL view transitions, then JavaScript shows it selectively. */
+        html:has(::view-transition) #work-category-filter-container {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
         /* Reset button hover states during view transitions to prevent shadow desync */
         html:has(::view-transition) .btn {
             /* Disable transitions during view transition to prevent animation desync */
