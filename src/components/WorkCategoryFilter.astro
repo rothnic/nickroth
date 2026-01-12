@@ -70,9 +70,12 @@ const isAllActive = activeCategory === null;
   ====================
   Uses w-screen + left-1/2 + -translate-x-1/2 to break out of parent container
   and span full viewport width. This allows fade effects to reach viewport edges.
+  
+  On larger screens (lg+), the nav content aligns with the project grid by using
+  a container constraint that matches the grid's positioning.
 -->
 <div 
-  class="relative mb-8 sm:mb-12 w-screen left-1/2 -translate-x-1/2 transition-opacity duration-200" 
+  class="relative mb-8 sm:mb-12 w-screen left-1/2 -translate-x-1/2" 
   id="work-category-filter-container"
 >
   <!-- 
@@ -96,12 +99,19 @@ const isAllActive = activeCategory === null;
     - scroll-px-*: Ensures snap-scroll respects padding
     - scrollbar-hide: Custom utility to hide scrollbar
     - hover-lift-stable: Custom class for layout-stable hover effects
+    
+    Responsive padding strategy:
+    - Mobile (default): px-2 - minimal padding for full-width scroll
+    - Tablet (sm): px-4 - slightly more padding
+    - Desktop (lg+): Uses mx-auto max-w-6xl px-4 to create a container that aligns
+      the filter content with the grid below (which uses max-w-5xl mx-auto)
   -->
   <nav 
     class="
       flex flex-nowrap gap-3 min-w-0 overflow-x-auto py-2 scrollbar-hide overscroll-contain
       justify-start px-2 scroll-px-2
       sm:px-4 sm:scroll-px-4
+      lg:mx-auto lg:max-w-6xl lg:px-4 lg:scroll-px-4
     " 
     transition:name="work-category-nav"
     transition:persist
@@ -319,25 +329,27 @@ const isAllActive = activeCategory === null;
   sessionStorage.setItem(PREV_FILTER_KEY, getActiveFilterHref() || '');
   
   // Hide filter bar during work card view transitions to prevent overlay
+  // Quick and snappy animations - immediate hide, fast fade in
   document.addEventListener('astro:before-preparation', () => {
     saveScrollPositions();
     
-    // Hide filter bar at the start of navigation to prevent it from appearing
-    // during work card scale animations (detail → listing page)
+    // IMMEDIATE hide (no transition) when navigation starts
+    // This allows work card to be the star of the show
     const container = document.getElementById('work-category-filter-container');
     if (container) {
+      container.style.transition = 'none'; // Disable transition for instant hide
       container.style.opacity = '0';
       container.style.pointerEvents = 'none';
     }
   });
   
-  // Show filter bar after view transition completes
+  // Show filter bar after view transition completes with a quick fade
   document.addEventListener('astro:page-load', () => {
-    // Restore filter bar visibility after transition completes
     const container = document.getElementById('work-category-filter-container');
     if (container) {
-      // Small delay to ensure work card animation is complete
+      // Enable fast transition for fade in
       requestAnimationFrame(() => {
+        container.style.transition = 'opacity 0.1s ease-out'; // Quick 100ms fade
         container.style.opacity = '1';
         container.style.pointerEvents = 'auto';
       });

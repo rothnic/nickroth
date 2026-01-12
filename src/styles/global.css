@@ -2464,6 +2464,13 @@
             animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
         }
         
+        /* Disable animations on work cards not involved in the transition */
+        /* This reduces visual noise and focuses attention on the transitioning card */
+        html:has(::view-transition) .card[data-work-card] {
+            animation: none !important;
+            transition: none !important;
+        }
+        
         /* Let the browser handle the default cross-fade - no custom opacity animations needed */
         /* The view transition API automatically morphs position/size between old and new states */
         
