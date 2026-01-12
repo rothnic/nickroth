@@ -1534,21 +1534,35 @@
            This ensures work cards scale animation is always visible on top, regardless of
            opacity values or DOM order. */
         
-        /* Filter bar transition group - lowest layer (never overlays content)
+        /* View Transition Group Z-Index Stacking
+           
+           PROBLEM: View Transitions API creates multiple pseudo-element layers. By default,
+           these layers stack based on DOM order. The filter bar's persisted element can
+           appear above work cards during scale animations.
+           
+           SOLUTION: Explicit z-index control to ensure proper layering:
+           - Filter bar (work-category-nav): z-index 1 (lowest - background layer)
+           - Root content (root): z-index 50 (middle - main content layer)
+           - Work navigation (work-back-nav): z-index 100 (high - always visible)
            
            NOTE: CSS doesn't support wildcards in pseudo-element selectors like 
-           ::view-transition-group(work-card-*). These selectors are ignored by the browser,
-           breaking all view transitions.
-           
-           SOLUTION: Only set the filter bar to a low z-index (1). All other transition
-           groups (work cards, root, etc.) use default z-index values, which naturally
-           stack correctly. The filter bar just needs to be explicitly behind everything.
+           ::view-transition-group(work-card-*). Individual work card groups use default
+           z-index which should be higher than filter bar but lower than explicitly
+           set groups.
            
            This prevents the filter bar from overlaying work cards during scale animations
-           without breaking the entire View Transitions API rendering.
+           while keeping navigation elements always on top.
         */
         ::view-transition-group(work-category-nav) {
             z-index: 1 !important;
+        }
+        
+        ::view-transition-group(root) {
+            z-index: 50 !important;
+        }
+        
+        ::view-transition-group(work-back-nav) {
+            z-index: 100 !important;
         }
 
         /* Reset button hover states during view transitions to prevent shadow desync */

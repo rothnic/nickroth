@@ -24,11 +24,14 @@ export function initFilterBarTransitions() {
   console.log('[Filter Bar Transitions] Initializing global handlers');
 
   // Track navigation flags and manage transition:persist directive
-  document.addEventListener('astro:before-preparation', () => {
+  document.addEventListener('astro:before-preparation', (event) => {
     console.log('[Filter Bar] astro:before-preparation - Navigation starting');
     
     const nav = document.getElementById('work-category-nav');
-    if (!nav) return;
+    if (!nav) {
+      console.log('[Filter Bar] Nav element not found');
+      return;
+    }
     
     // Check if this is a filter-to-filter navigation
     const isFilterNavigation = sessionStorage.getItem('workFilterNavigation') === 'true';
@@ -40,24 +43,26 @@ export function initFilterBarTransitions() {
       sessionStorage.setItem('filterBarKeepVisible', 'true');
       sessionStorage.removeItem('workFilterNavigation');
     } else {
-      // Detail page navigation: REMOVE transition:persist so element gets swapped normally
-      console.log('[Filter Bar] Detail page nav - removing transition:persist to prevent immediate visibility');
-      
-      // Check if we're navigating TO a page with filter bar (from detail page)
-      // If so, remove persist so filter bar doesn't appear during transition
+      // NOT a filter navigation - check if we're navigating from detail page
       const currentPath = window.location.pathname;
       const isOnDetailPage = currentPath.includes('/work/') && currentPath !== '/work' && !currentPath.includes('/category');
       
+      console.log(`[Filter Bar] Current path: ${currentPath}, Is on detail page: ${isOnDetailPage}`);
+      
       if (isOnDetailPage) {
-        // We're ON a detail page, navigating TO work/category page
-        // Remove transition:persist so filter bar gets created fresh (not persisted)
-        console.log('[Filter Bar] Removing transition:persist attribute');
+        // We're ON a detail page, navigating AWAY (likely to work/category page)
+        // Remove transition:persist so filter bar doesn't get carried over
+        console.log('[Filter Bar] ON detail page - removing transition:persist to prevent immediate visibility');
         nav.removeAttribute('data-astro-transition-persist');
         nav.removeAttribute('data-astro-transition-persist-props');
         sessionStorage.setItem('filterBarPersistRemoved', 'true');
+        sessionStorage.setItem('filterBarShowAfterTransition', 'true');
+      } else {
+        // We're NOT on detail page - likely navigating to detail page
+        // Keep persist enabled but hide during transition
+        console.log('[Filter Bar] NOT on detail page - will hide during transition');
+        sessionStorage.setItem('filterBarShowAfterTransition', 'true');
       }
-      
-      sessionStorage.setItem('filterBarShowAfterTransition', 'true');
     }
   });
   
