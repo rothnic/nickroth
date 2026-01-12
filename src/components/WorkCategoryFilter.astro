@@ -330,11 +330,11 @@ const isAllActive = activeCategory === null;
   
   // Filter bar visibility during view transitions
   // 
-  // CSS hides filter bar during ALL view transitions using: 
-  //   html:has(::view-transition) #work-category-filter-container { opacity: 0 !important; }
+  // Problem: transition:persist elements remain visible during view transition animations
+  // CSS alone (html:has(::view-transition)) is unreliable at the very start of transitions
   // 
-  // JavaScript's job: Restore visibility ONLY for filter-to-filter navigation
-  // For detail page transitions, let it stay hidden (CSS handles it)
+  // Solution: Use JavaScript to FORCE hide in astro:before-swap (right before animation)
+  // Then restore visibility conditionally based on navigation type
   
   document.addEventListener('astro:before-preparation', () => {
     console.log('[Filter Bar] astro:before-preparation - Navigation starting');
@@ -350,13 +350,27 @@ const isAllActive = activeCategory === null;
       sessionStorage.setItem('filterBarKeepVisible', 'true');
       sessionStorage.removeItem('workFilterNavigation');
     } else {
-      // Detail page navigation: CSS will hide it, we'll show it after transition
-      console.log('[Filter Bar] Detail page nav - will show after transition');
+      // Detail page navigation: Will hide it before swap, show after transition
+      console.log('[Filter Bar] Detail page nav - will hide before swap');
       sessionStorage.setItem('filterBarShowAfterTransition', 'true');
     }
   });
   
-  // For filter-to-filter navigation: restore visibility immediately after swap (before animation)
+  // CRITICAL: Hide filter bar RIGHT BEFORE view transition animation starts
+  // This is the ONLY reliable way to hide persisted elements during transitions
+  document.addEventListener('astro:before-swap', () => {
+    console.log('[Filter Bar] astro:before-swap - Forcing hide before animation');
+    const container = document.getElementById('work-category-filter-container');
+    if (container) {
+      // Force hide with !important-equivalent inline styles
+      container.style.setProperty('opacity', '0', 'important');
+      container.style.setProperty('pointer-events', 'none', 'important');
+      console.log('[Filter Bar] Filter bar forced to opacity 0');
+    }
+  });
+  
+  // For filter-to-filter navigation: restore visibility immediately after swap
+  // This happens AFTER astro:before-swap forced the hide, so animation is already complete
   document.addEventListener('astro:after-swap', () => {
     const keepVisible = sessionStorage.getItem('filterBarKeepVisible') === 'true';
     console.log(`[Filter Bar] astro:after-swap - Keep visible: ${keepVisible}`);
@@ -365,8 +379,11 @@ const isAllActive = activeCategory === null;
     if (keepVisible) {
       const container = document.getElementById('work-category-filter-container');
       if (container) {
-        console.log('[Filter Bar] Restoring visibility for filter-to-filter navigation');
-        // Override CSS hiding for filter-to-filter navigation
+        console.log('[Filter Bar] Restoring visibility immediately for filter-to-filter navigation');
+        // Remove forced hide from astro:before-swap
+        container.style.removeProperty('opacity');
+        container.style.removeProperty('pointer-events');
+        // Explicitly set visible state
         container.style.opacity = '1';
         container.style.pointerEvents = 'auto';
       }
@@ -383,6 +400,9 @@ const isAllActive = activeCategory === null;
       const container = document.getElementById('work-category-filter-container');
       if (container) {
         console.log('[Filter Bar] Fading in after detail page transition');
+        // Remove forced hide from astro:before-swap
+        container.style.removeProperty('opacity');
+        container.style.removeProperty('pointer-events');
         // Quick 100ms fade in after detail page transition
         requestAnimationFrame(() => {
           container.style.transition = 'opacity 0.1s ease-out';

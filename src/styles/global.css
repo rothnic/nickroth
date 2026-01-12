@@ -1504,10 +1504,18 @@
             animation: none !important;
         }
 
-        /* Hide persisted filter bar during view transitions (except filter-to-filter navigation)
-           The filter bar uses transition:persist to maintain scroll state during filter navigation.
-           However, during detail page transitions, it should be hidden to avoid overlaying the work card.
-           We use CSS to hide it during ALL view transitions, then JavaScript shows it selectively. */
+        /* Hide persisted filter bar during view transitions
+           
+           PROBLEM: Filter bar uses transition:persist which keeps it visible during animations.
+           This causes it to overlay the work card during the scaling animation.
+           
+           ATTEMPTED FIX: CSS selector html:has(::view-transition) should hide it.
+           ISSUE: The ::view-transition pseudo-element may not exist at the very start of the animation,
+           causing a brief flash where the filter bar is visible before this rule kicks in.
+           
+           WORKING FIX: JavaScript in WorkCategoryFilter.astro forces opacity: 0 in astro:before-swap
+           (which fires RIGHT BEFORE the view transition animation starts). This is more reliable
+           than relying on CSS alone. We keep this CSS rule as a backup/reinforcement. */
         html:has(::view-transition) #work-category-filter-container {
             opacity: 0 !important;
             pointer-events: none !important;
