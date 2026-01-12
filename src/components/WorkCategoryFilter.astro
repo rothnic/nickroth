@@ -333,18 +333,35 @@ const isAllActive = activeCategory === null;
   document.addEventListener('astro:before-preparation', () => {
     saveScrollPositions();
     
-    // IMMEDIATE hide (no transition) when navigation starts
-    // This allows work card to be the star of the show
-    const container = document.getElementById('work-category-filter-container');
-    if (container) {
-      container.style.transition = 'none'; // Disable transition for instant hide
-      container.style.opacity = '0';
-      container.style.pointerEvents = 'none';
+    // Only hide filter bar when navigating TO or FROM work detail pages
+    // Don't hide during filter-to-filter navigation to avoid flicker
+    const currentPath = window.location.pathname;
+    const isOnWorkPage = currentPath === '/work' || currentPath.startsWith('/work/category/');
+    const isOnDetailPage = currentPath.startsWith('/work/') && !currentPath.startsWith('/work/category/');
+    
+    // Hide if we're currently on a work/category page OR on a detail page
+    // (meaning we're either going to detail or coming back from detail)
+    if (isOnWorkPage || isOnDetailPage) {
+      const container = document.getElementById('work-category-filter-container');
+      if (container) {
+        container.style.transition = 'none'; // Disable transition for instant hide
+        container.style.opacity = '0';
+        container.style.pointerEvents = 'none';
+        
+        // Mark that we hid the filter bar (so we know to show it later)
+        sessionStorage.setItem('filterBarHidden', 'true');
+      }
     }
   });
   
   // Show filter bar after view transition completes with a quick fade
   document.addEventListener('astro:page-load', () => {
+    // Only restore filter bar if it was hidden
+    const wasHidden = sessionStorage.getItem('filterBarHidden') === 'true';
+    sessionStorage.removeItem('filterBarHidden');
+    
+    if (!wasHidden) return;
+    
     const container = document.getElementById('work-category-filter-container');
     if (container) {
       // Enable fast transition for fade in
@@ -444,14 +461,8 @@ const isAllActive = activeCategory === null;
       nav.scrollLeft = parseInt(savedScroll, 10);
     }
     
-    // Only restore vertical page scroll for filter-to-filter navigation
-    // (let browser handle back-button scroll restoration)
-    if (isFilterNavigation) {
-      const savedPageScroll = sessionStorage.getItem(PAGE_SCROLL_KEY);
-      if (savedPageScroll !== null) {
-        window.scrollTo(0, parseInt(savedPageScroll, 10));
-      }
-    }
+    // Don't restore vertical scroll - let the view transition scroll handling
+    // determine if scrolling is needed (it only scrolls if card won't be visible)
     
     // Update fades based on current scroll position
     const scrollLeft = nav.scrollLeft;

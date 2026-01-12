@@ -127,17 +127,9 @@ function setupViewTransitionHandlers() {
 
 /**
  * Main handler for scroll-to-card logic
+ * Only scrolls if the target card won't be visible in the current viewport
  */
 function handleScrollToCard() {
-	// Skip on work listing pages - they have their own scroll management
-	// and we want browser's native back-button scroll restoration to work
-	const isWorkListingPage = window.location.pathname === '/work' || 
-		window.location.pathname.startsWith('/work/category/');
-	if (isWorkListingPage) {
-		console.debug("Skipping scroll-to-card on work listing page");
-		return;
-	}
-	
 	// Get card reference
 	const cardId = getCardReference();
 	console.debug(`handleScrollToCard: cardId=${cardId}`);
@@ -166,9 +158,21 @@ function handleScrollToCard() {
 	const customOffset = card.getAttribute("data-scroll-offset");
 	const offset = customOffset ? parseInt(customOffset, 10) : 80;
 
-	console.debug(`Scrolling to card ${cardId} with offset ${offset}`);
+	// Check if card is already visible in viewport
+	const rect = card.getBoundingClientRect();
+	const viewportHeight = window.innerHeight;
+	const isVisible = rect.top >= offset && rect.bottom <= viewportHeight;
 	
-	// Scroll to the card
+	if (isVisible) {
+		console.debug(`Card ${cardId} is already visible in viewport, skipping scroll`);
+		sessionStorage.removeItem("lastViewedCard");
+		sessionStorage.removeItem("lastViewedCardUsedAt");
+		return;
+	}
+
+	console.debug(`Card ${cardId} not in viewport, scrolling with offset ${offset}`);
+	
+	// Scroll to the card only if it's not visible
 	scrollToElement(card, offset);
 	
 	// Clear the reference after successful scroll
