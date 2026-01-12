@@ -331,54 +331,66 @@ import ArticleOutline from './ArticleOutline.astro';
     
     const outlineLinks = container.querySelectorAll('[data-outline-link]');
     outlineLinks.forEach((link) => {
-      link.addEventListener('click', (e) => {
+      link.addEventListener('click', async (e) => {
         e.preventDefault();
+        e.stopPropagation();
+        
         const href = (link as HTMLAnchorElement).getAttribute('href');
         const targetId = link.getAttribute('data-outline-link');
         
         if (!targetId) return;
         
-        // Get the current scroll position BEFORE making any changes
-        // The body is locked with position:fixed and top:-XXXpx
+        // CRITICAL: Read scroll position BEFORE any async operations
+        // When the sheet is open, body has position:fixed with top:-XXXpx
         const bodyTop = document.body.style.top;
-        const savedScrollY = bodyTop ? Math.abs(parseInt(bodyTop)) : 0;
+        const savedScrollY = bodyTop ? Math.abs(parseInt(bodyTop)) : window.scrollY;
         
-        // Close sheet
+        console.log('Outline link clicked:', targetId);
+        console.log('Body top style:', bodyTop);
+        console.log('Saved scroll position:', savedScrollY);
+        
+        // Close sheet UI immediately
         container.classList.remove('open');
         const trigger = container.querySelector('.outline-trigger') as HTMLButtonElement;
         if (trigger) {
           trigger.setAttribute('aria-expanded', 'false');
         }
         
-        // Restore body styles (unlock the body)
+        // Step 1: Unlock body and restore scroll position
         document.body.style.position = '';
         document.body.style.top = '';
         document.body.style.left = '';
         document.body.style.right = '';
         document.body.style.overflow = '';
         
-        // Use requestAnimationFrame to let browser process style changes
-        requestAnimationFrame(() => {
-          // Restore scroll position first (prevents jump to top)
-          window.scrollTo(0, savedScrollY);
+        // Step 2: Restore scroll IMMEDIATELY (not in requestAnimationFrame)
+        // This ensures we're at the correct position before scrollIntoView
+        window.scrollTo(0, savedScrollY);
+        
+        console.log('Restored scroll to:', savedScrollY);
+        console.log('Current scroll after restore:', window.scrollY);
+        
+        // Step 3: Wait for browser to process the unlock and scroll restore
+        // Use a small delay to ensure browser has fully processed the changes
+        await new Promise(resolve => setTimeout(resolve, 50));
+        
+        // Step 4: Now scroll to the target element
+        const target = document.getElementById(targetId);
+        if (target) {
+          console.log('Scrolling to target:', targetId);
+          console.log('Current scroll before scrollIntoView:', window.scrollY);
           
-          // Now scroll to the target element
-          requestAnimationFrame(() => {
-            const target = document.getElementById(targetId);
-            if (target) {
-              const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-              target.scrollIntoView({ 
-                behavior: prefersReducedMotion ? 'auto' : 'smooth', 
-                block: 'start' 
-              });
-              
-              // Update URL hash after scrolling starts
-              if (href) {
-                history.pushState(null, '', href);
-              }
-            }
+          const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          target.scrollIntoView({ 
+            behavior: prefersReducedMotion ? 'auto' : 'smooth', 
+            block: 'start' 
           });
-        });
+          
+          // Update URL hash after scrolling starts
+          if (href) {
+            history.pushState(null, '', href);
+          }
+        }
       });
     });
   }

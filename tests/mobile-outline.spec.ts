@@ -312,4 +312,81 @@ test.describe('Mobile Outline Bottom Sheet', () => {
     expect(sheetOpen).toBe(false);
   });
   
+  test('scrolling to heading starts from current position, not top', async ({ page }) => {
+    await page.setViewportSize(VIEWPORT_SIZES.mobile);
+    await page.goto('/work/ai-assisted-design');
+    await waitForPage(page);
+    
+    // Scroll to middle of page (around 1500px)
+    await scrollPage(page, 1500);
+    
+    // Record the current scroll position
+    const startScrollY = await page.evaluate(() => window.scrollY);
+    expect(startScrollY).toBeGreaterThan(1400); // Verify we're at ~1500px
+    
+    // Open the bottom sheet
+    await page.locator('.outline-trigger').click();
+    await page.waitForTimeout(500);
+    
+    // Get position of "Google Stitch" heading (should be near top, ~200-500px)
+    const googleStitchY = await getElementScrollY(page, '#google-stitch');
+    expect(googleStitchY).not.toBeNull();
+    expect(googleStitchY).toBeLessThan(1000); // Heading is above our current position
+    
+    // Track scroll positions during animation
+    const scrollPositions: number[] = [];
+    
+    // Set up interval to capture scroll positions every 50ms
+    await page.evaluate(() => {
+      (window as any).scrollPositions = [];
+      (window as any).scrollTracker = setInterval(() => {
+        (window as any).scrollPositions.push(window.scrollY);
+      }, 50);
+    });
+    
+    // Click on "Google Stitch" in the outline (should scroll UP from 1500px to ~300px)
+    const googleStitchLink = page.locator('.outline-bottom-sheet a[data-outline-link="google-stitch"]');
+    await googleStitchLink.click();
+    
+    // Wait for animation to complete
+    await page.waitForTimeout(1200);
+    
+    // Stop tracking and get positions
+    await page.evaluate(() => {
+      clearInterval((window as any).scrollTracker);
+    });
+    
+    const trackedPositions = await page.evaluate(() => (window as any).scrollPositions as number[]);
+    
+    // Final scroll position should be near the target
+    const finalScrollY = await page.evaluate(() => window.scrollY);
+    expect(Math.abs(finalScrollY - googleStitchY!)).toBeLessThan(100);
+    
+    // CRITICAL CHECK: Verify scroll animation never went to top (0px)
+    // If it started from top, we'd see values close to 0
+    // Since we're scrolling from ~1500px to ~300px, all values should be in that range
+    const minScrollDuringAnimation = Math.min(...trackedPositions.filter(p => p > 0));
+    
+    // If animation incorrectly starts from top, minScroll would be near 0
+    // If animation correctly starts from current position (1500px), minScroll should be > 200px
+    console.log('Start position:', startScrollY);
+    console.log('Target position:', googleStitchY);
+    console.log('Min scroll during animation:', minScrollDuringAnimation);
+    console.log('Final position:', finalScrollY);
+    console.log('Tracked positions:', trackedPositions.slice(0, 10)); // First 10 samples
+    
+    // The minimum scroll position during animation should NOT be near 0
+    // It should be at least 200px (accounting for scroll direction and slight overshoot)
+    expect(minScrollDuringAnimation).toBeGreaterThan(200);
+    
+    // Additionally, the first tracked position should be close to our start position
+    // (not 0, which would indicate a jump to top)
+    if (trackedPositions.length > 0) {
+      const firstTrackedPosition = trackedPositions[0];
+      // First position should be within 200px of our start position (1500px)
+      // Not at 0 or very low value
+      expect(firstTrackedPosition).toBeGreaterThan(1000);
+    }
+  });
+  
 });
