@@ -7,12 +7,17 @@
  * 
  * This component is lazy-loaded using client:idle and is only rendered on work detail pages.
  * 
+ * IMPORTANT: To avoid breaking view transitions on mobile, the fixed-positioned container
+ * is NOT rendered initially. It's only added to the DOM after the user scrolls past 300px.
+ * This prevents fixed elements from interfering with view transitions on mobile browsers.
+ * 
  * Features:
  * - Minimal sticky tag at bottom-right (mobile only)
  * - Slides up as bottom-sheet when clicked
  * - Scrollable content if outline is taller than viewport
  * - Auto-minimizes after selecting a section
  * - Smooth scroll to selected section
+ * - Lazy-rendered after scrolling to avoid view transition conflicts
  * 
  * Usage (in [slug].astro):
  * <OutlineBottomSheet client:idle />
@@ -21,8 +26,10 @@
 import ArticleOutline from './ArticleOutline.astro';
 ---
 
-<!-- Mobile bottom sheet (hidden on lg: screens where sidebar is visible) -->
-<div class="outline-bottom-sheet-container lg:hidden">
+<!-- Template for mobile bottom sheet (will be rendered by JS after scroll) -->
+<!-- Hidden on lg: screens where sidebar is visible -->
+<template id="outline-bottom-sheet-template" class="lg:hidden">
+  <div class="outline-bottom-sheet-container lg:hidden">
   <!-- Sticky trigger button -->
   <button 
     class="outline-trigger"
@@ -70,7 +77,7 @@ import ArticleOutline from './ArticleOutline.astro';
       <ArticleOutline class="outline-in-sheet" showHeading={false} />
     </div>
   </div>
-</div>
+</template>
 
 <style>
   .outline-bottom-sheet-container {
@@ -269,6 +276,34 @@ import ArticleOutline from './ArticleOutline.astro';
 
 <script>
   /**
+   * Lazy-render and initialize bottom sheet interactions
+   * 
+   * To avoid breaking view transitions on mobile, we delay rendering the 
+   * fixed-positioned container until after the user scrolls past 300px.
+   */
+  
+  let containerRendered = false;
+  let scrollListenerAdded = false;
+  
+  /**
+   * Render the bottom sheet container from template
+   */
+  function renderBottomSheet() {
+    if (containerRendered) return;
+    
+    const template = document.getElementById('outline-bottom-sheet-template') as HTMLTemplateElement;
+    if (!template) return;
+    
+    // Clone and insert the template content
+    const clone = template.content.cloneNode(true);
+    document.body.appendChild(clone);
+    containerRendered = true;
+    
+    // Initialize the newly rendered container
+    initBottomSheet();
+  }
+  
+  /**
    * Initialize bottom sheet interactions
    */
   function initBottomSheet() {
@@ -286,7 +321,7 @@ import ArticleOutline from './ArticleOutline.astro';
       
       let scrollY = 0;
       
-      // Handle scroll-based visibility to avoid interference with view transitions
+      // Handle scroll-based visibility
       const handleVisibility = () => {
         if (window.scrollY > 300) {
           container.classList.add('scrolled');
@@ -410,7 +445,45 @@ import ArticleOutline from './ArticleOutline.astro';
     });
   }
   
-  // Initialize on load and after view transitions
-  initBottomSheet();
-  document.addEventListener('astro:page-load', initBottomSheet);
+  /**
+   * Setup scroll listener to render container when user scrolls
+   */
+  function setupScrollListener() {
+    if (scrollListenerAdded) return;
+    
+    const handleScroll = () => {
+      if (window.scrollY > 300 && !containerRendered) {
+        renderBottomSheet();
+        // Remove listener after rendering
+        window.removeEventListener('scroll', handleScroll);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    scrollListenerAdded = true;
+    
+    // Also check immediately in case user already scrolled
+    handleScroll();
+  }
+  
+  /**
+   * Reset state on page navigation
+   */
+  function resetState() {
+    containerRendered = false;
+    scrollListenerAdded = false;
+    
+    // Remove any existing containers
+    const existingContainers = document.querySelectorAll('.outline-bottom-sheet-container');
+    existingContainers.forEach(container => container.remove());
+  }
+  
+  // Initialize on load
+  setupScrollListener();
+  
+  // Reset and reinitialize after view transitions
+  document.addEventListener('astro:page-load', () => {
+    resetState();
+    setupScrollListener();
+  });
 </script>
