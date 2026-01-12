@@ -295,4 +295,14 @@ const { class: className = '', showHeading = true } = Astro.props;
       }
     });
   });
+  
+  // Listen for custom event when outline container is dynamically added (e.g., mobile bottom sheet)
+  document.addEventListener('outline-container-added', (e) => {
+    // Initialize the specific outline that was just added
+    const target = e.target as Element;
+    if (target && target.classList.contains('article-outline')) {
+      // Re-run initialization for this specific outline
+      initArticleOutline();
+    }
+  });
 </script>

@@ -301,6 +301,18 @@ import ArticleOutline from './ArticleOutline.astro';
     
     // Initialize the newly rendered container
     initBottomSheet();
+    
+    // CRITICAL: Initialize the ArticleOutline inside the bottom sheet
+    // The outline script runs on page load before this template is rendered,
+    // so we need to manually trigger initialization for the newly added outline
+    requestAnimationFrame(() => {
+      const outlineInSheet = document.querySelector('.outline-bottom-sheet .article-outline:not(.initialized)');
+      if (outlineInSheet) {
+        // Dispatch a custom event that ArticleOutline can listen for
+        const event = new CustomEvent('outline-container-added', { bubbles: true });
+        outlineInSheet.dispatchEvent(event);
+      }
+    });
   }
   
   /**
