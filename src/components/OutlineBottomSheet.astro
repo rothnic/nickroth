@@ -324,6 +324,9 @@ import ArticleOutline from './ArticleOutline.astro';
   /**
    * Setup click handlers for outline links in the bottom sheet
    * This must be called AFTER the ArticleOutline initializes and creates the links
+   * 
+   * For mobile: Close the sheet and let Astro's router handle the navigation.
+   * The data-astro-history="replace" attribute ensures no history entries are created.
    */
   function setupOutlineLinkHandlers() {
     const container = document.querySelector('.outline-bottom-sheet-container');
@@ -332,66 +335,37 @@ import ArticleOutline from './ArticleOutline.astro';
     const outlineLinks = container.querySelectorAll('[data-outline-link]');
     outlineLinks.forEach((link) => {
       link.addEventListener('click', async (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+        // Don't prevent default - let Astro's router handle the navigation
+        // Just close the sheet and unlock the body
         
-        const href = (link as HTMLAnchorElement).getAttribute('href');
-        const targetId = link.getAttribute('data-outline-link');
-        
-        if (!targetId) return;
-        
-        // CRITICAL: Read scroll position BEFORE any async operations
-        // When the sheet is open, body has position:fixed with top:-XXXpx
+        // Read scroll position BEFORE any DOM changes
         const bodyTop = document.body.style.top;
         const savedScrollY = bodyTop ? Math.abs(parseInt(bodyTop)) : window.scrollY;
         
-        console.log('Outline link clicked:', targetId);
-        console.log('Body top style:', bodyTop);
+        console.log('Mobile outline link clicked');
         console.log('Saved scroll position:', savedScrollY);
         
-        // Close sheet UI immediately
+        // Close sheet UI
         container.classList.remove('open');
         const trigger = container.querySelector('.outline-trigger') as HTMLButtonElement;
         if (trigger) {
           trigger.setAttribute('aria-expanded', 'false');
         }
         
-        // Step 1: Unlock body and restore scroll position
+        // Unlock body and restore scroll position
         document.body.style.position = '';
         document.body.style.top = '';
         document.body.style.left = '';
         document.body.style.right = '';
         document.body.style.overflow = '';
         
-        // Step 2: Restore scroll IMMEDIATELY (not in requestAnimationFrame)
-        // This ensures we're at the correct position before scrollIntoView
+        // Restore scroll position immediately
         window.scrollTo(0, savedScrollY);
         
-        console.log('Restored scroll to:', savedScrollY);
-        console.log('Current scroll after restore:', window.scrollY);
+        console.log('Sheet closed, scroll restored to:', savedScrollY);
         
-        // Step 3: Wait for browser to process the unlock and scroll restore
-        // Use a small delay to ensure browser has fully processed the changes
-        await new Promise(resolve => setTimeout(resolve, 50));
-        
-        // Step 4: Now scroll to the target element
-        const target = document.getElementById(targetId);
-        if (target) {
-          console.log('Scrolling to target:', targetId);
-          console.log('Current scroll before scrollIntoView:', window.scrollY);
-          
-          const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-          target.scrollIntoView({ 
-            behavior: prefersReducedMotion ? 'auto' : 'smooth', 
-            block: 'start' 
-          });
-          
-          // Update URL hash after scrolling starts
-          // Use replaceState to avoid adding history entry
-          if (href) {
-            history.replaceState(null, '', href);
-          }
-        }
+        // Let Astro's router handle the rest (it will navigate to the hash)
+        // The link has data-astro-history="replace" so it won't create a history entry
       });
     });
   }

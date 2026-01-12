@@ -172,7 +172,7 @@ const { class: className = '', showHeading = true } = Astro.props;
         const text = heading.textContent?.trim() || 'Untitled';
         items.push(`
           <li data-level="${level}">
-            <a href="#${id}" data-outline-link="${id}">${text}</a>
+            <a href="#${id}" data-outline-link="${id}" data-astro-history="replace">${text}</a>
           </li>
         `);
       });
@@ -236,6 +236,10 @@ const { class: className = '', showHeading = true } = Astro.props;
   /**
    * Set up click handlers for outline links (desktop sidebar only)
    * Mobile bottom sheet handles its own clicks in OutlineBottomSheet.astro
+   * 
+   * NOTE: We don't prevent default or manually scroll anymore. Astro's router
+   * handles hash navigation correctly. The data-astro-history="replace" attribute
+   * ensures outline clicks don't create history entries.
    */
   function setupClickHandlers(outline: Element) {
     // Skip if this is inside a bottom sheet (mobile)
@@ -243,36 +247,8 @@ const { class: className = '', showHeading = true } = Astro.props;
       return;
     }
     
-    const links = outline.querySelectorAll('[data-outline-link]');
-    
-    links.forEach((link) => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault(); // CRITICAL: Prevent browser's default navigation
-        e.stopPropagation(); // Prevent event bubbling
-        
-        const targetId = link.getAttribute('data-outline-link');
-        const href = (link as HTMLAnchorElement).getAttribute('href');
-        if (!targetId) return;
-        
-        const targetElement = document.getElementById(targetId);
-        if (!targetElement) return;
-        
-        // Check user's motion preference
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        
-        // Scroll to target
-        targetElement.scrollIntoView({
-          behavior: prefersReducedMotion ? 'auto' : 'smooth',
-          block: 'start'
-        });
-        
-        // Update URL hash using replaceState to avoid adding history entry
-        // This allows browser back button to work correctly
-        if (href) {
-          history.replaceState(null, '', href);
-        }
-      });
-    });
+    // No custom handlers needed - let Astro's router handle hash navigation
+    // The links already have data-astro-history="replace" to prevent history entries
   }
   
   // Initialize on load and after view transitions
