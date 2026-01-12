@@ -234,9 +234,15 @@ const { class: className = '', showHeading = true } = Astro.props;
   }
   
   /**
-   * Set up click handlers for outline links
+   * Set up click handlers for outline links (desktop sidebar only)
+   * Mobile bottom sheet handles its own clicks in OutlineBottomSheet.astro
    */
   function setupClickHandlers(outline: Element) {
+    // Skip if this is inside a bottom sheet (mobile)
+    if (outline.closest('.outline-bottom-sheet')) {
+      return;
+    }
+    
     const links = outline.querySelectorAll('[data-outline-link]');
     
     links.forEach((link) => {
@@ -252,17 +258,7 @@ const { class: className = '', showHeading = true } = Astro.props;
         // Check user's motion preference
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         
-        // Close any open bottom sheet (mobile)
-        const bottomSheet = document.querySelector('.outline-bottom-sheet');
-        if (bottomSheet?.classList.contains('open')) {
-          bottomSheet.classList.remove('open');
-          // Small delay to let the sheet close before scrolling
-          setTimeout(() => {
-            scrollToTarget(targetElement, prefersReducedMotion);
-          }, 200);
-        } else {
-          scrollToTarget(targetElement, prefersReducedMotion);
-        }
+        scrollToTarget(targetElement, prefersReducedMotion);
       });
     });
   }

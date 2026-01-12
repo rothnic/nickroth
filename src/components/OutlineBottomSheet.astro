@@ -311,7 +311,64 @@ import ArticleOutline from './ArticleOutline.astro';
         // Dispatch a custom event that ArticleOutline can listen for
         const event = new CustomEvent('outline-container-added', { bubbles: true });
         outlineInSheet.dispatchEvent(event);
+        
+        // Set up click handlers for outline links AFTER they're created
+        // Wait a bit for the outline to populate
+        setTimeout(() => {
+          setupOutlineLinkHandlers();
+        }, 100);
       }
+    });
+  }
+  
+  /**
+   * Setup click handlers for outline links in the bottom sheet
+   * This must be called AFTER the ArticleOutline initializes and creates the links
+   */
+  function setupOutlineLinkHandlers() {
+    const container = document.querySelector('.outline-bottom-sheet-container');
+    if (!container) return;
+    
+    const outlineLinks = container.querySelectorAll('[data-outline-link]');
+    outlineLinks.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const href = (link as HTMLAnchorElement).getAttribute('href');
+        const targetId = link.getAttribute('data-outline-link');
+        
+        if (!targetId) return;
+        
+        // Close sheet first
+        container.classList.remove('open');
+        const trigger = container.querySelector('.outline-trigger') as HTMLButtonElement;
+        if (trigger) {
+          trigger.setAttribute('aria-expanded', 'false');
+        }
+        
+        // Restore body styles
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.overflow = '';
+        
+        // Scroll to the target after a small delay to let the sheet close
+        setTimeout(() => {
+          const target = document.getElementById(targetId);
+          if (target) {
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            target.scrollIntoView({ 
+              behavior: prefersReducedMotion ? 'auto' : 'smooth', 
+              block: 'start' 
+            });
+            
+            // Update URL hash
+            if (href) {
+              history.pushState(null, '', href);
+            }
+          }
+        }, 200);
+      });
     });
   }
   
@@ -384,38 +441,6 @@ import ArticleOutline from './ArticleOutline.astro';
         if (e.key === 'Escape' && container.classList.contains('open')) {
           closeSheet();
         }
-      });
-      
-      // Close when clicking an outline link - don't restore scroll position
-      // The link's href will handle scrolling to the correct position
-      const outlineLinks = container.querySelectorAll('[data-outline-link]');
-      outlineLinks.forEach((link) => {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          const href = (link as HTMLAnchorElement).getAttribute('href');
-          
-          // Close sheet without restoring scroll position
-          container.classList.remove('open');
-          trigger.setAttribute('aria-expanded', 'false');
-          
-          // Restore body styles but don't scroll back
-          document.body.style.position = '';
-          document.body.style.top = '';
-          document.body.style.left = '';
-          document.body.style.right = '';
-          document.body.style.overflow = '';
-          
-          // After body is unlocked, scroll to the target
-          if (href) {
-            const target = document.querySelector(href);
-            if (target) {
-              // Wait for body to unlock, then smooth scroll
-              requestAnimationFrame(() => {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              });
-            }
-          }
-        });
       });
       
       // Handle touch gestures (swipe down to close)
