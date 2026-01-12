@@ -103,3 +103,41 @@ Or with Tailwind:
 
 - [Astro View Transitions Documentation](https://docs.astro.build/en/guides/view-transitions/)
 - [Astro Lifecycle Events](https://docs.astro.build/en/guides/view-transitions/#lifecycle-events)
+
+## View Transition Stacking Context
+
+### The Problem: Regular DOM Elements Over View Transitions
+
+View transitions create `::view-transition-group` pseudo-elements that should appear above regular content during animations. However, regular DOM elements with z-index can still appear on top of these pseudo-elements if not properly managed.
+
+### Solution: Lower Z-Index During Active Transitions
+
+Use the `html:has(::view-transition)` selector to target elements only during active view transitions:
+
+```css
+/* Lower z-index during view transitions */
+html:has(::view-transition) #element-id {
+    z-index: 0 !important;
+}
+```
+
+### Example: Filter Bar Fix
+
+The filter bar fade overlays (z-10) were appearing over work card transitions (z-index: 100 in ::view-transition-group). The fix:
+
+```css
+html:has(::view-transition) #work-category-filter-container,
+html:has(::view-transition) #filter-fade-left,
+html:has(::view-transition) #filter-fade-right {
+    z-index: 0 !important;
+}
+```
+
+This ensures the work card view transition remains the top-most layer during scaling animations.
+
+### When to Use
+
+Apply this pattern when:
+- Regular DOM elements appear over view transition animations
+- Fixed or absolute positioned elements interfere with transitions
+- You need to temporarily lower z-index only during transitions
