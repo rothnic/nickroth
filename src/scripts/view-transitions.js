@@ -154,25 +154,27 @@ function handleScrollToCard() {
 		return;
 	}
 
-	// Get custom offset if specified, otherwise use default
-	const customOffset = card.getAttribute("data-scroll-offset");
-	const offset = customOffset ? parseInt(customOffset, 10) : 80;
-
-	// Check if card is already visible in viewport
+	// Check if the ENTIRE card is already fully visible in viewport
+	// Only scroll if the card is partially or fully outside the visible area
 	const rect = card.getBoundingClientRect();
 	const viewportHeight = window.innerHeight;
-	const isVisible = rect.top >= offset && rect.bottom <= viewportHeight;
+	const isFullyVisible = rect.top >= 0 && rect.bottom <= viewportHeight;
 	
-	if (isVisible) {
-		console.debug(`Card ${cardId} is already visible in viewport, skipping scroll`);
+	if (isFullyVisible) {
+		console.debug(`Card ${cardId} is fully visible in viewport, skipping scroll`);
 		sessionStorage.removeItem("lastViewedCard");
 		sessionStorage.removeItem("lastViewedCardUsedAt");
 		return;
 	}
 
-	console.debug(`Card ${cardId} not in viewport, scrolling with offset ${offset}`);
+	// Card is not fully visible - scroll to make it visible
+	// Get custom offset if specified, otherwise use default (navbar height)
+	const customOffset = card.getAttribute("data-scroll-offset");
+	const offset = customOffset ? parseInt(customOffset, 10) : 80;
 	
-	// Scroll to the card only if it's not visible
+	console.debug(`Card ${cardId} not fully visible in viewport, scrolling with offset ${offset}`);
+	
+	// Scroll to the card with appropriate offset
 	scrollToElement(card, offset);
 	
 	// Clear the reference after successful scroll
