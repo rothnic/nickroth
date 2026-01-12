@@ -1171,50 +1171,44 @@
         
         /* Tables */
         .prose-content table {
-            width: 100%;
-            min-width: 100%;
             margin: 1.5rem 0;
             border-collapse: collapse;
             font-size: 0.9375rem;
             border: 3px solid oklch(0.2 0 0);
-            display: block;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        /* Ensure thead/tbody display properly with block table */
-        .prose-content thead,
-        .prose-content tbody,
-        .prose-content tr {
-            display: table;
             width: 100%;
-            table-layout: fixed;
+            /* Use table-layout: auto to allow content to determine column widths */
+            table-layout: auto;
         }
         
-        .prose-content thead {
-            display: table-header-group;
-        }
-        
-        .prose-content tbody {
-            display: table-row-group;
-        }
-        
-        /* Table scroll fade indicator (mobile) */
+        /* Wrap tables in a scrollable container on mobile */
         @media (max-width: 640px) {
             .prose-content table {
-                /* Right edge gradient to indicate scrollable */
-                mask-image: linear-gradient(
-                    to right,
-                    black calc(100% - 2rem),
-                    transparent 100%
-                );
-                -webkit-mask-image: linear-gradient(
-                    to right,
-                    black calc(100% - 2rem),
-                    transparent 100%
-                );
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                /* Let content width determine table width, fill container if content is narrower */
+                width: fit-content;
+                min-width: 100%;
+                max-width: 100%;
             }
             
+            .prose-content thead,
+            .prose-content tbody {
+                display: table-row-group;
+            }
+            
+            .prose-content tr {
+                display: table-row;
+            }
+            
+            .prose-content th,
+            .prose-content td {
+                display: table-cell;
+            }
+        }
+        
+        /* Table scrollbar styling (mobile) */
+        @media (max-width: 640px) {
             .prose-content table::-webkit-scrollbar {
                 height: 4px;
             }
@@ -1241,7 +1235,11 @@
             text-transform: uppercase;
             font-size: 0.8125rem;
             letter-spacing: 0.05em;
+            /* Prevent line breaks in headers for consistency */
             white-space: nowrap;
+            /* Prevent overflow */
+            overflow-wrap: break-word;
+            word-break: normal;
         }
         
         .prose-content td {
@@ -1254,6 +1252,19 @@
         .prose-content td:first-child {
             white-space: nowrap;
             font-weight: 500;
+        }
+        
+        /* On mobile, allow minimal wrapping to enable horizontal scroll when needed */
+        @media (max-width: 640px) {
+            .prose-content td {
+                /* Allow wrapping only on very long words, not short phrases */
+                white-space: nowrap;
+            }
+            
+            .prose-content td:first-child {
+                /* First column stays nowrap */
+                white-space: nowrap;
+            }
         }
         
         .prose-content tbody tr:nth-child(even) {
