@@ -47,20 +47,23 @@ export function initFilterBarTransitions() {
       const currentPath = window.location.pathname;
       const isOnDetailPage = currentPath.includes('/work/') && currentPath !== '/work' && !currentPath.includes('/category');
       
-      console.log(`[Filter Bar] Current path: ${currentPath}, Is on detail page: ${isOnDetailPage}`);
+      console.log(`[Filter Bar] Current path: ${currentPath}`);
+      console.log(`[Filter Bar] Is on detail page: ${isOnDetailPage}`);
+      console.log(`[Filter Bar] Has transition:persist: ${nav.hasAttribute('data-astro-transition-persist')}`);
       
       if (isOnDetailPage) {
         // We're ON a detail page, navigating AWAY (likely to work/category page)
         // Remove transition:persist so filter bar doesn't get carried over
-        console.log('[Filter Bar] ON detail page - removing transition:persist to prevent immediate visibility');
+        console.log('[Filter Bar] ✓ ON detail page - removing transition:persist to prevent immediate visibility');
         nav.removeAttribute('data-astro-transition-persist');
         nav.removeAttribute('data-astro-transition-persist-props');
         sessionStorage.setItem('filterBarPersistRemoved', 'true');
         sessionStorage.setItem('filterBarShowAfterTransition', 'true');
+        console.log(`[Filter Bar] ✓ Persist removed, has attribute now: ${nav.hasAttribute('data-astro-transition-persist')}`);
       } else {
         // We're NOT on detail page - likely navigating to detail page
         // Keep persist enabled but hide during transition
-        console.log('[Filter Bar] NOT on detail page - will hide during transition');
+        console.log('[Filter Bar] ✗ NOT on detail page - keeping transition:persist, will hide during transition');
         sessionStorage.setItem('filterBarShowAfterTransition', 'true');
       }
     }
