@@ -172,7 +172,7 @@ const { class: className = '', showHeading = true } = Astro.props;
         const text = heading.textContent?.trim() || 'Untitled';
         items.push(`
           <li data-level="${level}">
-            <a href="#${id}" data-outline-link="${id}" data-astro-history="replace">${text}</a>
+            <a href="#${id}" data-outline-link="${id}">${text}</a>
           </li>
         `);
       });
@@ -237,9 +237,8 @@ const { class: className = '', showHeading = true } = Astro.props;
    * Set up click handlers for outline links (desktop sidebar only)
    * Mobile bottom sheet handles its own clicks in OutlineBottomSheet.astro
    * 
-   * NOTE: We don't prevent default or manually scroll anymore. Astro's router
-   * handles hash navigation correctly. The data-astro-history="replace" attribute
-   * ensures outline clicks don't create history entries.
+   * For desktop: Prevent default navigation, scroll to target, update URL.
+   * Use history.replaceState() to update URL without creating history entries.
    */
   function setupClickHandlers(outline: Element) {
     // Skip if this is inside a bottom sheet (mobile)
@@ -247,8 +246,29 @@ const { class: className = '', showHeading = true } = Astro.props;
       return;
     }
     
-    // No custom handlers needed - let Astro's router handle hash navigation
-    // The links already have data-astro-history="replace" to prevent history entries
+    const links = outline.querySelectorAll('[data-outline-link]');
+    links.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault(); // Prevent default hash navigation
+        
+        const href = (link as HTMLAnchorElement).getAttribute('href');
+        if (!href || !href.startsWith('#')) return;
+        
+        const targetId = href.substring(1);
+        const target = document.getElementById(targetId);
+        if (!target) return;
+        
+        // Scroll to target
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        target.scrollIntoView({ 
+          behavior: prefersReducedMotion ? 'auto' : 'smooth', 
+          block: 'start' 
+        });
+        
+        // Update URL without creating history entry
+        history.replaceState(null, '', href);
+      });
+    });
   }
   
   // Initialize on load and after view transitions
