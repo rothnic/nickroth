@@ -237,8 +237,10 @@ const { class: className = '', showHeading = true } = Astro.props;
    * Set up click handlers for outline links (desktop sidebar only)
    * Mobile bottom sheet handles its own clicks in OutlineBottomSheet.astro
    * 
-   * For desktop: Prevent default navigation, scroll to target, update URL.
-   * Use history.replaceState() to update URL without creating history entries.
+   * For desktop: Let browser handle hash navigation naturally.
+   * Browser's default behavior: clicking <a href="#heading"> updates URL hash and scrolls WITHOUT creating history entry.
+   * CSS scroll-behavior: smooth provides smooth animation.
+   * No custom JavaScript needed - browser does everything correctly!
    */
   function setupClickHandlers(outline: Element) {
     // Skip if this is inside a bottom sheet (mobile)
@@ -246,29 +248,13 @@ const { class: className = '', showHeading = true } = Astro.props;
       return;
     }
     
-    const links = outline.querySelectorAll('[data-outline-link]');
-    links.forEach((link) => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault(); // Prevent default hash navigation
-        
-        const href = (link as HTMLAnchorElement).getAttribute('href');
-        if (!href || !href.startsWith('#')) return;
-        
-        const targetId = href.substring(1);
-        const target = document.getElementById(targetId);
-        if (!target) return;
-        
-        // Scroll to target
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        target.scrollIntoView({ 
-          behavior: prefersReducedMotion ? 'auto' : 'smooth', 
-          block: 'start' 
-        });
-        
-        // Update URL without creating history entry
-        history.replaceState(null, '', href);
-      });
-    });
+    // No custom click handlers needed for desktop!
+    // Browser's native <a href="#heading"> behavior:
+    // 1. Updates URL hash (visible in address bar)
+    // 2. Scrolls to target element (smooth via CSS scroll-behavior)
+    // 3. Does NOT create browser history entry
+    // 4. Back button goes to previous page (not previous hash)
+    // 5. Forward button works correctly with hash URLs
   }
   
   // Initialize on load and after view transitions
