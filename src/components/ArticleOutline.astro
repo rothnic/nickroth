@@ -247,8 +247,8 @@ const { class: className = '', showHeading = true } = Astro.props;
     
     links.forEach((link) => {
       link.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation(); // Prevent event bubbling that might trigger default navigation
+        e.preventDefault(); // CRITICAL: Prevent browser's default navigation
+        e.stopPropagation(); // Prevent event bubbling
         
         const targetId = link.getAttribute('data-outline-link');
         const href = (link as HTMLAnchorElement).getAttribute('href');
@@ -266,9 +266,10 @@ const { class: className = '', showHeading = true } = Astro.props;
           block: 'start'
         });
         
-        // Update URL hash using pushState to avoid duplicate history entries
+        // Update URL hash using replaceState to avoid adding history entry
+        // This allows browser back button to work correctly
         if (href) {
-          history.pushState(null, '', href);
+          history.replaceState(null, '', href);
         }
       });
     });

@@ -389,4 +389,93 @@ test.describe('Mobile Outline Bottom Sheet', () => {
     }
   });
   
+  test('desktop outline navigation does not create duplicate history entries', async ({ page }) => {
+    // Use desktop viewport
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto('/work/ai-assisted-design');
+    await waitForPage(page);
+    
+    // Get initial history length
+    const initialHistoryLength = await page.evaluate(() => history.length);
+    
+    // Click an outline link in the desktop sidebar
+    await page.locator('.article-outline:not(.outline-in-sheet) [data-outline-link="choosing-the-right-tool"]').click();
+    await page.waitForTimeout(800);
+    
+    // Verify URL changed
+    expect(page.url()).toContain('#choosing-the-right-tool');
+    
+    // Verify history length hasn't changed (replaceState instead of pushState)
+    const afterClickHistoryLength = await page.evaluate(() => history.length);
+    expect(afterClickHistoryLength).toBe(initialHistoryLength);
+    
+    // Click another outline link
+    await page.locator('.article-outline:not(.outline-in-sheet) [data-outline-link="google-stitch"]').click();
+    await page.waitForTimeout(800);
+    
+    // Verify URL changed again
+    expect(page.url()).toContain('#google-stitch');
+    
+    // History length still shouldn't have changed
+    const afterSecondClickHistoryLength = await page.evaluate(() => history.length);
+    expect(afterSecondClickHistoryLength).toBe(initialHistoryLength);
+    
+    // Now test browser back button
+    await page.goBack();
+    await page.waitForTimeout(500);
+    
+    // Should go back to the root page (not to #choosing-the-right-tool)
+    // Because we used replaceState, not pushState
+    expect(page.url()).not.toContain('#');
+  });
+  
+  test('mobile outline navigation does not create duplicate history entries', async ({ page }) => {
+    await page.setViewportSize(VIEWPORT_SIZES.mobile);
+    await page.goto('/work/ai-assisted-design');
+    await waitForPage(page);
+    
+    // Get initial history length
+    const initialHistoryLength = await page.evaluate(() => history.length);
+    
+    // Scroll and open sheet
+    await scrollPage(page, 400);
+    await page.locator('.outline-trigger').click();
+    await page.waitForTimeout(500);
+    
+    // Click an outline link
+    await page.locator('.outline-bottom-sheet [data-outline-link="choosing-the-right-tool"]').click();
+    await page.waitForTimeout(1000);
+    
+    // Verify URL changed
+    expect(page.url()).toContain('#choosing-the-right-tool');
+    
+    // Verify history length hasn't changed (replaceState instead of pushState)
+    const afterClickHistoryLength = await page.evaluate(() => history.length);
+    expect(afterClickHistoryLength).toBe(initialHistoryLength);
+    
+    // Scroll again and open sheet
+    await scrollPage(page, 600);
+    await page.locator('.outline-trigger').click();
+    await page.waitForTimeout(500);
+    
+    // Click another outline link
+    await page.locator('.outline-bottom-sheet [data-outline-link="google-stitch"]').click();
+    await page.waitForTimeout(1000);
+    
+    // Verify URL changed again
+    expect(page.url()).toContain('#google-stitch');
+    
+    // History length still shouldn't have changed
+    const afterSecondClickHistoryLength = await page.evaluate(() => history.length);
+    expect(afterSecondClickHistoryLength).toBe(initialHistoryLength);
+    
+    // Now test browser back button
+    await page.goBack();
+    await page.waitForTimeout(500);
+    
+    // Should go back to the root page (not to #choosing-the-right-tool)
+    // Because we used replaceState, not pushState
+    expect(page.url()).not.toContain('#');
+  });
+  
 });

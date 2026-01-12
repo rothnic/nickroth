@@ -387,8 +387,9 @@ import ArticleOutline from './ArticleOutline.astro';
           });
           
           // Update URL hash after scrolling starts
+          // Use replaceState to avoid adding history entry
           if (href) {
-            history.pushState(null, '', href);
+            history.replaceState(null, '', href);
           }
         }
       });
