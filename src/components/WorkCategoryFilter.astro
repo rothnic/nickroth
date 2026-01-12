@@ -70,6 +70,9 @@ const isAllActive = activeCategory === null;
   ====================
   Uses w-screen + left-1/2 + -translate-x-1/2 to break out of parent container
   and span full viewport width. This allows fade effects to reach viewport edges.
+  
+  On larger screens (lg+), the nav content aligns with the project grid by using
+  a container constraint that matches the grid's positioning.
 -->
 <div 
   class="relative mb-8 sm:mb-12 w-screen left-1/2 -translate-x-1/2" 
@@ -96,12 +99,19 @@ const isAllActive = activeCategory === null;
     - scroll-px-*: Ensures snap-scroll respects padding
     - scrollbar-hide: Custom utility to hide scrollbar
     - hover-lift-stable: Custom class for layout-stable hover effects
+    
+    Responsive padding strategy:
+    - Mobile (default): px-2 - minimal padding for full-width scroll
+    - Tablet (sm): px-4 - slightly more padding
+    - Desktop (lg+): Uses mx-auto max-w-6xl px-4 to create a container that aligns
+      the filter content with the grid below (which uses max-w-5xl mx-auto)
   -->
   <nav 
     class="
       flex flex-nowrap gap-3 min-w-0 overflow-x-auto py-2 scrollbar-hide overscroll-contain
       justify-start px-2 scroll-px-2
       sm:px-4 sm:scroll-px-4
+      lg:mx-auto lg:max-w-6xl lg:px-4 lg:scroll-px-4
     " 
     transition:name="work-category-nav"
     transition:persist
