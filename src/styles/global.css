@@ -2464,6 +2464,13 @@
             animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
         }
         
+        /* Lower z-index of filter bar elements during view transitions to prevent overlaying work cards */
+        html:has(::view-transition) #work-category-filter-container,
+        html:has(::view-transition) #filter-fade-left,
+        html:has(::view-transition) #filter-fade-right {
+            z-index: 0 !important;
+        }
+        
         /* Let the browser handle the default cross-fade - no custom opacity animations needed */
         /* The view transition API automatically morphs position/size between old and new states */
         
