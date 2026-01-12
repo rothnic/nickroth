@@ -1171,32 +1171,39 @@
         
         /* Tables */
         .prose-content table {
-            width: 100%;
-            min-width: 100%;
             margin: 1.5rem 0;
             border-collapse: collapse;
             font-size: 0.9375rem;
             border: 3px solid oklch(0.2 0 0);
-            display: block;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        /* Ensure thead/tbody display properly with block table */
-        .prose-content thead,
-        .prose-content tbody,
-        .prose-content tr {
-            display: table;
             width: 100%;
-            table-layout: fixed;
+            /* Use table-layout: auto to allow content to determine column widths */
+            table-layout: auto;
         }
         
-        .prose-content thead {
-            display: table-header-group;
-        }
-        
-        .prose-content tbody {
-            display: table-row-group;
+        /* Wrap tables in a scrollable container on mobile */
+        @media (max-width: 640px) {
+            .prose-content table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                width: max-content;
+                min-width: 100%;
+            }
+            
+            .prose-content thead,
+            .prose-content tbody {
+                display: table-row-group;
+                width: 100%;
+            }
+            
+            .prose-content tr {
+                display: table-row;
+            }
+            
+            .prose-content th,
+            .prose-content td {
+                display: table-cell;
+            }
         }
         
         /* Table scrollbar styling (mobile) */
@@ -1227,19 +1234,30 @@
             text-transform: uppercase;
             font-size: 0.8125rem;
             letter-spacing: 0.05em;
+            /* Prevent line breaks in headers for consistency */
             white-space: nowrap;
+            /* Prevent overflow */
+            overflow-wrap: break-word;
+            word-break: normal;
         }
         
         .prose-content td {
             padding: 0.75rem 1rem;
             border-top: 1px solid oklch(0.9 0.01 280);
             color: oklch(0.35 0 0);
+            /* Allow text to wrap naturally within cells */
+            word-break: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
         }
         
         /* First column: prevent wrapping for labels */
         .prose-content td:first-child {
             white-space: nowrap;
             font-weight: 500;
+            /* Override word-break for first column */
+            word-break: normal;
+            overflow-wrap: normal;
         }
         
         .prose-content tbody tr:nth-child(even) {
