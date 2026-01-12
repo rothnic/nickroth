@@ -330,7 +330,12 @@ const isAllActive = activeCategory === null;
   
   // Filter bar visibility during view transitions
   // 
-  // Problem: transition:persist elements remain visible during view transition animations
+  // IMPORTANT: View transition event listeners are now handled globally in
+  // src/scripts/filter-bar-transitions.js (imported in BaseLayout.astro).
+  // 
+  // This is because the component uses transition:persist, which means event
+  // listeners added in this script block only run once on initial load and
+  // don't reliably fire on subsequent navigations.
   // 
   // Two-layer solution:
   // 1. Z-INDEX CONTROL (CSS): Ensures filter bar is on lowest layer during transitions
@@ -343,82 +348,11 @@ const isAllActive = activeCategory === null;
   //    - JavaScript: Forces opacity: 0 in astro:before-swap (right before animation)
   //    - CSS: html:has(::view-transition) as backup/reinforcement
   //    - Conditionally restore visibility based on navigation type
+  //    - Handled in src/scripts/filter-bar-transitions.js
   
+  // Save scroll positions before navigation (used by global script)
   document.addEventListener('astro:before-preparation', () => {
-    console.log('[Filter Bar] astro:before-preparation - Navigation starting');
     saveScrollPositions();
-    
-    // Check if this is a filter-to-filter navigation
-    const isFilterNavigation = sessionStorage.getItem('workFilterNavigation') === 'true';
-    console.log(`[Filter Bar] Is filter navigation: ${isFilterNavigation}`);
-    
-    if (isFilterNavigation) {
-      // Filter-to-filter: Mark that we should restore visibility immediately after swap
-      console.log('[Filter Bar] Filter-to-filter nav - will keep visible');
-      sessionStorage.setItem('filterBarKeepVisible', 'true');
-      sessionStorage.removeItem('workFilterNavigation');
-    } else {
-      // Detail page navigation: Will hide it before swap, show after transition
-      console.log('[Filter Bar] Detail page nav - will hide before swap');
-      sessionStorage.setItem('filterBarShowAfterTransition', 'true');
-    }
-  });
-  
-  // CRITICAL: Hide filter bar RIGHT BEFORE view transition animation starts
-  // This is the ONLY reliable way to hide persisted elements during transitions
-  document.addEventListener('astro:before-swap', () => {
-    console.log('[Filter Bar] astro:before-swap - Forcing hide before animation');
-    const container = document.getElementById('work-category-filter-container');
-    if (container) {
-      // Force hide with !important-equivalent inline styles
-      container.style.setProperty('opacity', '0', 'important');
-      container.style.setProperty('pointer-events', 'none', 'important');
-      console.log('[Filter Bar] Filter bar forced to opacity 0');
-    }
-  });
-  
-  // For filter-to-filter navigation: restore visibility immediately after swap
-  // This happens AFTER astro:before-swap forced the hide, so animation is already complete
-  document.addEventListener('astro:after-swap', () => {
-    const keepVisible = sessionStorage.getItem('filterBarKeepVisible') === 'true';
-    console.log(`[Filter Bar] astro:after-swap - Keep visible: ${keepVisible}`);
-    sessionStorage.removeItem('filterBarKeepVisible');
-    
-    if (keepVisible) {
-      const container = document.getElementById('work-category-filter-container');
-      if (container) {
-        console.log('[Filter Bar] Restoring visibility immediately for filter-to-filter navigation');
-        // Remove forced hide from astro:before-swap
-        container.style.removeProperty('opacity');
-        container.style.removeProperty('pointer-events');
-        // Explicitly set visible state
-        container.style.opacity = '1';
-        container.style.pointerEvents = 'auto';
-      }
-    }
-  });
-  
-  // For detail page navigation: show filter bar after transition completes
-  document.addEventListener('astro:page-load', () => {
-    const showAfter = sessionStorage.getItem('filterBarShowAfterTransition') === 'true';
-    console.log(`[Filter Bar] astro:page-load - Show after: ${showAfter}`);
-    sessionStorage.removeItem('filterBarShowAfterTransition');
-    
-    if (showAfter) {
-      const container = document.getElementById('work-category-filter-container');
-      if (container) {
-        console.log('[Filter Bar] Fading in after detail page transition');
-        // Remove forced hide from astro:before-swap
-        container.style.removeProperty('opacity');
-        container.style.removeProperty('pointer-events');
-        // Quick 100ms fade in after detail page transition
-        requestAnimationFrame(() => {
-          container.style.transition = 'opacity 0.1s ease-out';
-          container.style.opacity = '1';
-          container.style.pointerEvents = 'auto';
-        });
-      }
-    }
   });
   
   // Track clicked button href to maintain hover state across DOM swap
