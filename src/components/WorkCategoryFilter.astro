@@ -333,24 +333,27 @@ const isAllActive = activeCategory === null;
   document.addEventListener('astro:before-preparation', () => {
     saveScrollPositions();
     
-    // Only hide filter bar when navigating TO or FROM work detail pages
-    // Don't hide during filter-to-filter navigation to avoid flicker
-    const currentPath = window.location.pathname;
-    const isOnWorkPage = currentPath === '/work' || currentPath.startsWith('/work/category/');
-    const isOnDetailPage = currentPath.startsWith('/work/') && !currentPath.startsWith('/work/category/');
+    // Check if this is a filter-to-filter navigation
+    // If so, DON'T hide the filter bar to avoid flicker
+    const isFilterNavigation = sessionStorage.getItem('workFilterNavigation') === 'true';
     
-    // Hide if we're currently on a work/category page OR on a detail page
-    // (meaning we're either going to detail or coming back from detail)
-    if (isOnWorkPage || isOnDetailPage) {
-      const container = document.getElementById('work-category-filter-container');
-      if (container) {
-        container.style.transition = 'none'; // Disable transition for instant hide
-        container.style.opacity = '0';
-        container.style.pointerEvents = 'none';
-        
-        // Mark that we hid the filter bar (so we know to show it later)
-        sessionStorage.setItem('filterBarHidden', 'true');
-      }
+    if (isFilterNavigation) {
+      // Filter-to-filter navigation - keep filter bar visible
+      return;
+    }
+    
+    // Not a filter navigation, so we're either:
+    // 1. Navigating from a page with filter bar TO a detail page
+    // 2. Navigating from a detail page TO a page with filter bar
+    // In either case, hide the filter bar if it exists
+    const container = document.getElementById('work-category-filter-container');
+    if (container) {
+      container.style.transition = 'none'; // Disable transition for instant hide
+      container.style.opacity = '0';
+      container.style.pointerEvents = 'none';
+      
+      // Mark that we hid the filter bar (so we know to show it later)
+      sessionStorage.setItem('filterBarHidden', 'true');
     }
   });
   
