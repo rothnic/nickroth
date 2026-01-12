@@ -1186,14 +1186,15 @@
                 display: block;
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
-                width: max-content;
+                /* Let content width determine table width, fill container if content is narrower */
+                width: fit-content;
                 min-width: 100%;
+                max-width: 100%;
             }
             
             .prose-content thead,
             .prose-content tbody {
                 display: table-row-group;
-                width: 100%;
             }
             
             .prose-content tr {
@@ -1245,19 +1246,25 @@
             padding: 0.75rem 1rem;
             border-top: 1px solid oklch(0.9 0.01 280);
             color: oklch(0.35 0 0);
-            /* Allow text to wrap naturally within cells */
-            word-break: break-word;
-            overflow-wrap: break-word;
-            hyphens: auto;
         }
         
         /* First column: prevent wrapping for labels */
         .prose-content td:first-child {
             white-space: nowrap;
             font-weight: 500;
-            /* Override word-break for first column */
-            word-break: normal;
-            overflow-wrap: normal;
+        }
+        
+        /* On mobile, allow minimal wrapping to enable horizontal scroll when needed */
+        @media (max-width: 640px) {
+            .prose-content td {
+                /* Allow wrapping only on very long words, not short phrases */
+                white-space: nowrap;
+            }
+            
+            .prose-content td:first-child {
+                /* First column stays nowrap */
+                white-space: nowrap;
+            }
         }
         
         .prose-content tbody tr:nth-child(even) {
