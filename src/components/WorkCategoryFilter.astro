@@ -331,10 +331,17 @@ const isAllActive = activeCategory === null;
   // Filter bar visibility during view transitions
   // 
   // Problem: transition:persist elements remain visible during view transition animations
-  // CSS alone (html:has(::view-transition)) is unreliable at the very start of transitions
   // 
-  // Solution: Use JavaScript to FORCE hide in astro:before-swap (right before animation)
-  // Then restore visibility conditionally based on navigation type
+  // Two-layer solution:
+  // 1. Z-INDEX CONTROL (CSS): Ensures work cards are always on top layer during transitions
+  //    - ::view-transition-group(work-category-nav) { z-index: 1 } (filter bar - lowest)
+  //    - ::view-transition-group(work-card-*) { z-index: 100 } (work cards - highest)
+  //    - This prevents any visual overlap regardless of opacity
+  // 
+  // 2. OPACITY HIDING (JS + CSS): Hides filter bar for detail page transitions
+  //    - JavaScript: Forces opacity: 0 in astro:before-swap (right before animation)
+  //    - CSS: html:has(::view-transition) as backup/reinforcement
+  //    - Conditionally restore visibility based on navigation type
   
   document.addEventListener('astro:before-preparation', () => {
     console.log('[Filter Bar] astro:before-preparation - Navigation starting');

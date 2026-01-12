@@ -1521,6 +1521,38 @@
             pointer-events: none !important;
         }
 
+        /* View Transition Layer Stacking (Z-Index Control)
+           
+           PROBLEM: Even when filter bar is hidden (opacity: 0), its view-transition-group layer
+           can still affect stacking context during transitions. Work cards must be on top.
+           
+           SOLUTION: Explicitly control z-index of all view transition groups:
+           - Filter bar layer (work-category-nav): z-index 1 (lowest - background)
+           - Work card layers (work-card-*): z-index 100 (highest - foreground)
+           - Root/page layer: z-index 10 (middle)
+           
+           This ensures work cards scale animation is always visible on top, regardless of
+           opacity values or DOM order. */
+        
+        /* Filter bar persisted element - lowest layer */
+        ::view-transition-group(work-category-nav) {
+            z-index: 1 !important;
+        }
+        
+        /* Work card transition groups - highest layer (cards scale on top of everything) */
+        ::view-transition-group(work-card-*),
+        ::view-transition-group(work-img-*),
+        ::view-transition-group(work-title-*),
+        ::view-transition-group(work-body-*),
+        ::view-transition-group(work-impact-*) {
+            z-index: 100 !important;
+        }
+        
+        /* Root page layer - middle layer */
+        ::view-transition-group(root) {
+            z-index: 10 !important;
+        }
+
         /* Reset button hover states during view transitions to prevent shadow desync */
         html:has(::view-transition) .btn {
             /* Disable transitions during view transition to prevent animation desync */
