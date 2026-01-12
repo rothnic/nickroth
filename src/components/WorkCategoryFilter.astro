@@ -339,12 +339,14 @@ const isAllActive = activeCategory === null;
     
     if (isFilterNavigation) {
       // Filter-to-filter navigation - keep filter bar visible
+      // Clear the flag immediately since we're handling it now
+      sessionStorage.removeItem('workFilterNavigation');
       return;
     }
     
     // Not a filter navigation, so we're either:
-    // 1. Navigating from a page with filter bar TO a detail page
-    // 2. Navigating from a detail page TO a page with filter bar
+    // 1. Navigating from a page with filter bar TO a detail page (hide it)
+    // 2. Navigating from a detail page TO a page with filter bar (hide it, will show after transition)
     // In either case, hide the filter bar if it exists
     const container = document.getElementById('work-category-filter-container');
     if (container) {
@@ -454,9 +456,8 @@ const isAllActive = activeCategory === null;
       }
     });
     
-    // Check if this is a filter-to-filter navigation (flag was set on click)
-    const isFilterNavigation = sessionStorage.getItem('workFilterNavigation') === 'true';
-    sessionStorage.removeItem('workFilterNavigation'); // Clear the flag
+    // Note: workFilterNavigation flag is now cleared in astro:before-preparation
+    // to prevent it from persisting across multiple navigations
     
     // Always restore horizontal filter bar scroll (prevents animation from 0)
     const savedScroll = sessionStorage.getItem(SCROLL_POSITION_KEY);
