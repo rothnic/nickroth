@@ -50,34 +50,51 @@ export function initFilterBarTransitions() {
   function injectWorkCardStyles(slug) {
     if (!slug) return;
     
-    // Remove any existing injected styles
-    if (injectedStyleElement) {
-      injectedStyleElement.remove();
-      injectedStyleElement = null;
-    }
+    // Remove any existing injected styles first
+    removeInjectedStyles();
     
     // Create style element with explicit z-index for this card's groups
+    // CRITICAL: Each group needs explicit z-index to prevent filter bar overlay
+    // We apply z-index to BOTH the card AND all its sub-groups (img, body, title, impact)
     const style = document.createElement('style');
     style.id = 'work-card-transition-z-index';
     style.textContent = `
-      /* Dynamically injected z-index for work card: ${slug} */
-      ::view-transition-group(work-card-${slug}),
-      ::view-transition-group(work-img-${slug}),
-      ::view-transition-group(work-body-${slug}),
-      ::view-transition-group(work-title-${slug}),
-      ::view-transition-group(work-impact-${slug}) {
+      /* Dynamically injected z-index for work card: ${slug} 
+         EXPLANATION: Filter bar at z-index 1, these groups at z-index 100
+         ensures work cards always render above filter bar during transitions */
+      
+      /* Root content layer - middle */
+      ::view-transition-group(root) {
+        z-index: 5 !important;
+      }
+      
+      /* Work card groups - highest (must be above root and filter) */
+      ::view-transition-group(work-card-${slug}) {
         z-index: 100 !important;
       }
       
-      /* Root content sits between filter and work cards */
-      ::view-transition-group(root) {
-        z-index: 5 !important;
+      ::view-transition-group(work-img-${slug}) {
+        z-index: 100 !important;
+      }
+      
+      ::view-transition-group(work-body-${slug}) {
+        z-index: 100 !important;
+      }
+      
+      ::view-transition-group(work-title-${slug}) {
+        z-index: 100 !important;
+      }
+      
+      ::view-transition-group(work-impact-${slug}) {
+        z-index: 100 !important;
       }
     `;
     
     document.head.appendChild(style);
     injectedStyleElement = style;
-    console.log(`[Filter Bar] Injected z-index styles for work card: ${slug}`);
+    console.log(`[Filter Bar] ✓ Injected z-index styles for work card: ${slug}`);
+    console.log(`[Filter Bar] ✓ Applied z-index: 100 to ${slug} transition groups`);
+    console.log(`[Filter Bar] ✓ Applied z-index: 5 to root`);
   }
 
   // Helper: Remove injected styles
@@ -102,19 +119,34 @@ export function initFilterBarTransitions() {
       return;
     }
     
-    // Detect which work card is transitioning
+    // Detect which work card is transitioning - check multiple sources
+    // Source 1: Target URL (where we're going TO)
     const targetUrl = event.to?.pathname || window.location.pathname;
-    const workCardMatch = targetUrl.match(/\/work\/([^/]+)/);
-    const targetSlug = workCardMatch ? workCardMatch[1] : null;
+    const targetMatch = targetUrl.match(/\/work\/([^/]+)/);
+    const targetSlug = targetMatch ? targetMatch[1] : null;
     
-    // Check if clicking FROM a work card by looking for the clicked element
+    // Source 2: Current URL (where we're coming FROM)
+    const currentPath = window.location.pathname;
+    const currentMatch = currentPath.match(/\/work\/([^/]+)/);
+    const currentSlug = currentMatch ? currentMatch[1] : null;
+    
+    // Source 3: Clicked element (if clicking FROM a work card)
     const clickedCard = document.activeElement?.closest('[data-card-id]') || document.querySelector('[data-card-id]:hover');
-    const sourceSlug = clickedCard?.getAttribute('data-card-id') || null;
+    const clickedSlug = clickedCard?.getAttribute('data-card-id') || null;
     
-    // Store slug for injection in astro:before-swap (when pseudo-elements exist)
-    pendingSlug = targetSlug && targetSlug !== 'index' ? targetSlug : sourceSlug;
+    // Priority: target (going to detail) > current (coming from detail) > clicked (navigating between cards)
+    // Exclude 'index' as it's not a valid work card slug
+    pendingSlug = (targetSlug && targetSlug !== 'index') ? targetSlug : 
+                   (currentSlug && currentSlug !== 'index') ? currentSlug : 
+                   (clickedSlug && clickedSlug !== 'index') ? clickedSlug : null;
+    
     if (pendingSlug) {
-      console.log(`[Filter Bar] Detected transitioning work card slug: ${pendingSlug}`);
+      console.log(`[Filter Bar] ✓ Detected transitioning work card slug: ${pendingSlug}`);
+      console.log(`[Filter Bar]   - From target URL: ${targetSlug || 'none'}`);
+      console.log(`[Filter Bar]   - From current URL: ${currentSlug || 'none'}`);
+      console.log(`[Filter Bar]   - From clicked element: ${clickedSlug || 'none'}`);
+    } else {
+      console.log('[Filter Bar] ✗ No work card slug detected - navigation does not involve work card detail');
     }
     
     // Check if this is a filter-to-filter navigation
@@ -162,16 +194,25 @@ export function initFilterBarTransitions() {
     // after astro:before-swap fires. Injecting earlier means styles exist but
     // have no targets to apply to yet.
     if (pendingSlug) {
-      console.log(`[Filter Bar] Injecting z-index styles for slug: ${pendingSlug}`);
-      injectWorkCardStyles(pendingSlug);
+      const slugToInject = pendingSlug; // Store before clearing
+      console.log(`[Filter Bar] Injecting z-index styles for slug: ${slugToInject}`);
+      injectWorkCardStyles(slugToInject);
       
       // Verify injection worked
       const injectedStyle = document.getElementById('work-card-transition-z-index');
       if (injectedStyle) {
         console.log('[Filter Bar] ✓ Styles injected and visible in DOM');
-        console.log('[Filter Bar] ✓ Styles will apply to ::view-transition-group pseudo-elements');
+        console.log(`[Filter Bar] ✓ Style content length: ${injectedStyle.textContent.length} chars`);
+        console.log('[Filter Bar] ✓ Z-index rules created for:');
+        console.log(`[Filter Bar]   - ::view-transition-group(work-card-${slugToInject})`);
+        console.log(`[Filter Bar]   - ::view-transition-group(work-img-${slugToInject})`);
+        console.log(`[Filter Bar]   - ::view-transition-group(work-body-${slugToInject})`);
+        console.log(`[Filter Bar]   - ::view-transition-group(work-title-${slugToInject})`);
+        console.log(`[Filter Bar]   - ::view-transition-group(work-impact-${slugToInject})`);
+        console.log('[Filter Bar]   - ::view-transition-group(root)');
+        console.log('[Filter Bar] ✓ These styles will persist throughout the transition animation');
       } else {
-        console.error('[Filter Bar] ✗ Style injection failed');
+        console.error('[Filter Bar] ✗ Style injection failed - element not found in DOM');
       }
       
       pendingSlug = null; // Clear after injection
