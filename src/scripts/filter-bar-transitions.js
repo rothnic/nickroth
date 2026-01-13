@@ -196,7 +196,7 @@ export function initFilterBarTransitions() {
     if (pendingSlug) {
       const slugToInject = pendingSlug; // Store before clearing
       console.log(`[Filter Bar] Injecting z-index styles for slug: ${slugToInject}`);
-      inject WorkCardStyles(slugToInject);
+      injectWorkCardStyles(slugToInject);
       
       // Verify injection worked
       const injectedStyle = document.getElementById('work-card-transition-z-index');
