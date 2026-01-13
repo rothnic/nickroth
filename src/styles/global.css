@@ -1515,6 +1515,59 @@
             animation: none !important;
         }
 
+        /* Hide persisted filter bar during view transitions
+           
+           PROBLEM: Filter bar uses transition:persist which keeps it visible during animations.
+           This causes it to overlay the work card during the scaling animation.
+           
+           ATTEMPTED FIX: CSS selector html:has(::view-transition) should hide it.
+           ISSUE: The ::view-transition pseudo-element may not exist at the very start of the animation,
+           causing a brief flash where the filter bar is visible before this rule kicks in.
+           
+           WORKING FIX: JavaScript in WorkCategoryFilter.astro forces opacity: 0 in astro:before-swap
+           (which fires RIGHT BEFORE the view transition animation starts). This is more reliable
+           than relying on CSS alone. We keep this CSS rule as a backup/reinforcement. */
+        html:has(::view-transition) #work-category-filter-container {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        /* View Transition Layer Stacking (Z-Index Control)
+           
+           PROBLEM: Even when filter bar is hidden (opacity: 0), its view-transition-group layer
+           can still affect stacking context during transitions. Work cards must be on top.
+           
+           SOLUTION: Explicitly control z-index of all view transition groups:
+           - Filter bar layer (work-category-nav): z-index 1 (lowest - background)
+           - Work card layers (work-card-*): z-index 100 (highest - foreground)
+           - Root/page layer: z-index 10 (middle)
+           
+           This ensures work cards scale animation is always visible on top, regardless of
+           opacity values or DOM order. */
+        
+        /* View Transition Group Z-Index Stacking
+           
+           PROBLEM: View Transitions API creates multiple pseudo-element layers. By default,
+           these layers stack based on DOM order. The filter bar's persisted element can
+           appear above work cards during scale animations.
+           
+           SOLUTION: MINIMAL z-index control - only set filter bar to lowest layer.
+           - Filter bar (work-category-nav): z-index 1 (lowest - ensures it never overlays)
+           - ALL other groups (root, work-card-*, work-img-*, work-back-nav, etc.): USE BROWSER DEFAULT
+           
+           IMPORTANT: Do NOT set z-index on root or other groups. Setting root to a higher
+           z-index (e.g., 50) causes it to cover ALL work card transition groups (work-card-*,
+           work-img-*, work-title-*, work-body-*) which use default/auto z-index, resulting
+           in blank pages during transitions.
+           
+           Browser's natural stacking order works correctly for all groups EXCEPT the filter bar,
+           which needs to be explicitly placed at the bottom. This minimal intervention approach
+           prevents stacking conflicts while ensuring filter bar never overlays content.
+        */
+        ::view-transition-group(work-category-nav) {
+            z-index: 1 !important;
+        }
+
         /* Reset button hover states during view transitions to prevent shadow desync */
         html:has(::view-transition) .btn {
             /* Disable transitions during view transition to prevent animation desync */
@@ -2464,15 +2517,26 @@
            Clean, snappy card-to-detail morphing
            ======================================== */
         
-        /* Work card transitions - smooth morphing from card to detail */
-        ::view-transition-group(work-card-*),
-        ::view-transition-group(work-img-*),
-        ::view-transition-group(work-title-*),
-        ::view-transition-group(work-body-*),
-        ::view-transition-group(work-impact-*) {
-            z-index: 100;
+        /* Work card transitions - smooth morphing from card to detail
+           
+           CRITICAL: CSS doesn't support wildcards in pseudo-element selectors.
+           ::view-transition-group(work-card-*) is INVALID and ignored by browsers.
+           
+           Solution: JavaScript dynamically injects z-index for each specific work card group.
+           See src/scripts/filter-bar-transitions.js for implementation.
+           
+           Default animation timing (applies to all groups):
+        */
+        ::view-transition-group(*) {
             animation-duration: 0.35s;
             animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        
+        /* Disable animations on work cards not involved in the transition */
+        /* This reduces visual noise and focuses attention on the transitioning card */
+        html:has(::view-transition) .card[data-work-card] {
+            animation: none !important;
+            transition: none !important;
         }
         
         /* Let the browser handle the default cross-fade - no custom opacity animations needed */

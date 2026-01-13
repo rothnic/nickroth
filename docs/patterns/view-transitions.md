@@ -103,3 +103,50 @@ Or with Tailwind:
 
 - [Astro View Transitions Documentation](https://docs.astro.build/en/guides/view-transitions/)
 - [Astro Lifecycle Events](https://docs.astro.build/en/guides/view-transitions/#lifecycle-events)
+
+## View Transition Stacking Context
+
+### The Problem: Persisted Elements Appearing During Transitions
+
+When using `transition:persist` on elements like the filter bar, they remain in the DOM during view transitions and appear immediately at the start of the animation. This can cause them to overlay transitioning work cards even if the work card's `::view-transition-group` has a higher z-index.
+
+### Solution: Hide Persisted Elements During Transitions
+
+Use Astro's lifecycle events to hide persisted elements at the start of navigation and show them after the transition completes:
+
+```javascript
+// Hide filter bar during work card view transitions
+document.addEventListener('astro:before-preparation', () => {
+  const container = document.getElementById('work-category-filter-container');
+  if (container) {
+    container.style.opacity = '0';
+    container.style.pointerEvents = 'none';
+  }
+});
+
+// Show filter bar after view transition completes
+document.addEventListener('astro:page-load', () => {
+  const container = document.getElementById('work-category-filter-container');
+  if (container) {
+    requestAnimationFrame(() => {
+      container.style.opacity = '1';
+      container.style.pointerEvents = 'auto';
+    });
+  }
+});
+```
+
+Add transition-opacity to the container for smooth fade in/out:
+
+```html
+<div class="transition-opacity duration-200" id="work-category-filter-container">
+  <!-- filter bar content -->
+</div>
+```
+
+### When to Use
+
+Apply this pattern when:
+- Using `transition:persist` on elements that could interfere with view transitions
+- Fixed or absolute positioned elements appear over transitioning content
+- You need elements to fade out during navigation and fade back in after

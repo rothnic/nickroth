@@ -57,10 +57,18 @@ const isHomepage = currentPath === "/" || currentPath === "";
   <script>
     import { initScrollAnimations } from "../scripts/animations.js";
     import { initViewTransitionScrolling } from "../scripts/view-transitions.js";
+    import { initFilterBarTransitions } from "../scripts/filter-bar-transitions.js";
+
+    // Disable automatic scroll restoration - let view-transitions.js handle all scrolling
+    // This prevents the browser from scrolling to top (0,0) before our smart scroll logic runs
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
 
     // Initialize on page load
     initScrollAnimations();
     initViewTransitionScrolling();
+    initFilterBarTransitions(); // Global filter bar visibility handlers
 
     // Reinitialize on Astro page transitions
     document.addEventListener("astro:page-load", () => {

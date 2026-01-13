@@ -328,8 +328,32 @@ const isAllActive = activeCategory === null;
   setupFilterBar(false);
   sessionStorage.setItem(PREV_FILTER_KEY, getActiveFilterHref() || '');
   
-  // Before navigation starts - save current scroll positions
-  document.addEventListener('astro:before-preparation', saveScrollPositions);
+  // Filter bar visibility during view transitions
+  // 
+  // IMPORTANT: View transition event listeners are now handled globally in
+  // src/scripts/filter-bar-transitions.js (imported in BaseLayout.astro).
+  // 
+  // This is because the component uses transition:persist, which means event
+  // listeners added in this script block only run once on initial load and
+  // don't reliably fire on subsequent navigations.
+  // 
+  // Two-layer solution:
+  // 1. Z-INDEX CONTROL (CSS): Ensures filter bar is on lowest layer during transitions
+  //    - ::view-transition-group(work-category-nav) { z-index: 1 } (filter bar - lowest)
+  //    - All other transition groups use default z-index (work cards, root, etc.)
+  //    - NOTE: CSS doesn't support wildcards like work-card-*, so we can't set specific
+  //      z-index for individual work card groups. Only setting filter bar to low z-index.
+  // 
+  // 2. OPACITY HIDING (JS + CSS): Hides filter bar for detail page transitions
+  //    - JavaScript: Forces opacity: 0 in astro:before-swap (right before animation)
+  //    - CSS: html:has(::view-transition) as backup/reinforcement
+  //    - Conditionally restore visibility based on navigation type
+  //    - Handled in src/scripts/filter-bar-transitions.js
+  
+  // Save scroll positions before navigation (used by global script)
+  document.addEventListener('astro:before-preparation', () => {
+    saveScrollPositions();
+  });
   
   // Track clicked button href to maintain hover state across DOM swap
   const CLICKED_BTN_KEY = 'workFilterClickedHref';
@@ -409,9 +433,8 @@ const isAllActive = activeCategory === null;
       }
     });
     
-    // Check if this is a filter-to-filter navigation (flag was set on click)
-    const isFilterNavigation = sessionStorage.getItem('workFilterNavigation') === 'true';
-    sessionStorage.removeItem('workFilterNavigation'); // Clear the flag
+    // Note: workFilterNavigation flag is now cleared in astro:before-preparation
+    // to prevent it from persisting across multiple navigations
     
     // Always restore horizontal filter bar scroll (prevents animation from 0)
     const savedScroll = sessionStorage.getItem(SCROLL_POSITION_KEY);
@@ -419,14 +442,8 @@ const isAllActive = activeCategory === null;
       nav.scrollLeft = parseInt(savedScroll, 10);
     }
     
-    // Only restore vertical page scroll for filter-to-filter navigation
-    // (let browser handle back-button scroll restoration)
-    if (isFilterNavigation) {
-      const savedPageScroll = sessionStorage.getItem(PAGE_SCROLL_KEY);
-      if (savedPageScroll !== null) {
-        window.scrollTo(0, parseInt(savedPageScroll, 10));
-      }
-    }
+    // Don't restore vertical scroll - let the view transition scroll handling
+    // determine if scrolling is needed (it only scrolls if card won't be visible)
     
     // Update fades based on current scroll position
     const scrollLeft = nav.scrollLeft;
