@@ -186,7 +186,7 @@ export function initFilterBarTransitions() {
   });
   
   // Before DOM swap: Inject z-index styles + handle filter bar visibility
-  document.addEventListener('astro:before-swap', () => {
+  document.addEventListener('astro:before-swap', (event) => {
     console.log('[Filter Bar] astro:before-swap - Handling transition');
     
     // CRITICAL: Inject z-index styles HERE (not in before-preparation)
@@ -196,7 +196,7 @@ export function initFilterBarTransitions() {
     if (pendingSlug) {
       const slugToInject = pendingSlug; // Store before clearing
       console.log(`[Filter Bar] Injecting z-index styles for slug: ${slugToInject}`);
-      injectWorkCardStyles(slugToInject);
+      inject WorkCardStyles(slugToInject);
       
       // Verify injection worked
       const injectedStyle = document.getElementById('work-card-transition-z-index');
@@ -220,17 +220,31 @@ export function initFilterBarTransitions() {
     
     const persistRemoved = sessionStorage.getItem('filterBarPersistRemoved') === 'true';
     
+    // ALWAYS hide filter bar during work card transitions
+    // Check both old and new DOMs for filter bar container
+    const oldContainer = document.getElementById('work-category-filter-container');
+    const newContainer = event.newDocument?.getElementById('work-category-filter-container');
+    
     if (persistRemoved) {
-      // Persist was removed - element will be swapped normally by Astro
-      // No need to force hide, as new element won't exist until after transition
-      console.log('[Filter Bar] Persist removed - element will swap normally');
+      // Persist was removed - element will be swapped normally
+      // Hide old element (if exists) and new element during transition
+      console.log('[Filter Bar] Persist removed - hiding filter bar in BOTH old and new DOM');
+      if (oldContainer) {
+        oldContainer.style.setProperty('opacity', '0', 'important');
+        oldContainer.style.setProperty('pointer-events', 'none', 'important');
+        console.log('[Filter Bar] ✓ Hid old filter bar');
+      }
+      if (newContainer) {
+        newContainer.style.setProperty('opacity', '0', 'important');
+        newContainer.style.setProperty('pointer-events', 'none', 'important');
+        console.log('[Filter Bar] ✓ Hid new filter bar (will appear after transition)');
+      }
     } else {
-      // Persist is active - force hide to prevent visibility during transition
-      const container = document.getElementById('work-category-filter-container');
-      if (container) {
-        container.style.setProperty('opacity', '0', 'important');
-        container.style.setProperty('pointer-events', 'none', 'important');
-        console.log('[Filter Bar] Persist active - forcing hide');
+      // Persist is active - force hide persisted element
+      if (oldContainer) {
+        oldContainer.style.setProperty('opacity', '0', 'important');
+        oldContainer.style.setProperty('pointer-events', 'none', 'important');
+        console.log('[Filter Bar] Persist active - hiding persisted filter bar');
       }
     }
   });
