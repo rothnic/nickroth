@@ -362,9 +362,11 @@ test.describe('Filter Button & Scroll Position', () => {
     
     // Report any differences
     const diffs: Record<string, number> = {};
-    for (const key of Object.keys(before) as (keyof typeof before)[]) {
+    for (const key of Object.keys(before)) {
       if (key === 'label') continue;
-      const diff = Math.abs((after[key] as number ?? 0) - (before[key] as number ?? 0));
+      const beforeVal = (before as Record<string, unknown>)[key];
+      const afterVal = (after as Record<string, unknown>)[key];
+      const diff = Math.abs((afterVal as number ?? 0) - (beforeVal as number ?? 0));
       if (diff > 0) diffs[key] = diff;
     }
     console.log('Before/After differences:', Object.keys(diffs).length === 0 ? 'NONE' : diffs);
