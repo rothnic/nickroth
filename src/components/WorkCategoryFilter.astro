@@ -136,7 +136,7 @@ const isAllActive = activeCategory === null;
   class="relative mb-8 sm:mb-12 w-screen left-1/2 -translate-x-1/2" 
   id="work-category-filter-container"
   transition:name="work-category-filter-container"
-  transition:animate="none" 
+  transition:animate="none"
   transition:persist
 >
   <!-- 
@@ -148,7 +148,7 @@ const isAllActive = activeCategory === null;
   -->
   <div 
     id="filter-fade-left"
-    class="absolute left-0 h-12 top-1/2 -translate-y-1/2 w-12 bg-gradient-to-r from-base-100 to-transparent pointer-events-none z-10 opacity-0"
+    class="absolute left-0 h-12 top-1/2 -translate-y-1/2 w-8 sm:w-10 lg:w-16 bg-gradient-to-r from-base-100 to-transparent pointer-events-none z-10 opacity-0"
     transition:name="filter-fade-left"
     transition:animate="none"
   ></div>
@@ -166,6 +166,9 @@ const isAllActive = activeCategory === null;
     - Tablet (sm): px-4 - slightly more padding
     - Desktop (lg+): Uses mx-auto max-w-6xl px-4 to create a container that aligns
       the filter content with the grid below (which uses max-w-5xl mx-auto)
+    
+    transition:persist keeps the nav element alive during list-to-list nav,
+    preserving hover states, scroll position, and event listeners.
   -->
   <nav 
     id="work-category-nav"
@@ -179,7 +182,7 @@ const isAllActive = activeCategory === null;
   >
     <a 
       href="/work"
-      class={`btn btn-sm font-semibold text-xs uppercase tracking-wider flex-shrink-0 hover-lift-stable ${isAllActive ? 'btn-accent' : 'btn-outline'}`}
+      class={`btn btn-sm font-semibold text-xs uppercase tracking-wider flex-shrink-0 filter-btn ${isAllActive ? 'btn-accent' : 'btn-outline'}`}
       aria-current={isAllActive ? 'page' : undefined}
     >
       ALL PROJECTS
@@ -187,7 +190,7 @@ const isAllActive = activeCategory === null;
     {categories.map((category) => (
       <a 
         href={getCategoryUrl(category)}
-        class={`btn btn-sm font-semibold text-xs uppercase tracking-wider flex-shrink-0 hover-lift-stable ${category === activeCategory ? 'btn-accent' : 'btn-outline'}`}
+        class={`btn btn-sm font-semibold text-xs uppercase tracking-wider flex-shrink-0 filter-btn ${category === activeCategory ? 'btn-accent' : 'btn-outline'}`}
         aria-current={category === activeCategory ? 'page' : undefined}
       >
         {category}
@@ -203,7 +206,7 @@ const isAllActive = activeCategory === null;
   -->
   <div 
     id="filter-fade-right"
-    class="absolute right-0 h-12 top-1/2 -translate-y-1/2 w-12 bg-gradient-to-l from-base-100 to-transparent pointer-events-none z-10 opacity-100"
+    class="absolute right-0 h-12 top-1/2 -translate-y-1/2 w-8 sm:w-10 lg:w-16 bg-gradient-to-l from-base-100 to-transparent pointer-events-none z-10 opacity-100"
     transition:name="filter-fade-right"
     transition:animate="none"
   ></div>
@@ -381,55 +384,38 @@ const isAllActive = activeCategory === null;
   setupFilterBar(false);
   sessionStorage.setItem(PREV_FILTER_KEY, getActiveFilterHref() || '');
   
-  // Before navigation starts - save current scroll positions
-  document.addEventListener('astro:before-preparation', saveScrollPositions);
-  
-  // Track clicked button href to maintain hover state across DOM swap
-  const CLICKED_BTN_KEY = 'workFilterClickedHref';
-  
-  // Handle filter button clicks: save scroll positions + add click animation + lock hover
-  document.getElementById('work-category-nav')?.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
-    const link = target.closest('a') as HTMLElement | null;
-    
-    if (link) {
-      saveScrollPositions();
+  // Press animation for filter buttons
+  // Intercept clicks to play animation before navigation
+  const nav = document.getElementById('work-category-nav');
+  if (nav) {
+    nav.addEventListener('click', (e) => {
+      const link = (e.target as HTMLElement).closest('a.filter-btn');
+      if (!link) return;
       
-      // Mark this as a filter-to-filter navigation (for scroll restoration)
-      sessionStorage.setItem('workFilterNavigation', 'true');
-      
-      // Store clicked button href to re-apply hover lock after DOM swap
+      // Don't re-navigate to current page
       const href = link.getAttribute('href');
-      if (href) {
-        sessionStorage.setItem(CLICKED_BTN_KEY, href);
-      }
+      const currentPath = window.location.pathname.replace(/\/$/, '');
+      if (href === currentPath || href === currentPath + '/') return;
       
-      // Lock hover state during transition
-      link.classList.add('filter-btn-clicked');
+      // Add pressing class to trigger animation
+      link.classList.add('pressing');
       
-      // Add pulse animation for visual feedback
-      link.classList.add('filter-btn-animate');
-      // Remove animation class after animation completes
-      link.addEventListener('animationend', () => {
-        link.classList.remove('filter-btn-animate');
-      }, { once: true });
-    }
-  });
+      // Remove class after animation (in case navigation is cancelled)
+      setTimeout(() => link.classList.remove('pressing'), 150);
+    });
+  }
   
-  // Remove hover-lock after page transition completes (with delay for mouse position check)
-  document.addEventListener('astro:page-load', () => {
-    const clickedHref = sessionStorage.getItem(CLICKED_BTN_KEY);
-    if (clickedHref) {
-      sessionStorage.removeItem(CLICKED_BTN_KEY);
-      
-      // Delay to allow transition animation to complete and hover state to re-evaluate
-      setTimeout(() => {
-        const nav = document.getElementById('work-category-nav');
-        const btn = nav?.querySelector(`a[href="${clickedHref}"]`);
-        if (btn) {
-          btn.classList.remove('filter-btn-clicked');
-        }
-      }, 300); // 300ms matches typical view transition duration
+  // Before navigation starts - save scroll positions and mark filter navigation
+  document.addEventListener('astro:before-preparation', (event) => {
+    saveScrollPositions();
+    
+    // Check if this is a filter-to-filter navigation
+    const targetUrl = (event as any).to?.pathname || '';
+    const isFilterNav = targetUrl === '/work' || targetUrl === '/work/' || 
+                        targetUrl.startsWith('/work/category/');
+    
+    if (isFilterNav) {
+      sessionStorage.setItem('workFilterNavigation', 'true');
     }
   });
   

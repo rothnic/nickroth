@@ -1,6 +1,6 @@
 ---
 title: "Persistent Filter Bar with View Transitions"
-description: "A deep dive into building a horizontally-scrollable filter component that maintains scroll position, hover states, and active styling across page transitions using Astro's View Transitions API and JIT naming."
+description: "A deep dive into building a horizontally-scrollable filter component that maintains scroll position and active styling across page transitions using Astro's View Transitions API."
 company: "Personal Project"
 role: "Frontend Developer"
 startDate: 2024-12-15
@@ -8,7 +8,7 @@ featured: false
 tags: ["View Transitions", "Astro", "UX", "CSS", "JavaScript"]
 image: "../../assets/images/projects/view-transitions-filter-bar.png"
 category: "WEB PLATFORMS"
-impact: "SEAMLESS CATEGORY FILTERING WITH PROFESSIONAL POLISH—NO SCROLL JUMPS, NO HOVER FLICKER."
+impact: "SEAMLESS CATEGORY FILTERING WITH PROFESSIONAL POLISH—NO SCROLL JUMPS, NO LAYOUT SHIFTS."
 stack: ["ASTRO 5", "VIEW TRANSITIONS", "SESSION STORAGE", "CSS ANIMATIONS"]
 roleCategory: "FRONTEND DEVELOPER"
 parentProject: "astro-portfolio-ai-development"
@@ -28,100 +28,54 @@ Category filter bars appear simple but require careful attention to preserve use
 | User Expectation | Common Failure Mode |
 |------------------|---------------------|
 | Scroll position persists | Resets to left on each page |
-| Hover state continues through click | Drops and re-applies, causing flicker |
 | Page depth maintained when filtering | Jumps to top on every filter change |
 | Click feels responsive | No feedback during navigation delay |
 | Cards morph above filter | Filter bar covers transitioning elements |
+| Buttons feel consistent | Different behavior on mouse vs touch |
 
-This guide covers the patterns required to deliver a polished filtering experience with Astro's View Transitions API, including the **JIT Naming Pattern** for high-performance card transitions.
+This guide covers the patterns required to deliver a polished filtering experience with Astro's View Transitions API.
 
 ---
 
-## Pattern 1: JIT (Just-In-Time) Naming for Cards
+## Current Implementation
 
-The first challenge with view transitions is **performance**. If you give all 20+ cards unique transition names, the browser must snapshot and track every single one—even though only ONE card transitions at a time.
+### Filter Button Styling
 
-<Image src={jitNamingPattern} alt="JIT Naming Pattern diagram showing static naming creating browser overload vs JIT naming with only one active card" />
-
-### The Problem with Static Naming
-
-```astro
-<!-- ❌ BEFORE: Every card has a unique name -->
-{cards.map(card => (
-  <div transition:name={`work-card-${card.slug}`}>
-    <img transition:name={`work-img-${card.slug}`} />
-    <h2 transition:name={`work-title-${card.slug}`}>{card.title}</h2>
-  </div>
-))}
-```
-
-This creates 60+ transition groups (20 cards × 3 named elements each). CSS wildcards like `::view-transition-group(work-img-*)` don't work, so you can't even style them properly.
-
-### The JIT Solution
-
-**Step 1:** Cards use `data-vt-*` attributes instead of `transition:name`:
-
-```astro
-<!-- ✅ AFTER: Cards have data attributes, not transition names -->
-{cards.map(card => (
-  <div data-vt-card="work-card" data-card-id={card.slug}>
-    <img data-vt-img="work-img" />
-    <h2 data-vt-title="work-title">{card.title}</h2>
-  </div>
-))}
-```
-
-**Step 2:** Detail page has constant (not dynamic) transition names:
-
-```astro
-<!-- Detail page: constant names match the data-vt-* values -->
-<article transition:name="work-card">
-  <img transition:name="work-img" />
-  <h1 transition:name="work-title">{title}</h1>
-</article>
-```
-
-**Step 3:** JavaScript applies names to ONE card at a time:
-
-```javascript
-// On click: apply names to the clicked card only
-document.addEventListener('click', (e) => {
-  const card = e.target.closest('[data-card-id]');
-  if (card) {
-    card.style.viewTransitionName = card.dataset.vtCard;
-    card.querySelector('[data-vt-img]').style.viewTransitionName = 'work-img';
-    card.querySelector('[data-vt-title]').style.viewTransitionName = 'work-title';
-  }
-});
-
-// On back navigation: inject names into the target card
-document.addEventListener('astro:after-swap', () => {
-  const targetId = sessionStorage.getItem('lastViewedCard');
-  const card = document.querySelector(`[data-card-id="${targetId}"]`);
-  if (card) {
-    // Apply same names for morph back
-    applyTransitionNames(card);
-  }
-});
-```
-
-### Why Constant Names Work
-
-Since only ONE card ever has names applied, we can use constant names (`work-img`) instead of dynamic ones (`work-img-resume-chatbot`). This means CSS can target them exactly:
+Filter buttons use a **neobrutalist press animation** with transform and shadow changes:
 
 ```css
-/* ✅ Exact selector works with constant names */
-::view-transition-group(work-img) {
-    z-index: 100;
-    animation-duration: 0.35s;
+.filter-btn {
+    /* Smooth transitions for press effects */
+    transition: transform 0.1s ease-out, filter 0.1s ease-out, box-shadow 0.1s ease-out;
+    /* Resting shadow position */
+    box-shadow: 6px 6px 0px 0px var(--nr-shadow-color);
+    /* Resting position */
+    transform: translate(0, 0);
+}
+
+/* Hover: subtle brightness increase */
+.filter-btn:hover {
+    filter: brightness(1.05);
+}
+
+/* Press: Button drops toward shadow (neobrutalist effect) */
+.filter-btn:active,
+.filter-btn.pressing {
+    transform: translate(2px, 2px);    /* Move toward shadow */
+    box-shadow: 4px 4px 0px 0px var(--nr-shadow-color);  /* Shrink shadow */
+    filter: brightness(0.95);
 }
 ```
 
----
+**Key design decisions:**
+- **Neobrutalist press effect** - button drops 2px toward shadow, shadow shrinks proportionally
+- **JS-triggered `.pressing` class** - ensures animation plays even during fast navigation
+- **Works identically** on mouse and touch devices
+- **Adjacent elements stay stable** - transform doesn't cause layout shift
 
-## Pattern 2: DOM Persistence with `transition:persist`
+### DOM Persistence
 
-The filter bar itself uses `transition:persist` on its container to survive page navigations without being replaced:
+The filter bar uses `transition:persist` to survive page navigations:
 
 ```astro
 <div 
@@ -130,45 +84,107 @@ The filter bar itself uses `transition:persist` on its container to survive page
   transition:animate="none" 
   transition:persist
 >
-  <nav id="work-category-nav">
+  <nav id="work-category-nav" transition:persist>
     {categories.map(cat => (
-      <a href={`/work/category/${slugify(cat)}`}>{cat}</a>
+      <a href={`/work/category/${slugify(cat)}`} class="filter-btn">{cat}</a>
     ))}
   </nav>
 </div>
 ```
 
-### What Persistence Preserves
+**What persistence preserves:**
+- `scrollLeft` position
+- Event listeners
+- Ongoing CSS animations
 
-| State | Standard Transition | With `persist` |
-|-------|---------------------|----------------|
-| `scrollLeft` position | Resets to 0 | Maintained |
-| `:hover` pseudo-class | Lost on swap | Maintained |
-| Ongoing CSS animations | Interrupted | Continue |
-| Event listeners | Require re-binding | Already bound |
+**Required manual handling:**
+- Active button styling (must update via JS after swap)
 
-### Required Trade-off: Manual State Sync
+### Scroll Position Restoration
 
-Persisted elements bypass server rendering. Active button styling must be updated via JavaScript:
+```javascript
+const SCROLL_KEY = 'filterScrollPos';
+const PAGE_SCROLL_KEY = 'pageVerticalScroll';
+
+// Before navigation - save positions
+document.addEventListener('astro:before-preparation', () => {
+  const nav = document.getElementById('work-category-nav');
+  if (nav) {
+    sessionStorage.setItem(SCROLL_KEY, nav.scrollLeft);
+    sessionStorage.setItem(PAGE_SCROLL_KEY, window.scrollY);
+  }
+});
+
+// After swap - restore positions
+document.addEventListener('astro:after-swap', () => {
+  const nav = document.getElementById('work-category-nav');
+  
+  // Restore filter bar scroll
+  const savedScroll = sessionStorage.getItem(SCROLL_KEY);
+  if (nav && savedScroll) {
+    nav.scrollLeft = parseInt(savedScroll, 10);
+  }
+  
+  // Restore page scroll for filter-to-filter navigation
+  const isFilterNav = sessionStorage.getItem('workFilterNavigation') === 'true';
+  if (isFilterNav) {
+    const savedPageScroll = sessionStorage.getItem(PAGE_SCROLL_KEY);
+    if (savedPageScroll) {
+      window.scrollTo(0, parseInt(savedPageScroll, 10));
+    }
+  }
+});
+```
+
+### Active Button State Sync
+
+Persisted elements bypass server rendering, so active styling must be updated via JavaScript:
 
 ```javascript
 document.addEventListener('astro:after-swap', () => {
   const nav = document.getElementById('work-category-nav');
-  const currentPath = window.location.pathname;
+  const currentPath = window.location.pathname.replace(/\/$/, '');
   
   nav?.querySelectorAll('a').forEach(btn => {
-    const isActive = btn.getAttribute('href') === currentPath;
-    btn.classList.toggle('btn-accent', isActive);
-    btn.classList.toggle('btn-outline', !isActive);
+    const href = (btn.getAttribute('href') || '').replace(/\/$/, '');
+    const isActive = href === currentPath;
+    
+    if (isActive) {
+      btn.classList.remove('btn-outline');
+      btn.classList.add('btn-accent');
+      btn.setAttribute('aria-current', 'page');
+    } else {
+      btn.classList.remove('btn-accent');
+      btn.classList.add('btn-outline');
+      btn.removeAttribute('aria-current');
+    }
   });
 });
 ```
 
+### Responsive Fade Overlays
+
+Fade overlays indicate scrollable content. Width varies by viewport:
+
+```astro
+<div 
+  id="filter-fade-left"
+  class="absolute left-0 h-12 top-1/2 -translate-y-1/2 
+         w-8 sm:w-10 lg:w-16 
+         bg-gradient-to-r from-base-100 to-transparent 
+         pointer-events-none z-10 opacity-0"
+></div>
+```
+
+JavaScript controls visibility based on scroll position:
+- Left fade: visible when `scrollLeft > 0`
+- Right fade: visible when `scrollLeft < maxScroll`
+
 ---
 
-## Pattern 3: Animation Timeline & Z-Index Layering
+## Animation Timeline & Z-Index Layering
 
-When navigating back from a detail page, multiple animations must be choreographed:
+When navigating between detail page and list view, multiple animations must be choreographed:
 
 <Image src={animationTimeline} alt="Animation timeline showing card morph at 0-350ms and filter bar fade at 350-650ms" />
 
@@ -188,7 +204,6 @@ When navigating back from a detail page, multiple animations must be choreograph
 ::view-transition-group(work-title) {
     z-index: 100;
     animation-duration: 0.35s;
-    animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 /* Filter bar stays BELOW cards */
@@ -196,121 +211,26 @@ When navigating back from a detail page, multiple animations must be choreograph
     z-index: 10;
 }
 
-/* Delayed fade-in for filter bar AFTER card morph completes */
+/* Delayed fade-in AFTER card morph completes */
 ::view-transition-new(work-category-filter-container):only-child {
-    animation: filter-fade-in 0.3s ease-out 0.35s both;
-}
-
-@keyframes filter-fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    animation: filter-fade-in 0.3s ease-out 0.35s both !important;
 }
 ```
 
 ---
 
-## Pattern 4: The `:only-child` Selector for Appear/Disappear
+## The `:only-child` Selector for Appear/Disappear
 
-The filter bar animations should only fire when it **appears** (back navigation) or **disappears** (forward navigation)—not during list-to-list filtering. The `:only-child` pseudo-class makes this possible:
+The filter bar animations should only fire when it **appears** (back navigation) or **disappears** (forward navigation)—not during list-to-list filtering:
 
 <Image src={onlyChildSelector} alt="Diagram explaining how :only-child detects appear, disappear, and morph scenarios" />
 
-### How It Works
-
-The View Transition API creates pseudo-elements for each named element:
-
-```
-::view-transition-image-pair(work-category-filter-container)
-├── ::view-transition-old(...)  ← snapshot from OLD page
-└── ::view-transition-new(...)  ← snapshot from NEW page
-```
-
-- **APPEAR** (Detail → List): Only `::view-transition-new` exists (no old)
+- **APPEAR** (Detail → List): Only `::view-transition-new` exists
   - `::view-transition-new(...):only-child` ✓ matches
-- **DISAPPEAR** (List → Detail): Only `::view-transition-old` exists (no new)
-  - `::view-transition-old(...):only-child` ✓ matches
+- **DISAPPEAR** (List → Detail): Only `::view-transition-old` exists
+  - `::view-transition-old(...):only-child` ✓ matches  
 - **MORPH** (List → List): BOTH exist
   - Neither `:only-child` matches — no animation fires
-
-```css
-/* Only fires when filter bar APPEARS */
-::view-transition-new(work-category-filter-container):only-child {
-    animation: filter-fade-in 0.3s ease-out 0.35s both;
-}
-
-/* Only fires when filter bar DISAPPEARS */
-::view-transition-old(work-category-filter-container):only-child {
-    animation: filter-fade-out 0.15s ease-out both;
-}
-```
-
----
-
-## Pattern 5: The Delta-Restoration Scroll Strategy
-
-Even with `transition:persist`, scroll positions require explicit handling.
-
-### Horizontal Scroll: Always Restore
-
-```javascript
-const SCROLL_KEY = 'filterScrollPos';
-
-document.addEventListener('astro:before-preparation', () => {
-  const nav = document.getElementById('work-category-nav');
-  if (nav) sessionStorage.setItem(SCROLL_KEY, nav.scrollLeft);
-});
-
-document.addEventListener('astro:after-swap', () => {
-  const nav = document.getElementById('work-category-nav');
-  const saved = sessionStorage.getItem(SCROLL_KEY);
-  if (nav && saved) nav.scrollLeft = parseInt(saved, 10);
-});
-```
-
-### Vertical Scroll: Conditional Restoration
-
-Only restore vertical scroll for explicit filter clicks, not browser back/forward:
-
-```javascript
-const PAGE_SCROLL_KEY = 'pageVerticalScroll';
-const NAV_FLAG_KEY = 'isFilterNavigation';
-
-// Mark filter clicks explicitly
-nav.addEventListener('click', (e) => {
-  if (e.target.closest('a')) {
-    sessionStorage.setItem(NAV_FLAG_KEY, 'true');
-    sessionStorage.setItem(PAGE_SCROLL_KEY, window.scrollY);
-  }
-});
-
-document.addEventListener('astro:after-swap', () => {
-  const isFilterNav = sessionStorage.getItem(NAV_FLAG_KEY) === 'true';
-  sessionStorage.removeItem(NAV_FLAG_KEY);
-  
-  if (isFilterNav) {
-    const saved = sessionStorage.getItem(PAGE_SCROLL_KEY);
-    if (saved) window.scrollTo(0, parseInt(saved, 10));
-  }
-});
-```
-
----
-
-## Pattern 6: Tactile Click Feedback
-
-View transitions introduce a delay between click and visible change. Add an immediate pulse animation:
-
-```css
-@keyframes filter-btn-pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(0.95); filter: brightness(1.1); }
-  100% { transform: scale(1); }
-}
-
-.filter-btn-animate {
-  animation: filter-btn-pulse 0.2s ease-out;
-}
-```
 
 ---
 
@@ -318,12 +238,115 @@ View transitions introduce a delay between click and visible change. Add an imme
 
 | Pattern | Purpose |
 |---------|---------|
-| **JIT Naming** | Only one card named at a time → no browser overload |
-| **Constant Names** | CSS can target exactly (`work-img` not `work-img-*`) |
+| **Neobrutalist press animation** | Button drops 2px toward shadow, shadow shrinks |
+| **JS `.pressing` class** | Ensures animation plays during navigation |
 | **transition:persist** | Filter bar survives navigation, keeps scroll position |
 | **Z-Index Layering** | Cards (100) fly above filter bar (10) |
+| **Nav text transition:name** | Text stays visible above nav-active-bg (z-index 1 > 0) |
 | **:only-child Selector** | Fade animations only on appear/disappear |
-| **Animation Delay** | Filter fades in AFTER card morph completes |
+| **Work cards: smaller press** | 1px translate vs filter btn's 2px |
+
+---
+
+## Lessons Learned
+
+### ❌ Avoid: Complex JavaScript Hover Management
+
+Early iterations tried to manage hover state with JavaScript:
+- Inline style locks (`btn.style.transform = ...`)
+- `mouseleave` event handlers
+- sessionStorage to persist clicked button href
+- Touch device detection for timeouts
+
+**Problems encountered:**
+- Inline styles were lost during view transition DOM swap
+- Race conditions between `astro:after-swap` and browser repaint
+- Couldn't distinguish between hover and active states reliably
+- Different behavior on touch vs mouse created complexity
+
+**Solution:** Use CSS-only with no transform effects. Simple `filter: brightness()` works identically everywhere.
+
+### ❌ Avoid: Hover Lift Effects on Filter Buttons
+
+Neobrutalist button "lift" effects (`transform: translate(-2px, -2px)`) look great on regular buttons but cause problems for filter buttons:
+- View transitions interrupt the lift state
+- Buttons "bounce" during page navigation
+- Mobile touch has no hover, so inconsistent experience
+
+**Solution:** Keep filter buttons in fixed position, use brightness change for visual feedback.
+
+### ❌ Avoid: Transform Effects That Change Visual Footprint
+
+`transform: scale(0.97)` on press caused the filter bar height to shift by 1-2px because it changes the button's visual bounding box.
+
+**Solution:** Use `filter: brightness()` which has zero layout impact.
+
+### ✓ Do: Disable Animations During Persist Morphs
+
+When the filter bar persists from one list to another, you don't want animations firing. The `:only-child` selector ensures that animations only apply during appear/disappear scenarios.
+
+### ✓ Do: Save Scroll Positions Early
+
+Save scroll positions in `astro:before-preparation`, not `click`. The click handler runs after the navigation has started processing.
+
+### ✓ Do: Normalize URL Paths
+
+When comparing hrefs for active state, normalize trailing slashes:
+```javascript
+const currentPath = window.location.pathname.replace(/\/$/, '');
+const href = btn.getAttribute('href').replace(/\/$/, '');
+```
+
+### ✓ Do: Give Sibling Elements Their Own Transition Names for Z-Index Control
+
+When an element with `transition:name` (like `nav-active-bg`) has siblings (like text labels), the siblings can get hidden during transitions because view transition pseudo-elements stack above the DOM.
+
+**The Problem:**
+- `nav-active-bg` has `transition:name="nav-active-bg"` and animates
+- Text label has no transition name, so it's part of parent's transition
+- During transition, `nav-active-bg` layer covers the text
+
+**The Solution:**
+```astro
+<!-- Background with z-index: 0 -->
+<span class="nav-active-bg" transition:name="nav-active-bg" />
+
+<!-- Text with z-index: 1 (MUST have its own transition name) -->
+<span 
+  class="relative z-10" 
+  transition:name={`nav-text-${item.href.slice(1)}`}
+>{item.label}</span>
+```
+
+```css
+::view-transition-group(nav-active-bg) {
+    z-index: 0;
+}
+
+::view-transition-group(nav-text-work),
+::view-transition-group(nav-text-approach),
+::view-transition-group(nav-text-background),
+::view-transition-group(nav-text-contact) {
+    z-index: 1; /* Text stays above background */
+}
+```
+
+---
+
+## Known Issues
+
+### Mobile Jiggle at Transition End
+
+There's a subtle 1-2px vertical "jiggle" visible on mobile devices when the view transition completes. Playwright tests in mobile emulation show stable positions (no measurable shift), but real devices exhibit this behavior.
+
+**Possible causes:**
+- Browser's native view transition rasterization
+- Safe area inset changes during transition
+- Mobile viewport adjustments (address bar show/hide)
+
+**Mitigation:** The effect is subtle enough that most users won't notice. Future investigation could explore disabling view transitions entirely for filter-to-filter navigation using `data-astro-reload`.
+
+---
 
 ## Related
 

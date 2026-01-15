@@ -70,7 +70,6 @@ const desktopLinkClass = (href: string) =>
 				<a 
 					href={item.href} 
 					class={topLevelLinkClass(item.href)}
-					transition:name={`nav-link-${item.href.slice(1)}`}
 				>
 					{isActive(item.href) && (
 						<span 
@@ -78,7 +77,10 @@ const desktopLinkClass = (href: string) =>
 							transition:name="nav-active-bg"
 						/>
 					)}
-					<span class="relative z-10">{item.label}</span>
+					<span 
+						class="relative z-10" 
+						transition:name={`nav-text-${item.href.slice(1)}`}
+					>{item.label}</span>
 				</a>
 			))}
 		</nav>

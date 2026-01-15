@@ -4,7 +4,7 @@ import ContentLayout from '../components/ContentLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 ---
 
-<BaseLayout title="Systematic Approach - Nick Roth" description="AI-enhanced systems engineering methodology: from user needs to verified implementation">
+<BaseLayout title="Approach - NR" description="AI-enhanced systems engineering methodology: from user needs to verified implementation">
   <ContentLayout>
       <PageHeader
         title="Systematic"
@@ -12,16 +12,26 @@ import PageHeader from '../components/PageHeader.astro';
         description="Bridging systems engineering rigor with AI-enhanced development for verifiable outcomes."
       />
 
-      <!-- Manifesto Banner -->
-      <div class="max-w-4xl mx-auto mb-32 px-4 relative">
+      <!-- Manifesto Banner - reduced margin -->
+      <div class="max-w-4xl mx-auto mb-16 px-4 relative">
         <!-- Decorative corners -->
         <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-primary/40"></div>
         <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-primary/40"></div>
         
-        <div class="py-12 text-center">
-          <p class="text-xl md:text-3xl font-medium leading-relaxed font-display">
+        <div class="py-8 text-center">
+          <p class="text-xl md:text-2xl font-medium leading-relaxed font-display">
             "I use <span class="text-primary font-black">systems engineering</span> principles to maintain complete traceability, leveraging <span class="text-accent font-black">AI agents</span> to accelerate the rigor without losing human intent."
           </p>
+        </div>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="text-center mb-12 animate-bounce">
+        <span class="text-base-content/40 text-sm font-mono uppercase tracking-wider">5 Phases</span>
+        <div class="mt-2">
+          <svg class="w-6 h-6 mx-auto text-base-content/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
         </div>
       </div>
 

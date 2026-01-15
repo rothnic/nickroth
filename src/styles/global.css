@@ -748,11 +748,12 @@
             --hover-rotate: -3deg;
         }
         
-        /* Filter button click animation - brief pulse effect for visual feedback */
+        /* Filter button click animation - brief pulse effect for visual feedback
+           IMPORTANT: Must INCLUDE the hover translate offset so we don't fight with hover lock */
         @keyframes filter-btn-pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(0.95); filter: brightness(1.1); }
-            100% { transform: scale(1); }
+            0% { transform: translate(-2px, -2px) scale(1); }
+            50% { transform: translate(-2px, -2px) scale(0.95); filter: brightness(1.1); }
+            100% { transform: translate(-2px, -2px) scale(1); }
         }
         
         .filter-btn-animate {
@@ -764,6 +765,87 @@
             /* Mirror the hover-lift-stable:hover styles */
             transform: translate(-2px, -2px) !important;
             box-shadow: 10px 10px 0px 0px var(--nr-shadow-color) !important;
+            /* Disable CSS transition to prevent double-bounce when animation ends */
+            transition: none !important;
+        }
+        
+        /* Filter buttons need pure JS control to avoid conflicts between:
+           - :hover (lift up)
+           - :active (push down)  
+           This class provides a simpler, unified style that works consistently 
+           on both mouse and touch devices.
+        */
+        .filter-btn {
+            /* Smooth transitions for press effects */
+            transition: transform 0.1s ease-out, filter 0.1s ease-out, box-shadow 0.1s ease-out !important;
+            /* Resting shadow position */
+            box-shadow: 6px 6px 0px 0px var(--nr-shadow-color) !important;
+            /* Resting position */
+            transform: translate(0, 0) !important;
+        }
+        
+        /* Hover: subtle brightness increase (works on both mouse and touch) */
+        .filter-btn:hover {
+            filter: brightness(1.05);
+        }
+        
+        /* Press: Button drops toward shadow (neobrutalist press effect)
+           - Button moves 2px toward shadow
+           - Shadow shrinks from 6px to 4px
+           - Slight brightness dip for visual feedback */
+        .filter-btn:active,
+        .filter-btn.pressing {
+            transform: translate(2px, 2px) !important;
+            box-shadow: 4px 4px 0px 0px var(--nr-shadow-color) !important;
+            filter: brightness(0.95) !important;
+        }
+        
+        /* Focus visible for accessibility */
+        .filter-btn:focus-visible {
+            outline: 3px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+
+        /* ========================================
+           WORK CARD STYLING
+           ========================================
+           Work cards use a smaller press animation than filter buttons
+           because they have smaller shadows (shadow-xs).
+        */
+        .card[data-work-card] {
+            /* Ensure consistent transition for visual effects */
+            transition: transform 0.1s ease-out, filter 0.1s ease-out, box-shadow 0.1s ease-out !important;
+            /* Disable any hover transform that might be inherited */
+            transform: translate(0, 0) !important;
+            /* Stable border - prevent any changes */
+            border: 2px solid var(--nr-border-color) !important;
+        }
+        
+        /* Hover: NO visual change whatsoever */
+        .card[data-work-card]:hover {
+            transform: translate(0, 0) !important;
+            filter: none !important;
+            outline: none !important;
+            /* Keep same border - no changes */
+            border: 2px solid var(--nr-border-color) !important;
+        }
+        
+        /* Active/Press: Small press animation (proportional to shadow-xs)
+           - Button moves 1px toward shadow (smaller than filter btn's 2px)
+           - Shadow stays minimal
+           - Subtle brightness dip */
+        .card[data-work-card]:active,
+        .card[data-work-card].pressing {
+            transform: translate(1px, 1px) !important;
+            box-shadow: 1px 1px 0px 0px var(--nr-shadow-color) !important;
+            filter: brightness(0.97) !important;
+            outline: none !important;
+        }
+
+        /* Remove focus outline from the link inside work cards */
+        .card[data-work-card] a:focus,
+        .card[data-work-card] a:focus-visible {
+            outline: none !important;
         }
 
         /* Sticker positioning */
@@ -1383,6 +1465,30 @@
             );
         }
         
+        /* ========================================
+           NAVBAR ACTIVE BACKGROUND VIEW TRANSITIONS
+           ========================================
+           
+           The navbar has a colored background that slides between nav items.
+           
+           ## Z-Index Layering Pattern
+           View transitions create pseudo-elements that stack above the DOM.
+           To keep text visible ABOVE the sliding background:
+           
+           1. nav-active-bg gets transition:name="nav-active-bg" (z-index: 0)
+           2. Text labels get transition:name="nav-text-{name}" (z-index: 1)
+           3. The text MUST have its own transition name - without it, text
+              becomes part of the main-navbar transition and ends up BELOW
+              the nav-active-bg layer.
+           
+           ## Animation Types
+           - MORPH (nav to nav): Background slides, pure position/size change
+           - APPEAR (home to nav): Scale up from 0.8 + fade in
+           - DISAPPEAR (nav to home): Scale down to 0.8 + fade out
+           
+           The :only-child selector detects appear/disappear vs morph.
+        */
+        
         /* Nav active background - slides between nav items */
         ::view-transition-old(nav-active-bg),
         ::view-transition-new(nav-active-bg) {
@@ -1397,9 +1503,10 @@
             animation: scale-fade-out 0.2s ease-in forwards;
         }
         
-        /* When nav-active-bg appears (leaving home page), make it scale up and fade in */
+        /* When nav-active-bg appears (leaving home page), delay to sync with navbar drop
+           Navbar uses 0.5s bounce animation, so we wait 0.3s then fade in */
         ::view-transition-new(nav-active-bg):only-child {
-            animation: scale-fade-in 0.2s ease-out forwards;
+            animation: scale-fade-in 0.2s ease-out 0.3s both;
         }
         
         @keyframes scale-fade-out {
@@ -1428,22 +1535,50 @@
         ::view-transition-group(nav-active-bg) {
             animation-duration: 0.3s;
             animation-timing-function: ease-in-out;
-            /* Keep background behind text during transition */
+            /* Background stays behind text during transition (z-index: 0) */
             z-index: 0;
             /* Prevent height changes from affecting layout */
             overflow: hidden;
             contain: layout;
         }
 
-        /* Nav link text - keep visible and above background during transitions */
-        ::view-transition-group(nav-link-work),
-        ::view-transition-group(nav-link-approach),
-        ::view-transition-group(nav-link-background),
-        ::view-transition-group(nav-link-contact) {
-            /* Text stays above the background */
+        /* Nav text labels - stay above the active background during transitions
+           CRITICAL: Without explicit transition:name on text, the text becomes
+           part of the main-navbar group and ends up BELOW nav-active-bg */
+        ::view-transition-group(nav-text-work),
+        ::view-transition-group(nav-text-approach),
+        ::view-transition-group(nav-text-background),
+        ::view-transition-group(nav-text-contact) {
+            /* Text stays above the background (z-index: 1 > 0) */
             z-index: 1;
-            /* Prevent height variations during transition */
+            /* Prevent layout shift */
             contain: layout;
+        }
+        
+        /* Nav text appears - delayed to sync with navbar drop (home → internal) */
+        ::view-transition-new(nav-text-work):only-child,
+        ::view-transition-new(nav-text-approach):only-child,
+        ::view-transition-new(nav-text-background):only-child,
+        ::view-transition-new(nav-text-contact):only-child {
+            animation: simple-fade-in 0.2s ease-out 0.3s both;
+        }
+        
+        /* Nav text disappears - quick fade (internal → home) */
+        ::view-transition-old(nav-text-work):only-child,
+        ::view-transition-old(nav-text-approach):only-child,
+        ::view-transition-old(nav-text-background):only-child,
+        ::view-transition-old(nav-text-contact):only-child {
+            animation: simple-fade-out 0.15s ease-out both;
+        }
+        
+        @keyframes simple-fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes simple-fade-out {
+            from { opacity: 1; }
+            to { opacity: 0; }
         }
 
         /* Page header - simple fade instead of morph to avoid distracting expand/contract */
@@ -1467,12 +1602,13 @@
             overflow: clip;
         }
         
+        /* Page header fade animations - smooth crossfade during navigation */
         ::view-transition-old(page-header-container) {
-            animation: page-header-fade-out 0.1s ease-out forwards;
+            animation: page-header-fade-out 0.15s ease-out forwards;
         }
         
         ::view-transition-new(page-header-container) {
-            animation: page-header-fade-in 0.1s ease-in 0.05s forwards;
+            animation: page-header-fade-in 0.15s ease-in 0.05s forwards;
             opacity: 0;
         }
         
@@ -1545,12 +1681,12 @@
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
 
-                &:hover:not(.hover-effect):not(.hover-lift):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]) {
+                &:hover:not(.hover-effect):not(.hover-lift):not(.hover-lift-stable):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]):not(.filter-btn) {
                     box-shadow: var(--btn-shadow-hover);
                     transform: translate(2px, 2px) rotate(var(--btn-rotate-angle));
                 }
 
-                &:active {
+                &:active:not(.filter-btn) {
                     box-shadow: var(--nr-shadow-pressed);
                     transform: translate(0, 0) rotate(0deg);
                 }
@@ -1750,30 +1886,32 @@
                 }
                 
                 /* Override default button hover behavior for grouped buttons (inactive buttons) */
-                & > .btn:hover:not(.active):not(.hover-effect):not(.hover-lift):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]) {
-                    /* Only change text color slightly on hover, no opacity or background change */
-                    color: oklch(from var(--bc) calc(l * 0.7) c h);
-                    background-color: transparent;
-                    box-shadow: none;
-                    transform: none;
+                & > .btn:hover:not(.active):not(.hover-effect):not(.hover-lift):not(.hover-lift-stable):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]) {
+                    /* Subtle brightness on hover instead of transform */
+                    filter: brightness(1.05);
+                    background-color: transparent !important;
+                    box-shadow: none !important;
+                    transform: none !important;
                 }
 
                 /* Override hover for active buttons - no effect at all */
                 & > .btn.active:hover {
-                    opacity: 1;
-                    box-shadow: none;
-                    transform: none;
+                    opacity: 1 !important;
+                    box-shadow: none !important;
+                    transform: none !important;
                 }
 
                 /* Also override active state (when clicking) */
                 & > .btn:active {
-                    box-shadow: none;
-                    transform: none;
+                    /* Subtle brightness down on press */
+                    filter: brightness(0.95);
+                    box-shadow: none !important;
+                    transform: none !important;
                 }
 
                 /* Override focus-visible state */
                 & > .btn:focus-visible {
-                    box-shadow: none;
+                    box-shadow: none !important;
                 }
             }
             
@@ -1822,8 +1960,9 @@
                    - [class*="hover-rotate-"]: Use specific rotation hover modifiers
                    - .rotated-section: Container sections must remain static (child elements can still hover)
                    - .no-hover: Explicitly disabled hover effects
+                   - [data-work-card]: Work cards use their own simplified hover system
                 */
-                &:hover:not(.hover-effect):not(.hover-lift):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]):not(.rotated-section):not(.no-hover) {
+                &:hover:not(.hover-effect):not(.hover-lift):not(.hover-lift-stable):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]):not(.rotated-section):not(.no-hover):not([data-work-card]) {
                     transform: translate(-4px, -4px);
                     box-shadow: var(--nr-shadow-lg);
                 }
@@ -2416,7 +2555,7 @@
         }
         
         /* Disable hover effects during view transitions to prevent animations */
-        html[data-vt-nav] .card:hover:not(.hover-effect):not(.hover-lift):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]):not(.rotated-section):not(.no-hover) {
+        html[data-vt-nav] .card:hover:not(.hover-effect):not(.hover-lift):not(.hover-lift-stable):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]):not(.rotated-section):not(.no-hover) {
             transform: translate(0, 0) !important;
             box-shadow: var(--nr-shadow-base) !important;
         }
@@ -2594,22 +2733,22 @@
             100% { opacity: 1; }
         }
         
-        /* Filter bar APPEARS: navigating from detail to listing */
+        /* Filter bar APPEARS: navigating TO listing from any other page
+           No delay - appears with page content */
         ::view-transition-new(work-category-filter-container):only-child {
-            /* Wait for card morph (0.35s), then fade in (0.3s) */
-            animation: filter-bar-delayed-fade-in 0.3s ease-out 0.35s both;
+            animation: filter-bar-delayed-fade-in 0.25s ease-out both !important;
         }
         
-        /* Filter bar DISAPPEARS: navigating from listing to detail */
+        /* Filter bar DISAPPEARS: navigating FROM listing to detail */
         ::view-transition-old(work-category-filter-container):only-child {
             /* Quick fade out to clear space for expanding card */
-            animation: filter-bar-delayed-fade-in 0.15s ease-out reverse both;
+            animation: filter-bar-delayed-fade-in 0.15s ease-out reverse both !important;
         }
         
         /* Same treatment for the fade overlays */
         ::view-transition-new(filter-fade-left):only-child,
         ::view-transition-new(filter-fade-right):only-child {
-            animation: filter-bar-delayed-fade-in 0.3s ease-out 0.35s both;
+            animation: filter-bar-delayed-fade-in 0.25s ease-out both;
         }
         
         ::view-transition-old(filter-fade-left):only-child,

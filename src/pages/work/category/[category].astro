@@ -42,13 +42,22 @@ const sortedWork = entries.sort((a, b) => {
 	return bDate.getTime() - aDate.getTime();
 });
 
+// Helper to convert category to Title Case for browser tab
+const toTitleCase = (str: string): string => {
+	return str.toLowerCase().split(' ').map(word => 
+		word.charAt(0).toUpperCase() + word.slice(1)
+	).join(' ');
+};
+
+const categoryTitleCase = toTitleCase(category);
+
 // Get all unique categories - SORTED ALPHABETICALLY for consistency across all pages
 const workEntries = await getCollection("work");
 const allCategories = [...new Set(workEntries.map((work) => work.data.category).filter(Boolean))].sort() as string[];
 ---
 
 <BaseLayout 
-	title={`${category} Projects - Nick Roth`} 
+	title={`${categoryTitleCase} | Work - NR`} 
 	description={`Case studies in ${category.toLowerCase()}: systematic approach to product development`}
 >
   <ContentLayout>

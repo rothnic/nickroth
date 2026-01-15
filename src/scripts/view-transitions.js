@@ -169,6 +169,13 @@ function setupViewTransitionHandlers() {
 			storeCardReference(cardId);
 			console.debug(`Stored card reference: ${cardId}`);
 			
+			// Add press animation class (no delay - plays during navigation)
+			if (card.hasAttribute('data-work-card')) {
+				card.classList.add('pressing');
+				// Clean up after animation
+				setTimeout(() => card.classList.remove('pressing'), 150);
+			}
+			
 			// JIT View Transition: Apply names only to THIS card
 			applyTransitionNames(card);
 		}
@@ -179,11 +186,14 @@ function setupViewTransitionHandlers() {
 		const cardId = sessionStorage.getItem("lastViewedCard");
 		if (!cardId) return;
 		
-		// Check if we're on a work listing page (back navigation target)
-		const isWorkListingPage = window.location.pathname === '/work' || 
-			window.location.pathname.startsWith('/work/category/');
+		// Check if we're on a page with work cards (back navigation target)
+		// This includes: work listing, work categories, AND home page (featured work)
+		const pathname = window.location.pathname;
+		const isPageWithWorkCards = pathname === '/' || 
+			pathname === '/work' || 
+			pathname.startsWith('/work/category/');
 		
-		if (isWorkListingPage) {
+		if (isPageWithWorkCards) {
 			// Find and name the target card for back-nav morphing
 			const targetCard = document.querySelector(`[data-card-id="${cardId}"]`);
 			if (targetCard) {
