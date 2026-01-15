@@ -206,7 +206,6 @@ function setupViewTransitionHandlers() {
 	// Handle scroll after navigation completes
 	document.addEventListener("astro:page-load", () => {
 		// Minimal delay to ensure DOM is ready
-		// Use instant scroll to avoid conflicting with view transition animation
 		requestAnimationFrame(() => {
 			const pathname = window.location.pathname;
 			const isWorkListingPage = pathname === '/work' || pathname.startsWith('/work/category/');
@@ -216,16 +215,10 @@ function setupViewTransitionHandlers() {
 			// Store current path for next navigation
 			sessionStorage.setItem("prevPath", pathname);
 			
-			// If coming FROM a work detail page back to listing, try to restore scroll to card
+			// ONLY manually scroll when returning from a work detail page to a listing
+			// This restores the user's position to the card they clicked
+			// All other cases: let the browser handle default scroll behavior
 			if (isWorkListingPage && isFromWorkDetail) {
-				handleScrollToCard();
-			} else if (isWorkListingPage) {
-				// Fresh navigation to work page - scroll to top
-				window.scrollTo({ top: 0, behavior: 'auto' });
-				// Clear any stale card reference
-				sessionStorage.removeItem("lastViewedCard");
-			} else {
-				// Non-work pages - standard behavior
 				handleScrollToCard();
 			}
 			
