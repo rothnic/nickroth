@@ -1498,37 +1498,24 @@
             height: 100%;
         }
         
-        /* When nav-active-bg disappears (going to home page), make it scale down and fade quickly */
+        /* When nav-active-bg disappears (going to home page), fade out quickly */
         ::view-transition-old(nav-active-bg):only-child {
-            animation: scale-fade-out 0.2s ease-in forwards;
+            animation: simple-fade-out 0.2s ease-out forwards;
         }
         
-        /* When nav-active-bg appears (leaving home page), delay to sync with navbar drop
-           Navbar uses 0.5s bounce animation, so we wait 0.3s then fade in */
+        /* When nav-active-bg appears (leaving home page), simple fade in */
         ::view-transition-new(nav-active-bg):only-child {
-            animation: scale-fade-in 0.2s ease-out 0.3s both;
+            animation: simple-fade-in 0.25s ease-out both;
         }
         
-        @keyframes scale-fade-out {
-            from {
-                opacity: 1;
-                transform: scale(1);
-            }
-            to {
-                opacity: 0;
-                transform: scale(0.8);
-            }
+        @keyframes simple-fade-out {
+            from { opacity: 1; }
+            to { opacity: 0; }
         }
         
-        @keyframes scale-fade-in {
-            from {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+        @keyframes simple-fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
         /* Smooth horizontal morph with ease-in-out (no overshoot) */
@@ -1555,12 +1542,12 @@
             contain: layout;
         }
         
-        /* Nav text appears - delayed to sync with navbar drop (home → internal) */
+        /* Nav text appears - simple fade (home → internal) */
         ::view-transition-new(nav-text-work):only-child,
         ::view-transition-new(nav-text-approach):only-child,
         ::view-transition-new(nav-text-background):only-child,
         ::view-transition-new(nav-text-contact):only-child {
-            animation: simple-fade-in 0.2s ease-out 0.3s both;
+            animation: simple-fade-in 0.25s ease-out both;
         }
         
         /* Nav text disappears - quick fade (internal → home) */
@@ -1569,16 +1556,6 @@
         ::view-transition-old(nav-text-background):only-child,
         ::view-transition-old(nav-text-contact):only-child {
             animation: simple-fade-out 0.15s ease-out both;
-        }
-        
-        @keyframes simple-fade-in {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes simple-fade-out {
-            from { opacity: 1; }
-            to { opacity: 0; }
         }
 
         /* Page header - simple fade instead of morph to avoid distracting expand/contract */

@@ -211,6 +211,18 @@ function setupViewTransitionHandlers() {
 			handleScrollToCard();
 			// Clean up transition names after transition completes
 			cleanupTransitionNames();
+			
+			// Scroll to top for fresh navigation (not back navigation to card)
+			// If lastViewedCard was NOT used/found, we're not returning to a card,
+			// so scroll to top for a clean page view
+			const pathname = window.location.pathname;
+			const isWorkListingPage = pathname === '/work' || pathname.startsWith('/work/category/');
+			const cardId = sessionStorage.getItem("lastViewedCard");
+			
+			// If no card reference, scroll to top (fresh navigation)
+			if (isWorkListingPage && !cardId) {
+				window.scrollTo({ top: 0, behavior: 'auto' });
+			}
 		});
 	});
 }
