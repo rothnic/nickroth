@@ -1187,12 +1187,12 @@
             position: absolute;
             left: 0;
             top: 0;
-            width: 1.75rem;
-            height: 1.75rem;
+            width: 1.5rem;
+            height: 1.5rem;
             background-color: var(--color-primary);
             color: white;
             font-weight: 700;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             display: flex;
             align-items: center;
             justify-content: center;

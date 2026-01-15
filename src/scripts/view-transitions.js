@@ -215,11 +215,14 @@ function setupViewTransitionHandlers() {
 			// Store current path for next navigation
 			sessionStorage.setItem("prevPath", pathname);
 			
-			// ONLY manually scroll when returning from a work detail page to a listing
-			// This restores the user's position to the card they clicked
-			// All other cases: let the browser handle default scroll behavior
-			if (isWorkListingPage && isFromWorkDetail) {
-				handleScrollToCard();
+			if (isWorkListingPage) {
+				if (isFromWorkDetail) {
+					// Returning from work detail - restore scroll to the card
+					handleScrollToCard();
+				} else {
+					// Fresh navigation to work page - scroll to top
+					window.scrollTo(0, 0);
+				}
 			}
 			
 			// Clean up transition names after transition completes
