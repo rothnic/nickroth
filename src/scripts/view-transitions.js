@@ -1,20 +1,75 @@
 /**
- * View Transition Utilities - Scroll Management for Card Navigation
+ * View Transition Utilities
+ * 
+ * This module provides scroll management and JIT (Just-In-Time) transition naming
+ * for work card navigation. It integrates with Astro's view transition lifecycle.
  *
- * Automatically scrolls to the top of cards when navigating back from detail pages.
- * Uses Astro's view transition lifecycle hooks for seamless integration.
- *
+ * ============================================================================
+ * JIT NAMING PATTERN FOR WORK CARDS
+ * ============================================================================
+ * 
+ * Instead of statically assigning view-transition-name to ALL cards (which would
+ * create 20+ simultaneous transition groups), we use JIT naming:
+ * 
+ * ## How It Works:
+ * 
+ * 1. Card Mode (WorkCard.astro):
+ *    - Elements have data-vt-* attributes instead of transition:name
+ *    - Example: data-vt-img="work-img" (constant name, not slug-based)
+ *    - NO actual transition names in the HTML
+ * 
+ * 2. Detail Page (WorkCard expanded mode):
+ *    - Elements have static transition:name attributes
+ *    - Example: transition:name="work-img"
+ *    - Using CONSTANT names (work-img, not work-img-resume-chatbot)
+ * 
+ * 3. This JavaScript:
+ *    - Forward nav (click): Applies transition names to the clicked card ONLY
+ *    - Back nav (after-swap): Injects transition names to the target card
+ *    - After transition: Cleans up all transition names
+ * 
+ * ## Why Constant Names?
+ * 
+ * Since only ONE card ever has names at a time, we can use constant names:
+ * - work-card, work-img, work-title, work-body, work-impact
+ * 
+ * This allows CSS to target them exactly (no wildcards needed):
+ * - ::view-transition-group(work-img) { z-index: 100; }
+ * 
+ * ## Lifecycle Flow:
+ * 
+ * FORWARD NAVIGATION (Grid → Detail):
+ * 1. User clicks card link
+ * 2. click handler calls applyTransitionNames(card)
+ * 3. Card elements get view-transition-name via inline style
+ * 4. View transition starts - browser morphs card → detail
+ * 5. astro:page-load fires - cleanupTransitionNames() removes styles
+ * 
+ * BACK NAVIGATION (Detail → Grid):
+ * 1. User navigates back (browser back, breadcrumb, etc.)
+ * 2. astro:after-swap fires - we find the target card via sessionStorage
+ * 3. applyTransitionNames(targetCard) adds names to that card
+ * 4. View transition runs - browser morphs detail → card
+ * 5. astro:page-load fires - cleanupTransitionNames() cleans up
+ * 
+ * ============================================================================
+ * SCROLL MANAGEMENT
+ * ============================================================================
+ * 
  * Features:
- * - Scrolls to card top when navigating back (only back, not forward)
+ * - Scrolls to card top when navigating back from detail pages
  * - Works with any collection items (work, blog, etc.)
  * - Configurable via data attributes
- * - Respects user motion preferences
- *
+ * 
  * Usage:
  * 1. On card wrapper: Add data-card-id="unique-id" and data-scroll-target
  * 2. On detail page: Add data-card-ref="unique-id" to identify source card
  * 3. Auto-initializes on page load
+ * 
+ * @see src/components/WorkCard.astro
+ * @see src/styles/global.css (WORK CARD VIEW TRANSITIONS section)
  */
+
 
 /**
  * Scroll to a specific element with optional offset
@@ -101,6 +156,7 @@ function storeCardReference(cardId) {
  */
 function setupViewTransitionHandlers() {
 	// Store card reference when clicking on a card link
+	// AND apply JIT view transition names to only the clicked card
 	document.addEventListener("click", (e) => {
 		const target = e.target;
 		const link = target.closest("a");
@@ -112,6 +168,28 @@ function setupViewTransitionHandlers() {
 			const cardId = card.getAttribute("data-card-id");
 			storeCardReference(cardId);
 			console.debug(`Stored card reference: ${cardId}`);
+			
+			// JIT View Transition: Apply names only to THIS card
+			applyTransitionNames(card);
+		}
+	});
+	
+	// Handle back navigation: inject transition names on target card
+	document.addEventListener("astro:after-swap", () => {
+		const cardId = sessionStorage.getItem("lastViewedCard");
+		if (!cardId) return;
+		
+		// Check if we're on a work listing page (back navigation target)
+		const isWorkListingPage = window.location.pathname === '/work' || 
+			window.location.pathname.startsWith('/work/category/');
+		
+		if (isWorkListingPage) {
+			// Find and name the target card for back-nav morphing
+			const targetCard = document.querySelector(`[data-card-id="${cardId}"]`);
+			if (targetCard) {
+				console.debug(`Back nav: Injecting transition names for card ${cardId}`);
+				applyTransitionNames(targetCard);
+			}
 		}
 	});
 
@@ -121,6 +199,52 @@ function setupViewTransitionHandlers() {
 		// Use instant scroll to avoid conflicting with view transition animation
 		requestAnimationFrame(() => {
 			handleScrollToCard();
+			// Clean up transition names after transition completes
+			cleanupTransitionNames();
+		});
+	});
+}
+
+/**
+ * Apply view transition names to a card's elements
+ * Uses constant names from data-vt-* attributes
+ * @param {HTMLElement} card - The card element to name
+ */
+function applyTransitionNames(card) {
+	if (!card) return;
+	
+	// Map of data attribute -> apply name from that attribute
+	const vtMappings = [
+		{ attr: 'data-vt-card', selector: null }, // card itself
+		{ attr: 'data-vt-img', selector: '[data-vt-img]' },
+		{ attr: 'data-vt-body', selector: '[data-vt-body]' },
+		{ attr: 'data-vt-title', selector: '[data-vt-title]' },
+		{ attr: 'data-vt-impact', selector: '[data-vt-impact]' },
+	];
+	
+	vtMappings.forEach(({ attr, selector }) => {
+		const element = selector ? card.querySelector(selector) : card;
+		if (element) {
+			const name = element.getAttribute(attr);
+			if (name) {
+				element.style.viewTransitionName = name;
+				console.debug(`Applied view-transition-name: ${name}`);
+			}
+		}
+	});
+}
+
+/**
+ * Remove view transition names from all cards
+ * Called after transition completes to reset state
+ */
+function cleanupTransitionNames() {
+	const cards = document.querySelectorAll('[data-work-card]');
+	cards.forEach(card => {
+		// Clear names from card and all named children
+		card.style.viewTransitionName = '';
+		card.querySelectorAll('[data-vt-img], [data-vt-body], [data-vt-title], [data-vt-impact]').forEach(el => {
+			el.style.viewTransitionName = '';
 		});
 	});
 }

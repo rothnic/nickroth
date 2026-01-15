@@ -83,6 +83,13 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
 ---
 
 <!-- Card Mode -->
+<!-- 
+  JIT View Transition Pattern:
+  - No static transition:name on card mode elements
+  - Names are applied dynamically via JS only to the clicked card (forward nav)
+  - Or injected on the target card during astro:after-swap (back nav)
+  - This prevents 20+ simultaneous transition groups from overloading the browser
+-->
 {mode === "card" && (
   <div
     class="card bg-base-100 border-2 border-base-300 overflow-hidden relative mb-4 sm:mb-12 h-full transition-shadow shadow-xs sm:hover:shadow-md"
@@ -91,7 +98,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
     data-card-id={slug}
     data-scroll-target={true}
     data-preload-image={preloadImage?.src}
-    transition:name={`work-card-${slug}`}
+    data-vt-card="work-card"
   >
     <a 
       href={`/work/${slug}`}
@@ -100,7 +107,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
       data-astro-prefetch
     />
     
-    <figure transition:name={`work-img-${slug}`} class="relative w-full h-36 sm:h-48 overflow-hidden">
+    <figure data-vt-img="work-img" class="relative w-full h-36 sm:h-48 overflow-hidden">
       {image && (
         <Image
           src={image}
@@ -122,13 +129,13 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
       )}
     </figure>
     
-    <div transition:name={`work-body-${slug}`} class="card-body p-2 sm:p-6 gap-1 items-start text-left">
-      <h2 transition:name={`work-title-${slug}`} class="card-title text-sm sm:text-lg leading-tight w-full mb-0.5">
+    <div data-vt-body="work-body" class="card-body p-2 sm:p-6 gap-1 items-start text-left">
+      <h2 data-vt-title="work-title" class="card-title text-sm sm:text-lg leading-tight w-full mb-0.5">
         {title}
       </h2>
       
       {impact && (
-        <div transition:name={`work-impact-${slug}`} class="mb-0.5 w-full h-[25px] sm:h-[30px]">
+        <div data-vt-impact="work-impact" class="mb-0.5 w-full h-[25px] sm:h-[30px]">
           <p class="font-bold text-primary uppercase leading-tight text-[10px] sm:text-xs line-clamp-2">
             {impact}
           </p>
@@ -152,11 +159,11 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
 
 <!-- Expanded Mode - Redesigned -->
 {mode === "expanded" && (
-  <article class="max-w-6xl mx-auto" transition:name={`work-card-${slug}`}>
+  <article class="max-w-6xl mx-auto" transition:name="work-card">
     <!-- Hero Section -->
     <header class="mb-8">
       <!-- Hero Image -->
-      <figure transition:name={`work-img-${slug}`} class="relative w-full h-48 sm:h-64 lg:h-80 rounded-none sm:rounded-xl overflow-hidden mb-6 border-y-2 border-x-0 sm:border-2 border-base-300">
+      <figure transition:name="work-img" class="relative w-full h-48 sm:h-64 lg:h-80 rounded-none sm:rounded-xl overflow-hidden mb-6 border-y-2 border-x-0 sm:border-2 border-base-300">
         {image && (
           <Image
             src={image}
@@ -179,8 +186,8 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
       </figure>
       
       <!-- Title & Meta -->
-      <div transition:name={`work-body-${slug}`} class="px-4 sm:px-0">
-        <h1 transition:name={`work-title-${slug}`} class="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 leading-tight">
+      <div transition:name="work-body" class="px-4 sm:px-0">
+        <h1 transition:name="work-title" class="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 leading-tight">
           {title}
         </h1>
         
@@ -212,7 +219,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
         
         <!-- Impact Statement -->
         {impact && (
-          <div transition:name={`work-impact-${slug}`} class="bg-primary/10 border-l-4 border-primary px-4 py-3 rounded-r-lg">
+          <div transition:name="work-impact" class="bg-primary/10 border-l-4 border-primary px-4 py-3 rounded-r-lg">
             <p class="font-bold text-primary text-lg leading-snug">
               {impact}
             </p>

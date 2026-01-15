@@ -1495,34 +1495,9 @@
             animation: none !important;
         }
 
-        /* Work category nav - instant swap during transitions (persistent element)
-           Since the filter bar appears on all work pages, we keep it visible
-           and in-place while only the content below animates.
-           Using instant swap prevents any moment where both old/new exist causing layout flicker. */
-        ::view-transition-group(work-category-nav) {
-            /* No animation - stays in place */
-            animation: none !important;
-        }
-        
-        ::view-transition-old(work-category-nav) {
-            /* Immediately hide old - no fade */
-            animation: none !important;
-            display: none !important;
-        }
-        
-        ::view-transition-new(work-category-nav) {
-            /* Immediately show new - no fade */
-            animation: none !important;
-        }
-
-        /* Reset button hover states during view transitions to prevent shadow desync */
-        html:has(::view-transition) .btn {
-            /* Disable transitions during view transition to prevent animation desync */
-            transition: none !important;
-            /* Reset to non-hovered state */
-            transform: translate(0, 0) rotate(0deg) !important;
-            box-shadow: var(--btn-shadow) !important;
-        }
+        /* Work category filter container transition behavior is handled in the 
+           "WORK CARD VIEW TRANSITIONS" section. Uses transition:persist for 
+           element stability with delayed fade-in for detail-to-list navigation. */
 
         /* Preserve cursor pointer on all interactive elements during view transitions */
         ::view-transition-old(*),
@@ -1533,7 +1508,7 @@
         
         /* Ensure navbar and buttons maintain pointer during transitions */
         ::view-transition-group(nav-active-bg),
-        ::view-transition-group(work-category-nav) {
+        ::view-transition-group(work-category-filter-container) {
             cursor: pointer;
         }
 
@@ -2461,22 +2436,77 @@
         
         /* ========================================
            WORK CARD VIEW TRANSITIONS
-           Clean, snappy card-to-detail morphing
+           ========================================
+           
+           This section implements high-fidelity card-to-detail morphing with
+           proper z-index layering to ensure smooth visual transitions.
+           
+           ## JIT (Just-In-Time) Naming Pattern
+           
+           Instead of giving ALL cards transition names (which would create 20+
+           simultaneous transition groups), we use JIT naming:
+           
+           1. Cards have NO transition names in HTML (only data-vt-* attributes)
+           2. Detail page has CONSTANT transition names (work-card, work-img, etc.)
+           3. JavaScript applies names to ONE card at a time:
+              - Forward nav: On click, name the clicked card
+              - Back nav: On after-swap, name the target card
+           
+           This approach:
+           ✓ Eliminates browser snapshot overload
+           ✓ Allows CSS to target names exactly (no wildcards needed)
+           ✓ Creates smooth morph between card and detail
+           
+           ## transition:persist Interaction
+           
+           The filter bar uses transition:persist on its container, which means:
+           - The DOM element is NOT replaced during navigation
+           - No view transition snapshot is taken of it
+           - It remains interactive throughout the transition
+           - JavaScript updates its state (active button) after navigation
+           
+           However, the filter bar DOES get fade animations via ::view-transition-new/old
+           when it APPEARS or DISAPPEARS (detail page doesn't have filter bar).
+           The :only-child pseudo-class ensures these only fire for appear/disappear,
+           not for list-to-list navigation where filter bar exists on both pages.
+           
+           ## Animation Timeline: Detail → Listing (Back Navigation)
+           
+           t=0ms       View transition starts
+                       • Card morph begins (0.35s duration)
+                       • Filter bar at opacity: 0
+           
+           t=350ms     Card morph complete
+                       • Filter bar fade-in begins (0.3s ease-out)
+           
+           t=650ms     All animations complete
+                       • JS updates active button state
+           
+           ## Z-INDEX HIERARCHY
+           
+           Layer 100: work-card, work-img, work-body, work-title, work-impact
+                      → Morphing card elements always on top during transitions
+           
+           Layer 10:  work-category-filter-container, filter-fade-left, filter-fade-right
+                      → Filter bar below morphing cards but above root
+           
+           Layer 0:   ::view-transition-group(root)
+                      → Base page content
+           
            ======================================== */
+
         
-        /* Work card transitions - smooth morphing from card to detail */
-        ::view-transition-group(work-card-*),
-        ::view-transition-group(work-img-*),
-        ::view-transition-group(work-title-*),
-        ::view-transition-group(work-body-*),
-        ::view-transition-group(work-impact-*) {
+        /* Work card transition groups - must fly ABOVE the filter bar */
+        ::view-transition-group(work-card),
+        ::view-transition-group(work-img),
+        ::view-transition-group(work-body),
+        ::view-transition-group(work-title),
+        ::view-transition-group(work-impact) {
             z-index: 100;
             animation-duration: 0.35s;
             animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
         }
         
-        /* Let the browser handle the default cross-fade - no custom opacity animations needed */
-        /* The view transition API automatically morphs position/size between old and new states */
         
         /* Spring animations for cards appearing/disappearing during filter changes */
         @keyframes card-spring-in {
@@ -2520,11 +2550,74 @@
             animation-timing-function: ease-out;
         }
         
-        /* Category nav should morph smoothly between pages */
-        ::view-transition-group(work-category-nav) {
-            animation-duration: 0.25s;
-            animation-timing-function: ease-out;
+        /* ----------------------------------------
+           FILTER BAR APPEAR/DISAPPEAR ANIMATIONS
+           ----------------------------------------
+           
+           These animations fire when the filter bar appears (back nav) or
+           disappears (forward nav). The :only-child selector is CRITICAL:
+           
+           - :only-child means "this element has no sibling"
+           - For ::view-transition-new(name):only-child, it means there is
+             NO corresponding ::view-transition-old(name) - the element is
+             APPEARING (new page has it, old page didn't)
+           - For ::view-transition-old(name):only-child, the element is
+             DISAPPEARING (old page had it, new page doesn't)
+           
+           Without :only-child, these animations would fire on EVERY navigation,
+           including list-to-list where the filter bar exists on both pages.
+           
+           The filter bar has transition:persist, which means during list-to-list
+           navigation, no transition animations occur - it just stays put.
+           But when navigating to/from the detail page (which lacks the filter),
+           these animations create a polished appear/disappear effect:
+           
+           APPEAR (Detail → Listing):
+           • Starts at opacity 0
+           • Waits 0.35s for card morph to complete
+           • Fades in over 0.3s with ease-out
+           
+           DISAPPEAR (Listing → Detail):
+           • Fades out in 0.15s
+           • Quick exit so it doesn't compete with expanding card
+           ---------------------------------------- */
+        
+        /* Category filter container - z-index below morphing cards */
+        ::view-transition-group(work-category-filter-container),
+        ::view-transition-group(filter-fade-left),
+        ::view-transition-group(filter-fade-right) {
+            z-index: 10;
         }
+        
+        @keyframes filter-bar-delayed-fade-in {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        
+        /* Filter bar APPEARS: navigating from detail to listing */
+        ::view-transition-new(work-category-filter-container):only-child {
+            /* Wait for card morph (0.35s), then fade in (0.3s) */
+            animation: filter-bar-delayed-fade-in 0.3s ease-out 0.35s both;
+        }
+        
+        /* Filter bar DISAPPEARS: navigating from listing to detail */
+        ::view-transition-old(work-category-filter-container):only-child {
+            /* Quick fade out to clear space for expanding card */
+            animation: filter-bar-delayed-fade-in 0.15s ease-out reverse both;
+        }
+        
+        /* Same treatment for the fade overlays */
+        ::view-transition-new(filter-fade-left):only-child,
+        ::view-transition-new(filter-fade-right):only-child {
+            animation: filter-bar-delayed-fade-in 0.3s ease-out 0.35s both;
+        }
+        
+        ::view-transition-old(filter-fade-left):only-child,
+        ::view-transition-old(filter-fade-right):only-child {
+            animation: filter-bar-delayed-fade-in 0.15s ease-out reverse both;
+        }
+
+
         
         
         /* ========================================

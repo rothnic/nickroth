@@ -8,38 +8,96 @@
  * - Full viewport width container with edge-to-edge scroll
  * - Dynamic fade effects on both edges when content overflows
  * - Smooth hover effects without layout shifts
- * - Proper Astro View Transition integration
+ * - Proper Astro View Transition integration with transition:persist
  * 
- * ## View Transition Patterns (Important!):
+ * ============================================================================
+ * VIEW TRANSITION ARCHITECTURE
+ * ============================================================================
  * 
- * When using Astro View Transitions with elements that need immediate visibility
- * (like these fade overlays), you must handle the transition lifecycle carefully:
+ * This component uses a hybrid approach combining transition:persist for
+ * stability with CSS animations for visual polish.
  * 
- * 1. **transition:animate="none"** - Prevents Astro from animating the element
- *    during page transitions. Without this, new elements fade in by default.
+ * ## The transition:persist Pattern
  * 
- * 2. **transition:name="unique-name"** - Gives the element a stable identity
- *    across page navigations. Elements with matching names "morph" instead of
- *    fading in/out.
+ * The parent container has `transition:persist` which tells Astro to:
+ * 1. Keep the DOM element in place during page navigation
+ * 2. NOT create view transition snapshots of it
+ * 3. Update its contents via JavaScript after navigation
  * 
- * 3. **astro:after-swap event** - Fires AFTER DOM swap but BEFORE the page
- *    becomes visible. Use this to set initial state for elements that need
- *    to appear immediately (not astro:page-load which fires after visible).
+ * This is ideal for interactive elements that need to maintain scroll position
+ * and respond quickly to navigation without visual disruption.
  * 
- * ## Layout Stability Patterns:
+ * ## Animation Timeline: Work Details → Work/Category Listing
  * 
- * 1. **hover-lift-stable class** - Provides visual hover feedback using only
- *    CSS transform (which doesn't affect document flow), preventing layout
- *    shifts to sibling elements.
+ * When navigating BACK from a work detail page to the listing:
  * 
- * 2. **w-screen left-1/2 -translate-x-1/2** - CSS pattern to break an element
- *    out of its container to full viewport width.
+ * t=0ms     │ View transition starts
+ *           │ • Old page snapshot captured
+ *           │ • work-card morphs from expanded → card position
+ *           │ • Filter bar container starts appearing (opacity: 0)
+ *           │
+ * t=0-350ms │ Card morph animation
+ *           │ • work-img, work-title, etc scale down from detail to card
+ *           │ • Uses cubic-bezier(0.32, 0.72, 0, 1) for smooth deceleration
+ *           │ • Filter bar remains invisible during this phase
+ *           │
+ * t=350ms   │ Card morph complete, filter bar fade begins
+ *           │ • filter-bar-delayed-fade-in animation starts
+ *           │ • Filter fade overlays also begin fading in
+ *           │
+ * t=350-650ms │ Filter bar fade-in
+ *           │ • 0.3s ease-out animation from opacity 0 → 1
+ *           │
+ * t=650ms   │ All animations complete
+ *           │ • Active button state updated via JS (astro:after-swap)
+ *           │ • Scroll position restored
  * 
- * 3. **scroll-px-* classes** - Tailwind's scroll-padding utilities ensure
- *    snap-scrolling respects container padding.
+ * ## Animation Timeline: Work/Category Listing → Work Details
  * 
- * @see https://docs.astro.build/en/guides/view-transitions/#lifecycle-events
- * @see /docs/patterns/view-transitions.md
+ * When navigating FORWARD to a work detail page:
+ * 
+ * t=0ms     │ User clicks card, view transition starts
+ *           │ • JIT naming: clicked card gets transition names via JS
+ *           │ • Filter bar starts fading out immediately
+ *           │
+ * t=0-150ms │ Filter bar quick fade-out
+ *           │ • Disappears before card reaches its expanded position
+ *           │ • Clears visual space for the morphing card
+ *           │
+ * t=0-350ms │ Card morph animation
+ *           │ • work-img, work-title, etc scale up from card to detail
+ *           │ • Card transition has z-index: 100 (above filter bar)
+ *           │
+ * t=350ms   │ All animations complete
+ *           │ • Detail page fully visible
+ * 
+ * ## Z-Index Hierarchy During Transitions
+ * 
+ * Layer 100: work-card, work-img, work-body, work-title, work-impact
+ *            → Morphing card elements always on top
+ * 
+ * Layer 10:  work-category-filter-container, filter-fade-left, filter-fade-right
+ *            → Filter bar below morphing cards
+ * 
+ * Layer 2:   Named view transition groups (browser default)
+ * 
+ * Layer 0:   Root snapshot (::view-transition-group(root))
+ * 
+ * ## Key Astro Attributes Used:
+ * 
+ * - `transition:persist` - Element survives navigation, not snapshotted
+ * - `transition:name` - Gives element identity for CSS targeting
+ * - `transition:animate="none"` - Disables default Astro morph animation
+ * 
+ * ## JavaScript Integration:
+ * 
+ * The astro:after-swap event updates the persisted element:
+ * - Updates active button styling based on new URL
+ * - Restores horizontal scroll position
+ * - Triggers fade overlay visibility check
+ * 
+ * @see https://docs.astro.build/en/guides/view-transitions/#transition-persist
+ * @see src/styles/global.css (WORK CARD VIEW TRANSITIONS section)
  */
 export interface Props {
   /** All available categories (sorted alphabetically) */
@@ -77,6 +135,9 @@ const isAllActive = activeCategory === null;
 <div 
   class="relative mb-8 sm:mb-12 w-screen left-1/2 -translate-x-1/2" 
   id="work-category-filter-container"
+  transition:name="work-category-filter-container"
+  transition:animate="none" 
+  transition:persist
 >
   <!-- 
     LEFT FADE OVERLAY
@@ -107,15 +168,13 @@ const isAllActive = activeCategory === null;
       the filter content with the grid below (which uses max-w-5xl mx-auto)
   -->
   <nav 
+    id="work-category-nav"
     class="
       flex flex-nowrap gap-3 min-w-0 overflow-x-auto py-2 scrollbar-hide overscroll-contain
       justify-start px-2 scroll-px-2
       sm:px-4 sm:scroll-px-4
       lg:mx-auto lg:max-w-6xl lg:px-4 lg:scroll-px-4
     " 
-    transition:name="work-category-nav"
-    transition:persist
-    id="work-category-nav"
   >
     <a 
       href="/work"
@@ -278,17 +337,10 @@ const isAllActive = activeCategory === null;
       }, 100);
     });
 
-    /**
-     * Converts vertical mouse wheel to horizontal scroll.
-     * Capped at 80px per event for smoother scrolling on trackpads.
-     */
-    nav.addEventListener('wheel', (e) => {
-      if (e.deltaY !== 0) {
-        e.preventDefault();
-        const scrollAmount = Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY), 80);
-        nav.scrollLeft += scrollAmount;
-      }
-    }, { passive: false });
+    // Native horizontal scrolling is used:
+    // - Trackpads: horizontal swipe
+    // - Mice: Shift+scroll or horizontal wheel
+    // - Touch: horizontal swipe
   }
 
   // === ASTRO VIEW TRANSITION LIFECYCLE ===
