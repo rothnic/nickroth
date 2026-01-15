@@ -1,6 +1,6 @@
 ---
 title: "Persistent Filter Bar with View Transitions"
-description: "A deep dive into building a horizontally-scrollable filter component that maintains scroll position, hover states, and active styling across page transitions using Astro's View Transitions API."
+description: "A deep dive into building a horizontally-scrollable filter component that maintains scroll position, hover states, and active styling across page transitions using Astro's View Transitions API and JIT naming."
 company: "Personal Project"
 role: "Frontend Developer"
 startDate: 2024-12-15
@@ -14,6 +14,11 @@ roleCategory: "FRONTEND DEVELOPER"
 parentProject: "astro-portfolio-ai-development"
 ---
 
+import { Image } from 'astro:assets';
+import jitNamingPattern from '../../assets/images/projects/jit-naming-pattern.png';
+import animationTimeline from '../../assets/images/projects/animation-timeline.png';
+import onlyChildSelector from '../../assets/images/projects/only-child-selector.png';
+
 # Persistent Filter Bar with View Transitions
 
 ## What Makes a Filter Bar Feel Professional
@@ -26,29 +31,111 @@ Category filter bars appear simple but require careful attention to preserve use
 | Hover state continues through click | Drops and re-applies, causing flicker |
 | Page depth maintained when filtering | Jumps to top on every filter change |
 | Click feels responsive | No feedback during navigation delay |
+| Cards morph above filter | Filter bar covers transitioning elements |
 
-This guide covers the patterns required to deliver a polished filtering experience with Astro's View Transitions API.
+This guide covers the patterns required to deliver a polished filtering experience with Astro's View Transitions API, including the **JIT Naming Pattern** for high-performance card transitions.
 
-## Pattern 1: DOM Persistence with `transition:persist`
+---
 
-The standard View Transition behavior swaps DOM elements—capturing a snapshot of the old element, replacing it with the new one, and crossfading between them. For interactive components like filter bars, this breaks continuity.
+## Pattern 1: JIT (Just-In-Time) Naming for Cards
 
-Use `transition:persist` to keep the **actual DOM element** alive across navigations:
+The first challenge with view transitions is **performance**. If you give all 20+ cards unique transition names, the browser must snapshot and track every single one—even though only ONE card transitions at a time.
+
+<Image src={jitNamingPattern} alt="JIT Naming Pattern diagram showing static naming creating browser overload vs JIT naming with only one active card" />
+
+### The Problem with Static Naming
 
 ```astro
-<nav 
-  id="work-category-nav"
-  transition:name="work-category-nav"
+<!-- ❌ BEFORE: Every card has a unique name -->
+{cards.map(card => (
+  <div transition:name={`work-card-${card.slug}`}>
+    <img transition:name={`work-img-${card.slug}`} />
+    <h2 transition:name={`work-title-${card.slug}`}>{card.title}</h2>
+  </div>
+))}
+```
+
+This creates 60+ transition groups (20 cards × 3 named elements each). CSS wildcards like `::view-transition-group(work-img-*)` don't work, so you can't even style them properly.
+
+### The JIT Solution
+
+**Step 1:** Cards use `data-vt-*` attributes instead of `transition:name`:
+
+```astro
+<!-- ✅ AFTER: Cards have data attributes, not transition names -->
+{cards.map(card => (
+  <div data-vt-card="work-card" data-card-id={card.slug}>
+    <img data-vt-img="work-img" />
+    <h2 data-vt-title="work-title">{card.title}</h2>
+  </div>
+))}
+```
+
+**Step 2:** Detail page has constant (not dynamic) transition names:
+
+```astro
+<!-- Detail page: constant names match the data-vt-* values -->
+<article transition:name="work-card">
+  <img transition:name="work-img" />
+  <h1 transition:name="work-title">{title}</h1>
+</article>
+```
+
+**Step 3:** JavaScript applies names to ONE card at a time:
+
+```javascript
+// On click: apply names to the clicked card only
+document.addEventListener('click', (e) => {
+  const card = e.target.closest('[data-card-id]');
+  if (card) {
+    card.style.viewTransitionName = card.dataset.vtCard;
+    card.querySelector('[data-vt-img]').style.viewTransitionName = 'work-img';
+    card.querySelector('[data-vt-title]').style.viewTransitionName = 'work-title';
+  }
+});
+
+// On back navigation: inject names into the target card
+document.addEventListener('astro:after-swap', () => {
+  const targetId = sessionStorage.getItem('lastViewedCard');
+  const card = document.querySelector(`[data-card-id="${targetId}"]`);
+  if (card) {
+    // Apply same names for morph back
+    applyTransitionNames(card);
+  }
+});
+```
+
+### Why Constant Names Work
+
+Since only ONE card ever has names applied, we can use constant names (`work-img`) instead of dynamic ones (`work-img-resume-chatbot`). This means CSS can target them exactly:
+
+```css
+/* ✅ Exact selector works with constant names */
+::view-transition-group(work-img) {
+    z-index: 100;
+    animation-duration: 0.35s;
+}
+```
+
+---
+
+## Pattern 2: DOM Persistence with `transition:persist`
+
+The filter bar itself uses `transition:persist` on its container to survive page navigations without being replaced:
+
+```astro
+<div 
+  id="work-category-filter-container"
+  transition:name="work-category-filter-container"
+  transition:animate="none" 
   transition:persist
-  class="flex flex-nowrap gap-3 overflow-x-auto"
 >
-  {categories.map(cat => (
-    <a href={`/work/category/${slugify(cat)}`}
-       class={cat === activeCategory ? 'btn-accent' : 'btn-outline'}>
-      {cat}
-    </a>
-  ))}
-</nav>
+  <nav id="work-category-nav">
+    {categories.map(cat => (
+      <a href={`/work/category/${slugify(cat)}`}>{cat}</a>
+    ))}
+  </nav>
+</div>
 ```
 
 ### What Persistence Preserves
@@ -62,7 +149,7 @@ Use `transition:persist` to keep the **actual DOM element** alive across navigat
 
 ### Required Trade-off: Manual State Sync
 
-Persisted elements bypass server rendering on navigation. The active button styling must be updated via JavaScript:
+Persisted elements bypass server rendering. Active button styling must be updated via JavaScript:
 
 ```javascript
 document.addEventListener('astro:after-swap', () => {
@@ -70,24 +157,100 @@ document.addEventListener('astro:after-swap', () => {
   const currentPath = window.location.pathname;
   
   nav?.querySelectorAll('a').forEach(btn => {
-    const href = btn.getAttribute('href');
-    const isActive = href === currentPath || 
-      (currentPath === '/work' && href === '/work');
-    
+    const isActive = btn.getAttribute('href') === currentPath;
     btn.classList.toggle('btn-accent', isActive);
     btn.classList.toggle('btn-outline', !isActive);
-    btn.toggleAttribute('aria-current', isActive);
   });
 });
 ```
 
-## Pattern 2: The Delta-Restoration Scroll Strategy
+---
 
-Even without `transition:persist`, scroll positions require explicit handling. Astro resets scroll to the top during page transitions.
+## Pattern 3: Animation Timeline & Z-Index Layering
+
+When navigating back from a detail page, multiple animations must be choreographed:
+
+<Image src={animationTimeline} alt="Animation timeline showing card morph at 0-350ms and filter bar fade at 350-650ms" />
+
+### The Sequence
+
+1. **0-350ms**: Card morphs from expanded detail → small card
+   - Card elements have `z-index: 100` so they fly above everything
+2. **350-650ms**: Filter bar fades in with 0.3s ease-out
+   - Filter bar has `z-index: 10` so cards pass over it
+
+### CSS Implementation
+
+```css
+/* Cards fly ABOVE the filter bar */
+::view-transition-group(work-card),
+::view-transition-group(work-img),
+::view-transition-group(work-title) {
+    z-index: 100;
+    animation-duration: 0.35s;
+    animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Filter bar stays BELOW cards */
+::view-transition-group(work-category-filter-container) {
+    z-index: 10;
+}
+
+/* Delayed fade-in for filter bar AFTER card morph completes */
+::view-transition-new(work-category-filter-container):only-child {
+    animation: filter-fade-in 0.3s ease-out 0.35s both;
+}
+
+@keyframes filter-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+```
+
+---
+
+## Pattern 4: The `:only-child` Selector for Appear/Disappear
+
+The filter bar animations should only fire when it **appears** (back navigation) or **disappears** (forward navigation)—not during list-to-list filtering. The `:only-child` pseudo-class makes this possible:
+
+<Image src={onlyChildSelector} alt="Diagram explaining how :only-child detects appear, disappear, and morph scenarios" />
+
+### How It Works
+
+The View Transition API creates pseudo-elements for each named element:
+
+```
+::view-transition-image-pair(work-category-filter-container)
+├── ::view-transition-old(...)  ← snapshot from OLD page
+└── ::view-transition-new(...)  ← snapshot from NEW page
+```
+
+- **APPEAR** (Detail → List): Only `::view-transition-new` exists (no old)
+  - `::view-transition-new(...):only-child` ✓ matches
+- **DISAPPEAR** (List → Detail): Only `::view-transition-old` exists (no new)
+  - `::view-transition-old(...):only-child` ✓ matches
+- **MORPH** (List → List): BOTH exist
+  - Neither `:only-child` matches — no animation fires
+
+```css
+/* Only fires when filter bar APPEARS */
+::view-transition-new(work-category-filter-container):only-child {
+    animation: filter-fade-in 0.3s ease-out 0.35s both;
+}
+
+/* Only fires when filter bar DISAPPEARS */
+::view-transition-old(work-category-filter-container):only-child {
+    animation: filter-fade-out 0.15s ease-out both;
+}
+```
+
+---
+
+## Pattern 5: The Delta-Restoration Scroll Strategy
+
+Even with `transition:persist`, scroll positions require explicit handling.
 
 ### Horizontal Scroll: Always Restore
-
-The filter bar's `scrollLeft` should be restored on every navigation—whether switching filters or returning from a detail page:
 
 ```javascript
 const SCROLL_KEY = 'filterScrollPos';
@@ -106,9 +269,7 @@ document.addEventListener('astro:after-swap', () => {
 
 ### Vertical Scroll: Conditional Restoration
 
-Vertical page scroll requires a different approach. Browser history navigation (back/forward) has its own scroll restoration—overriding it creates a worse experience.
-
-The solution: only restore vertical scroll for explicit filter clicks, not all navigations.
+Only restore vertical scroll for explicit filter clicks, not browser back/forward:
 
 ```javascript
 const PAGE_SCROLL_KEY = 'pageVerticalScroll';
@@ -130,13 +291,14 @@ document.addEventListener('astro:after-swap', () => {
     const saved = sessionStorage.getItem(PAGE_SCROLL_KEY);
     if (saved) window.scrollTo(0, parseInt(saved, 10));
   }
-  // Browser handles history navigation scroll automatically
 });
 ```
 
-## Pattern 3: Tactile Click Feedback
+---
 
-View transitions introduce a delay between click and visible change. Without feedback, the interface feels unresponsive. Add a brief pulse animation on click:
+## Pattern 6: Tactile Click Feedback
+
+View transitions introduce a delay between click and visible change. Add an immediate pulse animation:
 
 ```css
 @keyframes filter-btn-pulse {
@@ -150,79 +312,18 @@ View transitions introduce a delay between click and visible change. Without fee
 }
 ```
 
-```javascript
-nav.addEventListener('click', (e) => {
-  const link = e.target.closest('a');
-  if (link) {
-    link.classList.add('filter-btn-animate');
-    link.addEventListener('animationend', () => {
-      link.classList.remove('filter-btn-animate');
-    }, { once: true });
-  }
-});
-```
+---
 
-The animation completes regardless of navigation timing, providing immediate acknowledgment.
+## Architecture Summary
 
-## Pattern 4: Scroll Affordance with Edge Fades
-
-Long filter lists require overflow scrolling. Gradient fades at the edges signal that more content exists:
-
-```astro
-<div class="relative">
-  <div 
-    id="filter-fade-left"
-    class="absolute left-0 w-12 h-full bg-gradient-to-r 
-           from-base-100 to-transparent pointer-events-none z-10"
-    transition:animate="none"
-    style="opacity: 0"
-  />
-  
-  <nav id="work-category-nav">...</nav>
-  
-  <div 
-    id="filter-fade-right"
-    class="absolute right-0 w-12 h-full bg-gradient-to-l 
-           from-base-100 to-transparent pointer-events-none z-10"
-    transition:animate="none"
-    style="opacity: 1"
-  />
-</div>
-```
-
-Update visibility based on scroll position:
-
-```javascript
-function updateFades() {
-  const nav = document.getElementById('work-category-nav');
-  const fadeLeft = document.getElementById('filter-fade-left');
-  const fadeRight = document.getElementById('filter-fade-right');
-  
-  const { scrollLeft, scrollWidth, clientWidth } = nav;
-  const maxScroll = scrollWidth - clientWidth;
-  
-  fadeLeft.style.opacity = scrollLeft > 5 ? '1' : '0';
-  fadeRight.style.opacity = scrollLeft < maxScroll - 5 ? '1' : '0';
-}
-
-nav.addEventListener('scroll', updateFades);
-```
-
-Note the `transition:animate="none"` on fade elements—this prevents them from fading in during page transitions when they should already be visible.
-
-## Architecture: Static Routes vs Client-Side Filtering
-
-This implementation uses static routes (`/work/category/automation-ai`) rather than client-side filtering. The trade-offs favor static routing for most use cases:
-
-| Concern | Static Routes | Client-Side |
-|---------|---------------|-------------|
-| SEO | Category pages are indexable | Requires additional configuration |
-| Shareability | URLs are meaningful and shareable | Query params or hash fragments |
-| JS Dependency | Works without JavaScript | Requires JavaScript |
-| Initial Load | Each category pre-rendered | Filter logic runs client-side |
-| View Transitions | Natural integration | Manual animation handling |
-
-View Transitions make static routes feel as fluid as client-side filtering while preserving the architectural benefits.
+| Pattern | Purpose |
+|---------|---------|
+| **JIT Naming** | Only one card named at a time → no browser overload |
+| **Constant Names** | CSS can target exactly (`work-img` not `work-img-*`) |
+| **transition:persist** | Filter bar survives navigation, keeps scroll position |
+| **Z-Index Layering** | Cards (100) fly above filter bar (10) |
+| **:only-child Selector** | Fade animations only on appear/disappear |
+| **Animation Delay** | Filter fades in AFTER card morph completes |
 
 ## Related
 
