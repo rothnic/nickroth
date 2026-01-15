@@ -208,21 +208,29 @@ function setupViewTransitionHandlers() {
 		// Minimal delay to ensure DOM is ready
 		// Use instant scroll to avoid conflicting with view transition animation
 		requestAnimationFrame(() => {
-			handleScrollToCard();
-			// Clean up transition names after transition completes
-			cleanupTransitionNames();
-			
-			// Scroll to top for fresh navigation (not back navigation to card)
-			// If lastViewedCard was NOT used/found, we're not returning to a card,
-			// so scroll to top for a clean page view
 			const pathname = window.location.pathname;
 			const isWorkListingPage = pathname === '/work' || pathname.startsWith('/work/category/');
-			const cardId = sessionStorage.getItem("lastViewedCard");
+			const prevPath = sessionStorage.getItem("prevPath") || "";
+			const isFromWorkDetail = prevPath.startsWith('/work/') && !prevPath.startsWith('/work/category/') && prevPath !== '/work';
 			
-			// If no card reference, scroll to top (fresh navigation)
-			if (isWorkListingPage && !cardId) {
+			// Store current path for next navigation
+			sessionStorage.setItem("prevPath", pathname);
+			
+			// If coming FROM a work detail page back to listing, try to restore scroll to card
+			if (isWorkListingPage && isFromWorkDetail) {
+				handleScrollToCard();
+			} else if (isWorkListingPage) {
+				// Fresh navigation to work page - scroll to top
 				window.scrollTo({ top: 0, behavior: 'auto' });
+				// Clear any stale card reference
+				sessionStorage.removeItem("lastViewedCard");
+			} else {
+				// Non-work pages - standard behavior
+				handleScrollToCard();
 			}
+			
+			// Clean up transition names after transition completes
+			cleanupTransitionNames();
 		});
 	});
 }
