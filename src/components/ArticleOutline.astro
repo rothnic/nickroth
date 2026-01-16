@@ -234,53 +234,27 @@ const { class: className = '', showHeading = true } = Astro.props;
   }
   
   /**
-   * Set up click handlers for outline links
+   * Set up click handlers for outline links (desktop sidebar only)
+   * Mobile bottom sheet handles its own clicks in OutlineBottomSheet.astro
+   * 
+   * For desktop: Let browser handle hash navigation naturally.
+   * Browser's default behavior: clicking <a href="#heading"> updates URL hash and scrolls WITHOUT creating history entry.
+   * CSS scroll-behavior: smooth provides smooth animation.
+   * No custom JavaScript needed - browser does everything correctly!
    */
   function setupClickHandlers(outline: Element) {
-    const links = outline.querySelectorAll('[data-outline-link]');
-    
-    links.forEach((link) => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        const targetId = link.getAttribute('data-outline-link');
-        if (!targetId) return;
-        
-        const targetElement = document.getElementById(targetId);
-        if (!targetElement) return;
-        
-        // Check user's motion preference
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        
-        // Close any open bottom sheet (mobile)
-        const bottomSheet = document.querySelector('.outline-bottom-sheet');
-        if (bottomSheet?.classList.contains('open')) {
-          bottomSheet.classList.remove('open');
-          // Small delay to let the sheet close before scrolling
-          setTimeout(() => {
-            scrollToTarget(targetElement, prefersReducedMotion);
-          }, 200);
-        } else {
-          scrollToTarget(targetElement, prefersReducedMotion);
-        }
-      });
-    });
-  }
-  
-  /**
-   * Smooth scroll to target element
-   */
-  function scrollToTarget(element: Element, instant: boolean = false) {
-    element.scrollIntoView({
-      behavior: instant ? 'auto' : 'smooth',
-      block: 'start'
-    });
-    
-    // Update URL hash without triggering scroll
-    const id = element.id;
-    if (id) {
-      history.pushState(null, '', `#${id}`);
+    // Skip if this is inside a bottom sheet (mobile)
+    if (outline.closest('.outline-bottom-sheet')) {
+      return;
     }
+    
+    // No custom click handlers needed for desktop!
+    // Browser's native <a href="#heading"> behavior:
+    // 1. Updates URL hash (visible in address bar)
+    // 2. Scrolls to target element (smooth via CSS scroll-behavior)
+    // 3. Does NOT create browser history entry
+    // 4. Back button goes to previous page (not previous hash)
+    // 5. Forward button works correctly with hash URLs
   }
   
   // Initialize on load and after view transitions
@@ -294,5 +268,15 @@ const { class: className = '', showHeading = true } = Astro.props;
         observer.disconnect();
       }
     });
+  });
+  
+  // Listen for custom event when outline container is dynamically added (e.g., mobile bottom sheet)
+  document.addEventListener('outline-container-added', (e) => {
+    // Initialize the specific outline that was just added
+    const target = e.target as Element;
+    if (target && target.classList.contains('article-outline')) {
+      // Re-run initialization for this specific outline
+      initArticleOutline();
+    }
   });
 </script>

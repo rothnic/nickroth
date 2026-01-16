@@ -301,6 +301,89 @@ import ArticleOutline from './ArticleOutline.astro';
     
     // Initialize the newly rendered container
     initBottomSheet();
+    
+    // CRITICAL: Initialize the ArticleOutline inside the bottom sheet
+    // The outline script runs on page load before this template is rendered,
+    // so we need to manually trigger initialization for the newly added outline
+    requestAnimationFrame(() => {
+      const outlineInSheet = document.querySelector('.outline-bottom-sheet .article-outline:not(.initialized)');
+      if (outlineInSheet) {
+        // Dispatch a custom event that ArticleOutline can listen for
+        const event = new CustomEvent('outline-container-added', { bubbles: true });
+        outlineInSheet.dispatchEvent(event);
+        
+        // Set up click handlers for outline links AFTER they're created
+        // Wait a bit for the outline to populate
+        setTimeout(() => {
+          setupOutlineLinkHandlers();
+        }, 100);
+      }
+    });
+  }
+  
+  /**
+   * Setup click handlers for outline links in the bottom sheet
+   * This must be called AFTER the ArticleOutline initializes and creates the links
+   * 
+   * For mobile: Only close the sheet and restore scroll position.
+   * Let the browser handle hash navigation naturally (no preventDefault, no manual scrollIntoView).
+   * Browser's default behavior: clicking <a href="#heading"> updates URL hash and scrolls WITHOUT creating history entry.
+   */
+  function setupOutlineLinkHandlers() {
+    const container = document.querySelector('.outline-bottom-sheet-container');
+    if (!container) return;
+    
+    const outlineLinks = container.querySelectorAll('[data-outline-link]');
+    outlineLinks.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        // Read scroll position BEFORE any DOM changes
+        const bodyTop = document.body.style.top;
+        const savedScrollY = bodyTop ? Math.abs(parseInt(bodyTop)) : window.scrollY;
+        
+        // Close sheet UI
+        container.classList.remove('open');
+        const trigger = container.querySelector('.outline-trigger') as HTMLButtonElement;
+        if (trigger) {
+          trigger.setAttribute('aria-expanded', 'false');
+        }
+        
+        // Unlock body and restore scroll position
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.overflow = '';
+        
+        // Restore scroll position immediately
+        window.scrollTo(0, savedScrollY);
+        
+        // Let browser handle hash navigation naturally
+        // No preventDefault(), no manual scrollIntoView(), no history.replaceState()
+        // Browser will update URL hash and scroll - this doesn't create a history entry!
+      });
+    });
+  }
+  
+  /**
+   * Scroll to heading based on URL hash
+   * Called on page load and when using browser back/forward buttons
+   */
+  function scrollToHashIfPresent() {
+    const hash = window.location.hash;
+    if (hash && hash.length > 1) {
+      const targetId = hash.substring(1); // Remove '#'
+      const target = document.getElementById(targetId);
+      if (target) {
+        // Small delay to ensure page is fully rendered
+        setTimeout(() => {
+          const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          target.scrollIntoView({ 
+            behavior: prefersReducedMotion ? 'auto' : 'smooth', 
+            block: 'start' 
+          });
+        }, 100);
+      }
+    }
   }
   
   /**
@@ -372,38 +455,6 @@ import ArticleOutline from './ArticleOutline.astro';
         if (e.key === 'Escape' && container.classList.contains('open')) {
           closeSheet();
         }
-      });
-      
-      // Close when clicking an outline link - don't restore scroll position
-      // The link's href will handle scrolling to the correct position
-      const outlineLinks = container.querySelectorAll('[data-outline-link]');
-      outlineLinks.forEach((link) => {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          const href = (link as HTMLAnchorElement).getAttribute('href');
-          
-          // Close sheet without restoring scroll position
-          container.classList.remove('open');
-          trigger.setAttribute('aria-expanded', 'false');
-          
-          // Restore body styles but don't scroll back
-          document.body.style.position = '';
-          document.body.style.top = '';
-          document.body.style.left = '';
-          document.body.style.right = '';
-          document.body.style.overflow = '';
-          
-          // After body is unlocked, scroll to the target
-          if (href) {
-            const target = document.querySelector(href);
-            if (target) {
-              // Wait for body to unlock, then smooth scroll
-              requestAnimationFrame(() => {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              });
-            }
-          }
-        });
       });
       
       // Handle touch gestures (swipe down to close)
@@ -481,9 +532,17 @@ import ArticleOutline from './ArticleOutline.astro';
   // Initialize on load
   setupScrollListener();
   
+  // Scroll to hash on initial load (if present)
+  scrollToHashIfPresent();
+  
+  // Listen for browser back/forward navigation
+  window.addEventListener('popstate', scrollToHashIfPresent);
+  
   // Reset and reinitialize after view transitions
   document.addEventListener('astro:page-load', () => {
     resetState();
     setupScrollListener();
+    // Scroll to hash after page transition (if present)
+    scrollToHashIfPresent();
   });
 </script>
