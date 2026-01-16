@@ -3,6 +3,7 @@ import type { CollectionEntry } from "astro:content";
 import type { ImageMetadata } from "astro";
 import { Image, getImage } from "astro:assets";
 import ArticleOutline from "./ArticleOutline.astro";
+import TechHero from "./TechHero.astro";
 
 export interface Props {
 	entry: CollectionEntry<"work">;
@@ -23,6 +24,8 @@ const {
 	roleCategory,
 	startDate,
 	endDate,
+	techBrand,
+	heroFeature,
 } = entry.data;
 
 // Cast image to correct type for Image component
@@ -108,7 +111,11 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
     />
     
     <figure data-vt-img="work-img" class="relative w-full h-36 sm:h-48 overflow-hidden">
-      {image && (
+      {techBrand && heroFeature ? (
+        <!-- Use TechHero for branded tech projects -->
+        <TechHero tech={techBrand} feature={heroFeature} variant="compact" />
+      ) : image ? (
+        <!-- Use Image for projects with custom images -->
         <Image
           src={image}
           alt={title}
@@ -119,6 +126,11 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
           loading="lazy"
           quality={75}
         />
+      ) : (
+        <!-- Fallback placeholder -->
+        <div class="h-full w-full bg-base-300 flex items-center justify-center">
+          <span class="text-base-content/50 text-sm">No image</span>
+        </div>
       )}
       {category && (
         <div class="absolute top-2 left-2 z-20">
@@ -161,10 +173,13 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
 {mode === "expanded" && (
   <article class="max-w-6xl mx-auto" transition:name="work-card">
     <!-- Hero Section -->
-    <header class="mb-8">
+    <header class="mb-4 sm:mb-8">
       <!-- Hero Image -->
-      <figure transition:name="work-img" class="relative w-full h-48 sm:h-64 lg:h-80 rounded-none sm:rounded-xl overflow-hidden mb-6 border-y-2 border-x-0 sm:border-2 border-base-300">
-        {image && (
+      <figure transition:name="work-img" class="relative w-full h-48 sm:h-64 lg:h-80 rounded-none sm:rounded-xl overflow-hidden mb-4 sm:mb-6 border-y-2 border-x-0 sm:border-2 border-base-300">
+        {techBrand && heroFeature ? (
+          <!-- Use TechHero for branded tech projects -->
+          <TechHero tech={techBrand} feature={heroFeature} variant="full" />
+        ) : image ? (
           <Image
             src={image}
             alt={title}
@@ -175,6 +190,10 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
             loading="eager"
             quality={85}
           />
+        ) : (
+          <div class="h-full w-full bg-base-300 flex items-center justify-center">
+            <span class="text-base-content/50">No image</span>
+          </div>
         )}
         {category && (
           <div class="absolute top-4 left-4">

@@ -1,0 +1,11 @@
+pre-commit:
+  parallel: true
+  commands:
+    no-em-dash:
+      glob: "src/content/**/*.{md,mdx}"
+      run: |
+        if grep -q '—' {staged_files}; then
+          echo "❌ Found em dash (—) in content files. Replace with regular dash (-):"
+          grep -n '—' {staged_files}
+          exit 1
+        fi

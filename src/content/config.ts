@@ -38,6 +38,10 @@ const work = defineCollection({
     roleCategory: z.string().optional(),
     // Optional parent project slug for focused sub-articles
     parentProject: z.string().optional(),
+    // Tech brand for modular hero (astro, datocms, react, etc.)
+    techBrand: z.enum(['astro', 'datocms', 'react', 'generic']).optional(),
+    // Feature text to display in tech hero
+    heroFeature: z.string().optional(),
   }),
 });
 

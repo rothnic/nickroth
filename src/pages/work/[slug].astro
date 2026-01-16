@@ -64,12 +64,12 @@ breadcrumbs.push({ name: entry.data.title, url: canonicalUrl });
     breadcrumbs={breadcrumbs}
   />
   
-  <main class="py-4">
+  <main class="py-2 sm:py-4">
     <!-- Card reference for scroll restoration when returning to work list -->
     <div data-card-ref={entry.slug} class="hidden"></div>
     <div class="container mx-auto px-0 sm:px-4 max-w-6xl">
       <!-- Breadcrumb Navigation - flat text styling like filter tags -->
-      <nav class="mb-6 px-4 sm:px-0 flex items-center gap-1.5 text-sm font-black uppercase tracking-wide" transition:name="work-back-nav" aria-label="Breadcrumb">
+      <nav class="mb-3 sm:mb-6 px-4 sm:px-0 flex items-center gap-1.5 text-sm font-black uppercase tracking-wide" transition:name="work-back-nav" aria-label="Breadcrumb">
         <a 
           href="/work" 
           class="text-base-content/70 hover:text-primary transition-colors"

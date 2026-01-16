@@ -44,6 +44,7 @@
 		"@vitest/ui": "^3.2.4",
 		"daisyui": "^5.1.26",
 		"happy-dom": "^19.0.2",
+		"lefthook": "^2.0.15",
 		"lighthouse": "^12.8.2",
 		"sharp": "^0.34.4",
 		"subfont": "^7.2.1",

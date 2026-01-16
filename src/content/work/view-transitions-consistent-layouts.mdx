@@ -1,12 +1,13 @@
 ---
 title: "Consistent Layouts Make MPAs Feel Like SPAs"
-description: "How strategic use of transition:name on shared elements creates seamless navigation without JavaScript frameworks—the 'PROJECTS' stays put while categories morph."
+description: "How strategic use of transition:name on shared elements creates seamless navigation without JavaScript frameworks-the 'PROJECTS' stays put while categories morph."
 company: "Personal Project"
 role: "Frontend Developer"
 startDate: 2024-12-28
 featured: false
 tags: ["View Transitions", "Astro", "Layout", "UX"]
-image: "../../assets/images/projects/view-transitions-consistent-layouts.png"
+techBrand: "astro"
+heroFeature: "LAYOUTS"
 category: "WEB PLATFORMS"
 impact: "SEAMLESS MPA NAVIGATION THROUGH CONSISTENT LAYOUT STRUCTURE AND STRATEGIC VIEW TRANSITION NAMING."
 stack: ["ASTRO", "VIEW TRANSITIONS API", "CSS"]
@@ -38,12 +39,12 @@ Astro's View Transitions API offers a middle ground: **MPA architecture with SPA
   <LazyGif 
     src="/demos/with-view-transitions.webm"
     alt="Navigation WITH view transitions"
-    caption="✓ WITH View Transitions — smooth morphing between pages"
+    caption="✓ WITH View Transitions - smooth morphing between pages"
   />
   <LazyGif 
     src="/demos/without-view-transitions.webm"
     alt="Navigation WITHOUT view transitions"  
-    caption="✗ WITHOUT View Transitions — jarring full-page reloads"
+    caption="✗ WITHOUT View Transitions - jarring full-page reloads"
   />
 </div>
 
@@ -62,7 +63,7 @@ On the category filter pages, the heading structure is:
 </h1>
 ```
 
-The critical insight: **"PROJECTS" has the same `transition:name` on every category page**, so it never animates—it simply stays in place. Meanwhile, the category name (WEB PLATFORMS, HEADLESS CMS, etc.) morphs between values.
+The critical insight: **"PROJECTS" has the same `transition:name` on every category page**, so it never animates-it simply stays in place. Meanwhile, the category name (WEB PLATFORMS, HEADLESS CMS, etc.) morphs between values.
 
 This creates a visual anchor that grounds the user during navigation.
 
@@ -116,7 +117,7 @@ When elements share a `transition:name`, the browser:
 2. Captures a snapshot of the new element  
 3. Animates between them using CSS transitions
 
-For identical elements (like "PROJECTS"), the animation is invisible—the element appears to never move.
+For identical elements (like "PROJECTS"), the animation is invisible-the element appears to never move.
 
 ### 2. Cognitive Grounding
 
@@ -212,6 +213,6 @@ Navigation between category pages feels instantaneous and app-like:
 
 ## Related
 
-- [Building an Astro Portfolio with AI-Assisted Development](/work/astro-portfolio-ai-development) — Parent project overview
-- [Persistent Filter Bar with View Transitions](/work/view-transitions-filter-bar) — Filter component deep dive
-- [Navbar Active State Morphing](/work/view-transitions-navbar) — Navigation indicator patterns
+- [Building an Astro Portfolio with AI-Assisted Development](/work/astro-portfolio-ai-development) - Parent project overview
+- [Persistent Filter Bar with View Transitions](/work/view-transitions-filter-bar) - Filter component deep dive
+- [Navbar Active State Morphing](/work/view-transitions-navbar) - Navigation indicator patterns

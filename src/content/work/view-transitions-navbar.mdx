@@ -1,14 +1,15 @@
 ---
 title: "Navbar Active State Morphing with View Transitions"
-description: "How to create a sliding active indicator that smoothly morphs between navigation items using Astro's View Transitions API—with precise control over animation direction and timing."
+description: "How to create a sliding active indicator that smoothly morphs between navigation items using Astro's View Transitions API-with precise control over animation direction and timing."
 company: "Personal Project"
 role: "Frontend Developer"
 startDate: 2024-12-10
 featured: false
 tags: ["View Transitions", "Astro", "Navigation", "CSS", "Animation"]
-image: "../../assets/images/projects/view-transitions-navbar.png"
+techBrand: "astro"
+heroFeature: "NAVBAR"
 category: "WEB PLATFORMS"
-impact: "A NAVBAR THAT FEELS ALIVE—THE ACTIVE INDICATOR SLIDES BETWEEN ITEMS DURING PAGE TRANSITIONS."
+impact: "A NAVBAR THAT FEELS ALIVE-THE ACTIVE INDICATOR SLIDES BETWEEN ITEMS DURING PAGE TRANSITIONS."
 stack: ["ASTRO 5", "VIEW TRANSITIONS", "CSS KEYFRAMES", "SHARED ELEMENTS"]
 roleCategory: "FRONTEND DEVELOPER"
 parentProject: "astro-portfolio-ai-development"
@@ -18,7 +19,7 @@ parentProject: "astro-portfolio-ai-development"
 
 ## The Active State Problem
 
-Standard navigation updates instantly—click a link, and the active indicator jumps to its new position. This works, but misses an opportunity: the View Transitions API can make the indicator **slide** between positions during page navigation, reinforcing spatial relationships in the interface.
+Standard navigation updates instantly-click a link, and the active indicator jumps to its new position. This works, but misses an opportunity: the View Transitions API can make the indicator **slide** between positions during page navigation, reinforcing spatial relationships in the interface.
 
 This guide covers the implementation patterns for shared-element navbar transitions.
 
@@ -26,8 +27,8 @@ This guide covers the implementation patterns for shared-element navbar transiti
 
 The View Transitions API morphs elements that share the same `transition:name` across pages. For a sliding active indicator, we need:
 
-1. **Unique names for each nav link** — Allows the browser to track each link's position
-2. **A shared name for the active background** — The background "moves" to whichever link is active
+1. **Unique names for each nav link** - Allows the browser to track each link's position
+2. **A shared name for the active background** - The background "moves" to whichever link is active
 
 ```astro
 <nav class="flex items-center gap-4">
@@ -54,7 +55,7 @@ On navigation from `/work` to `/background`:
 3. Browser detects matching `transition:name` and creates a geometry morph
 4. The background animates from old position/size to new position/size
 
-No manual position calculations needed—the browser handles the interpolation.
+No manual position calculations needed-the browser handles the interpolation.
 
 ## Pattern 2: Animation Timing Control
 
@@ -116,7 +117,7 @@ When navigating to/from pages without the navbar, the element appears or disappe
 }
 ```
 
-The `:only-child` condition means "there is no corresponding old snapshot"—the element exists only on the destination page.
+The `:only-child` condition means "there is no corresponding old snapshot"-the element exists only on the destination page.
 
 ### Navbar Exit (Disappearing)
 
@@ -276,5 +277,5 @@ For users with `prefers-reduced-motion`, disable the morph:
 
 ## Related
 
-- [Building an Astro Portfolio with AI-Assisted Development](/work/astro-portfolio-ai-development) — Parent project overview
-- [Persistent Filter Bar with View Transitions](/work/view-transitions-filter-bar) — Scroll position and hover state preservation
+- [Building an Astro Portfolio with AI-Assisted Development](/work/astro-portfolio-ai-development) - Parent project overview
+- [Persistent Filter Bar with View Transitions](/work/view-transitions-filter-bar) - Scroll position and hover state preservation

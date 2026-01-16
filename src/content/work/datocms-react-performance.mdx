@@ -1,12 +1,13 @@
 ---
 title: "Solving React Performance Issues in DatoCMS Plugin iFrames"
-description: "Deep analysis of how iframe bridging breaks React reference equality in DatoCMS plugins, causing excessive re-renders and performance bottlenecks—with solutions."
+description: "Deep analysis of how iframe bridging breaks React reference equality in DatoCMS plugins, causing excessive re-renders and performance bottlenecks-with solutions."
 company: "DealNews"
 role: "Director of Product Management"
 startDate: 2024-02-01
 featured: false
 tags: ["DatoCMS", "React", "Performance", "TypeScript", "Optimization"]
-image: "../../assets/images/projects/datocms-react-perf.png"
+techBrand: "datocms"
+heroFeature: "REACT PERFORMANCE"
 category: "WEB PLATFORMS"
 impact: "IDENTIFIED CRITICAL PERFORMANCE BOTTLENECK IN DATOCMS PLUGIN SDK."
 stack: ["DATOCMS", "REACT", "TYPESCRIPT"]
@@ -17,7 +18,7 @@ parentProject: "content-platform-modernization"
 # Solving React Performance Issues in DatoCMS Plugin iFrames
 
 ## Impact Statement
-Identified that iframe message bridging breaks React's reference equality, causing all hooks depending on the `ctx` object to re-render on every field change—even unrelated fields.
+Identified that iframe message bridging breaks React's reference equality, causing all hooks depending on the `ctx` object to re-render on every field change-even unrelated fields.
 
 ## The Discovery
 
@@ -129,5 +130,5 @@ This analysis sparked a discussion with DatoCMS's CTO (Stefano Verna) about pote
 
 ## Related Work
 
-- [High-Performance Multi-Hook Plugin](/work/datocms-multi-hook-plugin) — Architecture designed with these performance constraints in mind
-- [DatoCMS Community Discussion](https://community.datocms.com/t/formvalues-in-plugin-context-object-triggers-updates-for-all-objects/4986) — Original thread with CTO response
+- [High-Performance Multi-Hook Plugin](/work/datocms-multi-hook-plugin) - Architecture designed with these performance constraints in mind
+- [DatoCMS Community Discussion](https://community.datocms.com/t/formvalues-in-plugin-context-object-triggers-updates-for-all-objects/4986) - Original thread with CTO response

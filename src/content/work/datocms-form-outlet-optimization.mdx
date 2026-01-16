@@ -6,12 +6,13 @@ role: "Director of Product Management"
 startDate: 2024-04-01
 featured: false
 tags: ["DatoCMS", "Plugin Development", "UI/UX", "TypeScript"]
-image: "../../assets/images/projects/datocms-form-outlets.png"
 category: "WEB PLATFORMS"
 impact: "ELIMINATED UNNECESSARY UI SPACE PENALTIES FOR MULTI-FIELD PLUGINS."
 stack: ["DATOCMS", "REACT", "TYPESCRIPT"]
 roleCategory: "TECHNICAL LEAD"
 parentProject: "content-platform-modernization"
+techBrand: "datocms"
+heroFeature: "FORM OUTLETS"
 ---
 
 # Optimizing DatoCMS UI Space with Form Outlets
@@ -21,7 +22,7 @@ Developed a workaround using Form Outlets to bypass the fixed space penalty (20-
 
 ## The Problem
 
-DatoCMS field extensions have a minimum height allocation—even when they render nothing:
+DatoCMS field extensions have a minimum height allocation-even when they render nothing:
 
 ```
 ┌─────────────────────────────────┐
@@ -120,5 +121,5 @@ function UnifiedFieldManager({ ctx }) {
 
 ## Related Work
 
-- [High-Performance Multi-Hook Plugin](/work/datocms-multi-hook-plugin) — The broader architecture using this pattern
-- [DatoCMS Community Discussion](https://community.datocms.com/t/control-canvas-height/4931) — Original thread exploring this approach
+- [High-Performance Multi-Hook Plugin](/work/datocms-multi-hook-plugin) - The broader architecture using this pattern
+- [DatoCMS Community Discussion](https://community.datocms.com/t/control-canvas-height/4931) - Original thread exploring this approach

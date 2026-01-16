@@ -6,9 +6,10 @@ role: "Frontend Developer"
 startDate: 2024-12-15
 featured: false
 tags: ["View Transitions", "Astro", "UX", "CSS", "JavaScript"]
-image: "../../assets/images/projects/view-transitions-filter-bar.png"
+techBrand: "astro"
+heroFeature: "FILTER BAR"
 category: "WEB PLATFORMS"
-impact: "SEAMLESS CATEGORY FILTERING WITH PROFESSIONAL POLISH—NO SCROLL JUMPS, NO LAYOUT SHIFTS."
+impact: "SEAMLESS CATEGORY FILTERING WITH PROFESSIONAL POLISH-NO SCROLL JUMPS, NO LAYOUT SHIFTS."
 stack: ["ASTRO 5", "VIEW TRANSITIONS", "SESSION STORAGE", "CSS ANIMATIONS"]
 roleCategory: "FRONTEND DEVELOPER"
 parentProject: "astro-portfolio-ai-development"
@@ -221,7 +222,7 @@ When navigating between detail page and list view, multiple animations must be c
 
 ## The `:only-child` Selector for Appear/Disappear
 
-The filter bar animations should only fire when it **appears** (back navigation) or **disappears** (forward navigation)—not during list-to-list filtering:
+The filter bar animations should only fire when it **appears** (back navigation) or **disappears** (forward navigation)-not during list-to-list filtering:
 
 <Image src={onlyChildSelector} alt="Diagram explaining how :only-child detects appear, disappear, and morph scenarios" />
 
@@ -230,7 +231,7 @@ The filter bar animations should only fire when it **appears** (back navigation)
 - **DISAPPEAR** (List → Detail): Only `::view-transition-old` exists
   - `::view-transition-old(...):only-child` ✓ matches  
 - **MORPH** (List → List): BOTH exist
-  - Neither `:only-child` matches — no animation fires
+  - Neither `:only-child` matches - no animation fires
 
 ---
 
@@ -350,5 +351,5 @@ There's a subtle 1-2px vertical "jiggle" visible on mobile devices when the view
 
 ## Related
 
-- [Building an Astro Portfolio with AI-Assisted Development](/work/astro-portfolio-ai-development) — Parent project overview
-- [Navbar Active State Morphing](/work/view-transitions-navbar) — Shared element transitions for navigation
+- [Building an Astro Portfolio with AI-Assisted Development](/work/astro-portfolio-ai-development) - Parent project overview
+- [Navbar Active State Morphing](/work/view-transitions-navbar) - Shared element transitions for navigation
