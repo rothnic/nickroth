@@ -1,0 +1,129 @@
+---
+title: "Multi-Agent Orchestration for Autonomous Software Development"
+description: "Building an installable framework for measurable, test-driven multi-agent development using specialized AI agents that collaborate autonomously."
+company: "Personal Project"
+role: "AI Engineer"
+startDate: 2025-10-18
+featured: true
+tags: ["AI", "Multi-Agent", "Agentic AI", "Developer Tools"]
+category: "AGENTIC AI"
+impact: "TEST-DRIVEN MULTI-AGENT SYSTEM WITH MEASURABLE PERFORMANCE METRICS."
+stack: ["TYPESCRIPT", "OPENCODE", "EVALITE", "VITEST", "+3"]
+roleCategory: "AI ENGINEER"
+---
+
+# Multi-Agent Orchestration for Autonomous Software Development
+
+## Impact Statement
+A test-driven framework where specialized AI agents collaborate autonomously, with measurable performance benchmarks proving actual improvement over single-agent approaches.
+
+## Overview
+
+OpenCode Agents explores the frontier of agentic AI for software development. Unlike single-agent coding assistants, this system orchestrates multiple specialized agents—each with distinct responsibilities and permissions—working together to build software autonomously.
+
+The project addresses a critical gap in AI-assisted development: **How do you prove agents actually work?** Every capability includes verification tests with boolean checks and performance metrics.
+
+## The Problem with Single-Agent Coding
+
+Most AI coding tools use a single agent model that handles everything: planning, implementation, testing, and documentation. This creates several problems:
+
+- **Context drift** during long tasks
+- **Quality degradation** as complexity increases
+- **No specialization** for distinct concerns
+- **Unmeasurable improvement** over time
+
+## Multi-Agent Architecture
+
+The system implements a team of specialized agents with clear boundaries:
+
+| Agent | Role | Permissions |
+|-------|------|-------------|
+| **Orchestrator** | Task decomposition & coordination | Read-only, planning |
+| **Code Implementer** | Write application code | Full write access |
+| **Test Writer** | Generate and run tests | Write + limited bash |
+| **Security Auditor** | Scan for vulnerabilities | Read-only |
+| **DocuWriter** | Create documentation | Write docs only |
+| **MemoryFormation** | Extract learnings | Memory tool access |
+
+Each agent operates with minimal permissions necessary for its role—a security-first approach that prevents accidental damage while enabling autonomous operation.
+
+## Key Technical Decisions
+
+### Test-First Verification
+Every agent capability is validated through automated tests:
+- File existence and syntax validation
+- Functional correctness testing
+- Test coverage requirements (≥80%)
+- Code quality checks (no critical linting errors)
+
+### Measurable Performance Targets
+
+| Phase | Token Efficiency | Quality | Success Rate |
+|-------|------------------|---------|--------------|
+| Baseline | < 500 tokens | N/A | 100% |
+| Two-Agent | ≤ 130% single | ≥ 80% | ≥ 95% |
+| With Memory | 20-30% reduction | ≥ 90% | ≥ 95% |
+| Complex Tasks | < 20,000 tokens | ≥ 90% | ≥ 85% |
+
+### Defense-in-Depth Quality Gates
+The system implements multiple layers of validation that prevent incomplete work:
+- Pre-commit hooks for syntax and linting
+- Automated test execution before merge
+- Coverage thresholds enforced at CI level
+- Security scanning on every PR
+
+### Adaptive Memory System
+Agents learn from previous work through a vector-based memory system:
+- **Semantic storage** for solution patterns
+- **Context retrieval** to reuse past approaches
+- **Learning loop** that improves efficiency over time
+
+## Development Journey
+
+This project is documented through a **16-post blog series** capturing real insights from each development phase:
+
+1. Why Most AI Coding Projects Fail
+2. Building Quality Gates: Defense-in-Depth
+3. Test Evidence: Proving agents work
+4. The Orchestrator Pattern
+5. Two-Agent Collaboration
+6. Permission Systems: Trust but verify
+7. Building Memory Systems
+8. The Learning Loop
+
+## Early Results
+
+**Phase 0.2 findings:**
+- ✅ Quality gates prevent 100% of designed failure modes
+- ✅ Defense-in-depth creates resilient boundaries
+- ✅ Timestamped test evidence proves execution
+- ✅ Automated enforcement >>> documentation alone
+
+## Technical Stack
+
+- **Runtime**: Node.js 18+ / TypeScript
+- **AI Integration**: OpenCode CLI with GitHub Copilot models
+- **Benchmarking**: Evalite for measurable performance
+- **Testing**: Vitest with custom metrics collection
+- **Memory**: Vector database for semantic storage
+
+## Lessons Learned
+
+- **Multi-agent beats single-agent** for complex tasks when properly orchestrated
+- **Measurable targets** reveal improvement that qualitative assessment misses
+- **Permission boundaries** are essential for autonomous operation at scale
+- **Memory systems** dramatically reduce token usage for repeated patterns
+- **Test evidence** is the only reliable proof that agents work
+
+## What's Next
+
+The framework is progressing toward an installable npm package that can transform any project into an AI-assisted development environment:
+
+```bash
+# Future installation (coming soon)
+npm install -g opencode-agents
+cd my-project
+opencode-agents init
+```
+
+This project represents the intersection of AI engineering and software craftsmanship—proving that the future of development isn't just AI-assisted, it's AI-collaborative.
