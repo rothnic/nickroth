@@ -46,7 +46,7 @@ Use these URLs in your OAuth consent screen:
 
 ```
 Application home page:
-https://www.nickroth.com/businessclaw
+https://www.nickroth.com/businessclaw/
 
 Application privacy policy link:
 https://www.nickroth.com/businessclaw/privacy-policy/

@@ -12,7 +12,7 @@ import businessClawLogo from '../../assets/images/businessclaw-logo.png';
   <ContentLayout>
     <div class="max-w-4xl mx-auto">
       <!-- Main Card -->
-      <div class="card bg-base-100 shadow-xl">
+      <div class="card bg-base-100 shadow-xl mb-12">
         <div class="card-body items-center text-center">
           <!-- Logo -->
           <div class="mb-6">
@@ -50,40 +50,76 @@ import businessClawLogo from '../../assets/images/businessclaw-logo.png';
         </div>
       </div>
 
-      <!-- Additional Info Section -->
-      <div class="prose prose-lg max-w-none mt-12">
-        <div class="card bg-base-100 shadow-lg">
-          <div class="card-body">
-            <h2 class="card-title text-3xl">About BusinessClaw</h2>
-            <p>
-              BusinessClaw is a personal productivity automation application that integrates with 
-              Google services to provide intelligent, opinionated assistance for business and 
-              personal tasks.
-            </p>
+      <!-- About Section -->
+      <div class="prose prose-lg max-w-none">
+        <h2>About BusinessClaw</h2>
+        <p>
+          BusinessClaw is a personal productivity automation application that provides 
+          intelligent, opinionated assistance for business and personal tasks. It integrates 
+          with Google services to help you work smarter, not harder.
+        </p>
 
-            <h3 class="text-2xl font-bold mt-6">Features</h3>
-            <ul class="list-disc list-inside space-y-2">
-              <li>Automated email management and smart responses</li>
-              <li>Intelligent calendar scheduling and event coordination</li>
-              <li>Document and spreadsheet automation</li>
-              <li>Contact management and organization</li>
-              <li>File organization and retrieval</li>
-              <li>Task automation and workflow optimization</li>
-            </ul>
-
-            <h3 class="text-2xl font-bold mt-6">Privacy & Security</h3>
-            <p>
-              Your data privacy is our top priority. BusinessClaw operates locally and never 
-              shares your data with third parties. All Google API access follows strict security 
-              protocols and Limited Use requirements.
-            </p>
-            <p>
-              For more details, please review our 
-              <a href="/businessclaw/privacy-policy/" class="link link-primary">Privacy Policy</a> and 
-              <a href="/businessclaw/terms-of-service/" class="link link-primary">Terms of Service</a>.
-            </p>
+        <h3>Core Features</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 not-prose my-6">
+          <div class="card bg-base-200">
+            <div class="card-body p-6">
+              <h4 class="card-title text-base">Email Automation</h4>
+              <p class="text-sm">Smart email management with intelligent filtering and automated responses</p>
+            </div>
+          </div>
+          <div class="card bg-base-200">
+            <div class="card-body p-6">
+              <h4 class="card-title text-base">Calendar Intelligence</h4>
+              <p class="text-sm">Automated scheduling, event coordination, and smart reminders</p>
+            </div>
+          </div>
+          <div class="card bg-base-200">
+            <div class="card-body p-6">
+              <h4 class="card-title text-base">Document Workflows</h4>
+              <p class="text-sm">Intelligent document and spreadsheet automation</p>
+            </div>
+          </div>
+          <div class="card bg-base-200">
+            <div class="card-body p-6">
+              <h4 class="card-title text-base">File Organization</h4>
+              <p class="text-sm">Smart file management and intelligent search</p>
+            </div>
           </div>
         </div>
+
+        <h3>Privacy & Security First</h3>
+        <p>
+          Your data privacy is our top priority. BusinessClaw operates locally on your authorized 
+          devices and never shares your data with third parties. All Google API access follows 
+          strict security protocols and complies with Google's Limited Use requirements.
+        </p>
+
+        <div class="card bg-primary text-primary-content mt-8">
+          <div class="card-body">
+            <h3 class="card-title">Key Principles</h3>
+            <ul class="space-y-2">
+              <li>🔒 <strong>Private by design</strong> - Your data never leaves your devices</li>
+              <li>🎯 <strong>Opinionated automation</strong> - Smart defaults that learn your preferences</li>
+              <li>🤝 <strong>Transparent operation</strong> - Full control and visibility into all actions</li>
+              <li>⚡ <strong>Productivity focused</strong> - Eliminate repetitive tasks, focus on what matters</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3>Get Started</h3>
+        <p>
+          To use BusinessClaw, you'll authorize it to access specific Google services needed for 
+          automation. You maintain full control and can revoke access at any time through your 
+          <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer" class="link link-primary">
+            Google Account Permissions
+          </a>.
+        </p>
+
+        <p>
+          For complete details about how we handle your data, please review our 
+          <a href="/businessclaw/privacy-policy/" class="link link-primary">Privacy Policy</a> and 
+          <a href="/businessclaw/terms-of-service/" class="link link-primary">Terms of Service</a>.
+        </p>
       </div>
     </div>
   </ContentLayout>
