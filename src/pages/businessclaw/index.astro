@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ContentLayout from '../../components/ContentLayout.astro';
-import PageHeader from '../../components/PageHeader.astro';
+import { Image } from 'astro:assets';
+import businessClawLogo from '../../assets/images/businessclaw-logo.png';
 ---
 
 <BaseLayout 
@@ -10,69 +11,79 @@ import PageHeader from '../../components/PageHeader.astro';
 >
   <ContentLayout>
     <div class="max-w-4xl mx-auto">
-      <div class="text-center mb-12">
-        <!-- Logo -->
-        <div class="flex justify-center mb-8">
-          <img 
-            src="/images/businessclaw-logo.png" 
-            alt="BusinessClaw Logo" 
-            class="w-48 h-48 object-contain"
-          />
-        </div>
+      <!-- Main Card -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body items-center text-center">
+          <!-- Logo -->
+          <div class="mb-6">
+            <Image 
+              src={businessClawLogo}
+              alt="BusinessClaw Logo - Turtle with briefcase"
+              width={384}
+              height={384}
+              class="w-96 h-auto"
+              loading="eager"
+            />
+          </div>
 
-        <!-- Title and Description -->
-        <h1 class="text-5xl font-bold mb-6">BusinessClaw</h1>
-        <p class="text-xl text-base-content/80 mb-8">
-          Personalized and opinionated productivity automation for OpenClaw
-        </p>
+          <!-- Title and Description -->
+          <h1 class="card-title text-5xl font-bold mb-4">BusinessClaw</h1>
+          <p class="text-xl text-base-content/80 mb-6">
+            Personalized and opinionated productivity automation for OpenClaw
+          </p>
 
-        <!-- Links -->
-        <div class="flex gap-6 justify-center mt-12">
-          <a 
-            href="/businessclaw/privacy-policy/" 
-            class="btn btn-outline btn-primary"
-          >
-            Privacy Policy
-          </a>
-          <a 
-            href="/businessclaw/terms-of-service/" 
-            class="btn btn-outline btn-primary"
-          >
-            Terms of Service
-          </a>
+          <!-- Links -->
+          <div class="card-actions justify-center gap-4 mt-4">
+            <a 
+              href="/businessclaw/privacy-policy/" 
+              class="btn btn-outline btn-primary"
+            >
+              Privacy Policy
+            </a>
+            <a 
+              href="/businessclaw/terms-of-service/" 
+              class="btn btn-outline btn-primary"
+            >
+              Terms of Service
+            </a>
+          </div>
         </div>
       </div>
 
       <!-- Additional Info Section -->
-      <div class="prose prose-lg max-w-none mt-16">
-        <h2>About BusinessClaw</h2>
-        <p>
-          BusinessClaw is a personal productivity automation application that integrates with 
-          Google services to provide intelligent, opinionated assistance for business and 
-          personal tasks.
-        </p>
+      <div class="prose prose-lg max-w-none mt-12">
+        <div class="card bg-base-100 shadow-lg">
+          <div class="card-body">
+            <h2 class="card-title text-3xl">About BusinessClaw</h2>
+            <p>
+              BusinessClaw is a personal productivity automation application that integrates with 
+              Google services to provide intelligent, opinionated assistance for business and 
+              personal tasks.
+            </p>
 
-        <h3>Features</h3>
-        <ul>
-          <li>Automated email management and smart responses</li>
-          <li>Intelligent calendar scheduling and event coordination</li>
-          <li>Document and spreadsheet automation</li>
-          <li>Contact management and organization</li>
-          <li>File organization and retrieval</li>
-          <li>Task automation and workflow optimization</li>
-        </ul>
+            <h3 class="text-2xl font-bold mt-6">Features</h3>
+            <ul class="list-disc list-inside space-y-2">
+              <li>Automated email management and smart responses</li>
+              <li>Intelligent calendar scheduling and event coordination</li>
+              <li>Document and spreadsheet automation</li>
+              <li>Contact management and organization</li>
+              <li>File organization and retrieval</li>
+              <li>Task automation and workflow optimization</li>
+            </ul>
 
-        <h3>Privacy & Security</h3>
-        <p>
-          Your data privacy is our top priority. BusinessClaw operates locally and never 
-          shares your data with third parties. All Google API access follows strict security 
-          protocols and Limited Use requirements.
-        </p>
-        <p>
-          For more details, please review our 
-          <a href="/businessclaw/privacy-policy/">Privacy Policy</a> and 
-          <a href="/businessclaw/terms-of-service/">Terms of Service</a>.
-        </p>
+            <h3 class="text-2xl font-bold mt-6">Privacy & Security</h3>
+            <p>
+              Your data privacy is our top priority. BusinessClaw operates locally and never 
+              shares your data with third parties. All Google API access follows strict security 
+              protocols and Limited Use requirements.
+            </p>
+            <p>
+              For more details, please review our 
+              <a href="/businessclaw/privacy-policy/" class="link link-primary">Privacy Policy</a> and 
+              <a href="/businessclaw/terms-of-service/" class="link link-primary">Terms of Service</a>.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </ContentLayout>
