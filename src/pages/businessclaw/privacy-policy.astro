@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContentLayout from '../../components/ContentLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+---
+
+<BaseLayout 
+  title="Privacy Policy - BusinessClaw" 
+  description="Privacy policy for BusinessClaw productivity automation OAuth application"
+>
+  <ContentLayout>
+    <PageHeader
+      title="Privacy Policy"
+      subtitle="BusinessClaw"
+      description="How we handle your data with personalized productivity automation"
+    />
+
+    <div class="max-w-4xl mx-auto">
+      <div class="prose prose-lg max-w-none">
+        <p class="text-sm italic text-base-content/70"><strong>Last Updated:</strong> February 18, 2026</p>
+
+        <h2>Overview</h2>
+        <p>
+          This privacy policy describes how BusinessClaw ("the App") accesses and handles 
+          Google account data. BusinessClaw provides personalized and opinionated productivity 
+          automation through intelligent integration with Google services.
+        </p>
+
+        <h2>Who This Applies To</h2>
+        <p>
+          This application is designed for <strong>personal productivity automation</strong>. 
+          It provides opinionated, intelligent assistance tailored to your working style. 
+          BusinessClaw is not a commercial service available to the general public.
+        </p>
+
+        <h2>Data Access</h2>
+        <p>The App requests access to:</p>
+        <ul>
+          <li><strong>Gmail</strong> - To read, send, and intelligently manage emails</li>
+          <li><strong>Google Calendar</strong> - To view, create, and optimize calendar events</li>
+          <li><strong>Google Drive</strong> - To search and intelligently organize files</li>
+          <li><strong>Google Contacts</strong> - To access contact information for communications</li>
+          <li><strong>Google Sheets</strong> - To read and automate spreadsheet workflows</li>
+          <li><strong>Google Docs</strong> - To read and process document content</li>
+        </ul>
+
+        <h2>How Data Is Used</h2>
+        <p>All data accessed through this App is used solely for personalized productivity automation, including:</p>
+        <ul>
+          <li>Intelligent email management with smart filtering and automated responses</li>
+          <li>Proactive calendar scheduling and event coordination</li>
+          <li>Smart file organization and contextual search</li>
+          <li>Automated document and spreadsheet workflows</li>
+          <li>Personalized productivity insights and recommendations</li>
+          <li>Opinionated task automation based on your patterns and preferences</li>
+        </ul>
+
+        <h2>Data Storage and Sharing</h2>
+        <ul>
+          <li><strong>Local storage:</strong> OAuth tokens are stored securely on your authorized devices only</li>
+          <li><strong>No third-party sharing:</strong> Your data is <strong>never</strong> shared with any third parties</li>
+          <li><strong>Non-commercial:</strong> This app is not used for any commercial purposes</li>
+          <li><strong>Minimal retention:</strong> Data is only accessed when needed for automation and is not permanently stored</li>
+          <li><strong>Local processing:</strong> All data analysis and automation happens on your authorized devices</li>
+        </ul>
+
+        <h2>Google API Services Compliance</h2>
+        <p>
+          BusinessClaw's use of information received from Google APIs adheres to the 
+          <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer" class="link link-primary">
+            Google API Services User Data Policy
+          </a>, including the Limited Use requirements.
+        </p>
+
+        <h2>Data Security</h2>
+        <ul>
+          <li>OAuth credentials are encrypted and stored securely on authorized devices</li>
+          <li>All communication with Google APIs uses encrypted HTTPS connections</li>
+          <li>No authentication data is logged or transmitted to external services</li>
+          <li>Access tokens are managed with industry-standard security practices</li>
+          <li>Local-only processing ensures your data never leaves your control</li>
+        </ul>
+
+        <h2>Your Control</h2>
+        <p>
+          You maintain full control over BusinessClaw's access to your Google account. 
+          You can revoke access at any time by visiting:
+        </p>
+        <p>
+          <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer" class="link link-primary">
+            Google Account Permissions
+          </a>
+        </p>
+        <p>
+          Revoking access will immediately stop all automation and data access. You can 
+          re-authorize at any time if you choose to resume using BusinessClaw.
+        </p>
+
+        <h2>Updates to This Policy</h2>
+        <p>
+          This policy may be updated occasionally to reflect changes in functionality or 
+          compliance requirements. Changes will be reflected with a new "Last Updated" date.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          For questions about this privacy policy or data handling, visit 
+          <a href="https://nickroth.com" class="link link-primary">nickroth.com</a>
+        </p>
+
+        <hr class="my-12">
+        
+        <div class="text-center">
+          <a href="/businessclaw/" class="link link-primary">← Back to BusinessClaw</a>
+          <span class="mx-4">|</span>
+          <a href="/businessclaw/terms-of-service/" class="link link-primary">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </ContentLayout>
+</BaseLayout>
