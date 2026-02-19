@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 580" role="img" aria-label="Resume Chatbot Architecture Diagram">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="var(--color-base-content, #1a1a1a)"/>
+    </marker>
+    <filter id="shadow" x="0" y="0" width="120%" height="120%">
+      <feDropShadow dx="3" dy="3" stdDeviation="0" flood-color="rgba(0,0,0,0.2)"/>
+    </filter>
+  </defs>
+  <style>
+    :root {
+      --diagram-bg: var(--color-base-200, #f0f0f0);
+      --diagram-border: var(--color-base-content, #1a1a1a);
+      --diagram-text: currentColor;
+      --diagram-accent: var(--color-primary, #00bcd4);
+      --diagram-secondary: var(--color-secondary, #50fa7b);
+      --diagram-muted: var(--color-base-300, #d0d0d0);
+    }
+    .bg-box { fill: var(--diagram-bg); stroke: var(--diagram-border); stroke-width: 3; }
+    .layer-box { fill: var(--diagram-bg); stroke: var(--diagram-border); stroke-width: 2; }
+    .accent-box { fill: var(--diagram-accent); stroke: var(--diagram-border); stroke-width: 2; }
+    .secondary-box { fill: var(--diagram-secondary); stroke: var(--diagram-border); stroke-width: 2; }
+    .muted-box { fill: var(--diagram-muted); stroke: var(--diagram-border); stroke-width: 2; }
+    .text { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; fill: var(--diagram-text); }
+    .text-sm { font-size: 11px; }
+    .text-md { font-size: 13px; }
+    .text-lg { font-size: 15px; font-weight: 600; }
+    .text-title { font-size: 18px; font-weight: 700; }
+    .label-bg { fill: var(--diagram-bg); stroke: var(--diagram-border); stroke-width: 1.5; }
+    .arrow { stroke: var(--diagram-border); stroke-width: 2; marker-end: url(#arrowhead); fill: none; }
+    .dashed-arrow { stroke: var(--diagram-border); stroke-width: 1.5; stroke-dasharray: 5,3; marker-end: url(#arrowhead); fill: none; }
+  </style>
+  
+  <!-- Background -->
+  <rect x="0" y="0" width="900" height="580" fill="transparent"/>
+  
+  <!-- Browser (Client) Column -->
+  <g transform="translate(20, 20)">
+    <rect x="0" y="0" width="260" height="540" class="bg-box" rx="8" filter="url(#shadow)"/>
+    <text x="130" y="32" class="text text-title" text-anchor="middle">Browser (Client)</text>
+    
+    <!-- useChat hook -->
+    <rect x="20" y="55" width="220" height="70" class="accent-box" rx="6"/>
+    <text x="130" y="80" class="text text-lg" text-anchor="middle">useChat() hook</text>
+    <text x="130" y="100" class="text text-sm" text-anchor="middle">Manages conversation state</text>
+    <text x="130" y="115" class="text text-sm" text-anchor="middle">&amp; message history</text>
+    
+    <!-- DataStreamHandler -->
+    <rect x="20" y="140" width="220" height="70" class="layer-box" rx="6"/>
+    <text x="130" y="165" class="text text-lg" text-anchor="middle">DataStreamHandler</text>
+    <text x="130" y="185" class="text text-sm" text-anchor="middle">Processes SSE events</text>
+    <text x="130" y="200" class="text text-sm" text-anchor="middle">(resumeDelta, patchProgress)</text>
+    
+    <!-- Artifact Panel -->
+    <rect x="20" y="225" width="220" height="70" class="secondary-box" rx="6"/>
+    <text x="130" y="250" class="text text-lg" text-anchor="middle">Artifact Panel</text>
+    <text x="130" y="270" class="text text-sm" text-anchor="middle">Renders JSON Resume</text>
+    <text x="130" y="285" class="text text-sm" text-anchor="middle">with data-path attributes</text>
+    
+    <!-- ResumeRenderer -->
+    <rect x="20" y="310" width="220" height="60" class="muted-box" rx="6"/>
+    <text x="130" y="335" class="text text-lg" text-anchor="middle">ResumeRenderer</text>
+    <text x="130" y="355" class="text text-sm" text-anchor="middle">React component tree</text>
+    
+    <!-- Scroll-to-edit -->
+    <rect x="20" y="385" width="220" height="55" class="layer-box" rx="6"/>
+    <text x="130" y="408" class="text text-md" text-anchor="middle">Scroll-to-edit</text>
+    <text x="130" y="425" class="text text-sm" text-anchor="middle">Highlights changed sections</text>
+    
+    <!-- Local Storage -->
+    <rect x="20" y="455" width="220" height="55" class="muted-box" rx="6"/>
+    <text x="130" y="478" class="text text-md" text-anchor="middle">localStorage</text>
+    <text x="130" y="495" class="text text-sm" text-anchor="middle">Caches conversation history</text>
+  </g>
+  
+  <!-- SSE Connection Column -->
+  <g transform="translate(295, 20)">
+    <!-- Vertical connection line -->
+    <line x1="40" y1="100" x2="40" y2="200" class="arrow" marker-end="url(#arrowhead)"/>
+    <line x1="40" y1="350" x2="40" y2="450" class="arrow" marker-end="url(#arrowhead)"/>
+    
+    <!-- SSE Label -->
+    <rect x="0" y="230" width="80" height="70" class="label-bg" rx="4"/>
+    <text x="40" y="255" class="text text-md" text-anchor="middle">SSE</text>
+    <text x="40" y="273" class="text text-sm" text-anchor="middle">Server-Sent</text>
+    <text x="40" y="288" class="text text-sm" text-anchor="middle">Events</text>
+    
+    <!-- Data types -->
+    <text x="40" y="320" class="text text-sm" text-anchor="middle" font-style="italic">data-resumeDelta</text>
+    <text x="40" y="335" class="text text-sm" text-anchor="middle" font-style="italic">data-patchProgress</text>
+  </g>
+  
+  <!-- Server Column -->
+  <g transform="translate(390, 20)">
+    <rect x="0" y="0" width="490" height="540" class="bg-box" rx="8" filter="url(#shadow)"/>
+    <text x="245" y="32" class="text text-title" text-anchor="middle">Server (Next.js API Route)</text>
+    
+    <!-- Layer 1: Conversation Agent -->
+    <g transform="translate(20, 55)">
+      <rect x="0" y="0" width="450" height="130" class="accent-box" rx="6"/>
+      <text x="225" y="25" class="text text-lg" text-anchor="middle">Layer 1: Conversation Agent</text>
+      
+      <!-- streamText -->
+      <rect x="20" y="40" width="200" height="75" class="bg-box" rx="4"/>
+      <text x="120" y="65" class="text text-md" text-anchor="middle">streamText()</text>
+      <text x="120" y="83" class="text text-sm" text-anchor="middle">Chat Model</text>
+      <text x="120" y="98" class="text text-sm" text-anchor="middle">(user-selectable)</text>
+      
+      <!-- Tools -->
+      <rect x="240" y="40" width="190" height="75" class="secondary-box" rx="4"/>
+      <text x="335" y="65" class="text text-md" text-anchor="middle">Tools</text>
+      <text x="335" y="83" class="text text-sm" text-anchor="middle">createDocument</text>
+      <text x="335" y="98" class="text text-sm" text-anchor="middle">patchResume</text>
+    </g>
+    
+    <!-- Arrow down -->
+    <line x1="245" y1="185" x2="245" y2="210" class="arrow" marker-end="url(#arrowhead)"/>
+    
+    <!-- Layer 2: Patch Tool -->
+    <g transform="translate(20, 220)">
+      <rect x="0" y="0" width="450" height="110" class="secondary-box" rx="6"/>
+      <text x="225" y="25" class="text text-lg" text-anchor="middle">Layer 2: Patch Tool</text>
+      
+      <!-- generateObject -->
+      <rect x="20" y="40" width="200" height="55" class="bg-box" rx="4"/>
+      <text x="120" y="63" class="text text-md" text-anchor="middle">generateObject()</text>
+      <text x="120" y="80" class="text text-sm" text-anchor="middle">Structured JSON patches</text>
+      
+      <!-- Patch Model -->
+      <rect x="240" y="40" width="190" height="55" class="muted-box" rx="4"/>
+      <text x="335" y="63" class="text text-md" text-anchor="middle">Patch Model</text>
+      <text x="335" y="80" class="text text-sm" text-anchor="middle">gpt-4.1-mini (fixed)</text>
+    </g>
+    
+    <!-- Arrow down -->
+    <line x1="245" y1="330" x2="245" y2="355" class="arrow" marker-end="url(#arrowhead)"/>
+    
+    <!-- Layer 3: Patch Application -->
+    <g transform="translate(20, 365)">
+      <rect x="0" y="0" width="450" height="145" class="layer-box" rx="6"/>
+      <text x="225" y="25" class="text text-lg" text-anchor="middle">Layer 3: Patch Application</text>
+      
+      <!-- partialObjectStream -->
+      <rect x="20" y="40" width="135" height="85" class="muted-box" rx="4"/>
+      <text x="87" y="60" class="text text-sm" text-anchor="middle">partialObject</text>
+      <text x="87" y="75" class="text text-sm" text-anchor="middle">Stream</text>
+      <text x="87" y="95" class="text text-xs" text-anchor="middle">Emits tokens as</text>
+      <text x="87" y="110" class="text text-xs" text-anchor="middle">they arrive</text>
+      
+      <!-- Path Stabilization -->
+      <rect x="170" y="40" width="135" height="85" class="bg-box" rx="4"/>
+      <text x="237" y="60" class="text text-sm" text-anchor="middle">Path</text>
+      <text x="237" y="75" class="text text-sm" text-anchor="middle">Stabilization</text>
+      <text x="237" y="95" class="text text-xs" text-anchor="middle">Wait for complete</text>
+      <text x="237" y="110" class="text text-xs" text-anchor="middle">JSON paths</text>
+      
+      <!-- fast-json-patch -->
+      <rect x="320" y="40" width="110" height="85" class="secondary-box" rx="4"/>
+      <text x="375" y="60" class="text text-sm" text-anchor="middle">fast-json-</text>
+      <text x="375" y="75" class="text text-sm" text-anchor="middle">patch</text>
+      <text x="375" y="95" class="text text-xs" text-anchor="middle">Apply RFC 6902</text>
+      <text x="375" y="110" class="text text-xs" text-anchor="middle">operations</text>
+    </g>
+  </g>
+  
+  <!-- Database Column (bottom) -->
+  <g transform="translate(390, 480)">
+    <line x1="245" y1="-15" x2="245" y2="10" class="dashed-arrow" marker-end="url(#arrowhead)"/>
+  </g>
+  
+  <g transform="translate(140, 510)">
+    <rect x="0" y="0" width="620" height="50" class="muted-box" rx="6" filter="url(#shadow)"/>
+    <text x="310" y="22" class="text text-lg" text-anchor="middle">Database (Postgres via Drizzle ORM)</text>
+    <text x="310" y="40" class="text text-sm" text-anchor="middle">Documents table with version history &amp; conversation threads</text>
+  </g>
+</svg>
