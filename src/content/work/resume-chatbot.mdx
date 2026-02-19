@@ -92,10 +92,26 @@ This keeps intent reasoning flexible while mutation stays deterministic and audi
 
 ```mermaid
 flowchart LR
-  U[User Request] --> A[Conversation Agent]
-  A -->|response stream| C1[Chat Stream] --> C2[Chat UI]
-  A -->|patch stream| P1[Patch Tool] --> P2[Patch Apply] --> P3[Artifact UI]
-  C2 -. sync .- P3
+  subgraph CHAT[Chat Stream]
+    U[User Request] --> A[Conversation Agent]
+    A --> C1[Chat Stream]
+    C1 --> C2[Chat UI]
+  end
+
+  subgraph PATCH[Patch Stream]
+    T1[Semantic Tool Call]
+    T2[Patch LLM]
+    T3[Patch Tool]
+    T4[Patch Apply]
+    T5[Artifact UI]
+    T6[(Resume Database)]
+
+    T1 --> T2 --> T3 --> T4 --> T5
+    T4 --> T6
+  end
+
+  C1 -. triggers patch pipeline .-> T1
+  C2 -. synced state .- T5
 ```
 
 ## <span class="h2-prefix"><span class="h2-hash">##</span> DEMO:</span> <span class="h2-title">What it shows</span>
