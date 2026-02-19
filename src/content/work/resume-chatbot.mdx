@@ -98,20 +98,6 @@ This page is an overview and hub. Follow the deep dives for implementation detai
 - **Stable emission:** keep the patch model fixed for predictable operation shape.
 - **Safety fallback:** for large destructive edits, use guarded full-document operations.
 
-## <span class="h2-prefix">## APPENDIX:</span> <span class="h2-title">Simplified server handler</span>
-
-```ts
-// /api/patch-resume.ts (simplified)
-import { streamObject } from 'ai-sdk';
-import { patchSchema } from '~/lib/schemas/patch';
-
-export async function POST(req) {
-  const { changes } = await req.json();
-  const result = await streamObject({ model: getArtifactModel(), schema: patchSchema, prompt: `Generate patches for: ${changes}` });
-  return new Response(result.stream);
-}
-```
-
 ## <span class="h2-prefix">## LESSONS:</span> <span class="h2-title">What we learned</span>
 
 - **Streaming partial objects:** reduces perceived latency and UI churn.
