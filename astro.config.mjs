@@ -40,8 +40,8 @@ export default defineConfig({
 						mermaidConfig: {
 							theme: "base",
 							themeVariables: {
-								fontFamily: "var(--font-mono), ui-monospace, monospace",
-								fontSize: "16px",
+								fontFamily: "JetBrains Mono, ui-monospace, monospace",
+								fontSize: "15px",
 							},
 						},
 					},
