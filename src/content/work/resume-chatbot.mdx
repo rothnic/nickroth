@@ -17,16 +17,16 @@ import LazyVideo from '../../components/LazyVideo.astro';
 
 # AI-Powered Resume Builder with Real-Time Streaming
 
-## Problem overview: document drift in conversational editors
+## <span class="h2-prefix">## PROBLEM:</span> <span class="h2-title">Document drift in conversational editors</span>
 
-Conversational editors that regenerate entire documents cause document drift over repeated edits. Small changes accumulate: duplicated sections, format loss, and stealth reordering. For structured artifacts like resumes, these errors are visible and costly. The core requirement is to preserve conversational UX while eliminating cumulative state corruption.
+Conversational editors that regenerate entire documents cause document drift. Small changes accumulate: duplicated sections, format loss, and stealth reordering. For resumes, these errors are costly.
 
-<div class="not-prose my-6 p-4 bg-primary/10 border-l-4 border-primary rounded-r-lg">
-  <p class="font-bold text-primary mb-1">TL;DR</p>
-  <p class="text-sm text-base-content/80 m-0">Instead of regenerating entire resumes, this system streams surgical JSON patches (RFC 6902) from an AI agent. Each patch targets a specific field - like changing just your job title - without touching anything else. The result: instant updates, zero formatting loss, and no document drift.</p>
+<div class="not-prose tldr-block">
+  <p class="tldr-label">TL;DR</p>
+  <p class="tldr-content">AI streams surgical JSON patches targeting specific fields - like changing just your job title - without touching anything else. Instant updates, zero formatting loss.</p>
 </div>
 
-## Architecture overview: three-layer streaming pipeline
+## <span class="h2-prefix">## ARCHITECTURE:</span> <span class="h2-title">Three-layer streaming pipeline</span>
 
 High-level runtime: a single-purpose pipeline with clear boundaries. Each layer has one responsibility so reasoning, testing, and failure modes remain isolated.
 
@@ -43,7 +43,7 @@ High-level runtime: a single-purpose pipeline with clear boundaries. Each layer 
   </figcaption>
 </figure>
 
-## Stream semantics: text streams vs object/tool-call streams
+## <span class="h2-prefix">## STREAM SEMANTICS:</span> <span class="h2-title">Text vs object/tool-call streams</span>
 
 Streaming raw text and streaming structured objects are different contracts. Text streams carry language; object streams carry typed operations. Treat object streams as authoritative, validate them, and avoid re-parsing textual tokens into state.
 
@@ -57,7 +57,7 @@ Streaming raw text and streaming structured objects are different contracts. Tex
   </figcaption>
 </figure>
 
-## Demo overview: what the demo shows and why it follows the concepts
+## <span class="h2-prefix">## DEMO:</span> <span class="h2-title">What it shows</span>
 
 The demo showcases surgical RFC 6902 patches arriving progressively and being applied without full-document replacements. It demonstrates reduced UI churn, preserved formatting, and deterministic application under mock providers.
 
@@ -68,7 +68,7 @@ The demo showcases surgical RFC 6902 patches arriving progressively and being ap
   caption="The resume chatbot applying surgical JSON patches in real-time"
 /> 
 
-## Testing overview: strategy and high-level results
+## <span class="h2-prefix">## TESTING:</span> <span class="h2-title">Strategy and results</span>
 
 Testing splits into deterministic model mocks and schema assertions. Replace external model calls with mock providers, then assert final resume JSON against the schema rather than fragile UI timings.
 
@@ -82,21 +82,21 @@ Results:
 
 For the full harness design and reliability methodology, see [Deterministic Testing for AI Streaming](/work/resume-chatbot-testing-strategy).
 
-## Handoff: deep dives and next reading
+## <span class="h2-prefix">## HANDOFF:</span> <span class="h2-title">Deep dives and next reading</span>
 
 This page is an overview and hub. Follow the deep dives for implementation detail and test patterns.
 
 - [Streaming JSON Patching Architecture](/work/resume-chatbot-streaming-architecture): detailed pipeline internals, stabilization mechanics, and operation lifecycle.
 - [Deterministic Testing for AI Streaming](/work/resume-chatbot-testing-strategy): mock-provider design, synchronization strategy, and reliability benchmarks.
 
-## Implementation notes and caveats
+## <span class="h2-prefix">## NOTES:</span> <span class="h2-title">Implementation and caveats</span>
 
 - **Progressive stream:** use `partialObjectStream` for incremental structured payloads.
 - **Validation first:** verify operations with `fast-json-patch` before mutation.
 - **Stable emission:** keep the patch model fixed for predictable operation shape.
 - **Safety fallback:** for large destructive edits, use guarded full-document operations.
 
-## Appendix: simplified server handler
+## <span class="h2-prefix">## APPENDIX:</span> <span class="h2-title">Simplified server handler</span>
 
 ```ts
 // /api/patch-resume.ts (simplified)
@@ -110,7 +110,7 @@ export async function POST(req) {
 }
 ```
 
-## Lessons learned
+## <span class="h2-prefix">## LESSONS:</span> <span class="h2-title">What we learned</span>
 
 - **Streaming partial objects:** reduces perceived latency and UI churn.
 - **Clear boundaries:** make debugging and testing substantially easier.
