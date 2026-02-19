@@ -14,6 +14,7 @@ roleCategory: "FULL-STACK DEVELOPER"
 ---
 
 import LazyVideo from '../../components/LazyVideo.astro';
+import FeatureBlock from '../../components/FeatureBlock.astro';
 
 # AI-Powered Resume Builder with Real-Time Streaming
 
@@ -21,15 +22,26 @@ import LazyVideo from '../../components/LazyVideo.astro';
 
 Conversational editors that regenerate entire documents cause document drift. Small changes accumulate: duplicated sections, format loss, and stealth reordering. For resumes, these errors are costly.
 
-<div class="not-prose tldr-block">
-  <p class="tldr-label">TL;DR</p>
-  <p class="tldr-content">The ideal UX for structured content editing should support:</p>
-  <ul class="tldr-list">
-    <li><strong>Collaborative interface:</strong> User and AI work together within schema constraints</li>
-    <li><strong>Surgical precision:</strong> Parallel, efficient edits to specific fields without full regeneration</li>
-    <li><strong>Managed revisions:</strong> Easy recovery from mistakes with clear change history</li>
-  </ul>
-</div>
+<FeatureBlock
+  title="Key Principles"
+  features={[
+    {
+      icon: "👥",
+      title: "Collaborative Interface",
+      description: "User and AI work together within schema constraints"
+    },
+    {
+      icon: "🎯",
+      title: "Surgical Precision",
+      description: "Parallel, efficient edits to specific fields without full regeneration"
+    },
+    {
+      icon: "🔄",
+      title: "Managed Revisions",
+      description: "Easy recovery from mistakes with clear change history"
+    }
+  ]}
+/>
 
 ## <span class="h2-prefix"><span class="h2-hash">##</span> ARCHITECTURE:</span> <span class="h2-title">Three-layer streaming pipeline</span>
 
