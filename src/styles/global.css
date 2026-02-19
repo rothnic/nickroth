@@ -1309,25 +1309,28 @@
 
 /* H2 Prefix - technical code style, emphasized */
 .prose-content h2 .h2-prefix {
-	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-family:
+		var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+		monospace;
 	font-size: 0.95em;
 	font-weight: 700;
-	color: oklch(0.4 0.15 350);
-	margin-right: 0.5rem;
+	color: var(--color-accent);
+	margin-right: 0.35rem;
 	vertical-align: baseline;
 	letter-spacing: 0.02em;
 }
 
 /* Subdued ## symbols within prefix */
 .prose-content h2 .h2-prefix .h2-hash {
-	color: oklch(0.75 0.08 350);
+	color: var(--color-accent);
 	font-weight: 400;
+	opacity: 0.5;
 }
 
 /* H2 Title - secondary, descriptive text */
 .prose-content h2 .h2-title {
 	font-weight: 500;
-	color: oklch(0.55 0.1 350);
+	color: var(--color-accent);
 	font-size: 0.9em;
 }
 
