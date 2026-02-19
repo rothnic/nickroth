@@ -38,6 +38,9 @@ importers:
       motion:
         specifier: ^12.23.22
         version: 12.23.22
+      playwright:
+        specifier: ^1.57.0
+        version: 1.57.0
       rehype-mermaid:
         specifier: ^3.0.0
         version: 3.0.0(playwright@1.57.0)

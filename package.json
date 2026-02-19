@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "astro dev --port 4322",
 		"start": "astro dev --port 4322",
-		"build": "astro check && astro build",
+		"build": "npx playwright install --with-deps chromium && astro check && astro build",
 		"preview": "astro preview --port 4322",
 		"astro": "astro",
 		"test": "vitest",
@@ -33,6 +33,7 @@
 		"astro": "^5.16.7",
 		"astro-expressive-code": "^0.41.5",
 		"motion": "^12.23.22",
+		"playwright": "^1.57.0",
 		"rehype-mermaid": "^3.0.0",
 		"tailwindcss": "^4.1.14",
 		"typescript": "^5.9.2"
