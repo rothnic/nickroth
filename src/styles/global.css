@@ -1307,14 +1307,14 @@
 	margin-top: 0;
 }
 
-/* H2 Prefix - technical code style, emphasized */
+/* H2 Prefix - technical code style, softer purple (not full primary) */
 .prose-content h2 .h2-prefix {
 	font-family:
 		var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
 		monospace;
 	font-size: 0.95em;
 	font-weight: 700;
-	color: var(--color-accent);
+	color: oklch(52% 0.22 314);
 	margin-right: 0.35rem;
 	vertical-align: baseline;
 	letter-spacing: 0.02em;
@@ -1322,16 +1322,48 @@
 
 /* Subdued ## symbols within prefix */
 .prose-content h2 .h2-prefix .h2-hash {
-	color: var(--color-accent);
+	color: oklch(52% 0.22 314);
 	font-weight: 400;
-	opacity: 0.5;
+	opacity: 0.4;
 }
 
 /* H2 Title - secondary, descriptive text */
 .prose-content h2 .h2-title {
 	font-weight: 500;
-	color: var(--color-accent);
+	color: oklch(45% 0.08 270);
 	font-size: 0.9em;
+}
+
+/* Feature block - muted styling */
+.prose-content .feature-block-header h3 {
+	color: oklch(45% 0.02 270);
+}
+
+.prose-content .feature-title {
+	color: oklch(35% 0.02 270);
+}
+
+/* Strong text - inline emphasis uses muted purple */
+.prose-content strong {
+	color: oklch(45% 0.18 314);
+	font-weight: 700;
+}
+
+/* List item labels - bullet headings use secondary indigo */
+.prose-content li strong:first-child {
+	color: oklch(60% 0.22 260);
+}
+
+/* Links - developer-style cyan-teal */
+.prose-content a {
+	color: oklch(70% 0.23 200);
+	font-weight: 500;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 3px;
+}
+
+.prose-content a:hover {
+	color: oklch(75% 0.27 200);
 }
 
 /* Third-level headings - subsections */
@@ -1723,7 +1755,7 @@
 
 [data-theme="neobrutalism-dark"] .prose-content p,
 [data-theme="neobrutalism-dark"] .prose-content li {
-	color: oklch(0.85 0.01 280); /* Increased from 0.8 for better contrast */
+	color: oklch(0.85 0.01 280);
 }
 
 [data-theme="neobrutalism-dark"] .prose-content h2,
@@ -1733,22 +1765,36 @@
 	border-color: oklch(0.4 0 0);
 }
 
+/* Dark mode: H2 prefix */
+[data-theme="neobrutalism-dark"] .prose-content h2 .h2-prefix {
+	color: oklch(68% 0.25 314);
+}
+
+[data-theme="neobrutalism-dark"] .prose-content h2 .h2-prefix .h2-hash {
+	color: oklch(68% 0.25 314);
+}
+
+[data-theme="neobrutalism-dark"] .prose-content h2 .h2-title {
+	color: oklch(80% 0.08 270);
+}
+
+/* Dark mode: strong text */
 [data-theme="neobrutalism-dark"] .prose-content strong {
-	color: oklch(0.97 0.01 280);
+	color: oklch(75% 0.18 314);
 }
 
 /* Dark mode: list item strong text (list headings) */
 [data-theme="neobrutalism-dark"] .prose-content li strong {
-	color: oklch(0.97 0.01 280);
+	color: oklch(75% 0.22 260);
 }
 
-/* Dark mode: links need high contrast */
+/* Dark mode: links - brighter cyan-teal */
 [data-theme="neobrutalism-dark"] .prose-content a {
-	color: oklch(0.75 0.25 330); /* Bright magenta */
+	color: oklch(80% 0.23 200);
 }
 
 [data-theme="neobrutalism-dark"] .prose-content a:hover {
-	color: oklch(0.85 0.25 330);
+	color: oklch(85% 0.27 200);
 }
 
 [data-theme="neobrutalism-dark"] .prose-content code {

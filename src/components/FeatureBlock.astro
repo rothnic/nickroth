@@ -1,80 +1,48 @@
 ---
-// FeatureBlock - A TL;DR/feature highlight component for MDX
-// Desktop: 3-column grid with icon on top
-// Mobile: List layout with icon on left
+// FeatureBlock - A lightweight TL;DR/feature highlight component for MDX
+// "Soft brutal" design: accent lines, hairline borders, minimal chrome
+// Blends with prose content instead of competing with it
 
 export interface Feature {
-  icon: string;
-  title: string;
-  description: string;
+	icon?: string;
+	title: string;
+	description: string;
 }
 
 export interface Props {
-  title?: string;
-  features: Feature[];
+	title?: string;
+	features: Feature[];
 }
 
-const { title = "TL;DR", features } = Astro.props as Props;
+const { title = "Key Principles", features } = Astro.props as Props;
 ---
 
-<div class="feature-block-container my-8">
-  {/* Header */}
-  <div class="feature-block-header bg-base-200 border-2 border-base-content py-3 px-4 mb-4 shadow-[4px_4px_0_0_rgba(0,0,0,1)]">
-    <h3 class="text-center font-mono text-sm font-bold uppercase tracking-wider text-base-content m-0">
-      {title}
-    </h3>
-  </div>
-  
-  {/* Features Grid */}
-  <div class="feature-grid grid grid-cols-1 md:grid-cols-3 gap-4">
-    {features.map((feature) => (
-      <div class="feature-item bg-base-100 border-2 border-base-content p-4 shadow-[4px_4px_0_0_rgba(0,0,0,1)] flex md:flex-col items-start md:items-center gap-3 md:gap-2">
-        {/* Icon */}
-        <div class="feature-icon text-2xl md:text-3xl flex-shrink-0">
-          {feature.icon}
-        </div>
-        
-        {/* Content */}
-        <div class="feature-content flex-1">
-          <h4 class="feature-title font-mono text-sm font-bold uppercase tracking-wide text-base-content mb-1 m-0">
-            {feature.title}
-          </h4>
-          <p class="feature-description text-sm text-base-content/70 leading-snug m-0">
-            {feature.description}
-          </p>
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
+<section class="feature-block my-10">
+	<p class="text-xs tracking-widest uppercase opacity-60 mb-4 font-mono">
+		{title}
+	</p>
+	
+	<div class="grid gap-4 md:grid-cols-3">
+		{features.map((feature, i) => (
+			<div class="feature-card border border-base-300 bg-base-100 p-4 shadow-[3px_3px_0_0_rgba(0,0,0,0.10)]">
+				<div class={`h-1 w-10 mb-3 rounded ${
+					i === 0 ? 'bg-primary' : 
+					i === 1 ? 'bg-secondary' : 
+					'bg-accent'
+				}`}></div>
+				<h4 class="text-sm font-semibold tracking-wide mb-1">
+					{feature.title}
+				</h4>
+				<p class="text-sm leading-relaxed opacity-75">
+					{feature.description}
+				</p>
+			</div>
+		))}
+	</div>
+</section>
 
 <style>
-  .feature-block-container {
-    /* Container styles handled by utility classes */
-  }
-  
-  .feature-block-header {
-    /* Hard shadow handled by Tailwind shadow-[...] */
-  }
-  
-  .feature-item {
-    /* Mobile: flex row (icon left, content right)
-       Desktop: flex column (icon top, content below) */
-    min-height: 100px;
-  }
-  
-  @media (max-width: 767px) {
-    .feature-item {
-      flex-direction: row !important;
-      align-items: flex-start !important;
-    }
-    
-    .feature-icon {
-      margin-top: 2px;
-    }
-    
-    .feature-content {
-      text-align: left !important;
-    }
-  }
+	.feature-card {
+		min-height: 80px;
+	}
 </style>
