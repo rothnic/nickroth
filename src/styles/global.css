@@ -1229,46 +1229,6 @@
 	display: none; /* Hide duplicate H1 - title is in header */
 }
 
-/* Second-level headings - major sections */
-.prose-content h2 {
-	font-size: 1.25rem;
-	font-weight: 600;
-	color: var(--color-primary);
-	margin-top: 2rem;
-	margin-bottom: 0.75rem;
-	padding-bottom: 0.5rem;
-	border-bottom: 2px solid var(--color-base-300);
-	letter-spacing: -0.025em;
-}
-
-.prose-content h2:first-child {
-	margin-top: 0;
-}
-
-/* H2 Prefix - technical code style, emphasized */
-.prose-content h2 .h2-prefix {
-	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-	font-size: 0.95em;
-	font-weight: 700;
-	color: oklch(0.4 0 0);
-	margin-right: 0.5rem;
-	vertical-align: baseline;
-	letter-spacing: 0.02em;
-}
-
-/* Subdued ## symbols within prefix */
-.prose-content h2 .h2-prefix .h2-hash {
-	color: oklch(0.7 0 0);
-	font-weight: 400;
-}
-
-/* H2 Title - secondary, descriptive text */
-.prose-content h2 .h2-title {
-	font-weight: 500;
-	color: oklch(0.5 0 0);
-	font-size: 0.9em;
-}
-
 /* TL;DR Block improvements */
 .prose-content .tldr-block {
 	margin: 1.5rem 0;
@@ -1320,11 +1280,55 @@
 	left: 0;
 	color: var(--color-primary);
 	font-weight: 700;
+	background: none;
+	width: auto;
+	height: auto;
+	border-radius: 0;
 }
 
 .prose-content .tldr-block .tldr-list li strong {
 	font-weight: 600;
 	color: oklch(0.25 0 0);
+}
+
+/* Second-level headings - major sections */
+.prose-content h2 {
+	font-size: 1.4rem;
+	font-weight: 600;
+	color: var(--color-primary);
+	margin-top: 3rem;
+	margin-bottom: 0.75rem;
+	padding-bottom: 0.5rem;
+	border-bottom: 2px solid var(--color-base-300);
+	letter-spacing: -0.025em;
+}
+
+.prose-content h2:first-child {
+	margin-top: 0;
+}
+
+/* H2 Prefix - technical code style, emphasized */
+.prose-content h2 .h2-prefix {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 0.95em;
+	font-weight: 700;
+	color: oklch(0.4 0.15 350);
+	margin-right: 0.5rem;
+	vertical-align: baseline;
+	letter-spacing: 0.02em;
+}
+
+/* Subdued ## symbols within prefix */
+.prose-content h2 .h2-prefix .h2-hash {
+	color: oklch(0.75 0.08 350);
+	font-weight: 400;
+}
+
+/* H2 Title - secondary, descriptive text */
+.prose-content h2 .h2-title {
+	font-weight: 500;
+	color: oklch(0.55 0.1 350);
+	font-size: 0.9em;
 }
 
 /* Third-level headings - subsections */
