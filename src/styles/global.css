@@ -1298,9 +1298,24 @@
 	color: var(--color-primary);
 	margin-top: 3rem;
 	margin-bottom: 0.75rem;
-	padding-bottom: 0.5rem;
-	border-bottom: 2px solid var(--color-base-300);
+	padding-bottom: 0.65rem;
+	border-bottom: 0;
 	letter-spacing: -0.025em;
+	position: relative;
+}
+
+.prose-content h2::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 2px;
+	background: linear-gradient(
+		90deg,
+		color-mix(in oklch, var(--color-primary) 78%, var(--color-base-300)),
+		color-mix(in oklch, var(--color-secondary) 58%, var(--color-base-300))
+	);
 }
 
 .prose-content h2:first-child {
@@ -1334,13 +1349,15 @@
 	font-size: 0.9em;
 }
 
-/* Feature block - muted styling */
-.prose-content .feature-block-header h3 {
-	color: oklch(45% 0.02 270);
-}
-
-.prose-content .feature-title {
-	color: oklch(35% 0.02 270);
+.prose-content h1 {
+	background: linear-gradient(
+		90deg,
+		var(--color-primary),
+		color-mix(in oklch, var(--color-primary) 64%, var(--color-secondary))
+	);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
 }
 
 /* Strong text - inline emphasis uses muted purple */
@@ -1394,28 +1411,9 @@
 	margin-bottom: 0;
 }
 
-/* Strong/bold text */
-.prose-content strong {
-	font-weight: 700;
-	color: oklch(0.2 0 0);
-}
-
 /* Emphasis/italic */
 .prose-content em {
 	font-style: italic;
-}
-
-/* Links */
-.prose-content a {
-	color: var(--color-primary);
-	font-weight: 500;
-	text-decoration: none;
-	border-bottom: 2px solid transparent;
-	transition: border-color 0.2s ease;
-}
-
-.prose-content a:hover {
-	border-bottom-color: var(--color-primary);
 }
 
 /* Unordered lists */
@@ -1434,8 +1432,8 @@
 .prose-content ul li {
 	position: relative;
 	padding-left: 1.5rem;
-	margin-bottom: 0.4rem;
-	line-height: 1.5;
+	margin-bottom: 0.25rem;
+	line-height: 1.55;
 	color: oklch(0.45 0 0);
 	font-weight: 400;
 }
@@ -1446,7 +1444,7 @@
 	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 	font-size: 0.9em;
 	font-weight: 600;
-	color: oklch(0.35 0 0);
+	color: oklch(60% 0.22 260);
 	letter-spacing: -0.01em;
 }
 
@@ -1464,7 +1462,7 @@
 	content: "";
 	position: absolute;
 	left: 0;
-	top: 0.5rem;
+	top: 0.62em;
 	width: 6px;
 	height: 6px;
 	background-color: var(--color-primary);
@@ -1537,7 +1535,7 @@
 	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 	font-size: 0.85em;
 	font-weight: 600;
-	color: oklch(0.4 0 0);
+	color: oklch(60% 0.22 260);
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 	min-width: 5rem;
@@ -1748,6 +1746,57 @@
 	border: 3px solid oklch(0.2 0 0);
 }
 
+.prose-content .mermaid {
+	margin: 1.5rem 0;
+	padding: 0.75rem;
+	border: 2px solid var(--nr-border-color);
+	background: var(--color-base-100);
+	box-shadow: var(--nr-shadow-sm);
+	overflow-x: auto;
+}
+
+.prose-content .mermaid svg {
+	max-width: 100%;
+	height: auto;
+}
+
+.prose-content
+	.mermaid
+	:is(.node rect, .node polygon, .node path, .cluster rect) {
+	fill: color-mix(
+		in oklch,
+		var(--color-base-100) 88%,
+		var(--color-primary)
+	) !important;
+	stroke: var(--nr-border-color) !important;
+	stroke-width: 2px !important;
+}
+
+.prose-content .mermaid :is(.edgePath path, .flowchart-link) {
+	stroke: var(--color-secondary) !important;
+	stroke-width: 2px !important;
+}
+
+.prose-content .mermaid :is(.nodeLabel, .edgeLabel, .cluster-label, text) {
+	fill: var(--color-base-content) !important;
+	font-family: var(--font-mono), ui-monospace, monospace !important;
+}
+
+[data-theme="neobrutalism-dark"] .prose-content .mermaid {
+	background: var(--color-base-200);
+}
+
+[data-theme="neobrutalism-dark"]
+	.prose-content
+	.mermaid
+	:is(.edgePath path, .flowchart-link) {
+	stroke: color-mix(
+		in oklch,
+		var(--color-secondary) 72%,
+		var(--color-base-100)
+	) !important;
+}
+
 /* Dark mode adjustments */
 [data-theme="neobrutalism-dark"] .prose-content {
 	color: oklch(0.9 0.01 280);
@@ -1767,34 +1816,46 @@
 
 /* Dark mode: H2 prefix */
 [data-theme="neobrutalism-dark"] .prose-content h2 .h2-prefix {
-	color: oklch(68% 0.25 314);
+	color: color-mix(in oklch, var(--color-primary) 84%, var(--color-base-100));
 }
 
 [data-theme="neobrutalism-dark"] .prose-content h2 .h2-prefix .h2-hash {
-	color: oklch(68% 0.25 314);
+	color: color-mix(in oklch, var(--color-primary) 84%, var(--color-base-100));
 }
 
 [data-theme="neobrutalism-dark"] .prose-content h2 .h2-title {
-	color: oklch(80% 0.08 270);
+	color: color-mix(
+		in oklch,
+		var(--color-base-content) 86%,
+		var(--color-primary)
+	);
 }
 
 /* Dark mode: strong text */
 [data-theme="neobrutalism-dark"] .prose-content strong {
-	color: oklch(75% 0.18 314);
+	color: color-mix(
+		in oklch,
+		var(--color-primary) 64%,
+		var(--color-base-content)
+	);
 }
 
 /* Dark mode: list item strong text (list headings) */
 [data-theme="neobrutalism-dark"] .prose-content li strong {
-	color: oklch(75% 0.22 260);
+	color: color-mix(
+		in oklch,
+		var(--color-secondary) 74%,
+		var(--color-base-content)
+	);
 }
 
 /* Dark mode: links - brighter cyan-teal */
 [data-theme="neobrutalism-dark"] .prose-content a {
-	color: oklch(80% 0.23 200);
+	color: color-mix(in oklch, var(--color-info) 78%, var(--color-base-content));
 }
 
 [data-theme="neobrutalism-dark"] .prose-content a:hover {
-	color: oklch(85% 0.27 200);
+	color: color-mix(in oklch, var(--color-info) 90%, white);
 }
 
 [data-theme="neobrutalism-dark"] .prose-content code {

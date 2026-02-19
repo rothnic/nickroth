@@ -18,75 +18,102 @@ import FeatureBlock from '../../components/FeatureBlock.astro';
 
 # AI-Powered Resume Builder with Real-Time Streaming
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> PROBLEM:</span> <span class="h2-title">Document drift in conversational editors</span>
+## <span class="h2-prefix"><span class="h2-hash">##</span> PROBLEM:</span> <span class="h2-title">Why iterative artifact edits fail at scale</span>
 
-Conversational editors that regenerate entire documents cause document drift. Small changes accumulate: duplicated sections, format loss, and stealth reordering. For resumes, these errors are costly.
+- **Partial context windows:** large documents are read in slices, so local edits miss global structure.
+- **Ambiguous match targets:** similar blocks can satisfy the same patch selector and update the wrong area.
+- **Patch sequencing drift:** chained edits break formatting when newline boundaries are emitted incorrectly.
+- **Unstable insertion behavior:** content appears to jump while streamed text is still incomplete.
+- **Rich-format constraints:** markdown-first editing breaks down when output demands richer structure.
+
+The core issue is predictability. Collaborative editing needs concise, deterministic mutations instead of broad regeneration.
 
 <FeatureBlock
   title="Key Principles"
   features={[
     {
       title: "Collaborative Interface",
-      description: "User and AI work together within schema constraints"
+      description: "User and AI work together inside explicit structure and constraints"
     },
     {
       title: "Surgical Precision",
-      description: "Parallel, efficient edits to specific fields without full regeneration"
+      description: "Targeted updates apply only where intended, without full document replacement"
     },
     {
       title: "Managed Revisions",
-      description: "Easy recovery from mistakes with clear change history"
+      description: "Clear patch history makes recovery and review straightforward"
     }
   ]}
 />
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> ARCHITECTURE:</span> <span class="h2-title">Three-layer streaming pipeline</span>
+## <span class="h2-prefix"><span class="h2-hash">##</span> STREAM MODEL:</span> <span class="h2-title">Text vs object vs partial-object streams</span>
 
-High-level runtime: a single-purpose pipeline with clear boundaries. Each layer has one responsibility so reasoning, testing, and failure modes remain isolated.
+Streaming is not one contract.
 
-### Layers
+- **Text stream:** human-facing response text for conversational flow.
+- **Object/tool-call stream:** machine-facing structured outputs for deterministic actions.
+- **Partial-object stream:** incremental structured payloads that become valid after stabilization.
 
-- **Conversation Agent:** handles intent reasoning and tool routing.
-- **Patch Tool:** emits RFC 6902 operations from structured requests.
-- **Patch Application:** validates and applies safe mutations in the client.
+This separation lets chat stay responsive while document mutation remains safe.
 
-<figure class="my-10 border-2 border-base-content bg-base-100 p-3 shadow-[4px_4px_0_0_rgba(0,0,0,0.9)]">
-  <img src="/assets/diagrams/resume-chatbot-three-streams.svg" alt="Three parallel streams: Backend, Chat, and Artifact channels" loading="lazy" />
-  <figcaption class="mt-3 text-sm font-semibold uppercase tracking-wide text-base-content/65">
-    Three parallel streams: Backend processing, Chat conversation, and Artifact updates.
-  </figcaption>
-</figure>
+## <span class="h2-prefix"><span class="h2-hash">##</span> DATA MODEL:</span> <span class="h2-title">JSON Resume as a stable mutation surface</span>
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> STREAM SEMANTICS:</span> <span class="h2-title">Text vs object/tool-call streams</span>
+Resume data is stored as structured JSON (basics, work, education, skills, projects). That provides stable paths and type boundaries, so updates can be validated before apply.
 
-Streaming raw text and streaming structured objects are different contracts. Text streams carry language; object streams carry typed operations. Treat object streams as authoritative, validate them, and avoid re-parsing textual tokens into state.
+## <span class="h2-prefix"><span class="h2-hash">##</span> TOOLING TRADEOFF:</span> <span class="h2-title">Custom schema tools vs JSON Patch</span>
 
-- **Text stream contract:** human-facing output for explanation and conversational flow.
-- **Object/tool-call contract:** machine-facing operations for precise, schema-valid state updates.
+We considered a large schema-specific tool set (`addWorkItem`, `updateSkill`, `replaceSummary`) and rejected it for scalability.
 
-<figure class="my-10 border-2 border-base-content bg-base-100 p-3 shadow-[4px_4px_0_0_rgba(0,0,0,0.9)]">
-  <img src="/assets/diagrams/resume-chatbot-comparison.svg" alt="Comparison: Traditional text replacement vs JSON Patch streaming approach" loading="lazy" />
-  <figcaption class="mt-3 text-sm font-semibold uppercase tracking-wide text-base-content/65">
-    Core innovation: JSON Patch enables surgical, streamable updates instead of full document replacement.
-  </figcaption>
-</figure>
+JSON Patch (RFC 6902) gives one consistent API (`add`, `replace`, `remove`, `move`, `copy`, `test`) at any object depth. Agents can reuse the same operation model instead of learning dozens of schema-specific tool signatures.
+
+## <span class="h2-prefix"><span class="h2-hash">##</span> PATCH MODEL:</span> <span class="h2-title">Operation shape and partial stabilization</span>
+
+```json
+{
+  "operations": [
+    { "op": "replace", "path": "/skills/2/name", "value": "React" },
+    { "op": "add", "path": "/work/1/highlights/-", "value": "Reduced test runtime by 68%." }
+  ]
+}
+```
+
+Streamed partials are buffered until path and value are structurally stable, then applied in order.
+
+## <span class="h2-prefix"><span class="h2-hash">##</span> INTEGRATION:</span> <span class="h2-title">Split planning from patch translation</span>
+
+We separate responsibilities for reliability:
+
+- **Planner model:** maps natural language to semantic change intent.
+- **Patch translator model:** maps semantic intent to RFC 6902 tool-call payloads.
+
+This keeps intent reasoning flexible while mutation stays deterministic and auditable.
+
+## <span class="h2-prefix"><span class="h2-hash">##</span> ARCHITECTURE:</span> <span class="h2-title">Three synchronized channels with one clear fork</span>
+
+```mermaid
+flowchart LR
+  U[User Request] --> A[Conversation Agent]
+  A -->|response stream| C1[Chat Stream] --> C2[Chat UI]
+  A -->|patch stream| P1[Patch Tool] --> P2[Patch Apply] --> P3[Artifact UI]
+  C2 -. sync .- P3
+```
 
 ## <span class="h2-prefix"><span class="h2-hash">##</span> DEMO:</span> <span class="h2-title">What it shows</span>
 
-The demo showcases surgical RFC 6902 patches arriving progressively and being applied without full-document replacements. It demonstrates reduced UI churn, preserved formatting, and deterministic application under mock providers.
+The demo shows progressive RFC 6902 patches being applied without full-document replacement. The user sees conversational feedback and artifact updates in parallel.
 
-<LazyVideo 
+<LazyVideo
   videoUrl="https://drive.google.com/file/d/1Hb6bH99F8uEqPU7BhpI4fS0UTeuEhrhC/preview"
   thumbnailSrc="/assets/images/projects/resume-chatbot-demo-frame.webp"
   thumbnailAlt="Resume chatbot demo showing real-time streaming edits"
   caption="The resume chatbot applying surgical JSON patches in real-time"
-/> 
+/>
 
 ## <span class="h2-prefix"><span class="h2-hash">##</span> TESTING:</span> <span class="h2-title">Strategy and results</span>
 
-Testing splits into deterministic model mocks and schema assertions. Replace external model calls with mock providers, then assert final resume JSON against the schema rather than fragile UI timings.
+Testing is split into deterministic model mocks and schema assertions.
 
-- **Deterministic mocks:** remove network and model variability from primary checks.
+- **Deterministic mocks:** remove network/model variability from core checks.
 - **Schema assertions:** verify final JSON correctness without timing fragility.
 
 Results:
@@ -96,25 +123,9 @@ Results:
   <li><span class="metric-label metric-after">After</span> <span class="metric-value metric-after">100%</span> stability, <span class="stat-callout stat-positive">9.2s</span> avg per test</li>
 </ul>
 
-For the full harness design and reliability methodology, see [Deterministic Testing for AI Streaming](/work/resume-chatbot-testing-strategy).
+For full harness details, see [Deterministic Testing for AI Streaming](/work/resume-chatbot-testing-strategy).
 
 ## <span class="h2-prefix"><span class="h2-hash">##</span> HANDOFF:</span> <span class="h2-title">Deep dives and next reading</span>
 
-This page is an overview and hub. Follow the deep dives for implementation detail and test patterns.
-
-- [Streaming JSON Patching Architecture](/work/resume-chatbot-streaming-architecture): detailed pipeline internals, stabilization mechanics, and operation lifecycle.
-- [Deterministic Testing for AI Streaming](/work/resume-chatbot-testing-strategy): mock-provider design, synchronization strategy, and reliability benchmarks.
-
-## <span class="h2-prefix"><span class="h2-hash">##</span> NOTES:</span> <span class="h2-title">Implementation and caveats</span>
-
-- **Progressive stream:** use `partialObjectStream` for incremental structured payloads.
-- **Validation first:** verify operations with `fast-json-patch` before mutation.
-- **Stable emission:** keep the patch model fixed for predictable operation shape.
-- **Safety fallback:** for large destructive edits, use guarded full-document operations.
-
-## <span class="h2-prefix"><span class="h2-hash">##</span> LESSONS:</span> <span class="h2-title">What we learned</span>
-
-- **Streaming partial objects:** reduces perceived latency and UI churn.
-- **Clear boundaries:** make debugging and testing substantially easier.
-- **Schema validation:** prevents invalid model operations from corrupting state.
-- **Deterministic mocks:** are required for fast, stable E2E reliability.
+- [Streaming JSON Patching Architecture](/work/resume-chatbot-streaming-architecture): pipeline internals and operation lifecycle.
+- [Deterministic Testing for AI Streaming](/work/resume-chatbot-testing-strategy): mock-provider strategy and reliability benchmarks.
