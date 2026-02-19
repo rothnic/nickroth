@@ -1592,7 +1592,7 @@
 }
 
 /* Code - inline */
-.prose-content code {
+.prose-content :not(pre) > code {
 	font-family: var(--font-mono), ui-monospace, monospace;
 	font-size: 0.875em;
 	background-color: oklch(0.95 0.01 280);
@@ -1619,6 +1619,14 @@
 .prose-content pre code {
 	font-size: 0.875rem;
 	line-height: 1.6;
+	color: var(--color-base-content) !important;
+	background: transparent !important;
+	border: 0 !important;
+	padding: 0 !important;
+}
+
+.prose-content pre code * {
+	color: var(--color-base-content) !important;
 }
 
 /* Show copy button on touch devices (no hover capability) */

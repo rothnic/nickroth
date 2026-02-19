@@ -62,9 +62,11 @@ Resume data is stored as structured JSON (basics, work, education, skills, proje
 
 ## <span class="h2-prefix"><span class="h2-hash">##</span> TOOLING TRADEOFF:</span> <span class="h2-title">Custom schema tools vs JSON Patch</span>
 
-We considered a large schema-specific tool set (`addWorkItem`, `updateSkill`, `replaceSummary`) and rejected it for scalability.
+Other approaches considered included a large schema-specific tool surface (`addWorkItem`, `updateSkill`, `replaceSummary`, and many more field-level variants).
 
-JSON Patch (RFC 6902) gives one consistent API (`add`, `replace`, `remove`, `move`, `copy`, `test`) at any object depth. Agents can reuse the same operation model instead of learning dozens of schema-specific tool signatures.
+That approach was decided against because each new edit shape requires a new tool-call contract, plus custom streaming behavior for partial payloads. Tool design becomes brittle as document complexity grows, and maintenance cost compounds quickly. It also does not transfer well to other structured document formats, since most tools are schema-specific by construction.
+
+JSON Patch (RFC 6902) provides a single operation model (`add`, `replace`, `remove`, `move`, `copy`, `test`) at any depth. The same patch contract works across nested objects and arrays, and the same streaming/application logic can be reused for any structured document type.
 
 ## <span class="h2-prefix"><span class="h2-hash">##</span> PATCH MODEL:</span> <span class="h2-title">Operation shape and partial stabilization</span>
 
@@ -81,7 +83,7 @@ Streamed partials are buffered until path and value are structurally stable, the
 
 ## <span class="h2-prefix"><span class="h2-hash">##</span> INTEGRATION:</span> <span class="h2-title">Split planning from patch translation</span>
 
-We separate responsibilities for reliability:
+Responsibilities are split for reliability:
 
 - **Planner model:** maps natural language to semantic change intent.
 - **Patch translator model:** maps semantic intent to RFC 6902 tool-call payloads.
