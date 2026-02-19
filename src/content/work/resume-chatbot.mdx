@@ -42,7 +42,12 @@ The runtime is organized as a three-layer pipeline:
 - Patch Tool (Layer 2): A fixed, fast model that converts intentions to RFC 6902 patches and streams them as partial JSON objects.
 - Patch Application (Layer 3): Validates, stabilizes, and applies patches to the in-memory JSON Resume instance.
 
-<img src="/assets/diagrams/resume-chatbot-architecture.svg" alt="Three-layer architecture diagram" />
+<figure class="my-10 border-4 border-base-content bg-base-100 p-3 shadow-[8px_8px_0_0_rgba(0,0,0,0.9)]">
+  <img src="/assets/diagrams/resume-chatbot-architecture.svg" alt="Three-layer architecture diagram" loading="lazy" />
+  <figcaption class="mt-3 text-sm font-semibold uppercase tracking-wide text-base-content/65">
+    Architecture overview: conversation layer, patch tool layer, and patch application layer.
+  </figcaption>
+</figure>
 
 Each layer is single-purpose. The Conversation Agent reasons about content and tone. The Patch Tool is the only producer of RFC 6902 operations. The Patch Application is the only mutator of the resume state.
 

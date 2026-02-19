@@ -16,8 +16,8 @@ const {
 } = Astro.props as Props;
 ---
 
-<figure class="lazy-video-container aspect-{aspectRatio}">
-  <div class="lazy-video-wrapper" data-video-url={videoUrl}>
+<figure class="lazy-video-container">
+  <div class="lazy-video-wrapper" data-video-url={videoUrl} style={`aspect-ratio: ${aspectRatio};`}>
     <div class="lazy-video-poster" role="button" tabindex="0" aria-label={`Play video: ${thumbnailAlt}`}>
       <img src={thumbnailSrc} alt={thumbnailAlt} loading="lazy" />
       <div class="lazy-video-play">
@@ -26,7 +26,7 @@ const {
       </div>
     </div>
 
-    <div class="lazy-video-embed" style="display: none;" aria-hidden="true"></div>
+    <div class="lazy-video-embed" aria-hidden="true"></div>
   </div>
 
   {caption && <figcaption class="lazy-video-caption">{caption}</figcaption>}
@@ -46,11 +46,6 @@ const {
     box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
   }
 
-  /* Aspect helpers (simple) */
-  .aspect-16\/9 { aspect-ratio: 16 / 9; }
-  .aspect-4\/3 { aspect-ratio: 4 / 3; }
-  .aspect-1\/1 { aspect-ratio: 1 / 1; }
-
   .lazy-video-poster {
     position: relative;
     width: 100%;
@@ -64,6 +59,12 @@ const {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  .lazy-video-embed {
+    display: none;
+    width: 100%;
+    height: 100%;
   }
 
   .lazy-video-play {
@@ -142,6 +143,8 @@ const {
   const wrappers = document.querySelectorAll('.lazy-video-wrapper');
     Array.from(wrappers).forEach((el) => {
       const wrapper = el as HTMLElement;
+      if (wrapper.dataset.lazyVideoInit === 'true') return;
+      wrapper.dataset.lazyVideoInit = 'true';
       const poster = wrapper.querySelector('.lazy-video-poster') as HTMLElement | null;
       const embed = wrapper.querySelector('.lazy-video-embed') as HTMLElement | null;
       if (!poster || !embed) return;
@@ -153,8 +156,12 @@ const {
 
         const iframe = document.createElement('iframe');
         iframe.src = url;
-        iframe.setAttribute('allow', 'autoplay; encrypted-media');
+        const posterImg = poster.querySelector('img') as HTMLImageElement | null;
+        iframe.title = posterImg?.alt || 'Embedded video';
+        iframe.setAttribute('allow', 'autoplay; fullscreen; encrypted-media; picture-in-picture');
         iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('webkitallowfullscreen', '');
+        iframe.setAttribute('mozallowfullscreen', '');
         iframe.loading = 'lazy';
         iframe.referrerPolicy = 'no-referrer-when-downgrade';
 
