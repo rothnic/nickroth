@@ -19,13 +19,13 @@ parentProject: "resume-chatbot"
 
 This article explains the streaming JSON patching pipeline used by the resume chatbot project. It focuses on how the system converts freeform editing intents into surgical RFC 6902 patches, how those patches stream back to the client token by token, and how the UI stabilizes partially-emitted paths before applying changes.
 
-Why this matters
+Why this matters, at a glance
 
 - Sending full regenerated documents for every edit is expensive and noisy. It forces the client to reconcile entire blobs, triggers wide UI re-renders, and makes fine-grained undo difficult.
 - A structured, typed document model lets the AI reason about locations explicitly. Instead of asking the model to "update the skills section", we give it paths like `/skills/2/keywords/0` and a schema to validate against.
 - Streaming patches let the UI show edits as they are generated, provide immediate feedback, and reduce bandwidth by sending only the minimal edit operations.
 
-Why Structured Data
+Why structured data
 
 Traditional AI-first editors often treat documents as plain text or markdown. That works for single, monolithic content, but it breaks down when content has typed sections, arrays, and nested objects.
 
@@ -50,7 +50,7 @@ Example: structured resume snippet
 
 When the model needs to add a keyword it can emit a patch with path `/skills/0/keywords/-` and op `add`. That path is unambiguous. The client can apply it immediately using fast-json-patch and re-render only the affected component.
 
-The Three-Layer Architecture
+Three-layer architecture overview
 
 The runtime separates responsibilities into three layers. Each layer is intentionally small to keep reasoning and trust boundaries clear.
 
@@ -63,7 +63,7 @@ Diagram: patch pipeline
   </figcaption>
 </figure>
 
-Layer 1, Conversation Agent
+Layer 1, conversation agent responsibilities
 
 The conversation agent is the chat surface you interact with. It streams text to the client with `streamText()` and uses a user-selectable model for conversational quality and cost control. Its job is intent capture. When a change requires document modification it decides which tool to call and with what parameters.
 
@@ -73,7 +73,7 @@ Responsibilities
 - Validate intent and decide if a structured tool should run
 - Call `patchResume` or other tools when modification is required
 
-Layer 2, Patch Tool
+Layer 2, patch tool responsibilities
 
 The `patchResume` tool owns document modifications. It fetches the current document state, streams the snapshot to the client, and then initiates a nested LLM call that generates RFC 6902 patches. The tool is the only code path that applies patches to persisted documents.
 
@@ -126,7 +126,7 @@ Notes on the example
 - `streamObject` is the Vercel AI SDK helper that returns a partial object stream while the model emits tokens.
 - `applyPatch` is from fast-json-patch. It applies an RFC 6902 op and returns the mutated document.
 
-Layer 3, Structured Data Model
+Layer 3, structured data model
 
 The patch generator runs with a fixed model choice tuned for predictable structured output. In this project we use gpt-4.1-mini for patch generation and we validate emitted objects with Zod. The generator's output is a sequence of RFC 6902 operations grouped as patch bundles.
 
@@ -139,7 +139,7 @@ Patch bundles
 
 A patch bundle is a small collection of RFC 6902 operations that represent one coherent change. Bundles arrive as partial objects while the model streams. Each bundle may contain 1 to N operations. The client applies bundles as they are stabilized.
 
-Path Stabilization
+Path stabilization and buffering rules
 
 Partial streams create a practical problem: JSON patch paths arrive as the model emits tokens. A single path like `/skills/0/keywords/-` can be emitted in fragments. If the client tries to apply a patch before the path is complete it can target the wrong node.
 
@@ -175,7 +175,7 @@ function stabilizePatchStream(partialObjectStream) {
 
 The intent is simple, but the edge cases matter. The stabilizer must not wait forever, so it enforces a short timeout and emits what it has when the model pauses beyond a threshold. UI consumers treat those emissions as tentative until the next bundle confirms them.
 
-Semantic Text Operations
+Semantic text operations and rules
 
 RFC 6902 gives us `add`, `remove`, `replace` and so on. For rich text fields we added a small set of semantic operations that keep intent explicit while remaining easy to validate and apply.
 
@@ -198,22 +198,22 @@ Example semantic op
 }
 ```
 
-Client application rules
+Client application rules and examples
 
 - When a semantic op arrives the client converts it into a small patch sequence that manipulates the string while preserving surrounding markup.
 - Paragraph ops are only allowed where `fieldType === 'richtext'` in the Zod schema.
 - Semantic ops are audited in the server logs so automated tests can assert that only expected fields receive them.
 
-Tool Governance
+Tool governance and ownership rules
 
 In a multi-tool system overlapping responsibilities create ambiguity. We resolve that by assigning ownership at the code level and by restricting active tools per conversation turn.
 
-Ownership
+Tool ownership
 
 - `createDocument` owns document initialization. It writes the first version and sets metadata.
 - `patchResume` owns all modifications after create. It is the only tool allowed to write patches to the document store.
 
-Active tool limits
+Active tool limits and enforcement
 
 We expose `experimental_activeTools` at the conversation level. The conversation agent sets this list for each turn. If a tool is not listed the agent cannot call it. This keeps the space of available capabilities small and prevents the model from calling tools it should not use.
 

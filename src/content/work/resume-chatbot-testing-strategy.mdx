@@ -18,7 +18,7 @@ parentProject: "resume-chatbot"
 
 This article documents a deterministic testing strategy for the resume-chatbot. It describes concrete patterns and small helper implementations used to make token-by-token streaming testable and repeatable. The focus is engineering: what we implemented, why, and the tradeoffs.
 
-The Testing Problem
+Testing problem and scope
 
 AI-driven chat flows are nondeterministic. A production model will produce different token sequences on different invocations. That variability is fine for users, but it breaks end-to-end tests that expect stable DOM changes or a stable final JSON document.
 
@@ -26,13 +26,13 @@ Streaming magnifies the issue. Content arrives incrementally, so timing, bufferi
 
 Additional sources of flakiness include client-side animations, hydration ordering, and transforms that alter timing semantics (for example, smoothing token emission). The testing strategy reduces surface area by fixing model outputs, exposing reliable readiness signals, and instrumenting the pipeline for observability.
 
-Baseline metrics
+Baseline metrics and impact
 
 - Stability when running tests against live models: ~50% intermittent failures.
 - Average runtime per test against live models: ~28.8s.
 - After the deterministic mock approach: stability ~100%, average runtime ~9.2s.
 
-Goals
+Testing goals
 
 - Determinism: identical inputs must yield identical observable outputs.
 - Speed: remove external network/model latency for most CI runs.
@@ -48,7 +48,7 @@ Design principle: keep tests simple and explicit. The mock must emulate the prod
   </figcaption>
 </figure>
 
-Mock Language Models
+Mock language models
 
 We implement a mock language model that mirrors the Vercel AI SDK streaming contract. The mock returns a ReadableStream-like object whose frames match the production model: stream-start, text-start/text-delta/text-end, tool-call, and finish frames.
 
@@ -84,7 +84,7 @@ Notes:
 - defaultChunksForPrompt is a test helper that returns a canonical chunk sequence for common fixture prompts.
 - The mock does not try to replicate model internals, only the observable streaming contract.
 
-Stream protocol contract
+Stream protocol contract and frames
 
 The application expects a simple, strict stream contract. The mock must follow it exactly.
 
@@ -111,7 +111,7 @@ const chunks: LanguageModelV2StreamPart[] = [
 ];
 ```
 
-Deterministic tool-call frame testing
+Deterministic tool-call frame checks
 
 Tool-call frames are deterministic contract points between the conversation layer and side-effecting tools. Tests should verify three properties:
 
@@ -129,7 +129,7 @@ function assertToolCallFrame(frame: LanguageModelV2StreamPart, expectedTool: str
 }
 ```
 
-Playwright stability patterns
+Playwright stability patterns and readiness signals
 
 The Playwright layer should avoid fixed sleeps and rely on explicit readiness signals.
 
@@ -184,7 +184,7 @@ Common pitfalls and how to avoid them
 - Non-string tool-call inputs: always stringify JSON for tool-call.input.
 - Relying on visual animations: disable transitions in the test build.
 
-Results and benchmarks
+Results, benchmarks, and interpretation
 
 After adopting mocks and the patterns above we observed the following in CI runs using the mock provider:
 
@@ -196,7 +196,7 @@ After adopting mocks and the patterns above we observed the following in CI runs
 
 The numbers above reflect our controlled test environment and the specific fixtures used. See "Benchmark interpretation" for how to interpret these numbers.
 
-Failure triage checklist
+Failure triage checklist and steps
 
 When a previously passing deterministic test fails, follow this ordered checklist to quickly identify root causes:
 
@@ -207,7 +207,7 @@ When a previously passing deterministic test fails, follow this ordered checklis
 5. If the mock emitted the expected frames but the client state diverged, fetch the serialized partial bundles produced by the mock and compare them to the stabilizer rules in the streaming architecture article.
 6. If all of the above pass, isolate the regression to a single test and reproduce locally with the same fixture.
 
-CI hardening recommendations
+CI hardening recommendations and artifacts
 
 - Pin Node and pnpm with Volta on CI. That removes environment drift across runners.
 - Run Playwright with `--retries=1` initially for flaky suites while you fix root causes, but aim for zero retries.
@@ -219,7 +219,7 @@ Benchmark interpretation
 - Run benchmarks repeatedly (>30 samples) and report the median plus interquartile range; single-run means are unreliable for long-tail distributions.
 - Split benchmarks into two categories: network-free (mock) and production-simulated (mock configured with production-like delays). This separates harness performance from production realism.
 
-Test coverage plan
+Test coverage plan and fidelity tiers
 
 Organize tests by fidelity and contract boundaries:
 
@@ -227,7 +227,7 @@ Organize tests by fidelity and contract boundaries:
 - Integration tests: tool-call handling, patch validation with fast-json-patch, and the stabilizer running against representative partial streams.
 - End-to-end tests: Playwright flows that exercise the UI, storage, and mock provider. Keep fixtures small and focused.
 
-Golden fixtures and comparison testing
+Golden fixtures and comparison testing practices
 
 Store small golden fixtures representing expected final resume JSON for canonical flows. When a test fails, CI should present a compact JSON diff that shows the minimal patch to convert expected -> actual.
 
@@ -239,7 +239,7 @@ const actual = await getFinalResumeFromClient(page);
 expect(actual).toEqual(expected);
 ```
 
-Observability and logging
+Observability and logging signals
 
 Capture the following structured signals on test runs and upload them as JSON artifacts when a failure occurs:
 
@@ -250,7 +250,7 @@ Capture the following structured signals on test runs and upload them as JSON ar
 
 Keep per-test artifact sizes small. Use sampling and only include full token traces on demand.
 
-Token-level assertions
+Token-level assertions and guidance
 
 Token-level assertions are narrow checks used to verify framing or stabilizer behavior. Keep them focused and infrequent. Example checks:
 
@@ -264,7 +264,7 @@ const frames = await page.evaluate(() => (window as any).__TEST_STREAM_EVENTS ||
 expect(frames.some(f => f.type === 'tool-call' && f.toolName === 'patchResume')).toBe(true);
 ```
 
-Avoiding brittle DOM assertions
+Avoiding brittle DOM assertions and favored checks
 
 Prefer state-based checks over structure-based checks. When DOM assertions are necessary, target stable attributes such as data-testid or data-path. Avoid pixel-based snapshots in CI; use them only as local debugging aids.
 
