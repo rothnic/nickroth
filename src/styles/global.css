@@ -1292,7 +1292,39 @@
 	font-size: 0.95rem;
 	line-height: 1.5;
 	color: oklch(0.35 0 0);
+	margin: 0 0 0.75rem 0;
+}
+
+.prose-content .tldr-block .tldr-list {
 	margin: 0;
+	padding-left: 0;
+	list-style: none;
+}
+
+.prose-content .tldr-block .tldr-list li {
+	position: relative;
+	padding-left: 1.25rem;
+	margin-bottom: 0.5rem;
+	font-size: 0.9rem;
+	line-height: 1.4;
+	color: oklch(0.4 0 0);
+}
+
+.prose-content .tldr-block .tldr-list li:last-child {
+	margin-bottom: 0;
+}
+
+.prose-content .tldr-block .tldr-list li::before {
+	content: "→";
+	position: absolute;
+	left: 0;
+	color: var(--color-primary);
+	font-weight: 700;
+}
+
+.prose-content .tldr-block .tldr-list li strong {
+	font-weight: 600;
+	color: oklch(0.25 0 0);
 }
 
 /* Third-level headings - subsections */

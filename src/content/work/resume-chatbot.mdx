@@ -23,7 +23,12 @@ Conversational editors that regenerate entire documents cause document drift. Sm
 
 <div class="not-prose tldr-block">
   <p class="tldr-label">TL;DR</p>
-  <p class="tldr-content">AI streams surgical JSON patches targeting specific fields - like changing just your job title - without touching anything else. Instant updates, zero formatting loss.</p>
+  <p class="tldr-content">The ideal UX for structured content editing should support:</p>
+  <ul class="tldr-list">
+    <li><strong>Collaborative interface:</strong> User and AI work together within schema constraints</li>
+    <li><strong>Surgical precision:</strong> Parallel, efficient edits to specific fields without full regeneration</li>
+    <li><strong>Managed revisions:</strong> Easy recovery from mistakes with clear change history</li>
+  </ul>
 </div>
 
 ## <span class="h2-prefix"><span class="h2-hash">##</span> ARCHITECTURE:</span> <span class="h2-title">Three-layer streaming pipeline</span>
