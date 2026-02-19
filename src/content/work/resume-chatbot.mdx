@@ -18,7 +18,7 @@ import FeatureBlock from '../../components/FeatureBlock.astro';
 
 # AI-Powered Resume Builder with Real-Time Streaming
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> PROBLEM:</span> <span class="h2-title">Why iterative artifact edits fail at scale</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> PROBLEM:</span> <span class="h2-title">Why iterative artifact edits fail at scale</span>
 
 Imagine a user saying, "Please add Python to my skills and tighten the Senior Backend Engineer job summary to mention API design." The user expects the editor to add a single skill entry and rewrite one paragraph, leaving the rest of the resume untouched. In practice, AI-driven edits to large artifacts rarely behave that cleanly.
 
@@ -70,7 +70,7 @@ This pattern matters because each failure mode compounds when multiple users, mo
   ]}
 />
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> SOLUTION:</span> <span class="h2-title">Surgical JSON patching instead of full regeneration</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> SOLUTION:</span> <span class="h2-title">Surgical JSON patching instead of full regeneration</span>
 
 Treat the resume as typed JSON, not a text blob. Every mutation is one explicit operation against one explicit path.
 
@@ -86,7 +86,7 @@ Treat the resume as typed JSON, not a text blob. Every mutation is one explicit 
 }
 ```
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> STREAM MODEL:</span> <span class="h2-title">Text vs object vs partial-object streams</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> STREAM MODEL:</span> <span class="h2-title">Text vs object vs partial-object streams</span>
 
 Streaming is not one contract. Each stream type has a different reliability profile and different UX implications.
 
@@ -111,7 +111,7 @@ Related docs for each framework:
 
 For the full framework comparison, partial-object behavior details, and benchmark results collected in charged-space, see [Streaming Modes and Framework Benchmarking](/work/resume-chatbot-streaming-modes-benchmarking).
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> DATA MODEL:</span> <span class="h2-title">JSON Resume as a stable mutation surface</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> DATA MODEL:</span> <span class="h2-title">JSON Resume as a stable mutation surface</span>
  
 Resume data is stored as structured JSON (basics, work, education, skills, projects). Using the JSON Resume schema gives us a stable, well-known surface to target edits, reuse existing toolchains, and keep type boundaries explicit for validation.
 
@@ -127,7 +127,7 @@ Structured paths are unambiguous: a pointer like `/skills/0/name` refers to the 
 
 Finally, we validate mutations with a schema layer (Zod in our stack). Zod catches missing required fields, wrong types, and invalid shapes before a patch is applied, so the editor never writes malformed resume state.
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> TOOL LAYER:</span> <span class="h2-title">Nested streaming for low-latency structured edits</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> TOOL LAYER:</span> <span class="h2-title">Nested streaming for low-latency structured edits</span>
 
 The chat agent handles intent and explanation. The patch tool handles state mutation. Inside that tool, a nested model streams patch objects.
 
@@ -153,7 +153,7 @@ for await (const partial of result.partialObjectStream) {
 }
 ```
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> TOOLING TRADEOFF:</span> <span class="h2-title">Custom schema tools vs JSON Patch</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> TOOLING TRADEOFF:</span> <span class="h2-title">Custom schema tools vs JSON Patch</span>
 
 ### Option A - schema-specific tool surface
 
@@ -174,7 +174,7 @@ for await (const partial of result.partialObjectStream) {
 - **Strength:** low-latency, path-scoped updates with deterministic apply semantics.
 - **Scales better:** one mutation model works across nested objects, arrays, and other structured documents.
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> PATCH MODEL:</span> <span class="h2-title">Operation shape and partial stabilization</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> PATCH MODEL:</span> <span class="h2-title">Operation shape and partial stabilization</span>
 
 Patch values can be any valid JSON payload, not only strings. In practice, we stabilize structure first (`op` + `path`), then stream value content as it arrives.
 
@@ -215,7 +215,7 @@ for await (const partial of partialObjectStream) {
 }
 ```
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> PROTOCOL:</span> <span class="h2-title">Map natural-language intent to RFC 6902 verbs</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> PROTOCOL:</span> <span class="h2-title">Map natural-language intent to RFC 6902 verbs</span>
 
 Small, explicit verbs keep state transitions inspectable and testable.
 
@@ -236,7 +236,7 @@ Small, explicit verbs keep state transitions inspectable and testable.
 
 Reference: [RFC 6902 JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902)
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> STABILIZATION:</span> <span class="h2-title">Safety valve before UI apply</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> STABILIZATION:</span> <span class="h2-title">Safety valve before UI apply</span>
 
 The UI should never render broken partial frames. The stabilizer blocks invalid fragments until they meet minimum criteria.
 
@@ -252,7 +252,7 @@ function canApply(op: PatchOp) {
 }
 ```
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> CONCURRENCY:</span> <span class="h2-title">Path-isolated operations enable parallelism</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> CONCURRENCY:</span> <span class="h2-title">Path-isolated operations enable parallelism</span>
 
 Independent paths can update in parallel without collisions.
 
@@ -265,7 +265,7 @@ Independent paths can update in parallel without collisions.
 
 This gives effectively O(1)-style conflict checks for unrelated paths, while history remains append-only through versioned document snapshots.
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> INTEGRATION:</span> <span class="h2-title">Split planning from patch translation</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> INTEGRATION:</span> <span class="h2-title">Split planning from patch translation</span>
 
 Separating intent from mutation reduces surprising edits, makes changes auditable, and keeps the mutation path deterministic.
 
@@ -295,7 +295,7 @@ Translator output (RFC 6902):
 
 Benefits: clearer responsibilities, flexible NLU, deterministic mutation, and a complete audit trail for reviewers.
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> HYBRID INTERFACE:</span> <span class="h2-title">Document editor plus chat confirmation loop</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> HYBRID INTERFACE:</span> <span class="h2-title">Document editor plus chat confirmation loop</span>
 
 The document pane renders structured state; the chat pane explains intent and confirms patch outcomes. This keeps UX conversational while preserving precise state transitions.
 
@@ -303,7 +303,7 @@ The document pane renders structured state; the chat pane explains intent and co
 - Patch-apply confirmations provide immediate trust signals.
 - The same operation stream powers both visual diff and persisted history.
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> ARCHITECTURE:</span> <span class="h2-title">Three synchronized channels with one clear fork</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> ARCHITECTURE:</span> <span class="h2-title">Three synchronized channels with one clear fork</span>
 
 ```mermaid
 flowchart LR
@@ -345,7 +345,7 @@ A short, concrete explanation of the diagram and how the channels cooperate. Thi
 - Makes edits auditable and reversible by emitting small, path-scoped RFC 6902 operations.
 - Enables safe incremental updates: the UI sees progress early while the translator and validator enforce correctness.
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> DEMO:</span> <span class="h2-title">What it shows</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> DEMO:</span> <span class="h2-title">What it shows</span>
 
 The demo shows progressive RFC 6902 patches being applied without full-document replacement. The user sees conversational feedback and artifact updates in parallel.
 
@@ -356,7 +356,7 @@ The demo shows progressive RFC 6902 patches being applied without full-document 
   caption="The resume chatbot applying surgical JSON patches in real-time"
 />
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> TESTING:</span> <span class="h2-title">Strategy and results</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> TESTING:</span> <span class="h2-title">Strategy and results</span>
 
 Testing is split into deterministic model mocks and schema assertions.
 
@@ -372,7 +372,7 @@ Results:
 
 For full harness details, see [Deterministic Testing for AI Streaming](/work/resume-chatbot-testing-strategy).
 
-## <span class="h2-prefix"><span class="h2-hash">##</span> HANDOFF:</span> <span class="h2-title">Deep dives and next reading</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> HANDOFF:</span> <span class="h2-title">Deep dives and next reading</span>
 
 - [Streaming JSON Patching Architecture](/work/resume-chatbot-streaming-architecture) - Detailed pipeline internals, lifecycle of patch operations, and failure handling patterns.
 - [Deterministic Testing for AI Streaming](/work/resume-chatbot-testing-strategy) - Mock-provider approach for repeatable streaming tests and measurable reliability results.
