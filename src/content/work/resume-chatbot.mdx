@@ -13,65 +13,161 @@ stack: ["NEXT.JS", "VERCEL AI SDK", "DRIZZLE ORM", "+4"]
 roleCategory: "FULL-STACK DEVELOPER"
 ---
 
+import LazyVideo from '../../components/LazyVideo.astro';
+
 # AI-Powered Resume Builder with Real-Time Streaming
 
-## Impact Statement
-A sophisticated AI resume editor featuring real-time streaming updates and surgical JSON patching for seamless collaborative editing.
+## The Challenge: document drift in conversational editors
 
-## Overview
+Conversational AI editors often regenerate entire documents in response to a prompt. That is simple to implement, but it creates a persistent problem: document drift. Small edits can compound across revision cycles and lead to duplicated sections, lost formatting, or unintended re-ordering.
 
-A sophisticated AI-powered resume editor that enables real-time, chat-based resume creation and optimization. The system uses surgical JSON patching (RFC 6902) to apply incremental updates as the AI generates content, creating a collaborative editing experience similar to Google Docs.
+For structured artifacts like resumes, those errors are visible and costly. The project goal was straightforward: keep the conversational UX and prevent cumulative state corruption.
 
-## Key Features
+## Demo
 
-- **Real-time streaming** - Watch content appear as the AI generates it
-- **Surgical updates** - Only modified fields update, preserving context
-- **Intelligent suggestions** - AI understands resume best practices
-- **Artifact system** - Side-by-side chat and resume preview
+<LazyVideo 
+  videoUrl="https://drive.google.com/file/d/1Hb6bH99F8uEqPU7BhpI4fS0UTeuEhrhC/preview"
+  thumbnailSrc="/assets/images/projects/resume-chatbot-demo-frame.webp"
+  thumbnailAlt="Resume chatbot demo showing real-time streaming edits"
+  caption="The resume chatbot applying surgical JSON patches in real-time"
+/> 
 
-## Technical Stack
+## The solution at a glance
 
-- **Frontend**: Next.js 15 with React 19 and App Router
-- **AI Integration**: Vercel AI SDK with multi-provider support
-- **Styling**: Tailwind CSS 4 with Framer Motion animations
-- **Database**: Postgres (Neon Serverless) via Drizzle ORM
-- **Authentication**: Auth.js (NextAuth.js) v5 Beta
-- **Observability**: OpenTelemetry with Vercel/SigNoz integration
+Replace full-document regeneration with surgical JSON patches. The system emits RFC 6902 operations that target only the changed fields. Patches are produced by a dedicated, low-latency model and applied client-side after validation. This reduces UI churn and prevents drift.
 
-## Core Architecture
+The runtime is organized as a three-layer pipeline:
 
-### Surgical JSON Patching
-Instead of replacing entire document content on each update, the system generates RFC 6902 JSON Patches that target specific fields. This enables:
-- Minimal UI re-renders for better performance
-- Precise scroll-to-edit behavior highlighting changes
-- Efficient undo/redo operations
+- Conversation Agent (Layer 1): Accepts user chat, clarifies intent, and produces structured edit intentions.
+- Patch Tool (Layer 2): A fixed, fast model that converts intentions to RFC 6902 patches and streams them as partial JSON objects.
+- Patch Application (Layer 3): Validates, stabilizes, and applies patches to the in-memory JSON Resume instance.
 
-### Deterministic Tool Governance
-In multi-tool AI systems, overlapping capabilities create ambiguity. This project implements hard blocking at the code level:
-- `createDocument` owns initialization
-- `patchResume` owns resume modifications (surgical)
-- `updateDocument` owns generic documents (text, code)
+<img src="/assets/diagrams/resume-chatbot-architecture.svg" alt="Three-layer architecture diagram" />
 
-### Streaming Infrastructure
-The system leverages Vercel AI SDK's `partialObjectStream` to emit partial JSON objects as the model generates tokens. Custom filtering ensures patches are only applied once values have stabilized.
+Each layer is single-purpose. The Conversation Agent reasons about content and tone. The Patch Tool is the only producer of RFC 6902 operations. The Patch Application is the only mutator of the resume state.
 
-## Development Patterns
+## Key components (glossary)
 
-### E2E Testing Strategy
-Playwright tests are the source of truth, implementing:
-- **Synchronized readiness** via `body.hydrated` markers
-- **Streaming completion detection** through status attributes
-- **Animation vs. functional separation** for reliable tests
+- Conversation Agent
+  - Orchestrates the chat, keeps context, emits structured intent objects for edits. It can call the Patch Tool but it never applies patches itself.
 
-### Prompt Engineering
-The AI uses structured prompts with:
-- Dynamic context injection for resume sections
-- Verbatim formatting rules for consistency
-- Task aggregation to batch related updates
+- Patch Tool
+  - Uses a fixed artifact model (gpt-4.1-mini) to generate JSON Patch operations. It streams partial JSON so the UI can show progress while patches are being produced.
 
-## Lessons Learned
+- Patch Application
+  - Client-side runtime that buffers incoming operations, waits for path stabilization, validates with fast-json-patch, then applies the operations to the resume object.
 
-- **Partial object streaming** enables typewriter-style UX without custom infrastructure
-- **Tool governance** at code level is more reliable than prompt engineering alone
-- **JSON Patch** provides surgical precision that full-document updates cannot match
-- **End-state verification** in tests is more stable than intermediate checks
+Each component has a focused testing strategy. Links to the deeper articles are at the bottom.
+
+## Technical highlights and code samples
+
+We use streaming JSON emission so patches arrive incrementally. A simplified call to the patch tool looks like this:
+
+```typescript
+const patchResult = streamObject({
+  model: getArtifactModel(),  // gpt-4.1-mini (fast, deterministic)
+  schema: patchSchema,        // Enforces RFC 6902 patch structure
+  prompt: `Generate patches for: ${changes}`,
+});
+```
+
+Example JSON Patch operation produced by the tool:
+
+```json
+{
+  "op": "add",
+  "path": "/skills/0/keywords/-",
+  "value": "Python"
+}
+```
+
+Patches are validated using fast-json-patch and a path-stabilization layer that prevents applying incomplete operations while the model is still emitting tokens.
+
+### Path stabilization
+
+Streaming introduces partial paths, for example array indices that are not yet closed. The Patch Application uses a small state machine and heuristics to detect syntactic completeness:
+
+- Strings must close with matching quotes.
+- Array indices must be syntactically complete (no trailing commas inside streaming tokens).
+- Object paths must end with a valid token sequence.
+
+Only after a path is stable do we validate the operation with fast-json-patch and apply it.
+
+### Deterministic patch model
+
+The patch model is fixed to a fast artifact so outputs are predictable. This reduces variance during tests and keeps latency low. The Conversation Agent can still use larger chat models for language-level reasoning.
+
+## Stack and references
+
+| Layer | Technology |
+|-------|------------|
+| Framework | Next.js (App Router) |
+| Chat integration | Vercel AI SDK ([Vercel AI SDK](https://ai.sdk.dev)) |
+| Patch validation | [fast-json-patch](https://github.com/Starcounter-Jack/JSON-Patch) |
+| Patch spec | [RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902) |
+| Resume schema | [JSON Resume](https://jsonresume.org) |
+| E2E tests | [Playwright](https://playwright.dev) |
+
+## Deep dives
+
+This page is an overview and hub for the technical series. Read the detailed breakdowns here:
+
+- [Streaming JSON Patching Architecture](/work/resume-chatbot-streaming-architecture) - how surgical patches replace full-document regeneration and the streaming pipeline internals.
+- [Deterministic Testing for AI Streaming](/work/resume-chatbot-testing-strategy) - mock providers, Playwright patterns, and stabilization techniques used to make tests deterministic.
+
+## Testing and results
+
+To make tests deterministic we use MockLanguageModelV1 from the provider utilities. The strategy has two parts:
+
+1. Replace external model calls with mock providers that return deterministic patch sequences.
+2. Assert the final resume JSON against the JSON Resume schema, rather than asserting intermediate UI timing.
+
+Results from the project:
+
+- Before: test stability ~50%, avg 28.8s per test
+- After: test stability 100%, avg 9.2s per test (faster because mocks remove network and model variability)
+
+These results are reproducible in CI when the mock provider is enabled.
+
+## Implementation notes and caveats
+
+- Use partialObjectStream (Vercel AI SDK) to receive JSON progressively and avoid blocking for full payloads.
+- Validate with fast-json-patch before mutating state.
+- Keep the patch model fixed to maintain predictable JSON emission.
+- For large, destructive edits or migrations, fall back to full-document operations guarded behind explicit user confirmation.
+- Multi-writer conflict resolution is out of scope for this project; a CRDT or operational transform layer would be needed for robust collaboration.
+
+## Component glossary (links)
+
+- patchResume tool - see Streaming JSON Patching Architecture for the tool contract and prompts.
+- Path stabilization filter - see Streaming JSON Patching Architecture for rules and heuristics.
+- MockLanguageModelV1 - see Deterministic Testing for AI Streaming for mock setup and examples.
+
+## External resources
+
+- [Vercel AI SDK](https://ai.sdk.dev)
+- [fast-json-patch](https://github.com/Starcounter-Jack/JSON-Patch)
+- [RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902)
+- [JSON Resume](https://jsonresume.org)
+- [Playwright](https://playwright.dev)
+
+## Appendix: simplified server handler
+
+```ts
+// /api/patch-resume.ts (simplified)
+import { streamObject } from 'ai-sdk';
+import { patchSchema } from '~/lib/schemas/patch';
+
+export async function POST(req) {
+  const { changes } = await req.json();
+  const result = await streamObject({ model: getArtifactModel(), schema: patchSchema, prompt: `Generate patches for: ${changes}` });
+  return new Response(result.stream);
+}
+```
+
+## Lessons learned
+
+- Streaming partial objects lets the UI present progress and reduces perceived latency.
+- Clear tool boundaries are more reliable than trying to encode behavior purely in prompts.
+- Schema validation is essential; models can still emit invalid operations.
+- Deterministic mocks are critical for fast, stable E2E tests.
