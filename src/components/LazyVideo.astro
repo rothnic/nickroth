@@ -1,0 +1,177 @@
+---
+interface Props {
+  videoUrl: string;
+  thumbnailSrc: string;
+  thumbnailAlt: string;
+  caption?: string;
+  aspectRatio?: string;
+}
+
+const {
+  videoUrl,
+  thumbnailSrc,
+  thumbnailAlt,
+  caption,
+  aspectRatio = '16/9',
+} = Astro.props as Props;
+---
+
+<figure class="lazy-video-container aspect-{aspectRatio}">
+  <div class="lazy-video-wrapper" data-video-url={videoUrl}>
+    <div class="lazy-video-poster" role="button" tabindex="0" aria-label={`Play video: ${thumbnailAlt}`}>
+      <img src={thumbnailSrc} alt={thumbnailAlt} loading="lazy" />
+      <div class="lazy-video-play">
+        <span class="play-circle" aria-hidden="true"></span>
+        <span class="play-triangle" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <div class="lazy-video-embed" style="display: none;" aria-hidden="true"></div>
+  </div>
+
+  {caption && <figcaption class="lazy-video-caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .lazy-video-container {
+    margin: 2rem 0;
+  }
+
+  .lazy-video-wrapper {
+    position: relative;
+    width: 100%;
+    border: 3px solid oklch(0.2 0 0);
+    background: oklch(0.95 0 0);
+    overflow: hidden;
+    box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+  }
+
+  /* Aspect helpers (simple) */
+  .aspect-16\/9 { aspect-ratio: 16 / 9; }
+  .aspect-4\/3 { aspect-ratio: 4 / 3; }
+  .aspect-1\/1 { aspect-ratio: 1 / 1; }
+
+  .lazy-video-poster {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: pointer;
+  }
+
+  .lazy-video-poster img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .lazy-video-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.35);
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    transition: transform 150ms ease, opacity 150ms ease;
+  }
+
+  .lazy-video-poster:hover .lazy-video-play,
+  .lazy-video-poster:focus .lazy-video-play {
+    transform: translate(-50%, -50%) scale(1.06);
+    opacity: 1;
+  }
+
+  /* Play icon: circle + triangle made with CSS */
+  .play-circle {
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    left: 0; top: 0;
+  }
+
+  .play-triangle {
+    position: relative;
+    width: 0;
+    height: 0;
+    border-left: 14px solid rgba(255,255,255,0.95);
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    margin-left: 6px; /* nudges triangle visually centered */
+  }
+
+  .lazy-video-embed iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: 0;
+  }
+
+  .lazy-video-caption {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: oklch(0.5 0 0);
+    font-style: italic;
+    text-align: center;
+  }
+
+  /* When active (replaced by iframe) */
+  .lazy-video-wrapper.playing .lazy-video-poster { display: none; }
+  .lazy-video-wrapper.playing .lazy-video-embed { display: block; }
+
+  /* Dark mode */
+  [data-theme="neobrutalism-dark"] .lazy-video-wrapper {
+    background: oklch(0.2 0 0);
+    border-color: oklch(0.4 0 0);
+  }
+
+  [data-theme="neobrutalism-dark"] .lazy-video-caption {
+    color: oklch(0.6 0 0);
+  }
+</style>
+
+<script>
+  function initLazyVideos() {
+  const wrappers = document.querySelectorAll('.lazy-video-wrapper');
+    Array.from(wrappers).forEach((el) => {
+      const wrapper = el as HTMLElement;
+      const poster = wrapper.querySelector('.lazy-video-poster') as HTMLElement | null;
+      const embed = wrapper.querySelector('.lazy-video-embed') as HTMLElement | null;
+      if (!poster || !embed) return;
+
+      const activate = () => {
+        if (wrapper.classList.contains('playing')) return;
+        const url = wrapper.dataset.videoUrl;
+        if (!url) return;
+
+        const iframe = document.createElement('iframe');
+        iframe.src = url;
+        iframe.setAttribute('allow', 'autoplay; encrypted-media');
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.loading = 'lazy';
+        iframe.referrerPolicy = 'no-referrer-when-downgrade';
+
+        embed.innerHTML = '';
+        embed.appendChild(iframe);
+        wrapper.classList.add('playing');
+        embed.setAttribute('aria-hidden', 'false');
+      };
+
+      poster.addEventListener('click', activate);
+      poster.addEventListener('keydown', (e) => {
+        const ke = e as KeyboardEvent;
+        if (ke.key === 'Enter' || ke.key === ' ') { ke.preventDefault(); activate(); }
+      });
+    });
+  }
+
+  initLazyVideos();
+  document.addEventListener('astro:after-swap', initLazyVideos);
+</script>
