@@ -108,7 +108,7 @@ const {
     margin-left: 6px; /* nudges triangle visually centered */
   }
 
-  .lazy-video-embed iframe {
+  .lazy-video-embed :global(iframe) {
     width: 100%;
     height: 100%;
     display: block;
@@ -164,6 +164,10 @@ const {
         iframe.setAttribute('mozallowfullscreen', '');
         iframe.loading = 'lazy';
         iframe.referrerPolicy = 'no-referrer-when-downgrade';
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.display = 'block';
+        iframe.style.border = '0';
 
         embed.innerHTML = '';
         embed.appendChild(iframe);
