@@ -1413,9 +1413,13 @@
 
 /* Unordered lists */
 .prose-content ul {
-	margin: 0.75rem 0;
+	margin: 1.3rem 0;
 	padding-left: 0;
 	list-style: none;
+}
+
+.prose-content h2 + ul {
+	margin-top: 1.8rem;
 }
 
 /* Reduce top margin when list follows a paragraph */
@@ -1427,8 +1431,8 @@
 .prose-content ul li {
 	position: relative;
 	padding-left: 1.5rem;
-	margin-bottom: 0.25rem;
-	line-height: 1.55;
+	margin: 0.6rem 0.25rem;
+	line-height: 1.35;
 	color: oklch(0.45 0 0);
 	font-weight: 400;
 }
@@ -1522,7 +1526,7 @@
 	display: flex;
 	align-items: baseline;
 	gap: 1rem;
-	margin-bottom: 0.5rem;
+	margin: 0 0 0.5rem 0;
 }
 
 .prose-content ul.comparable-list li::before {
@@ -1619,14 +1623,6 @@
 .prose-content pre code {
 	font-size: 0.875rem;
 	line-height: 1.6;
-	color: var(--color-base-content) !important;
-	background: transparent !important;
-	border: 0 !important;
-	padding: 0 !important;
-}
-
-.prose-content pre code * {
-	color: var(--color-base-content) !important;
 }
 
 /* Show copy button on touch devices (no hover capability) */
@@ -1862,7 +1858,7 @@
 	color: color-mix(in oklch, var(--color-info) 90%, white);
 }
 
-[data-theme="neobrutalism-dark"] .prose-content code {
+[data-theme="neobrutalism-dark"] .prose-content :not(pre) > code {
 	background-color: oklch(0.25 0.02 280);
 	border-color: oklch(0.4 0.02 280);
 	color: oklch(0.9 0.15 330); /* Light magenta for visibility */

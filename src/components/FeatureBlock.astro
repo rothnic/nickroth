@@ -15,12 +15,12 @@ export interface Props {
 const { title = "Key Principles", features } = Astro.props as Props;
 ---
 
-<section class="feature-block my-6">
-	<p class="text-xs tracking-widest uppercase opacity-50 mb-3 font-mono">
+<section class="feature-block py-2 pt-1 px-2 mb-4">
+	<p class="text-sm md:text-base tracking-[0.12em] uppercase mb-2 font-mono font-semibold text-primary">
 		{title}
 	</p>
 	
-	<div class="grid gap-3 md:grid-cols-3">
+	<div class="grid gap-2 md:grid-cols-3">
 		{features.map((feature, i) => (
 			<div class="feature-card border border-base-300 bg-base-100 p-3 shadow-brutal-sm">
 				<div class={`h-0.5 w-8 mb-2 ${
@@ -28,10 +28,10 @@ const { title = "Key Principles", features } = Astro.props as Props;
 					i === 1 ? 'bg-secondary' : 
 					'bg-accent'
 				}`}></div>
-				<h4 class="text-sm font-semibold tracking-wide mb-0.5">
+				<h4 class="text-sm font-semibold tracking-wide mb-0.5 text-base-content">
 					{feature.title}
 				</h4>
-				<p class="text-sm leading-relaxed opacity-70">
+				<p class="text-sm leading-snug opacity-75">
 					{feature.description}
 				</p>
 			</div>
