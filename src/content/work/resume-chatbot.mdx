@@ -98,8 +98,8 @@ This separation lets chat stay responsive while document mutation remains safe.
 
 ```mermaid
 flowchart LR
-  T[Text stream\nchat rendering] --> O[Object stream\ntool-call contract]
-  O --> P[Partial-object stream\nincremental structured state]
+  T["Text stream: chat rendering"] --> O["Object stream: tool-call contract"]
+  O --> P["Partial-object stream: incremental structured state"]
 ```
 
 Related docs for each framework:
