@@ -1655,111 +1655,66 @@
 	font-weight: 500;
 }
 
-/* Code - blocks (Expressive Code handles most styling) */
-.prose-content .expressive-code {
+/* Code - blocks (Shiki styling) */
+.prose-content pre {
 	margin: 1.5rem 0;
+	padding: 1rem;
+	border: 3px solid var(--nr-border-color);
+	box-shadow: 6px 6px 0px 0px var(--nr-shadow-color);
+	background: var(--color-base-100);
+	border-radius: 0;
+	overflow-x: auto;
+	max-width: 100%;
 	font-family: var(--font-mono), ui-monospace, monospace;
 }
 
 /* Reduce top margin when code follows a heading */
-.prose-content h3 + .expressive-code,
-.prose-content h4 + .expressive-code,
-.prose-content p + .expressive-code {
+.prose-content h3 + pre,
+.prose-content h4 + pre,
+.prose-content p + pre {
 	margin-top: 0.75rem;
+}
+
+/* Shiki code blocks */
+.prose-content pre.astro-code {
+	margin: 1.5rem 0;
+	padding: 1rem;
+	border: 3px solid var(--nr-border-color);
+	box-shadow: 6px 6px 0px 0px var(--nr-shadow-color);
+	background: var(--color-base-100);
+	border-radius: 0;
+	overflow-x: auto;
+	max-width: 100%;
+	font-family: var(--font-mono), ui-monospace, monospace;
 }
 
 .prose-content pre code {
 	font-size: 0.875rem;
 	line-height: 1.6;
-}
-
-/* Show copy button on touch devices (no hover capability) */
-@media (hover: none) {
-	.expressive-code .copy button {
-		opacity: 1 !important;
-	}
-}
-
-/* Enhanced Expressive Code styling for neobrutalist theme */
-.prose-content .expressive-code {
-	margin: 1.5rem 0;
 	font-family: var(--font-mono), ui-monospace, monospace;
-	border: 3px solid var(--nr-border-color);
-	box-shadow: 6px 6px 0px 0px var(--nr-shadow-color);
-	background: var(--color-base-100);
-}
-
-/* Code block frame styling */
-.prose-content .expressive-code .frame {
-	border-radius: 0 !important;
-}
-
-/* Code block header/title bar */
-.prose-content .expressive-code .frame .header {
-	background: var(--color-base-200);
-	border-bottom: 3px solid var(--nr-border-color);
-}
-
-/* Code block language indicator */
-.prose-content .expressive-code .frame .header .lang {
-	color: var(--color-base-content);
-	font-family: var(--font-mono), ui-monospace, monospace;
-	font-size: 0.75rem;
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
-}
-
-/* Code block copy button */
-.prose-content .expressive-code .copy button {
-	background: var(--color-base-100);
-	border: 2px solid var(--nr-border-color);
-	border-radius: 0;
-	box-shadow: 2px 2px 0px 0px var(--nr-shadow-color);
-	color: var(--color-base-content);
-	transition: all 0.1s ease-out;
-}
-
-.prose-content .expressive-code .copy button:hover {
-	transform: translate(1px, 1px);
-	box-shadow: 1px 1px 0px 0px var(--nr-shadow-color);
-}
-
-.prose-content .expressive-code .copy button:active {
-	transform: translate(2px, 2px);
-	box-shadow: 0px 0px 0px 0px transparent;
+	display: block;
+	white-space: pre;
 }
 
 /* Dark mode code block adjustments */
-[data-theme="neobrutalism-dark"] .prose-content .expressive-code {
+[data-theme="neobrutalism-dark"] .prose-content pre,
+[data-theme="neobrutalism-dark"] .prose-content pre.astro-code {
 	border-color: oklch(0.4 0.02 280);
 	box-shadow: 6px 6px 0px 0px oklch(0.15 0 0 / 0.8);
 }
 
-[data-theme="neobrutalism-dark"]
-	.prose-content
-	.expressive-code
-	.frame
-	.header {
-	background: oklch(0.25 0.02 280);
-	border-bottom-color: oklch(0.4 0.02 280);
-}
-
-[data-theme="neobrutalism-dark"] .prose-content .expressive-code .copy button {
-	border-color: oklch(0.4 0.02 280);
-	background: oklch(0.2 0.01 280);
-	color: oklch(0.95 0.01 280);
-}
-
 /* Ensure code blocks are responsive */
 @media (max-width: 640px) {
-	.prose-content .expressive-code {
+	.prose-content pre,
+	.prose-content pre.astro-code {
 		margin: 1rem -1rem;
 		border-left: none;
 		border-right: none;
 		box-shadow: none;
+		padding: 0.75rem;
 	}
 
-	.prose-content .expressive-code pre {
+	.prose-content pre code {
 		font-size: 0.8125rem;
 	}
 }

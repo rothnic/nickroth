@@ -1,36 +1,13 @@
 import mdx from "@astrojs/mdx";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, fontProviders } from "astro/config";
-import expressiveCode from "astro-expressive-code";
 import rehypeMermaid from "rehype-mermaid";
 
 // https://astro.build/config
 export default defineConfig({
 	prefetch: true,
 
-	// Expressive Code must come BEFORE mdx()
 	integrations: [
-		expressiveCode({
-			// Dual themes for light/dark mode
-			themes: ["github-light", "github-dark"],
-			// Map to our neobrutalism theme names
-			themeCssSelector: (theme) =>
-				theme.type === "light"
-					? '[data-theme="neobrutalism-light"]'
-					: '[data-theme="neobrutalism-dark"]',
-			// Default word wrap enabled
-			defaultProps: {
-				wrap: true,
-			},
-			// Style frames to match neobrutalism
-			styleOverrides: {
-				borderRadius: "0",
-				borderWidth: "3px",
-				frames: {
-					shadowColor: "transparent",
-				},
-			},
-		}),
 		mdx({
 			rehypePlugins: [
 				[
@@ -49,6 +26,21 @@ export default defineConfig({
 			],
 		}),
 	],
+
+	markdown: {
+		syntaxHighlight: {
+			type: "shiki",
+			excludeLangs: ["mermaid", "math"],
+		},
+		shikiConfig: {
+			themes: {
+				light: "github-light",
+				dark: "github-dark",
+			},
+			wrap: true,
+			transformers: [],
+		},
+	},
 
 	output: "static",
 
