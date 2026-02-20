@@ -21,7 +21,35 @@ import ExcalidrawDiagram from '../../components/ExcalidrawDiagram.astro';
 
 ## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> PROBLEM:</span> <span class="h2-title">Why iterative artifact edits fail at scale</span>
 
-Imagine a user saying, "Please add Python to my skills and tighten the Senior Backend Engineer job summary to mention API design." The user expects the editor to add a single skill entry and rewrite one paragraph, leaving the rest of the resume untouched. In practice, AI-driven edits to large artifacts rarely behave that cleanly.
+**You're in a conversation with your resume.**
+
+You type: *"Add Python to my skills and tighten up that Backend Engineer summary to highlight the API work."* You expect surgical precision - a new skill entry here, a rewritten paragraph there, everything else untouched.
+
+But that's not how AI-driven document editing usually works.
+
+Without structure, the same request might rewrite your entire skills section, drop half your job history, or generate a summary that sounds nothing like you. The problem isn't the AI's intent - it's the lack of **constraints**.
+
+**Real-time collaboration requires three things:**
+
+<FeatureBlock
+  title=""
+  features={[
+    {
+      title: "A Schema",
+      description: "Every resume field follows a predictable structure - skills, experience, projects - so the UI renders consistently no matter who edits what"
+    },
+    {
+      title: "Live Feedback",
+      description: "Changes appear as they happen. No waiting, no wondering if your edit landed, no surprises when the response finally arrives"
+    },
+    {
+      title: "Surgical Updates",
+      description: "Modifications target exactly what you specify without touching adjacent content - whether the AI makes them or you do"
+    }
+  ]}
+/>
+
+This is the story of building that system.
 
 <ExcalidrawDiagram
   src="/docs/project/resume-chatbot-simple.svg"
@@ -91,19 +119,28 @@ Incremental structured payloads that become valid after stabilization. The model
 
 **Example 1: Streaming a text value**
 
-The LLM streams character by character. The Vercel AI SDK accumulates these into partial objects:
+The LLM streams raw text character by character. The Vercel AI SDK accumulates these into partial objects, ensuring valid JSON structure at each step:
 
 ```javascript
-// Step 1: LLM streams -> AISDK receives partial object
+// Step 0: LLM streams raw text (no structure yet)
+// AI SDK receives: '{ "op": "repl'
+// The SDK buffers incomplete tokens and waits for valid JSON
+
+// Step 1: Partial operation name, incomplete object
+// AI SDK provides valid but incomplete structure
+{ "op": "repl" }
+
+// Step 2: Complete operation and path - patch can start applying
+// From here the UI can begin showing the update
 { "op": "replace", "path": "/summary" }
 
-// Step 2: Value starts arriving
+// Step 3: First character of value arrives
 { "op": "replace", "path": "/summary", "value": "S" }
 
-// Step 3: More characters arrive
+// Step 4: Partial word completion - user sees "Senior bac"
 { "op": "replace", "path": "/summary", "value": "Senior bac" }
 
-// Step 4: Complete value
+// Step 5: Complete value
 { "op": "replace", "path": "/summary", "value": "Senior backend engineer with 8+ years experience" }
 ```
 
@@ -112,28 +149,26 @@ The LLM streams character by character. The Vercel AI SDK accumulates these into
 When the value is an object, partial objects show incomplete nested properties:
 
 ```javascript
-// Step 1: Operation and path are clear
+// Step 0: LLM streams raw text
+// AI SDK receives: '{ "op": "add", "path": "/skills/-", "val'
+
+// Step 1: Partial operation name
 { "op": "add", "path": "/skills/-" }
 
-// Step 2: Object starts, only partial key available
+// Step 2: Object value starts, partial key
 { "op": "add", "path": "/skills/-", "value": { "nam": undefined } }
 
 // Step 3: Key completes, new value starts
 { "op": "add", "path": "/skills/-", "value": { "name": "Pytho", "level": undefined } }
 
-// Step 4: Both properties complete
+// Step 4: Partial word - "Pytho" becomes "Python"
+{ "op": "add", "path": "/skills/-", "value": { "name": "Python", "level": "int" } }
+
+// Step 5: Both properties complete
 { "op": "add", "path": "/skills/-", "value": { "name": "Python", "level": "intermediate" } }
 ```
 
-**Key insight:** The `stabilize()` function waits until required fields are present and valid before allowing the patch to apply. This prevents broken intermediate states from reaching the UI.
-
-This separation lets chat stay responsive while document mutation remains safe. For the full framework comparison, partial-object behavior details, and benchmark results, see [Streaming Modes and Framework Benchmarking](/work/resume-chatbot-streaming-modes-benchmarking).
-
-```mermaid
-flowchart LR
-  T["Text stream: chat rendering"] --> O["Object stream: tool-call contract"]
-  O --> P["Partial-object stream: incremental structured state"]
-```
+**Key insight:** The `stabilize()` function waits until required fields are present and valid before allowing the patch to apply. In Example 1, patching can begin at Step 2 once we have complete `op` and `path`. The AI SDK handles the raw text stream and ensures we always receive valid partial objects, even when the LLM output is incomplete.
 
 Related documentation:
 

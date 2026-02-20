@@ -143,23 +143,33 @@ const { src, alt, caption } = Astro.props;
 
 <style>
   .excalidraw-figure {
-    margin: 2rem 0;
+    margin: 2rem auto;
     padding: 1rem;
     border: 2px solid var(--nr-border-color);
     background: var(--color-base-100);
     box-shadow: var(--nr-shadow-sm);
     overflow: hidden;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   
   .excalidraw-container {
     width: 100%;
     max-width: 100%;
+    max-height: 500px;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   
   .excalidraw-container :global(svg) {
     width: 100%;
-    height: auto;
+    height: 100%;
+    max-height: 500px;
+    object-fit: contain;
     display: block;
   }
   
@@ -203,8 +213,7 @@ const { src, alt, caption } = Astro.props;
   }
   
   /* Dark mode - Excalidraw colors */
-  [data-theme="dark"],
-  [data-theme="neobrutalism-dark"] {
+  html[data-theme="neobrutalism-dark"] {
     --excalidraw-bg: #121212;
     --excalidraw-surface-high: #2e2d39;
     --excalidraw-surface-mid: #232329;
