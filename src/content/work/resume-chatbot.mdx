@@ -100,12 +100,12 @@ Text streams also limit our ability to provide rich, custom rendering. A spreads
 Yet text streaming has one clear advantage: you can follow along as the agent works. You see the edits happening in real-time, like watching a human collaborator type.
 
 <Callout type="tip" label="Core Challenge">
-  How can we have rich, custom rendering of a complex object, while also supporting intuitive streaming edits where we can follow along with the agent - in a collaborative way, like if it was a human making updates, as the agent moves their focus across the document and enters in or edits text?
+  How do we combine **rich custom rendering** with **streaming edits**? We want to watch the agent work in real-time, like a human collaborator typing, but we also need structured components - tables, code blocks, resumes - that plain text can't provide.
 </Callout>
 
 ### Object/Tool-Call Streams
 
-Machine-facing structured outputs for deterministic actions. When the model calls a tool like `addSkill`, the stream delivers a complete, validatable payload.
+Machine-facing structured outputs for deterministic actions. Frameworks like the Vercel AI SDK support `streamObject`, which can stream structured tool calls incrementally.
 
 ```json
 {
@@ -114,7 +114,9 @@ Machine-facing structured outputs for deterministic actions. When the model call
 }
 ```
 
-This is reliable, but the user waits until the entire object is ready before seeing any progress.
+The challenge: tools like `addSkill` are **schema-specific**. Each field pattern needs its own tool definition, so the approach doesn't transfer to other document types. A spreadsheet editor would need entirely different tools (`addColumn`, `updateCell`), and a code editor would need yet another set. This fragments prompting strategies and prevents reuse across domains.
+
+Even with streaming, the user still waits for each complete tool call before seeing updates - and the complexity of managing dozens of field-specific tools grows quickly.
 
 ### Partial-Object Streams
 
