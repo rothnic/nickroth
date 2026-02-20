@@ -6,19 +6,84 @@ interface Props {
 
 const { type = 'info', label } = Astro.props;
 
-const colorClass = {
-  tip: 'alert-success',
-  warning: 'alert-warning',
-  info: 'alert-info',
-  error: 'alert-error',
+const typeStyles = {
+  tip: {
+    borderColor: 'var(--color-success)',
+    bgLight: 'color-mix(in oklab, var(--color-success) 8%, transparent)',
+    bgDark: 'color-mix(in oklab, var(--color-success) 12%, transparent)',
+    labelColor: 'var(--color-success)',
+  },
+  warning: {
+    borderColor: 'var(--color-warning)',
+    bgLight: 'color-mix(in oklab, var(--color-warning) 8%, transparent)',
+    bgDark: 'color-mix(in oklab, var(--color-warning) 12%, transparent)',
+    labelColor: 'var(--color-warning)',
+  },
+  info: {
+    borderColor: 'var(--color-info)',
+    bgLight: 'color-mix(in oklab, var(--color-info) 8%, transparent)',
+    bgDark: 'color-mix(in oklab, var(--color-info) 12%, transparent)',
+    labelColor: 'var(--color-info)',
+  },
+  error: {
+    borderColor: 'var(--color-error)',
+    bgLight: 'color-mix(in oklab, var(--color-error) 8%, transparent)',
+    bgDark: 'color-mix(in oklab, var(--color-error) 12%, transparent)',
+    labelColor: 'var(--color-error)',
+  },
 }[type];
 ---
 
-<div role="note" class={`alert alert-soft alert-vertical ${colorClass}`}>
-  {label && (
-    <span class="font-mono text-xs font-bold uppercase tracking-widest">{label}</span>
-  )}
-  <div class="[&>p]:m-0">
+<div 
+  class="callout"
+  style={`
+    --callout-border: ${typeStyles.borderColor};
+    --callout-bg-light: ${typeStyles.bgLight};
+    --callout-bg-dark: ${typeStyles.bgDark};
+    --callout-label: ${typeStyles.labelColor};
+  `}
+  role="note"
+>
+  {label && <div class="callout-label">{label}</div>}
+  <div class="callout-content">
     <slot />
   </div>
 </div>
+
+<style>
+  .callout {
+    margin: 1.5rem 0;
+    padding: 1rem 1.25rem;
+    border-left: 4px solid var(--callout-border);
+    background: var(--callout-bg-light);
+    border-radius: 0 var(--nr-radius-sm) var(--nr-radius-sm) 0;
+  }
+
+  /* Dark mode background */
+  :global(html[data-theme="neobrutalism-dark"]) .callout {
+    background: var(--callout-bg-dark);
+  }
+
+  .callout-label {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--callout-label);
+    margin-bottom: 0.5rem;
+  }
+
+  .callout-content {
+    color: var(--color-base-content);
+    line-height: 1.6;
+  }
+
+  .callout-content :global(p) {
+    margin: 0;
+  }
+
+  .callout-content :global(p + p) {
+    margin-top: 0.5rem;
+  }
+</style>
