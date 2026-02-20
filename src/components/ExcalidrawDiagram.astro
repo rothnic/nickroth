@@ -14,7 +14,7 @@ const { src, alt, caption, height = '400px' } = Astro.props;
 ---
 
 <figure class="excalidraw-figure">
-  <div class="excalidraw-container" data-svg-url={src} aria-label={alt} data-lazy="true" style={`height: ${height};`}>
+  <div class="excalidraw-container p-3" data-svg-url={src} aria-label={alt} data-lazy="true" style={`height: ${height};`}>
     <!-- Placeholder shown while diagram is loading or off-screen -->
     <div class="excalidraw-placeholder" aria-hidden="true" style={`height: ${height};`}>
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -192,20 +192,18 @@ const { src, alt, caption, height = '400px' } = Astro.props;
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Hug the image width - let content determine width */
-    width: max-content;
+    width: min-content;
     max-width: 100%;
   }
-  
+
   .excalidraw-container {
-    /* Hug the image width */
     width: max-content;
     max-width: 100%;
-    /* height is set inline per-instance via the height prop */
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
+    height: fit-content;
   }
 
   /* Placeholder shown while diagram is off-screen or loading */
@@ -229,6 +227,7 @@ const { src, alt, caption, height = '400px' } = Astro.props;
   }
   
   .excalidraw-container :global(svg) {
+    max-height: 600px;
     width: auto;
     height: auto;
     max-width: 100%;
