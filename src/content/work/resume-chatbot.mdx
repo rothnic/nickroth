@@ -25,28 +25,38 @@ Imagine a user saying, "Please add Python to my skills and tighten the Senior Ba
 <div class="drift-compare" role="list" aria-label="Document drift failure modes">
   <article class="drift-item" role="listitem">
     <p class="drift-label">Partial context windows</p>
-    <p><strong>Expected:</strong> Small localized change with global context preserved.</p>
-    <p><strong>Observed:</strong> Edit applies to a slice and drops linked context.</p>
+    <div class="drift-content">
+      <p><strong>Expected:</strong> Small localized change with global context preserved.</p>
+      <p><strong>Observed:</strong> Edit applies to a slice and drops linked context.</p>
+    </div>
   </article>
   <article class="drift-item" role="listitem">
     <p class="drift-label">Ambiguous match targets</p>
-    <p><strong>Expected:</strong> Update the exact skills entry selected by the user.</p>
-    <p><strong>Observed:</strong> Similar text blocks match and the wrong node is rewritten.</p>
+    <div class="drift-content">
+      <p><strong>Expected:</strong> Update the exact skills entry selected by the user.</p>
+      <p><strong>Observed:</strong> Similar text blocks match and the wrong node is rewritten.</p>
+    </div>
   </article>
   <article class="drift-item" role="listitem">
     <p class="drift-label">Patch sequencing drift</p>
-    <p><strong>Expected:</strong> Multiple edits apply cleanly, preserving structure and spacing.</p>
-    <p><strong>Observed:</strong> Newline boundaries shift and list formatting degrades.</p>
+    <div class="drift-content">
+      <p><strong>Expected:</strong> Multiple edits apply cleanly, preserving structure and spacing.</p>
+      <p><strong>Observed:</strong> Newline boundaries shift and list formatting degrades.</p>
+    </div>
   </article>
   <article class="drift-item" role="listitem">
     <p class="drift-label">Unstable insertion behavior</p>
-    <p><strong>Expected:</strong> New text appears smoothly where it belongs.</p>
-    <p><strong>Observed:</strong> Partial output causes jumps, placeholders, and visual jitter.</p>
+    <div class="drift-content">
+      <p><strong>Expected:</strong> New text appears smoothly where it belongs.</p>
+      <p><strong>Observed:</strong> Partial output causes jumps, placeholders, and visual jitter.</p>
+    </div>
   </article>
   <article class="drift-item" role="listitem">
     <p class="drift-label">Rich-format constraints</p>
-    <p><strong>Expected:</strong> Typed fields stay validated and schema-safe.</p>
-    <p><strong>Observed:</strong> Markdown-first edits break typed structures downstream.</p>
+    <div class="drift-content">
+      <p><strong>Expected:</strong> Typed fields stay validated and schema-safe.</p>
+      <p><strong>Observed:</strong> Markdown-first edits break typed structures downstream.</p>
+    </div>
   </article>
 </div>
 
@@ -70,9 +80,86 @@ This pattern matters because each failure mode compounds when multiple users, mo
   ]}
 />
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> SOLUTION:</span> <span class="h2-title">Surgical JSON patching instead of full regeneration</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> STREAMING TYPES:</span> <span class="h2-title">Text vs object vs partial-object streams</span>
 
-Treat the resume as typed JSON, not a text blob. Every mutation is one explicit operation against one explicit path.
+When building AI-powered interfaces, not all streaming is the same. Each stream type has different reliability characteristics and UX implications.
+
+### Text Streams
+
+Human-facing response text for conversational flow. Great for chat, but insufficient when you need to modify structured data predictably.
+
+```
+User: "Add Python to my skills"
+AI (text stream): "I've added Python to your skills section..."
+```
+
+The AI describes what it *will* do, but hasn't actually done it yet. The user must wait for the full response, then hope the subsequent action matches the description.
+
+### Object/Tool-Call Streams
+
+Machine-facing structured outputs for deterministic actions. When the model calls a tool like `addSkill`, the stream delivers a complete, validatable payload.
+
+```json
+{
+  "tool": "addSkill",
+  "arguments": { "name": "Python", "level": "intermediate" }
+}
+```
+
+This is reliable, but the user waits until the entire object is ready before seeing any progress.
+
+### Partial-Object Streams
+
+Incremental structured payloads that become valid after stabilization. The model streams fragments of the object, and the client applies them as soon as they're complete enough to be safe.
+
+```json
+// Fragment 1: {"op": "add", "path": "/skills/-"}
+// Fragment 2: {"op": "add", "path": "/skills/-", "value": {"nam"}
+// Fragment 3: {"op": "add", "path": "/skills/-", "value": {"name": "Python", "level": "intermediate"}}
+```
+
+This separation lets chat stay responsive while document mutation remains safe. For the full framework comparison, partial-object behavior details, and benchmark results, see [Streaming Modes and Framework Benchmarking](/work/resume-chatbot-streaming-modes-benchmarking).
+
+```mermaid
+flowchart LR
+  T["Text stream: chat rendering"] --> O["Object stream: tool-call contract"]
+  O --> P["Partial-object stream: incremental structured state"]
+```
+
+Related documentation:
+
+- [LangChain streaming](https://js.langchain.com/docs/concepts/streaming/) and [structured output](https://js.langchain.com/docs/how_to/structured_output/)
+- [Mastra agents and streaming](https://mastra.ai/en/docs/agents/overview)
+- [Vercel AI SDK streamObject](https://ai-sdk.dev/docs/reference/ai-sdk-core/stream-object)
+- [BAML streaming and partial parsing](https://docs.boundaryml.com/)
+
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> TOOLING OPTIONS:</span> <span class="h2-title">Approaches to structured document edits</span>
+
+Given the problem and the streaming options available, we evaluated three approaches for implementing AI-driven document edits.
+
+### Option A: Schema-Specific Tool Surface
+
+Create many discrete tools like `addWorkItem`, `replaceSummary`, `updateSkill`, each with custom inputs tailored to the resume schema.
+
+**Strengths:** Easy to reason about for one narrow schema; type-safe by design.
+
+**Weaknesses:** Tool count grows with every new field pattern. Streaming contracts fragment across tools. Cross-document reuse collapses--each new document type needs its own complete tool suite.
+
+### Option B: Full-Object Structured Generation
+
+Stream or generate one complete typed object and replace the entire document state after validation.
+
+**Strengths:** Clean contract for final state and strong schema guardrails.
+
+**Weaknesses:** Poor incremental UX for large artifacts. Small edits (like adding one skill) still wait for the entire object to generate and validate. Reference implementations: [AI SDK generateObject](https://ai-sdk.dev/docs/reference/ai-sdk-core/generate-object), [Mastra structured output](https://mastra.ai/docs/agents/structured-output), [LangChain structured output](https://js.langchain.com/docs/how_to/structured_output/)
+
+### Option C: Streaming JSON Patch (Chosen)
+
+Emit RFC 6902 operations (`add`, `replace`, `remove`, `move`, `copy`, `test`) against stable JSON pointers. Treat the resume as typed JSON, not a text blob. Every mutation is one explicit operation against one explicit path.
+
+**Strengths:** Low-latency, path-scoped updates with deterministic apply semantics. One mutation model works across nested objects, arrays, and other structured documents. Enables true incremental rendering--users see changes as they arrive.
+
+**Core principles:**
 
 - **Immutable structure:** the document schema stays stable while values change.
 - **Atomic operations:** apply `add`, `replace`, `remove`, `move`, `copy`, and `test` from RFC 6902.
@@ -86,34 +173,13 @@ Treat the resume as typed JSON, not a text blob. Every mutation is one explicit 
 }
 ```
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> STREAM MODEL:</span> <span class="h2-title">Text vs object vs partial-object streams</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> OUR SOLUTION:</span> <span class="h2-title">Streaming JSON Patch with partial-object stabilization</span>
 
-Streaming is not one contract. Each stream type has a different reliability profile and different UX implications.
+We chose Option C--streaming JSON Patch with partial-object streams--because it uniquely combines the responsiveness of streaming with the precision of structured operations.
 
-- **Text stream:** human-facing response text for conversational flow.
-- **Object/tool-call stream:** machine-facing structured outputs for deterministic actions.
-- **Partial-object stream:** incremental structured payloads that become valid after stabilization.
+### The Data Model: JSON Resume as Stable Surface
 
-This separation lets chat stay responsive while document mutation remains safe.
-
-```mermaid
-flowchart LR
-  T["Text stream: chat rendering"] --> O["Object stream: tool-call contract"]
-  O --> P["Partial-object stream: incremental structured state"]
-```
-
-Related docs for each framework:
-
-- [LangChain streaming](https://js.langchain.com/docs/concepts/streaming/) and [structured output](https://js.langchain.com/docs/how_to/structured_output/)
-- [Mastra agents and streaming](https://mastra.ai/en/docs/agents/overview)
-- [Vercel AI SDK streamObject](https://ai-sdk.dev/docs/reference/ai-sdk-core/stream-object)
-- [BAML streaming and partial parsing](https://docs.boundaryml.com/)
-
-For the full framework comparison, partial-object behavior details, and benchmark results collected in charged-space, see [Streaming Modes and Framework Benchmarking](/work/resume-chatbot-streaming-modes-benchmarking).
-
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> DATA MODEL:</span> <span class="h2-title">JSON Resume as a stable mutation surface</span>
- 
-Resume data is stored as structured JSON (basics, work, education, skills, projects). Using the JSON Resume schema gives us a stable, well-known surface to target edits, reuse existing toolchains, and keep type boundaries explicit for validation.
+Resume data is stored as structured JSON following the JSON Resume schema (basics, work, education, skills, projects). Using this standard gives us a stable, well-known surface to target edits, reuse existing toolchains, and keep type boundaries explicit for validation.
 
 ```json
 {
@@ -127,7 +193,7 @@ Structured paths are unambiguous: a pointer like `/skills/0/name` refers to the 
 
 Finally, we validate mutations with a schema layer (Zod in our stack). Zod catches missing required fields, wrong types, and invalid shapes before a patch is applied, so the editor never writes malformed resume state.
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> TOOL LAYER:</span> <span class="h2-title">Nested streaming for low-latency structured edits</span>
+### The Tool Layer: Nested Streaming Architecture
 
 The chat agent handles intent and explanation. The patch tool handles state mutation. Inside that tool, a nested model streams patch objects.
 
@@ -153,28 +219,31 @@ for await (const partial of result.partialObjectStream) {
 }
 ```
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> TOOLING TRADEOFF:</span> <span class="h2-title">Custom schema tools vs JSON Patch</span>
+### Patch Operations: RFC 6902 Verbs
 
-### Option A - schema-specific tool surface
+Small, explicit verbs keep state transitions inspectable and testable.
 
-- **Shape:** many tools like `addWorkItem`, `replaceSummary`, `updateSkill`, each with custom inputs.
-- **Strength:** easy to reason about for one narrow schema.
-- **Failure mode:** tool count grows with every new field pattern, streaming contracts fragment, and cross-document reuse collapses.
+#### Add for Insertions
 
-### Option B - full-object structured generation
+```json
+{ "op": "add", "path": "/skills/-", "value": "Python" }
+```
 
-- **Shape:** stream or generate one full typed object and replace state after validation.
-- **Strength:** clean contract for final state and strong schema guardrails.
-- **Failure mode:** poor incremental UX for large artifacts, because small edits still wait on larger object completion.
-- **References:** [AI SDK generateObject](https://ai-sdk.dev/docs/reference/ai-sdk-core/generate-object), [Mastra structured output](https://mastra.ai/docs/agents/structured-output), [LangChain structured output](https://js.langchain.com/docs/how_to/structured_output/)
+#### Replace for Corrections
 
-### Option C (chosen) - streaming JSON Patch
+```json
+{ "op": "replace", "path": "/summary", "value": "Experienced backend engineer..." }
+```
 
-- **Shape:** emit RFC 6902 operations (`add`, `replace`, `remove`, `move`, `copy`, `test`) against stable pointers.
-- **Strength:** low-latency, path-scoped updates with deterministic apply semantics.
-- **Scales better:** one mutation model works across nested objects, arrays, and other structured documents.
+#### Remove for Deletions
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> PATCH MODEL:</span> <span class="h2-title">Operation shape and partial stabilization</span>
+```json
+{ "op": "remove", "path": "/work/2" }
+```
+
+Reference: [RFC 6902 JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902)
+
+### Partial Stabilization: Safety Before Apply
 
 Patch values can be any valid JSON payload, not only strings. In practice, we stabilize structure first (`op` + `path`), then stream value content as it arrives.
 
@@ -215,28 +284,7 @@ for await (const partial of partialObjectStream) {
 }
 ```
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> PROTOCOL:</span> <span class="h2-title">Map natural-language intent to RFC 6902 verbs</span>
-
-Small, explicit verbs keep state transitions inspectable and testable.
-
-### `add` for insertions
-```json
-{ "op": "add", "path": "/skills/-", "value": "Python" }
-```
-
-### `replace` for corrections
-```json
-{ "op": "replace", "path": "/summary", "value": "Experienced backend engineer..." }
-```
-
-### `remove` for deletions
-```json
-{ "op": "remove", "path": "/work/2" }
-```
-
-Reference: [RFC 6902 JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902)
-
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> STABILIZATION:</span> <span class="h2-title">Safety valve before UI apply</span>
+### Safety and Validation: Stabilization Layer
 
 The UI should never render broken partial frames. The stabilizer blocks invalid fragments until they meet minimum criteria.
 
@@ -252,7 +300,7 @@ function canApply(op: PatchOp) {
 }
 ```
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> CONCURRENCY:</span> <span class="h2-title">Path-isolated operations enable parallelism</span>
+### Concurrency: Path-Isolated Operations
 
 Independent paths can update in parallel without collisions.
 
@@ -265,17 +313,19 @@ Independent paths can update in parallel without collisions.
 
 This gives effectively O(1)-style conflict checks for unrelated paths, while history remains append-only through versioned document snapshots.
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> INTEGRATION:</span> <span class="h2-title">Split planning from patch translation</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> ARCHITECTURE:</span> <span class="h2-title">System design and implementation</span>
+
+### Split Planning from Patch Translation
 
 Separating intent from mutation reduces surprising edits, makes changes auditable, and keeps the mutation path deterministic.
 
-### Planner Model
+#### Planner Model
 
 - Understands natural language, extracts user intent and entities (intent: "add skill", entity: "Python").
 - Produces a semantic change description, not concrete ops, including target pointer hints and validation cues.
 - Handles ambiguity: asks clarifying questions or emits confidence/meta fields when unsure.
 
-### Translator Model
+#### Translator Model
 
 - Consumes semantic intent and resolves concrete RFC 6902 operations, array indices, and JSON Pointer paths.
 - Validates paths against schema and emits guarded operations (includes "test" ops when needed).
@@ -295,7 +345,7 @@ Translator output (RFC 6902):
 
 Benefits: clearer responsibilities, flexible NLU, deterministic mutation, and a complete audit trail for reviewers.
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> HYBRID INTERFACE:</span> <span class="h2-title">Document editor plus chat confirmation loop</span>
+### Hybrid Interface: Editor Plus Chat Confirmation
 
 The document pane renders structured state; the chat pane explains intent and confirms patch outcomes. This keeps UX conversational while preserving precise state transitions.
 
@@ -303,7 +353,7 @@ The document pane renders structured state; the chat pane explains intent and co
 - Patch-apply confirmations provide immediate trust signals.
 - The same operation stream powers both visual diff and persisted history.
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> ARCHITECTURE:</span> <span class="h2-title">Three synchronized channels with one clear fork</span>
+### System Architecture: Three Synchronized Channels
 
 ```mermaid
 flowchart LR
@@ -329,7 +379,7 @@ flowchart LR
 C2 -. synced state .- T5
 ```
 
-A short, concrete explanation of the diagram and how the channels cooperate. This architecture separates concerns: the Chat Stream keeps the UI responsive while the Patch Stream performs guarded, auditable mutations.
+This architecture separates concerns: the Chat Stream keeps the UI responsive while the Patch Stream performs guarded, auditable mutations.
 
 1. User sends a message to the Conversation Agent, which produces the Chat Stream for UI feedback (Chat Stream, Chat UI).
 2. The Chat Stream emits text while the planner evaluates intent in parallel (Chat Stream -> triggers patch pipeline).
@@ -339,13 +389,13 @@ A short, concrete explanation of the diagram and how the channels cooperate. Thi
 6. Once patches stabilize (complete op, path, and value), the Patch Apply step commits them to the Resume Database and the apply operation is recorded (Patch Apply -> Resume Database).
 7. The updated artifact state streams back to the Artifact UI and synchronizes with the Chat UI so conversation and edits stay aligned (Artifact UI and Chat UI stay in sync).
 
-### Why this architecture wins
+**Why this architecture wins:**
 
 - Keeps conversational latency low by streaming chat separately from mutation work.
 - Makes edits auditable and reversible by emitting small, path-scoped RFC 6902 operations.
 - Enables safe incremental updates: the UI sees progress early while the translator and validator enforce correctness.
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> DEMO:</span> <span class="h2-title">What it shows</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> DEMO:</span> <span class="h2-title">Progressive patches in action</span>
 
 The demo shows progressive RFC 6902 patches being applied without full-document replacement. The user sees conversational feedback and artifact updates in parallel.
 
