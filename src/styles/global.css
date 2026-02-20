@@ -1948,16 +1948,24 @@
 
 .prose-content .mermaid {
 	margin: 1.5rem 0;
-	padding: 0.75rem;
+	padding: 1rem;
 	border: 2px solid var(--nr-border-color);
 	background: var(--color-base-100);
 	box-shadow: var(--nr-shadow-sm);
 	overflow-x: auto;
+	/* Consistent minimum height for all diagrams */
+	min-height: 200px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .prose-content .mermaid svg {
 	max-width: 100%;
+	width: 100%;
 	height: auto;
+	/* Ensure SVG scales properly within container */
+	max-height: 400px;
 }
 
 .prose-content
