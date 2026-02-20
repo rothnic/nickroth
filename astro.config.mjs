@@ -2,29 +2,35 @@ import mdx from "@astrojs/mdx";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, fontProviders } from "astro/config";
 import rehypeMermaid from "rehype-mermaid";
-import expressiveCode from "astro-expressive-code";
+import rehypeExpressiveCode from "rehype-expressive-code";
 
 // https://astro.build/config
 export default defineConfig({
 	prefetch: true,
 
 	integrations: [
-		// IMPORTANT: expressiveCode must come BEFORE mdx()
-		expressiveCode({
-			themes: ['github-light', 'github-dark'],
-			styleOverrides: {
-				borderRadius: '0',
-				borderWidth: '2px',
-				borderColor: 'var(--nr-border-color, #000)',
-				codeFontFamily: 'var(--font-mono), ui-monospace, monospace',
-				codeFontSize: '0.875rem',
-				codeLineHeight: '1.6',
-			},
-			useThemedScrollbars: false,
-			useThemedSelectionColors: false,
-		}),
 		mdx({
+			// Disable default syntax highlighting so expressive-code can take over
+			syntaxHighlight: false,
 			rehypePlugins: [
+				// Process code blocks with expressive-code first
+				[
+					rehypeExpressiveCode,
+					{
+						themes: ['github-light', 'github-dark'],
+						styleOverrides: {
+							borderRadius: '0',
+							borderWidth: '2px',
+							borderColor: 'var(--nr-border-color, #000)',
+							codeFontFamily: 'var(--font-mono), ui-monospace, monospace',
+							codeFontSize: '0.875rem',
+							codeLineHeight: '1.6',
+						},
+						useThemedScrollbars: false,
+						useThemedSelectionColors: false,
+					},
+				],
+				// Then process mermaid diagrams
 				[
 					rehypeMermaid,
 					{
