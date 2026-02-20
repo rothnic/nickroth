@@ -2,32 +2,28 @@ import mdx from "@astrojs/mdx";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, fontProviders } from "astro/config";
 import rehypeMermaid from "rehype-mermaid";
-import remarkExpressiveCode from "remark-expressive-code";
+import expressiveCode from "astro-expressive-code";
 
 // https://astro.build/config
 export default defineConfig({
 	prefetch: true,
 
 	integrations: [
+		// IMPORTANT: expressiveCode must come BEFORE mdx()
+		expressiveCode({
+			themes: ['github-light', 'github-dark'],
+			styleOverrides: {
+				borderRadius: '0',
+				borderWidth: '2px',
+				borderColor: 'var(--nr-border-color, #000)',
+				codeFontFamily: 'var(--font-mono), ui-monospace, monospace',
+				codeFontSize: '0.875rem',
+				codeLineHeight: '1.6',
+			},
+			useThemedScrollbars: false,
+			useThemedSelectionColors: false,
+		}),
 		mdx({
-			remarkPlugins: [
-				[
-					remarkExpressiveCode,
-					{
-						themes: ['github-light', 'github-dark'],
-						styleOverrides: {
-							borderRadius: '0',
-							borderWidth: '2px',
-							borderColor: 'var(--nr-border-color, #000)',
-							codeFontFamily: 'var(--font-mono), ui-monospace, monospace',
-							codeFontSize: '0.875rem',
-							codeLineHeight: '1.6',
-						},
-						useThemedScrollbars: false,
-						useThemedSelectionColors: false,
-					},
-				],
-			],
 			rehypePlugins: [
 				[
 					rehypeMermaid,
@@ -46,20 +42,8 @@ export default defineConfig({
 		}),
 	],
 
-	markdown: {
-		syntaxHighlight: {
-			type: "shiki",
-			excludeLangs: ["mermaid", "math"],
-		},
-		shikiConfig: {
-			themes: {
-				light: "github-light",
-				dark: "github-dark",
-			},
-			wrap: true,
-			transformers: [],
-		},
-	},
+	// Note: expressive-code handles syntax highlighting automatically
+	// Do not set markdown.syntaxHighlight when using astro-expressive-code
 
 	output: "static",
 

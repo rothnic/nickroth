@@ -53,56 +53,6 @@ const isHomepage = currentPath === "/" || currentPath === "";
     <title>{title}</title>
     <ClientRouter />
     <script src="/src/scripts/theme.js" defer></script>
-    <script>
-      // Add copy buttons to code blocks
-      function initCopyButtons() {
-        const codeBlocks = document.querySelectorAll('.prose-content pre.astro-code');
-        
-        codeBlocks.forEach((pre) => {
-          // Skip if already has copy button
-          if (pre.querySelector('.copy-code-button')) return;
-          
-          const button = document.createElement('button');
-          button.className = 'copy-code-button';
-          button.textContent = 'Copy';
-          button.setAttribute('aria-label', 'Copy code to clipboard');
-          
-          button.addEventListener('click', async () => {
-            const code = pre.querySelector('code');
-            if (!code) return;
-            
-            try {
-              await navigator.clipboard.writeText(code.textContent || '');
-              button.textContent = 'Copied!';
-              button.classList.add('copied');
-              
-              setTimeout(() => {
-                button.textContent = 'Copy';
-                button.classList.remove('copied');
-              }, 2000);
-            } catch (err) {
-              console.error('Failed to copy:', err);
-              button.textContent = 'Failed';
-              setTimeout(() => {
-                button.textContent = 'Copy';
-              }, 2000);
-            }
-          });
-          
-          pre.appendChild(button);
-        });
-      }
-      
-      // Initialize on load
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initCopyButtons);
-      } else {
-        initCopyButtons();
-      }
-      
-      // Reinitialize on Astro page transitions
-      document.addEventListener('astro:page-load', initCopyButtons);
-    </script>
   </head>
   <script>
     import { initScrollAnimations } from "../scripts/animations.js";
