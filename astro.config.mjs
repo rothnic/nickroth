@@ -2,27 +2,32 @@ import mdx from "@astrojs/mdx";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, fontProviders } from "astro/config";
 import rehypeMermaid from "rehype-mermaid";
-import expressiveCode from "astro-expressive-code";
+import remarkExpressiveCode from "remark-expressive-code";
 
 // https://astro.build/config
 export default defineConfig({
 	prefetch: true,
 
 	integrations: [
-		expressiveCode({
-			themes: ['github-light', 'github-dark'],
-			styleOverrides: {
-				borderRadius: '0',
-				borderWidth: '2px',
-				borderColor: 'var(--nr-border-color, #000)',
-				codeFontFamily: 'var(--font-mono), ui-monospace, monospace',
-				codeFontSize: '0.875rem',
-				codeLineHeight: '1.6',
-			},
-			useThemedScrollbars: false,
-			useThemedSelectionColors: false,
-		}),
 		mdx({
+			remarkPlugins: [
+				[
+					remarkExpressiveCode,
+					{
+						themes: ['github-light', 'github-dark'],
+						styleOverrides: {
+							borderRadius: '0',
+							borderWidth: '2px',
+							borderColor: 'var(--nr-border-color, #000)',
+							codeFontFamily: 'var(--font-mono), ui-monospace, monospace',
+							codeFontSize: '0.875rem',
+							codeLineHeight: '1.6',
+						},
+						useThemedScrollbars: false,
+						useThemedSelectionColors: false,
+					},
+				],
+			],
 			rehypePlugins: [
 				[
 					rehypeMermaid,

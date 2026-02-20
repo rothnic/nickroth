@@ -32,9 +32,6 @@ importers:
       astro:
         specifier: ^5.16.7
         version: 5.16.7(@types/node@22.18.6)(jiti@2.6.1)(lightningcss@1.30.1)(rollup@4.52.2)(terser@5.44.1)(typescript@5.9.2)(yaml@2.8.1)
-      astro-expressive-code:
-        specifier: ^0.41.5
-        version: 0.41.5(astro@5.16.7(@types/node@22.18.6)(jiti@2.6.1)(lightningcss@1.30.1)(rollup@4.52.2)(terser@5.44.1)(typescript@5.9.2)(yaml@2.8.1))
       motion:
         specifier: ^12.23.22
         version: 12.23.22
@@ -44,6 +41,9 @@ importers:
       rehype-mermaid:
         specifier: ^3.0.0
         version: 3.0.0(playwright@1.57.0)
+      remark-expressive-code:
+        specifier: ^0.41.6
+        version: 0.41.6
       tailwindcss:
         specifier: ^4.1.14
         version: 4.1.14
@@ -543,17 +543,17 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@expressive-code/core@0.41.5':
-    resolution: {integrity: sha512-II5TEy5eOoXiqPwqtpSqwamUd7lZS3YH3ofxR1ZyQMmygqORZn8/7SzgfF8G0kB7uKCBzFZT6RgKgCuHcJuPpA==}
+  '@expressive-code/core@0.41.6':
+    resolution: {integrity: sha512-FvJQP+hG0jWi/FLBSmvHInDqWR7jNANp9PUDjdMqSshHb0y7sxx3vHuoOr6SgXjWw+MGLqorZyPQ0aAlHEok6g==}
 
-  '@expressive-code/plugin-frames@0.41.5':
-    resolution: {integrity: sha512-qU0cvAQGfRLX7XwGf3/+hqIVmAc/mNNTlqVLR0iBfJF6EKvtP3R7/uAlPrAxnxQxn0meTazCz8D+PsPyOpHKrQ==}
+  '@expressive-code/plugin-frames@0.41.6':
+    resolution: {integrity: sha512-d+hkSYXIQot6fmYnOmWAM+7TNWRv/dhfjMsNq+mIZz8Tb4mPHOcgcfZeEM5dV9TDL0ioQNvtcqQNuzA1sRPjxg==}
 
-  '@expressive-code/plugin-shiki@0.41.5':
-    resolution: {integrity: sha512-gw6OWvnmDmvcKJ5AZSzl2VkuixJMQ/zWSwPLFNzitqCa8aPfIFunb0K8IIOsE43LELgOWkie9lRFspOxwDVwrg==}
+  '@expressive-code/plugin-shiki@0.41.6':
+    resolution: {integrity: sha512-Y6zmKBmsIUtWTzdefqlzm/h9Zz0Rc4gNdt2GTIH7fhHH2I9+lDYCa27BDwuBhjqcos6uK81Aca9dLUC4wzN+ng==}
 
-  '@expressive-code/plugin-text-markers@0.41.5':
-    resolution: {integrity: sha512-0DSiTsjWFEz6/iuLOGNNy2GaeCW41OwnVJMKx1tS+XKeQxAL89UkZP3egWNzxjWNHNMzEv3ZWWWYqbonEQlv/Q==}
+  '@expressive-code/plugin-text-markers@0.41.6':
+    resolution: {integrity: sha512-PBFa1wGyYzRExMDzBmAWC6/kdfG1oLn4pLpBeTfIRrALPjcGA/59HP3e7q9J0Smk4pC7U+lWkA2LHR8FYV8U7Q==}
 
   '@fontsource/jetbrains-mono@5.2.8':
     resolution: {integrity: sha512-6w8/SG4kqvIMu7xd7wt6x3idn1Qux3p9N62s6G3rfldOUYHpWcc2FKrqf+Vo44jRvqWj2oAtTHrZXEP23oSKwQ==}
@@ -1656,11 +1656,6 @@ packages:
     resolution: {integrity: sha512-LElXdjswlqjWrPpJFg1Fx4wpkOCxj1TDHlSV4PlaRxHGWko024xICaa97ZkMfs6DRKlCguiAI+rbXv5GWwXIkg==}
     hasBin: true
 
-  astro-expressive-code@0.41.5:
-    resolution: {integrity: sha512-6jfABbPO0fkRD1ROAPBQtJR2p7gjbmk/GjfblOpo5Z7F+gwhL7+s8bEhLz9GdW10yfbn+gJvwEf7f9Lu2clh2A==}
-    peerDependencies:
-      astro: ^4.0.0-beta || ^5.0.0-beta || ^3.3.0
-
   astro@5.16.7:
     resolution: {integrity: sha512-Kfv7FKisFR+THvmojXWtvJGRCvQ4D9przguE9XdeUtS464ned6hvbgmyFDvPzyaNmDtkHGNpPwAQ9tgFcVqp+Q==}
     engines: {node: 18.20.8 || ^20.3.0 || >=22.0.0, npm: '>=9.6.5', pnpm: '>=7.1.0'}
@@ -2667,8 +2662,8 @@ packages:
     resolution: {integrity: sha512-JhFGDVJ7tmDJItKhYgJCGLOWjuK9vPxiXoUFLwLDc99NlmklilbiQJwoctZtt13+xMw91MCk/REan6MWHqDjyA==}
     engines: {node: '>=12.0.0'}
 
-  expressive-code@0.41.5:
-    resolution: {integrity: sha512-iXl9BgDogQgzgE/WRSrcyU8upOcRZrXPMiu6tegEHML57YLQ65S0E3/sjAXmMZy0GXoPs60s9jbwoMo/mdEQOg==}
+  expressive-code@0.41.6:
+    resolution: {integrity: sha512-W/5+IQbrpCIM5KGLjO35wlp1NCwDOOVQb+PAvzEoGkW1xjGM807ZGfBKptNWH6UECvt6qgmLyWolCMYKh7eQmA==}
 
   extend@3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
@@ -4482,9 +4477,6 @@ packages:
     resolution: {integrity: sha512-dYqgNSZbDwkaJ2ceRd9ojCGjBq+mOm9LmtXnAnEGyHhN/5R7iDW2TRw3h+o/jCFxus3P2LfWIIiwowAjANm7IA==}
     engines: {node: '>= 0.4'}
 
-  rehype-expressive-code@0.41.5:
-    resolution: {integrity: sha512-SzKJyu7heDpkt+XE/AqeWsYMSMocE/5mpJXD6CMgstqJHSE9bxGNcLp3zL9Wne3M5iBsS4GJyOD2syV77kRveA==}
-
   rehype-mermaid@3.0.0:
     resolution: {integrity: sha512-fxrD5E4Fa1WXUjmjNDvLOMT4XB1WaxcfycFIWiYU0yEMQhcTDElc9aDFnbDFRLxG1Cfo1I3mfD5kg4sjlWaB+Q==}
     peerDependencies:
@@ -4511,6 +4503,9 @@ packages:
   relateurl@0.2.7:
     resolution: {integrity: sha512-G08Dxvm4iDN3MLM0EsP62EDV9IuhXPR6blNz6Utcp7zyV3tr4HVNINt6MpaRWbxoOHT3Q7YN2P+jaHX8vUbgog==}
     engines: {node: '>= 0.10'}
+
+  remark-expressive-code@0.41.6:
+    resolution: {integrity: sha512-cnpA1YpkKK1gJVKcAXXUQMHdILdcOKjT/xu6NkOQqoVlSDkhWiKnXTg2eD+uulmW9ZZlO7kjy0xA//BUpOY4aQ==}
 
   remark-gfm@4.0.1:
     resolution: {integrity: sha512-1quofZ2RQ9EWdeN34S79+KExV1764+wCUGop5CPL1WGdD0ocPpu91lzPGbwWMECpEpd42kJGQwzRfyov9j4yNg==}
@@ -6173,7 +6168,7 @@ snapshots:
   '@esbuild/win32-x64@0.27.2':
     optional: true
 
-  '@expressive-code/core@0.41.5':
+  '@expressive-code/core@0.41.6':
     dependencies:
       '@ctrl/tinycolor': 4.2.0
       hast-util-select: 6.0.4
@@ -6185,18 +6180,18 @@ snapshots:
       unist-util-visit: 5.0.0
       unist-util-visit-parents: 6.0.2
 
-  '@expressive-code/plugin-frames@0.41.5':
+  '@expressive-code/plugin-frames@0.41.6':
     dependencies:
-      '@expressive-code/core': 0.41.5
+      '@expressive-code/core': 0.41.6
 
-  '@expressive-code/plugin-shiki@0.41.5':
+  '@expressive-code/plugin-shiki@0.41.6':
     dependencies:
-      '@expressive-code/core': 0.41.5
+      '@expressive-code/core': 0.41.6
       shiki: 3.21.0
 
-  '@expressive-code/plugin-text-markers@0.41.5':
+  '@expressive-code/plugin-text-markers@0.41.6':
     dependencies:
-      '@expressive-code/core': 0.41.5
+      '@expressive-code/core': 0.41.6
 
   '@fontsource/jetbrains-mono@5.2.8': {}
 
@@ -7505,11 +7500,6 @@ snapshots:
 
   astring@1.9.0: {}
 
-  astro-expressive-code@0.41.5(astro@5.16.7(@types/node@22.18.6)(jiti@2.6.1)(lightningcss@1.30.1)(rollup@4.52.2)(terser@5.44.1)(typescript@5.9.2)(yaml@2.8.1)):
-    dependencies:
-      astro: 5.16.7(@types/node@22.18.6)(jiti@2.6.1)(lightningcss@1.30.1)(rollup@4.52.2)(terser@5.44.1)(typescript@5.9.2)(yaml@2.8.1)
-      rehype-expressive-code: 0.41.5
-
   astro@5.16.7(@types/node@22.18.6)(jiti@2.6.1)(lightningcss@1.30.1)(rollup@4.52.2)(terser@5.44.1)(typescript@5.9.2)(yaml@2.8.1):
     dependencies:
       '@astrojs/compiler': 2.13.0
@@ -8747,12 +8737,12 @@ snapshots:
 
   expect-type@1.2.2: {}
 
-  expressive-code@0.41.5:
+  expressive-code@0.41.6:
     dependencies:
-      '@expressive-code/core': 0.41.5
-      '@expressive-code/plugin-frames': 0.41.5
-      '@expressive-code/plugin-shiki': 0.41.5
-      '@expressive-code/plugin-text-markers': 0.41.5
+      '@expressive-code/core': 0.41.6
+      '@expressive-code/plugin-frames': 0.41.6
+      '@expressive-code/plugin-shiki': 0.41.6
+      '@expressive-code/plugin-text-markers': 0.41.6
 
   extend@3.0.2: {}
 
@@ -10989,10 +10979,6 @@ snapshots:
       gopd: 1.2.0
       set-function-name: 2.0.2
 
-  rehype-expressive-code@0.41.5:
-    dependencies:
-      expressive-code: 0.41.5
-
   rehype-mermaid@3.0.0(playwright@1.57.0):
     dependencies:
       '@types/hast': 3.0.4
@@ -11041,6 +11027,10 @@ snapshots:
       unified: 11.0.5
 
   relateurl@0.2.7: {}
+
+  remark-expressive-code@0.41.6:
+    dependencies:
+      expressive-code: 0.41.6
 
   remark-gfm@4.0.1:
     dependencies:
