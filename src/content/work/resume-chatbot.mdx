@@ -113,11 +113,43 @@ This is reliable, but the user waits until the entire object is ready before see
 
 Incremental structured payloads that become valid after stabilization. The model streams fragments of the object, and the client applies them as soon as they're complete enough to be safe.
 
-```json
-// Fragment 1: {"op": "add", "path": "/skills/-"}
-// Fragment 2: {"op": "add", "path": "/skills/-", "value": {"nam"}
-// Fragment 3: {"op": "add", "path": "/skills/-", "value": {"name": "Python", "level": "intermediate"}}
+**Example 1: Streaming a text value**
+
+The LLM streams character by character. The Vercel AI SDK accumulates these into partial objects:
+
+```javascript
+// Step 1: LLM streams -> AISDK receives partial object
+{ "op": "replace", "path": "/summary" }
+
+// Step 2: Value starts arriving
+{ "op": "replace", "path": "/summary", "value": "S" }
+
+// Step 3: More characters arrive
+{ "op": "replace", "path": "/summary", "value": "Senior bac" }
+
+// Step 4: Complete value
+{ "op": "replace", "path": "/summary", "value": "Senior backend engineer with 8+ years experience" }
 ```
+
+**Example 2: Streaming an object value**
+
+When the value is an object, partial objects show incomplete nested properties:
+
+```javascript
+// Step 1: Operation and path are clear
+{ "op": "add", "path": "/skills/-" }
+
+// Step 2: Object starts, only partial key available
+{ "op": "add", "path": "/skills/-", "value": { "nam": undefined } }
+
+// Step 3: Key completes, new value starts
+{ "op": "add", "path": "/skills/-", "value": { "name": "Pytho", "level": undefined } }
+
+// Step 4: Both properties complete
+{ "op": "add", "path": "/skills/-", "value": { "name": "Python", "level": "intermediate" } }
+```
+
+**Key insight:** The `stabilize()` function waits until required fields are present and valid before allowing the patch to apply. This prevents broken intermediate states from reaching the UI.
 
 This separation lets chat stay responsive while document mutation remains safe. For the full framework comparison, partial-object behavior details, and benchmark results, see [Streaming Modes and Framework Benchmarking](/work/resume-chatbot-streaming-modes-benchmarking).
 
@@ -156,7 +188,7 @@ Stream or generate one complete typed object and replace the entire document sta
 
 ### Option C: Streaming JSON Patch (Chosen)
 
-Emit RFC 6902 operations (`add`, `replace`, `remove`, `move`, `copy`, `test`) against stable JSON pointers. Treat the resume as typed JSON, not a text blob. Every mutation is one explicit operation against one explicit path.
+Emit [RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902) operations (`add`, `replace`, `remove`, `move`, `copy`, `test`) against stable JSON pointers. Treat the resume as typed JSON, not a text blob. Every mutation is one explicit operation against one explicit path.
 
 **Strengths:** Low-latency, path-scoped updates with deterministic apply semantics. One mutation model works across nested objects, arrays, and other structured documents. Enables true incremental rendering--users see changes as they arrive.
 
@@ -219,6 +251,49 @@ for await (const partial of result.partialObjectStream) {
   emitDelta(document)
 }
 ```
+
+### Schema Architecture: Tool vs Patch Object
+
+The streaming tool layer uses two distinct schemas working in coordination: the outer **tool schema** defines how the resume data is patched, while the inner **patch object schema** defines the structure of each individual patch operation.
+
+#### Tool Schema (Outer Layer)
+
+The `patchResume` tool schema defines the tool's interface - the input it expects from the main chat agent:
+
+```typescript
+// Schema for the tool call itself
+const patchResumeToolSchema = z.object({
+  explanation: z.string().describe('Reason for the change'),
+  patch: z.object({
+    operations: z.array(patchOperationSchema)
+      .describe('JSON Patch operations to apply')
+  })
+});
+```
+
+This outer schema stays relatively simple. It wraps the patch operations and provides metadata (explanation) for the UI to display.
+
+#### Patch Object Schema (Inner Layer)
+
+Inside the tool, each individual patch operation follows a stricter, nested schema that the AI SDK streams incrementally:
+
+```typescript
+// Schema for each individual patch operation
+const patchOperationSchema = z.object({
+  op: z.enum(['add', 'replace', 'remove']),
+  path: z.string().describe('JSON Pointer path (RFC 6902)'),
+  value: z.union([
+    z.string(),
+    z.number(),
+    z.boolean(),
+    z.array(z.string()),
+    z.object({}).passthrough(), // Nested objects for complex values
+    z.null()
+  ]).optional()
+});
+```
+
+The key difference: the **tool schema** defines what the tool *receives* (structured data), while the **patch schema** defines what gets *streamed* (partial objects that stabilize into valid operations). The streaming layer doesn't see the tool schema - it sees the patch operations being built token by token until they form complete, valid JSON Patch operations.
 
 ### Patch Operations: RFC 6902 Verbs
 

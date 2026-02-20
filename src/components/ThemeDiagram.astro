@@ -30,7 +30,7 @@ const { lightSrc, darkSrc, alt, caption } = Astro.props;
   )}
 </figure>
 
-<style>
+<style is:global>
   .diagram-container {
     margin: 2rem 0;
     padding: 1rem;
@@ -50,24 +50,24 @@ const { lightSrc, darkSrc, alt, caption } = Astro.props;
     display: block;
   }
 
-  /* Show light by default */
+  /* Show light by default, hide dark */
   .diagram-light {
-    display: block;
+    display: block !important;
   }
 
   .diagram-dark {
-    display: none;
+    display: none !important;
   }
 
-  /* Show dark in dark mode */
-  :global([data-theme="neobrutalism-dark"]) .diagram-light,
-  :global([data-theme="dark"]) .diagram-light {
-    display: none;
+  /* Show dark in dark mode - hide light */
+  [data-theme="neobrutalism-dark"] .diagram-light,
+  [data-theme="dark"] .diagram-light {
+    display: none !important;
   }
 
-  :global([data-theme="neobrutalism-dark"]) .diagram-dark,
-  :global([data-theme="dark"]) .diagram-dark {
-    display: block;
+  [data-theme="neobrutalism-dark"] .diagram-dark,
+  [data-theme="dark"] .diagram-dark {
+    display: block !important;
   }
 
   .diagram-caption {
