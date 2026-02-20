@@ -28,6 +28,7 @@ export default defineConfig({
 						},
 						useThemedScrollbars: false,
 						useThemedSelectionColors: false,
+						wrap: true,
 					},
 				],
 				// Then process mermaid diagrams
