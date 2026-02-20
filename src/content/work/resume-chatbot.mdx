@@ -91,14 +91,15 @@ When building AI-powered interfaces, not all streaming is the same. Each stream 
 
 ### Text Streams
 
-Human-facing response text for conversational flow. Great for chat, but insufficient when you need to modify structured data predictably.
+Human-facing response text for conversational flow. Great for chat, but problematic for structured edits at scale. A large sequence of edits often results in accidentally overwriting information or duplicating headings - especially as the context grows for the primary agent.
 
-```
-User: "Add Python to my skills"
-AI (text stream): "I've added Python to your skills section..."
-```
+Text streams also limit our ability to provide rich, custom rendering. A spreadsheet rendered as Markdown is difficult to edit precisely. An agent can't practically make small edits to a Markdown table cell without regenerating the entire table.
 
-The AI describes what it *will* do, but hasn't actually done it yet. The user must wait for the full response, then hope the subsequent action matches the description.
+Yet text streaming has one clear advantage: you can follow along as the agent works. You see the edits happening in real-time, like watching a human collaborator type.
+
+:::tip[The Core Challenge]
+How can we have rich, custom rendering of a complex object, while also supporting intuitive streaming edits where we can follow along with the agent - in a collaborative way, like if it was a human making updates, as the agent moves their focus across the document and enters in or edits text?
+:::
 
 ### Object/Tool-Call Streams
 
@@ -122,22 +123,22 @@ Incremental structured payloads that become valid after stabilization. The model
 The LLM streams raw text character by character. The Vercel AI SDK accumulates these into partial objects, ensuring valid JSON structure at each step:
 
 ```javascript
-// Step 0: LLM streams raw text (no structure yet)
-// AI SDK receives: '{ "op": "repl'
-// The SDK buffers incomplete tokens and waits for valid JSON
+// Step 0: LLM streams raw incomplete text - no valid JSON yet
+// Raw LLM output: '{ "op": "repl'
+// The LLM doesn't emit closing braces until the token is complete.
+// The AI SDK buffers these fragments and reconstructs valid partial objects.
 
-// Step 1: Partial operation name, incomplete object
-// AI SDK provides valid but incomplete structure
+// Step 1: Partial operation name - AI SDK produces valid but incomplete structure
 { "op": "repl" }
 
-// Step 2: Complete operation and path - patch can start applying
-// From here the UI can begin showing the update
+// Step 2: Complete op + path - this is where we can start applying the patch
+// The stabilizer gates on complete op and path before allowing apply
 { "op": "replace", "path": "/summary" }
 
 // Step 3: First character of value arrives
 { "op": "replace", "path": "/summary", "value": "S" }
 
-// Step 4: Partial word completion - user sees "Senior bac"
+// Step 4: Value builds character by character - user sees "Senior bac" live
 { "op": "replace", "path": "/summary", "value": "Senior bac" }
 
 // Step 5: Complete value
@@ -149,22 +150,23 @@ The LLM streams raw text character by character. The Vercel AI SDK accumulates t
 When the value is an object, partial objects show incomplete nested properties:
 
 ```javascript
-// Step 0: LLM streams raw text
-// AI SDK receives: '{ "op": "add", "path": "/skills/-", "val'
+// Step 0: LLM streams raw incomplete text
+// Raw LLM output: '{ "op": "add", "path": "/skills/-", "val'
+// Again - no closing braces, the AI SDK reconstructs structure as tokens arrive
 
-// Step 1: Partial operation name
+// Step 1: Partial operation name - apply still blocked
 { "op": "add", "path": "/skills/-" }
 
-// Step 2: Object value starts, partial key
+// Step 2: Object value starts, partial key - still blocked (incomplete structure)
 { "op": "add", "path": "/skills/-", "value": { "nam": undefined } }
 
-// Step 3: Key completes, new value starts
+// Step 3: Key completes, second property starts
 { "op": "add", "path": "/skills/-", "value": { "name": "Pytho", "level": undefined } }
 
-// Step 4: Partial word - "Pytho" becomes "Python"
-{ "op": "add", "path": "/skills/-", "value": { "name": "Python", "level": "int" } }
+// Step 4: Both keys present, values streaming in
+{ "op": "add", "path": "/skills/-", "value": { "name": "Python", "level": "intermedia" } }
 
-// Step 5: Both properties complete
+// Step 5: Both properties complete - patch applies
 { "op": "add", "path": "/skills/-", "value": { "name": "Python", "level": "intermediate" } }
 ```
 
