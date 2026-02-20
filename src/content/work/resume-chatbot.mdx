@@ -95,12 +95,12 @@ When building AI-powered interfaces, not all streaming is the same. Each stream 
 
 Human-facing response text for conversational flow. Great for chat, but problematic for structured edits at scale. A large sequence of edits often results in accidentally overwriting information or duplicating headings - especially as the context grows for the primary agent.
 
-Text streams also limit our ability to provide rich, custom rendering. A spreadsheet rendered as Markdown is difficult to edit precisely. An agent can't practically make small edits to a Markdown table cell without regenerating the entire table.
+Text streams also limit the ability to provide rich, custom rendering. A spreadsheet rendered as Markdown is difficult to edit precisely. An agent can't practically make small edits to a Markdown table cell without regenerating the entire table.
 
 Yet text streaming has one clear advantage: you can follow along as the agent works. You see the edits happening in real-time, like watching a human collaborator type.
 
 <Callout type="tip" label="Core Challenge">
-  How do we combine **rich custom rendering** with **streaming edits**? We want to watch the agent work in real-time, like a human collaborator typing, but we also need structured components - tables, code blocks, resumes - that plain text can't provide.
+  How to combine **rich custom rendering** with **streaming edits**? The goal is to watch the agent work in real-time, like a human collaborator typing, but structured components - tables, code blocks, resumes - are also needed that plain text can't provide.
 </Callout>
 
 ### Object/Tool-Call Streams
@@ -124,15 +124,15 @@ The Vercel AI SDK's `streamObject` can return objects in two modes:
 
 **Complete objects**: Wait for the entire object to validate against your schema before emitting. The user sees nothing until the full object is ready.
 
-**Partial objects** (what we use): Receive `DeepPartial<YourSchema>` as tokens arrive. Each emission is valid JSON but may not satisfy your schema yet. You decide when it's "complete enough" to use.
+**Partial objects** (the approach used here): Receive `DeepPartial<YourSchema>` as tokens arrive. Each emission is valid JSON but may not satisfy your schema yet. You decide when it's "complete enough" to use.
 
 ```ts
-// Using partial object stream - we get updates as they arrive
+// Using partial object stream - updates arrive as they are generated
 const result = streamObject({ model, schema: patchSchema, prompt });
 
 for await (const partial of result.partialObjectStream) {
   // partial is DeepPartial<PatchOperation> - valid JSON, but may not match schema yet
-  // Our job: decide when it's safe to apply
+  // The task: decide when it's safe to apply
   if (isCompleteEnough(partial)) {
     applyPatch(document, partial);
   }
@@ -162,7 +162,7 @@ The LLM emits raw text tokens. The AI SDK accumulates them and parses into valid
 { "op": "replace", "path": "/summary", "value": "Senior backend engineer with 8+ years experience" }
 ```
 
-**Key insight**: The AI SDK guarantees valid JSON at each step, but it doesn't guarantee the object matches your schema. That's your responsibility. In Example 1 above, we might decide that having complete `op` and `path` is "complete enough" to start showing the edit in progress, even before the full `value` arrives.
+**Key insight**: The AI SDK guarantees valid JSON at each step, but it doesn't guarantee the object matches your schema. That's the implementation's responsibility. In Example 1 above, having complete `op` and `path` might be "complete enough" to start showing the edit in progress, even before the full `value` arrives.
 
 **Streaming object values** works the same way - nested properties fill in as tokens arrive:
 
@@ -192,7 +192,7 @@ Related documentation:
 
 ## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> TOOLING OPTIONS:</span> <span class="h2-title">Approaches to structured document edits</span>
 
-Given the problem and the streaming options available, we evaluated three approaches for implementing AI-driven document edits.
+Given the problem and the streaming options available, three approaches were evaluated for implementing AI-driven document edits.
 
 ### Option A: Schema-Specific Tool Surface
 
@@ -250,13 +250,13 @@ Emit [RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902) operations (`add`
 }
 ```
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> OUR SOLUTION:</span> <span class="h2-title">Streaming JSON Patch with partial-object stabilization</span>
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> SOLUTION:</span> <span class="h2-title">Streaming JSON Patch with partial-object stabilization</span>
 
-We chose Option C--streaming JSON Patch with partial-object streams--because it uniquely combines the responsiveness of streaming with the precision of structured operations.
+This implementation uses Option C--streaming JSON Patch with partial-object streams--because it uniquely combines the responsiveness of streaming with the precision of structured operations.
 
 ### The Data Model: JSON Resume as Stable Surface
 
-We chose [JSON Resume](https://jsonresume.org/) as our data format - an open-source standard for representing resume data as structured JSON. This format provides a simple yet extensible schema that covers all essential resume sections: basics, work experience, education, skills, projects, and more.
+[JSON Resume](https://jsonresume.org/) serves as the data format - an open-source standard for representing resume data as structured JSON. This format provides a simple yet extensible schema that covers all essential resume sections: basics, work experience, education, skills, projects, and more.
 
 **Why JSON Resume:**
 
@@ -266,7 +266,7 @@ We chose [JSON Resume](https://jsonresume.org/) as our data format - an open-sou
 - **Extensible design** - Custom properties can be added for domain-specific needs while maintaining compatibility
 - **Portable format** - Plain JSON enables easy data migration and interoperability
 
-In practice, we use the JSON Resume schema for data storage and validation (via Zod), but built a custom renderer to match our application's visual style rather than using off-the-shelf HTML themes. This gives us complete control over the presentation while benefiting from the standard's structured data model.
+In practice, the JSON Resume schema is used for data storage and validation (via Zod), but a custom renderer was built to match the application's visual style rather than using off-the-shelf HTML themes. This provides complete control over the presentation while benefiting from the standard's structured data model.
 
 ```json
 {
@@ -307,7 +307,7 @@ In practice, we use the JSON Resume schema for data storage and validation (via 
 
 Structured paths are unambiguous: a pointer like `/skills/0/name` refers to the first skill's name. Contrastingly, asking "find JavaScript in the text" can hit many places, match partial phrases, or pick the wrong list. With JSON Pointers and RFC 6902 patches we target exact keys and array indices.
 
-Finally, we validate mutations with a schema layer (Zod in our stack). Zod catches missing required fields, wrong types, and invalid shapes before a patch is applied, so the editor never writes malformed resume state.
+Finally, mutations are validated with a schema layer (Zod in this stack). Zod catches missing required fields, wrong types, and invalid shapes before a patch is applied, so the editor never writes malformed resume state.
 
 ### The Tool Layer: Nested Streaming Architecture
 
@@ -379,7 +379,7 @@ const patchOperationSchema = z.object({
 The key difference: the **tool schema** defines what the tool *receives* (structured data), while the **patch schema** defines what gets *streamed* (partial objects that stabilize into valid operations). The streaming layer doesn't see the tool schema - it sees the patch operations being built token by token until they form complete, valid JSON Patch operations.
 
 <Callout type="tip" label="Optimization Note">
-  The `z.union` for `value` could be refined per-operation. For `remove` operations, `value` is unused. For `add`/`replace`, the value type depends on the target path. We could use discriminated unions keyed on `op`, but that increases schema complexity. Balance simplicity against precision based on your validation needs.
+  The `z.union` for `value` could be refined per-operation. For `remove` operations, `value` is unused. For `add`/`replace`, the value type depends on the target path. One could use discriminated unions keyed on `op`, but that increases schema complexity. Balance simplicity against precision based on validation needs.
 </Callout>
 
 ### Patch Operations: RFC 6902 Verbs
@@ -408,7 +408,7 @@ Reference: [RFC 6902 JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902)
 
 ### Partial Stabilization: Safety Before Apply
 
-Patch values can be any valid JSON payload, not only strings. In practice, we stabilize structure first (`op` + `path`), then stream value content as it arrives.
+Patch values can be any valid JSON payload, not only strings. In practice, the structure is stabilized first (`op` + `path`), then value content streams as it arrives.
 
 ```json
 {
@@ -525,45 +525,19 @@ The document pane renders structured state; the chat pane explains intent and co
 
 ### System Architecture: Three Synchronized Channels
 
-```mermaid
-flowchart LR
-  subgraph CHAT[Chat Stream]
-    U[User Request] --> A[Conversation Agent]
-    A --> C1[Chat Stream]
-    C1 --> C2[Chat UI]
-  end
-
-  subgraph PATCH[Patch Stream]
-    T1[Semantic Tool Call]
-    T2[Patch LLM]
-    T3[Patch Tool]
-    T4[Patch Apply]
-    T5[Artifact UI]
-    T6[(Resume Database)]
-
-    T1 --> T2 --> T3 --> T4 --> T5
-    T4 --> T6
-  end
-
-  C1 -. triggers patch pipeline .-> T1
-C2 -. synced state .- T5
-```
-
 This architecture separates concerns: the Chat Stream keeps the UI responsive while the Patch Stream performs guarded, auditable mutations.
 
-1. User sends a message to the Conversation Agent, which produces the Chat Stream for UI feedback (Chat Stream, Chat UI).
-2. The Chat Stream emits text while the planner evaluates intent in parallel (Chat Stream -> triggers patch pipeline).
-3. When intent requires a document change, the planner emits a Semantic Tool Call that starts the Patch Stream (Semantic Tool Call).
-4. The Patch Tool immediately loads the document and streams a snapshot to the Artifact UI so users see the current state (Patch Tool -> Artifact UI).
-5. A nested Patch LLM generates RFC 6902 patch ops incrementally, sending Partial-Object updates (Patch LLM -> Patch Tool).
-6. Once patches stabilize (complete op, path, and value), the Patch Apply step commits them to the Resume Database and the apply operation is recorded (Patch Apply -> Resume Database).
-7. The updated artifact state streams back to the Artifact UI and synchronizes with the Chat UI so conversation and edits stay aligned (Artifact UI and Chat UI stay in sync).
+1. User sends a message to the Conversation Agent, which produces the Chat Stream for UI feedback.
+2. The Chat Stream emits text while the planner evaluates intent in parallel.
+3. When intent requires a document change, the planner emits a Semantic Tool Call that starts the Patch Stream.
+4. The Patch Tool immediately loads the document and streams a snapshot to the Artifact UI so users see the current state.
+5. A nested Patch LLM generates RFC 6902 patch ops incrementally, sending Partial-Object updates.
+6. Once patches stabilize, the Patch Apply step commits them to the Resume Database.
+7. The updated artifact state streams back to the Artifact UI and synchronizes with the Chat UI.
 
-**Why this architecture wins:**
+**Key benefits:** Low conversational latency, auditable edits via small RFC 6902 operations, and safe incremental updates with validation.
 
-- Keeps conversational latency low by streaming chat separately from mutation work.
-- Makes edits auditable and reversible by emitting small, path-scoped RFC 6902 operations.
-- Enables safe incremental updates: the UI sees progress early while the translator and validator enforce correctness.
+
 
 ## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> DEMO:</span> <span class="h2-title">Progressive patches in action</span>
 
@@ -578,25 +552,18 @@ The demo shows progressive RFC 6902 patches being applied without full-document 
 
 ## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> TESTING:</span> <span class="h2-title">Strategy and results</span>
 
-Testing is split into deterministic model mocks and schema assertions.
+Testing AI-driven systems requires two complementary approaches. First, deterministic mocks test UI components' ability to process streaming patches in a controlled environment. Second, end-to-end tests with live LLMs verify that given a user command to make a change, the agent can achieve the desired result with its prompting.
 
-- **Deterministic mocks:** remove network/model variability from core checks.
-- **Schema assertions:** verify final JSON correctness without timing fragility.
+Eval frameworks like [Langfuse](https://langfuse.com/) and [Evalite](https://evalite.dev/) add framework-agnostic evaluation capabilities. These might include LLM-as-judge combined with deterministic checks - like verifying structured data exists in the resume where expected after processing a request.
 
-Results:
+By leveraging API mocks, test execution time for streaming patches dropped from `28s` to `9s`.
 
-<ul class="comparable-list">
-  <li><span class="metric-label metric-before">Before</span> <span class="metric-value metric-before">~50%</span> stability, <span class="stat-callout stat-negative">28.8s</span> avg per test</li>
-  <li><span class="metric-label metric-after">After</span> <span class="metric-value metric-after">100%</span> stability, <span class="stat-callout stat-positive">9.2s</span> avg per test</li>
-</ul>
-
-For full harness details, see [Deterministic Testing for AI Streaming](/work/resume-chatbot-testing-strategy).
+See the [testing strategy document](/work/resume-chatbot-testing-strategy) for implementation details.
 
 ## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> HANDOFF:</span> <span class="h2-title">Deep dives and next reading</span>
 
 - [Streaming JSON Patching Architecture](/work/resume-chatbot-streaming-architecture) - Detailed pipeline internals, lifecycle of patch operations, and failure handling patterns.
 - [Deterministic Testing for AI Streaming](/work/resume-chatbot-testing-strategy) - Mock-provider approach for repeatable streaming tests and measurable reliability results.
-- [Streaming Modes and Framework Benchmarking](/work/resume-chatbot-streaming-modes-benchmarking) - Comparative analysis of streaming modes across frameworks with performance tradeoffs.
 - [Streaming Modes and Framework Benchmarking](/work/resume-chatbot-streaming-modes-benchmarking) - Comparative analysis of streaming modes across frameworks with performance tradeoffs.
 
 ## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> NEXT STEPS:</span> <span class="h2-title">Generative design tools for rapid UX iteration</span>

@@ -154,8 +154,11 @@ const {
         const url = wrapper.dataset.videoUrl;
         if (!url) return;
 
+        // Add autoplay parameter to Google Drive embeds
+        const autoplayUrl = url.includes('?') ? `${url}&autoplay=1` : `${url}?autoplay=1`;
+
         const iframe = document.createElement('iframe');
-        iframe.src = url;
+        iframe.src = autoplayUrl;
         const posterImg = poster.querySelector('img') as HTMLImageElement | null;
         iframe.title = posterImg?.alt || 'Embedded video';
         iframe.setAttribute('allow', 'autoplay; fullscreen; encrypted-media; picture-in-picture');
@@ -173,6 +176,16 @@ const {
         embed.appendChild(iframe);
         wrapper.classList.add('playing');
         embed.setAttribute('aria-hidden', 'false');
+
+        // Attempt to trigger play programmatically after iframe loads
+        iframe.onload = () => {
+          // Try to post play message to the iframe content
+          try {
+            iframe.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+          } catch (e) {
+            // Silent fail if cross-origin restrictions prevent postMessage
+          }
+        };
       };
 
       poster.addEventListener('click', activate);
