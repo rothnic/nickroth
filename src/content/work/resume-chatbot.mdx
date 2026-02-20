@@ -56,7 +56,7 @@ This is the story of building that system.
   src="/docs/project/resume-chatbot-simple.svg"
   alt="Resume chatbot concept diagram showing user request flowing through AI processing to structured resume output"
   caption="High-level concept: Natural language requests are translated into precise, structured document mutations"
-  height="600px"
+  height="450px"
 />
 
 **Core challenges with AI-driven document edits:**
@@ -482,7 +482,7 @@ This gives effectively O(1)-style conflict checks for unrelated paths, while his
   src="/docs/project/resume-chatbot-architecture.svg"
   alt="System architecture diagram showing end-to-end data flow from user request through chat agent, patch tool, and database"
   caption="High-level system architecture: User request flows through the Chat Stream for immediate feedback while the Patch Stream handles document mutations via streaming JSON patches."
-  height="600px"
+  height="700px"
 />
 
 ### Split Planning from Patch Translation
@@ -618,6 +618,8 @@ To explore this UX, I use generative design tools like **Figma Make**, **Google 
 - **v0.dev** - Most opinionated, uses shadcn/ui components and Next.js patterns. Produces the most usable code if you want to adapt components directly.
 - **Google Stitch** - Best for whole-application iterations. Uses Gemini Nano to generate visual representations quickly, then converts to HTML that agents can integrate. Great for exploring multiple directions fast.
 - **Figma Make** - Balanced approach for component-to-page level design with interactive behaviors.
+
+For a deeper comparison of these tools and how to choose the right one for your workflow, see [AI-Assisted Design: From Prompt to Production](/work/ai-assisted-design).
 
 **The workflow:** Generate → Test → Iterate → Export reference code → Rebuild properly. I rarely use generated code directly, but having a working reference accelerates implementation significantly.
 
