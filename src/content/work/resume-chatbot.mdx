@@ -8,13 +8,14 @@ featured: true
 tags: ["AI", "Next.js", "Streaming", "Real-time"]
 image: "../../assets/images/projects/resume-chatbot.png"
 category: "AI APPLICATION"
-impact: "REAL-TIME COLLABORATIVE EDITING WITH AI-POWERED RESUME OPTIMIZATION."
+impact: "REAL-TIME COLLABORATIVE EDITING WITH AI-POWERD RESUME OPTIMIZATION."
 stack: ["NEXT.JS", "VERCEL AI SDK", "DRIZZLE ORM", "+4"]
 roleCategory: "FULL-STACK DEVELOPER"
 ---
 
 import LazyVideo from '../../components/LazyVideo.astro';
 import FeatureBlock from '../../components/FeatureBlock.astro';
+import ThemeDiagram from '../../components/ThemeDiagram.astro';
 
 # AI-Powered Resume Builder with Real-Time Streaming
 
@@ -314,6 +315,13 @@ Independent paths can update in parallel without collisions.
 This gives effectively O(1)-style conflict checks for unrelated paths, while history remains append-only through versioned document snapshots.
 
 ## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> ARCHITECTURE:</span> <span class="h2-title">System design and implementation</span>
+
+<ThemeDiagram
+  lightSrc="/docs/project/resume-chatbot-diagram-light.svg"
+  darkSrc="/docs/project/resume-chatbot-diagram-dark.svg"
+  alt="System architecture diagram showing end-to-end data flow from user request through chat agent, patch tool, and database"
+  caption="High-level system architecture: User request flows through the Chat Stream for immediate feedback while the Patch Stream handles document mutations via streaming JSON patches."
+/>
 
 ### Split Planning from Patch Translation
 

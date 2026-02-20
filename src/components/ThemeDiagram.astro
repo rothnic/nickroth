@@ -1,0 +1,80 @@
+---
+// Theme-aware diagram component that switches between light/dark variants
+export interface Props {
+  lightSrc: string;
+  darkSrc: string;
+  alt: string;
+  caption?: string;
+}
+
+const { lightSrc, darkSrc, alt, caption } = Astro.props;
+---
+
+<figure class="diagram-container">
+  <div class="diagram-wrapper">
+    <img 
+      src={lightSrc} 
+      alt={alt}
+      class="diagram-light"
+      loading="lazy"
+    />
+    <img 
+      src={darkSrc} 
+      alt={alt}
+      class="diagram-dark"
+      loading="lazy"
+    />
+  </div>
+  {caption && (
+    <figcaption class="diagram-caption">{caption}</figcaption>
+  )}
+</figure>
+
+<style>
+  .diagram-container {
+    margin: 2rem 0;
+    padding: 1rem;
+    border: 2px solid var(--nr-border-color);
+    background: var(--color-base-100);
+    box-shadow: var(--nr-shadow-sm);
+  }
+
+  .diagram-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .diagram-wrapper img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Show light by default */
+  .diagram-light {
+    display: block;
+  }
+
+  .diagram-dark {
+    display: none;
+  }
+
+  /* Show dark in dark mode */
+  :global([data-theme="neobrutalism-dark"]) .diagram-light,
+  :global([data-theme="dark"]) .diagram-light {
+    display: none;
+  }
+
+  :global([data-theme="neobrutalism-dark"]) .diagram-dark,
+  :global([data-theme="dark"]) .diagram-dark {
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--color-base-content);
+    text-align: center;
+    font-style: italic;
+  }
+</style>
