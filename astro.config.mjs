@@ -13,7 +13,22 @@ export default defineConfig({
 			// Disable default syntax highlighting so expressive-code can take over
 			syntaxHighlight: false,
 			rehypePlugins: [
-				// Process code blocks with expressive-code first
+				// Process mermaid diagrams FIRST (before expressive-code)
+				// This prevents expressive-code from capturing mermaid blocks
+				[
+					rehypeMermaid,
+					{
+						strategy: "inline-svg",
+						mermaidConfig: {
+							theme: "base",
+							themeVariables: {
+								fontFamily: "JetBrains Mono, ui-monospace, monospace",
+								fontSize: "15px",
+							},
+						},
+					},
+				],
+				// Then process code blocks with expressive-code
 				[
 					rehypeExpressiveCode,
 					{
@@ -29,20 +44,6 @@ export default defineConfig({
 						useThemedScrollbars: false,
 						useThemedSelectionColors: false,
 						wrap: true,
-					},
-				],
-				// Then process mermaid diagrams
-				[
-					rehypeMermaid,
-					{
-						strategy: "inline-svg",
-						mermaidConfig: {
-							theme: "base",
-							themeVariables: {
-								fontFamily: "JetBrains Mono, ui-monospace, monospace",
-								fontSize: "15px",
-							},
-						},
 					},
 				],
 			],

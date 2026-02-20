@@ -451,16 +451,17 @@
            - Note: .paper and .section-paper have no styles - use .card class for actual styling
         */
 
-	/* Cards - intentional white panels for content separation */
+	/* Cards - intentional white panels for content separation
+       Canonical .card definition. Keep shared properties here; theme/variant
+       specifics are controlled via theme variables and later overrides.
+    */
 	.card {
 		position: relative;
 		z-index: 1;
 		background-color: var(--color-base-100) !important;
 		background-image: none;
-		/* DaisyUI automatically applies:
-               - border: var(--card-border-width) solid var(--card-border)
-               - For shadows, use utility classes: .shadow-brutal-sm, .shadow-brutal, .shadow-brutal-lg, .shadow-brutal-xl
-            */
+		/* DaisyUI applies border/shadow via theme variables; prefer utilities for shadows */
+		/* Border/shadow resolved by theme variables */
 	}
 
 	/* Rotated section - extends .card (see full definition near torn-gap styles)
@@ -1484,9 +1485,9 @@
 
 .prose-content ol li {
 	position: relative;
-	padding-left: 2.25rem;
-	margin-bottom: 0.25rem;
-	line-height: 1.5;
+	padding-left: 2.75rem;
+	margin-bottom: 1rem;
+	line-height: 1.6;
 	color: color-mix(in oklab, var(--color-base-content) 85%, #0000);
 	counter-increment: list-counter;
 }
@@ -2557,46 +2558,9 @@
 		}
 	}
 
-	/* Cards */
-	.card {
-		border-width: var(--border);
-		border-color: var(--nr-border-color);
-		border-style: solid;
-		border-radius: var(--radius-box);
-		box-shadow: var(--nr-shadow-base);
-		background: var(
-			--color-base-100
-		) !important; /* Cards should have solid backgrounds */
-		transform: translate(0, 0);
-		/* Anti-aliasing for crisp rendering */
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-
-		/* HOVER SYSTEM: Apply transitions only to cards that will have hover effects
-                   Excludes .rotated-section and .no-hover to prevent unwanted container animations */
-		&:not(.rotated-section):not(.no-hover) {
-			transition:
-				transform 0.2s ease-in-out,
-				box-shadow 0.2s ease-in-out;
-		}
-
-		/* HOVER EFFECT: Lift cards on hover with increased shadow
-                   EXCLUSIONS:
-                   - .hover-effect, .hover-lift, .hover-scale, .hover-rotate: Use custom hover classes
-                   - [class*="hover-rotate-"]: Use specific rotation hover modifiers
-                   - .rotated-section: Container sections must remain static (child elements can still hover)
-                   - .no-hover: Explicitly disabled hover effects
-                   - [data-work-card]: Work cards use their own simplified hover system
-                */
-		&:hover:not(.hover-effect):not(.hover-lift):not(.hover-lift-stable):not(
-				.hover-scale
-			):not(.hover-rotate):not([class*="hover-rotate-"]):not(
-				.rotated-section
-			):not(.no-hover):not([data-work-card]) {
-			transform: translate(-4px, -4px);
-			box-shadow: var(--nr-shadow-lg);
-		}
-	}
+	/* Theme-specific .card overrides are authored via theme variables and component
+   rules. Shared behavior is defined in the canonical .card block above.
+*/
 
 	/* Badges */
 	.badge {
