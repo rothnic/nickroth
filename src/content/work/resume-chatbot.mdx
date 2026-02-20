@@ -16,6 +16,7 @@ roleCategory: "FULL-STACK DEVELOPER"
 import LazyVideo from '../../components/LazyVideo.astro';
 import FeatureBlock from '../../components/FeatureBlock.astro';
 import ExcalidrawDiagram from '../../components/ExcalidrawDiagram.astro';
+import Callout from '../../components/Callout.astro';
 
 # AI-Powered Resume Builder with Real-Time Streaming
 
@@ -55,6 +56,7 @@ This is the story of building that system.
   src="/docs/project/resume-chatbot-simple.svg"
   alt="Resume chatbot concept diagram showing user request flowing through AI processing to structured resume output"
   caption="High-level concept: Natural language requests are translated into precise, structured document mutations"
+  height="600px"
 />
 
 **Core challenges with AI-driven document edits:**
@@ -97,9 +99,9 @@ Text streams also limit our ability to provide rich, custom rendering. A spreads
 
 Yet text streaming has one clear advantage: you can follow along as the agent works. You see the edits happening in real-time, like watching a human collaborator type.
 
-:::tip[The Core Challenge]
-How can we have rich, custom rendering of a complex object, while also supporting intuitive streaming edits where we can follow along with the agent - in a collaborative way, like if it was a human making updates, as the agent moves their focus across the document and enters in or edits text?
-:::
+<Callout type="tip" label="Core Challenge">
+  How can we have rich, custom rendering of a complex object, while also supporting intuitive streaming edits where we can follow along with the agent - in a collaborative way, like if it was a human making updates, as the agent moves their focus across the document and enters in or edits text?
+</Callout>
 
 ### Object/Tool-Call Streams
 
@@ -187,23 +189,43 @@ Given the problem and the streaming options available, we evaluated three approa
 
 Create many discrete tools like `addWorkItem`, `replaceSummary`, `updateSkill`, each with custom inputs tailored to the resume schema.
 
-**Strengths:** Easy to reason about for one narrow schema; type-safe by design.
+**Pros:**
 
-**Weaknesses:** Tool count grows with every new field pattern. Streaming contracts fragment across tools. Cross-document reuse collapses--each new document type needs its own complete tool suite.
+- Easy to reason about for one narrow schema
+- Type-safe by design
+
+**Cons:**
+
+- Tool count grows with every new field pattern
+- Streaming contracts fragment across tools
+- Cross-document reuse collapses - each new document type needs its own complete tool suite
 
 ### Option B: Full-Object Structured Generation
 
 Stream or generate one complete typed object and replace the entire document state after validation.
 
-**Strengths:** Clean contract for final state and strong schema guardrails.
+**Pros:**
 
-**Weaknesses:** Poor incremental UX for large artifacts. Small edits (like adding one skill) still wait for the entire object to generate and validate. Reference implementations: [AI SDK generateObject](https://ai-sdk.dev/docs/reference/ai-sdk-core/generate-object), [Mastra structured output](https://mastra.ai/docs/agents/structured-output), [LangChain structured output](https://js.langchain.com/docs/how_to/structured_output/)
+- Clean contract for final state
+- Strong schema guardrails
+
+**Cons:**
+
+- Poor incremental UX for large artifacts
+- Small edits (like adding one skill) wait for the entire object to generate and validate
+  - [AI SDK generateObject](https://ai-sdk.dev/docs/reference/ai-sdk-core/generate-object)
+  - [Mastra structured output](https://mastra.ai/docs/agents/structured-output)
+  - [LangChain structured output](https://js.langchain.com/docs/how_to/structured_output/)
 
 ### Option C: Streaming JSON Patch (Chosen)
 
 Emit [RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902) operations (`add`, `replace`, `remove`, `move`, `copy`, `test`) against stable JSON pointers. Treat the resume as typed JSON, not a text blob. Every mutation is one explicit operation against one explicit path.
 
-**Strengths:** Low-latency, path-scoped updates with deterministic apply semantics. One mutation model works across nested objects, arrays, and other structured documents. Enables true incremental rendering--users see changes as they arrive.
+**Pros:**
+
+- Low-latency, path-scoped updates with deterministic apply semantics
+- One mutation model works across nested objects, arrays, and other structured documents
+- Enables true incremental rendering - users see changes as they arrive
 
 **Core principles:**
 
@@ -239,9 +261,38 @@ In practice, we use the JSON Resume schema for data storage and validation (via 
 
 ```json
 {
-  "basics": { "name": "Nick Roth", "label": "Full-Stack Developer" },
-  "work": [{ "company": "Acme", "position": "Engineer", "highlights": ["API design"] }],
-  "skills": [{ "name": "JavaScript", "level": "advanced" }]
+  "basics": {
+    "name": "Nick Roth",
+    "label": "Full-Stack Developer",
+    "email": "nick@example.com",
+    "summary": "Backend engineer with 8+ years experience",
+    "location": { "city": "San Francisco", "countryCode": "US" }
+  },
+  "work": [
+    {
+      "company": "Acme Corp",
+      "position": "Senior Engineer",
+      "startDate": "2022-01",
+      "highlights": ["Led API redesign", "Reduced latency by 40%"]
+    }
+  ],
+  "education": [
+    {
+      "institution": "University of Washington",
+      "studyType": "Computer Science",
+      "startDate": "2014-09"
+    }
+  ],
+  "skills": [
+    { "name": "TypeScript", "level": "advanced" },
+    { "name": "Python", "level": "intermediate" }
+  ],
+  "projects": [
+    {
+      "name": "Resume Chatbot",
+      "description": "AI-powered resume editor with streaming JSON patches"
+    }
+  ]
 }
 ```
 
@@ -317,6 +368,10 @@ const patchOperationSchema = z.object({
 ```
 
 The key difference: the **tool schema** defines what the tool *receives* (structured data), while the **patch schema** defines what gets *streamed* (partial objects that stabilize into valid operations). The streaming layer doesn't see the tool schema - it sees the patch operations being built token by token until they form complete, valid JSON Patch operations.
+
+<Callout type="tip" label="Optimization Note">
+  The `z.union` for `value` could be refined per-operation. For `remove` operations, `value` is unused. For `add`/`replace`, the value type depends on the target path. We could use discriminated unions keyed on `op`, but that increases schema complexity. Balance simplicity against precision based on your validation needs.
+</Callout>
 
 ### Patch Operations: RFC 6902 Verbs
 
@@ -418,6 +473,7 @@ This gives effectively O(1)-style conflict checks for unrelated paths, while his
   src="/docs/project/resume-chatbot-architecture.svg"
   alt="System architecture diagram showing end-to-end data flow from user request through chat agent, patch tool, and database"
   caption="High-level system architecture: User request flows through the Chat Stream for immediate feedback while the Patch Stream handles document mutations via streaming JSON patches."
+  height="600px"
 />
 
 ### Split Planning from Patch Translation

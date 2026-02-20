@@ -1,0 +1,24 @@
+---
+interface Props {
+  type?: 'tip' | 'warning' | 'info' | 'error';
+  label?: string;
+}
+
+const { type = 'info', label } = Astro.props;
+
+const colorClass = {
+  tip: 'alert-success',
+  warning: 'alert-warning',
+  info: 'alert-info',
+  error: 'alert-error',
+}[type];
+---
+
+<div role="note" class={`alert alert-soft alert-vertical ${colorClass}`}>
+  {label && (
+    <span class="font-mono text-xs font-bold uppercase tracking-widest">{label}</span>
+  )}
+  <div class="[&>p]:m-0">
+    <slot />
+  </div>
+</div>
