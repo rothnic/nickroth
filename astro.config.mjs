@@ -112,5 +112,18 @@ export default defineConfig({
 				fallbacks: ["cursive"],
 			},
 		],
+		// SVG optimization via SVGO at build time
+		// Applies to SVG files imported as components (e.g. import Logo from '../assets/logo.svg')
+		svgo: {
+			plugins: [
+				'preset-default',
+				{
+					name: 'removeViewBox',
+					active: false, // Preserve viewBox for responsive scaling
+				},
+			],
+			floatPrecision: 2,
+			multipass: true,
+		},
 	},
 });

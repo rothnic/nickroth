@@ -2,6 +2,7 @@
 // ExcalidrawDiagram - Theme-aware diagram component using CSS variables
 // Based on https://alexop.dev/posts/excalidraw-dark-mode-astro-diagrams/
 // Uses Excalidraw's official theme color mappings
+// Lazy loads via IntersectionObserver - fetch is deferred until near viewport
 export interface Props {
   src: string;
   alt: string;
@@ -12,8 +13,15 @@ const { src, alt, caption } = Astro.props;
 ---
 
 <figure class="excalidraw-figure">
-  <div class="excalidraw-container" data-svg-url={src} aria-label={alt}>
-    <img src={src} alt={alt} style="display: none;" loading="lazy" />
+  <div class="excalidraw-container" data-svg-url={src} aria-label={alt} data-lazy="true">
+    <!-- Placeholder shown while diagram is loading or off-screen -->
+    <div class="excalidraw-placeholder" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M3 9h18M9 21V9" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      <span>Loading diagram...</span>
+    </div>
   </div>
   {caption && (
     <figcaption class="excalidraw-caption">{caption}</figcaption>
@@ -23,7 +31,7 @@ const { src, alt, caption } = Astro.props;
 <script>
   // Color mapping from Excalidraw's theme system
   // Light mode colors that should be replaced with CSS variables
-  const LIGHT_COLORS = {
+  const LIGHT_COLORS: Record<string, string> = {
     // Background/surface colors
     '#ffffff': 'var(--excalidraw-bg)',
     '#f5f5f5': 'var(--excalidraw-surface-high)',
@@ -76,8 +84,6 @@ const { src, alt, caption } = Astro.props;
     allElements.forEach(el => {
       const fill = el.getAttribute('fill');
       const stroke = el.getAttribute('stroke');
-      const strokeFill = el.getAttribute('stroke-fill'); // Some Excalidraw elements use this
-      
       if (fill && LIGHT_COLORS[fill.toLowerCase()]) {
         el.setAttribute('fill', LIGHT_COLORS[fill.toLowerCase()]);
       }
@@ -103,30 +109,63 @@ const { src, alt, caption } = Astro.props;
     return new XMLSerializer().serializeToString(svg);
   }
   
-  async function initExcalidrawDiagrams() {
-    const containers = document.querySelectorAll<HTMLElement>('.excalidraw-container');
-    
-    containers.forEach(async (container) => {
-      const svgUrl = container.dataset.svgUrl;
-      if (!svgUrl) return;
-      
-      try {
-        const response = await fetch(svgUrl);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch SVG: ${response.statusText}`);
-        }
-        
-        const svgData = await response.text();
-        const modifiedSvg = modifySvg(svgData);
-        container.innerHTML = modifiedSvg;
-      } catch (error) {
-        console.error('Error loading Excalidraw diagram:', error);
-        // Fallback: show the original img
-        const img = container.querySelector('img');
-        if (img) {
-          img.style.display = 'block';
-        }
+  async function loadDiagram(container: HTMLElement) {
+    const svgUrl = container.dataset.svgUrl;
+    if (!svgUrl || container.dataset.loaded === 'true') return;
+
+    // Mark as loading to prevent duplicate fetches
+    container.dataset.loaded = 'true';
+
+    try {
+      const response = await fetch(svgUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch SVG: ${response.statusText}`);
       }
+
+      const svgData = await response.text();
+      const modifiedSvg = modifySvg(svgData);
+      container.innerHTML = modifiedSvg;
+    } catch (error) {
+      console.error('Error loading Excalidraw diagram:', error);
+      // Fallback: show error state in placeholder
+      const placeholder = container.querySelector('.excalidraw-placeholder');
+      if (placeholder) {
+        placeholder.innerHTML = '<span>Diagram unavailable</span>';
+      }
+      container.dataset.loaded = 'false';
+    }
+  }
+
+  function initExcalidrawDiagrams() {
+    const containers = document.querySelectorAll<HTMLElement>(
+      '.excalidraw-container[data-lazy="true"]'
+    );
+
+    if (!containers.length) return;
+
+    // Use IntersectionObserver to lazy load diagrams near the viewport
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const container = entry.target as HTMLElement;
+            loadDiagram(container);
+            // Stop observing once triggered - no need to re-fire
+            observer.unobserve(container);
+          }
+        });
+      },
+      {
+        // Start loading 200px before diagram enters viewport
+        rootMargin: '200px 0px',
+        threshold: 0,
+      }
+    );
+
+    containers.forEach(container => {
+      // Reset loaded state on page transitions
+      container.dataset.loaded = 'false';
+      observer.observe(container);
     });
   }
   
@@ -158,17 +197,36 @@ const { src, alt, caption } = Astro.props;
   .excalidraw-container {
     width: 100%;
     max-width: 100%;
-    max-height: 500px;
+    max-height: 350px;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
   }
+
+  /* Placeholder shown while diagram is off-screen or loading */
+  .excalidraw-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 2rem;
+    color: color-mix(in oklab, var(--color-base-content) 40%, #0000);
+    font-size: 0.875rem;
+    min-height: 120px;
+    justify-content: center;
+  }
+
+  .excalidraw-placeholder svg {
+    width: 32px;
+    height: 32px;
+    opacity: 0.4;
+  }
   
   .excalidraw-container :global(svg) {
     width: 100%;
     height: 100%;
-    max-height: 500px;
+    max-height: 350px;
     object-fit: contain;
     display: block;
   }
