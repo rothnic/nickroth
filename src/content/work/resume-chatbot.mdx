@@ -28,7 +28,7 @@ You type: *"Add Python to my skills and tighten up that Backend Engineer summary
 
 But that's not how AI-driven document editing usually works.
 
-Without structure, the same request might rewrite your entire skills section, drop half your job history, or generate a summary that sounds nothing like you. The problem isn't the AI's intent - it's the lack of **constraints**.
+Without structure, the same request might rewrite your entire skills section, drop half your job history, or generate a summary that sounds nothing like you. Worse, agents often read only portions of the document and make assumptions about the rest. As patches accumulate on top of incorrect assumptions, errors compound. The problem isn't the AI's intent - it's the lack of **constraints**.
 
 **Real-time collaboration requires three things:**
 
@@ -120,62 +120,67 @@ Even with streaming, the user still waits for each complete tool call before see
 
 ### Partial-Object Streams
 
-Incremental structured payloads that become valid after stabilization. The model streams fragments of the object, and the client applies them as soon as they're complete enough to be safe.
+The Vercel AI SDK's `streamObject` can return objects in two modes:
 
-**Example 1: Streaming a text value**
+**Complete objects**: Wait for the entire object to validate against your schema before emitting. The user sees nothing until the full object is ready.
 
-The LLM streams raw text character by character. The Vercel AI SDK accumulates these into partial objects, ensuring valid JSON structure at each step:
+**Partial objects** (what we use): Receive `DeepPartial<YourSchema>` as tokens arrive. Each emission is valid JSON but may not satisfy your schema yet. You decide when it's "complete enough" to use.
+
+```ts
+// Using partial object stream - we get updates as they arrive
+const result = streamObject({ model, schema: patchSchema, prompt });
+
+for await (const partial of result.partialObjectStream) {
+  // partial is DeepPartial<PatchOperation> - valid JSON, but may not match schema yet
+  // Our job: decide when it's safe to apply
+  if (isCompleteEnough(partial)) {
+    applyPatch(document, partial);
+  }
+}
+```
+
+**How it works step by step:**
+
+The LLM emits raw text tokens. The AI SDK accumulates them and parses into valid JSON at each step:
 
 ```javascript
-// Step 0: LLM streams raw incomplete text - no valid JSON yet
-// Raw LLM output: '{ "op": "repl'
-// The LLM doesn't emit closing braces until the token is complete.
-// The AI SDK buffers these fragments and reconstructs valid partial objects.
-
-// Step 1: Partial operation name - AI SDK produces valid but incomplete structure
+// LLM begins emitting: '{ "op": "repl'
+// AI SDK accumulates and parses as valid JSON:
 { "op": "repl" }
 
-// Step 2: Complete op + path - this is where we can start applying the patch
-// The stabilizer gates on complete op and path before allowing apply
+// More tokens arrive: 'ace", "path": "/summary"'
+// AI SDK now parses complete op + path:
 { "op": "replace", "path": "/summary" }
 
-// Step 3: First character of value arrives
+// Value starts streaming: ', "value": "S'
 { "op": "replace", "path": "/summary", "value": "S" }
 
-// Step 4: Value builds character by character - user sees "Senior bac" live
+// Continues building: 'enior bac'
 { "op": "replace", "path": "/summary", "value": "Senior bac" }
 
-// Step 5: Complete value
+// Complete value: 'kend engineer with 8+ years'
 { "op": "replace", "path": "/summary", "value": "Senior backend engineer with 8+ years experience" }
 ```
 
-**Example 2: Streaming an object value**
+**Key insight**: The AI SDK guarantees valid JSON at each step, but it doesn't guarantee the object matches your schema. That's your responsibility. In Example 1 above, we might decide that having complete `op` and `path` is "complete enough" to start showing the edit in progress, even before the full `value` arrives.
 
-When the value is an object, partial objects show incomplete nested properties:
+**Streaming object values** works the same way - nested properties fill in as tokens arrive:
 
 ```javascript
-// Step 0: LLM streams raw incomplete text
-// Raw LLM output: '{ "op": "add", "path": "/skills/-", "val'
-// Again - no closing braces, the AI SDK reconstructs structure as tokens arrive
-
-// Step 1: Partial operation name - apply still blocked
-{ "op": "add", "path": "/skills/-" }
-
-// Step 2: Object value starts, partial key - still blocked (incomplete structure)
+// Object value starts building
 { "op": "add", "path": "/skills/-", "value": { "nam": undefined } }
 
-// Step 3: Key completes, second property starts
+// Key completes, next property starts  
 { "op": "add", "path": "/skills/-", "value": { "name": "Pytho", "level": undefined } }
 
-// Step 4: Both keys present, values streaming in
+// Values stream in character by character
 { "op": "add", "path": "/skills/-", "value": { "name": "Python", "level": "intermedia" } }
 
-// Step 5: Both properties complete - patch applies
+// Complete object
 { "op": "add", "path": "/skills/-", "value": { "name": "Python", "level": "intermediate" } }
 ```
 
-**Key insight:** The `stabilize()` function waits until required fields are present and valid before allowing the patch to apply. In Example 1, patching can begin at Step 2 once we have complete `op` and `path`. The AI SDK handles the raw text stream and ensures we always receive valid partial objects, even when the LLM output is incomplete.
-
+**Why this matters**: Without partial objects, you'd wait for the entire operation to complete before showing anything. With partial objects, you can start rendering progress immediately - but you need a stabilization layer to decide what's safe to display vs what's still incomplete.
 Related documentation:
 
 - [LangChain streaming](https://js.langchain.com/docs/concepts/streaming/) and [structured output](https://js.langchain.com/docs/how_to/structured_output/)
