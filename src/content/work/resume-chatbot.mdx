@@ -597,3 +597,39 @@ For full harness details, see [Deterministic Testing for AI Streaming](/work/res
 - [Streaming JSON Patching Architecture](/work/resume-chatbot-streaming-architecture) - Detailed pipeline internals, lifecycle of patch operations, and failure handling patterns.
 - [Deterministic Testing for AI Streaming](/work/resume-chatbot-testing-strategy) - Mock-provider approach for repeatable streaming tests and measurable reliability results.
 - [Streaming Modes and Framework Benchmarking](/work/resume-chatbot-streaming-modes-benchmarking) - Comparative analysis of streaming modes across frameworks with performance tradeoffs.
+- [Streaming Modes and Framework Benchmarking](/work/resume-chatbot-streaming-modes-benchmarking) - Comparative analysis of streaming modes across frameworks with performance tradeoffs.
+
+## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> NEXT STEPS:</span> <span class="h2-title">Generative design tools for rapid UX iteration</span>
+
+The current implementation handles AI-driven edits well, but the next evolution is **collaborative editing** - where users can manually refine what the AI suggests, or make changes directly while the AI observes and learns.
+
+### Rapid Prototyping with Generative Design Tools
+
+To explore this UX, I use generative design tools like **Figma Make**, **Google Stitch**, and **v0.dev** instead of traditional Figma. These tools produce interactive React applications that are faster to iterate on because you don't have to manually wire up user flows. The interactions are built-in, so you can immediately test if a flow makes sense or needs revision.
+
+**Why this approach wins:**
+
+- **Discover edge cases faster** - Interactive prototypes reveal usability issues that static mockups miss
+- **Fail cheap** - It's easier to discard a generated direction that doesn't work than to rebuild something you coded from scratch
+- **Focus on UX, not implementation** - You validate the concept before committing engineering time
+
+**Tool comparisons:**
+
+- **v0.dev** - Most opinionated, uses shadcn/ui components and Next.js patterns. Produces the most usable code if you want to adapt components directly.
+- **Google Stitch** - Best for whole-application iterations. Uses Gemini Nano to generate visual representations quickly, then converts to HTML that agents can integrate. Great for exploring multiple directions fast.
+- **Figma Make** - Balanced approach for component-to-page level design with interactive behaviors.
+
+**The workflow:** Generate → Test → Iterate → Export reference code → Rebuild properly. I rarely use generated code directly, but having a working reference accelerates implementation significantly.
+
+### Collaborative Editing UX Exploration
+
+Here's a walkthrough of a Figma Make project I used to explore the collaborative editing experience:
+
+<LazyVideo
+  videoUrl="https://drive.google.com/file/d/1SwAcHBqOzuL-U4nXO9W7K5ZXlYXNrBs_/preview"
+  thumbnailSrc="/assets/images/projects/resume-chatbot-figma-make-thumb.webp"
+  thumbnailAlt="Figma Make prototype exploring collaborative editing UX"
+  caption="Exploring collaborative editing flows with Figma Make - testing manual refinement alongside AI suggestions"
+/>
+
+The goal: seamless handoff between AI suggestions and manual edits, with clear visual indicators of who changed what and when.

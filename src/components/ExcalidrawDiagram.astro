@@ -227,9 +227,8 @@ const { src, alt, caption, height = '400px' } = Astro.props;
   }
   
   .excalidraw-container :global(svg) {
-    max-height: 600px;
-    width: auto;
-    height: auto;
+    height: 600px;
+    width: min-content;
     max-width: 100%;
     display: block;
   }
