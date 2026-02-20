@@ -15,7 +15,7 @@ roleCategory: "FULL-STACK DEVELOPER"
 
 import LazyVideo from '../../components/LazyVideo.astro';
 import FeatureBlock from '../../components/FeatureBlock.astro';
-import ThemeDiagram from '../../components/ThemeDiagram.astro';
+import ExcalidrawDiagram from '../../components/ExcalidrawDiagram.astro';
 
 # AI-Powered Resume Builder with Real-Time Streaming
 
@@ -23,45 +23,21 @@ import ThemeDiagram from '../../components/ThemeDiagram.astro';
 
 Imagine a user saying, "Please add Python to my skills and tighten the Senior Backend Engineer job summary to mention API design." The user expects the editor to add a single skill entry and rewrite one paragraph, leaving the rest of the resume untouched. In practice, AI-driven edits to large artifacts rarely behave that cleanly.
 
-<div class="drift-compare" role="list" aria-label="Document drift failure modes">
-  <article class="drift-item" role="listitem">
-    <p class="drift-label">Partial context windows</p>
-    <div class="drift-content">
-      <p><strong>Expected:</strong> Small localized change with global context preserved.</p>
-      <p><strong>Observed:</strong> Edit applies to a slice and drops linked context.</p>
-    </div>
-  </article>
-  <article class="drift-item" role="listitem">
-    <p class="drift-label">Ambiguous match targets</p>
-    <div class="drift-content">
-      <p><strong>Expected:</strong> Update the exact skills entry selected by the user.</p>
-      <p><strong>Observed:</strong> Similar text blocks match and the wrong node is rewritten.</p>
-    </div>
-  </article>
-  <article class="drift-item" role="listitem">
-    <p class="drift-label">Patch sequencing drift</p>
-    <div class="drift-content">
-      <p><strong>Expected:</strong> Multiple edits apply cleanly, preserving structure and spacing.</p>
-      <p><strong>Observed:</strong> Newline boundaries shift and list formatting degrades.</p>
-    </div>
-  </article>
-  <article class="drift-item" role="listitem">
-    <p class="drift-label">Unstable insertion behavior</p>
-    <div class="drift-content">
-      <p><strong>Expected:</strong> New text appears smoothly where it belongs.</p>
-      <p><strong>Observed:</strong> Partial output causes jumps, placeholders, and visual jitter.</p>
-    </div>
-  </article>
-  <article class="drift-item" role="listitem">
-    <p class="drift-label">Rich-format constraints</p>
-    <div class="drift-content">
-      <p><strong>Expected:</strong> Typed fields stay validated and schema-safe.</p>
-      <p><strong>Observed:</strong> Markdown-first edits break typed structures downstream.</p>
-    </div>
-  </article>
-</div>
+<ExcalidrawDiagram
+  src="/docs/project/resume-chatbot-simple.svg"
+  alt="Resume chatbot concept diagram showing user request flowing through AI processing to structured resume output"
+  caption="High-level concept: Natural language requests are translated into precise, structured document mutations"
+/>
 
-This pattern matters because each failure mode compounds when multiple users, models, or edits operate concurrently. Small unpredictabilities become merge conflicts, audit blind spots, and a poor UX that erodes trust.
+**Core challenges with AI-driven document edits:**
+
+- **Partial context windows** - Edits apply to a slice and drop linked context, even when the user expects global context to be preserved
+- **Ambiguous match targets** - Similar text blocks cause the wrong node to be rewritten instead of the exact entry selected by the user
+- **Patch sequencing drift** - Multiple edits that should apply cleanly instead cause newline boundaries to shift and list formatting to degrade
+- **Unstable insertion behavior** - Partial output causes jumps, placeholders, and visual jitter instead of smooth text appearance
+- **Rich-format constraints** - Markdown-first edits break typed structures downstream, even when fields should stay validated and schema-safe
+
+These failure modes compound when multiple users, models, or edits operate concurrently. Small unpredictabilities become merge conflicts, audit blind spots, and a poor UX that erodes trust.
 
 <FeatureBlock
   title="Key Principles"
@@ -212,7 +188,17 @@ We chose Option C--streaming JSON Patch with partial-object streams--because it 
 
 ### The Data Model: JSON Resume as Stable Surface
 
-Resume data is stored as structured JSON following the JSON Resume schema (basics, work, education, skills, projects). Using this standard gives us a stable, well-known surface to target edits, reuse existing toolchains, and keep type boundaries explicit for validation.
+We chose [JSON Resume](https://jsonresume.org/) as our data format - an open-source standard for representing resume data as structured JSON. This format provides a simple yet extensible schema that covers all essential resume sections: basics, work experience, education, skills, projects, and more.
+
+**Why JSON Resume:**
+
+- **Established standard** - Widely adopted schema with clear documentation and community support
+- **Built-in validation** - JSON Schema definition enables automated validation of resume structure and data types
+- **Existing tooling** - Ecosystem includes renderers for HTML export and PDF generation
+- **Extensible design** - Custom properties can be added for domain-specific needs while maintaining compatibility
+- **Portable format** - Plain JSON enables easy data migration and interoperability
+
+In practice, we use the JSON Resume schema for data storage and validation (via Zod), but built a custom renderer to match our application's visual style rather than using off-the-shelf HTML themes. This gives us complete control over the presentation while benefiting from the standard's structured data model.
 
 ```json
 {
@@ -391,9 +377,8 @@ This gives effectively O(1)-style conflict checks for unrelated paths, while his
 
 ## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> ARCHITECTURE:</span> <span class="h2-title">System design and implementation</span>
 
-<ThemeDiagram
-  lightSrc="/docs/project/resume-chatbot-diagram-light.svg"
-  darkSrc="/docs/project/resume-chatbot-diagram-dark.svg"
+<ExcalidrawDiagram
+  src="/docs/project/resume-chatbot-architecture.svg"
   alt="System architecture diagram showing end-to-end data flow from user request through chat agent, patch tool, and database"
   caption="High-level system architecture: User request flows through the Chat Stream for immediate feedback while the Patch Stream handles document mutations via streaming JSON patches."
 />
