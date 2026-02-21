@@ -23,8 +23,53 @@ export default defineConfig({
 						mermaidConfig: {
 							theme: "base",
 							themeVariables: {
+								// Typography
 								fontFamily: "JetBrains Mono, ui-monospace, monospace",
 								fontSize: "15px",
+								
+								// Base colors (light mode - neobrutalism-light theme)
+								background: "#fcfcfc",
+								primaryColor: "#f3f3f5",
+								primaryTextColor: "#262626",
+								primaryBorderColor: "#d946ef",
+								
+								// Secondary colors
+								secondaryColor: "#a3e635",
+								secondaryTextColor: "#262626",
+								secondaryBorderColor: "#262626",
+								
+								// Lines and text
+								lineColor: "#262626",
+								textColor: "#262626",
+								
+								// Notes
+								noteBkgColor: "#d946ef",
+								noteTextColor: "#ffffff",
+								noteBorderColor: "#d946ef",
+								
+								// Sequence diagram specific
+								actorBkg: "#f3f3f5",
+								actorBorder: "#d946ef",
+								actorTextColor: "#262626",
+								actorLineColor: "#e8e8eb",
+								
+								// Activation boxes
+								activationBkgColor: "#e8e8eb",
+								activationBorderColor: "#262626",
+								
+								// Edge labels
+								edgeLabelBackground: "#fcfcfc",
+								
+								// Loop and alt sections
+								loopTextColor: "#262626",
+								loopLineColor: "#262626",
+								
+								// Flowchart specific
+								nodeBorder: "#d946ef",
+								nodeTextColor: "#262626",
+								
+								// Dark mode flag - set to false for light mode base
+								darkMode: false,
 							},
 						},
 					},
@@ -67,8 +112,53 @@ export default defineConfig({
 					mermaidConfig: {
 						theme: "base",
 						themeVariables: {
+							// Typography
 							fontFamily: "JetBrains Mono, ui-monospace, monospace",
 							fontSize: "15px",
+
+							// Base colors (light mode - neobrutalism-light theme)
+							background: "#fcfcfc",
+							primaryColor: "#f3f3f5",
+							primaryTextColor: "#262626",
+							primaryBorderColor: "#d946ef",
+
+							// Secondary colors
+							secondaryColor: "#a3e635",
+							secondaryTextColor: "#262626",
+							secondaryBorderColor: "#262626",
+
+							// Lines and text
+							lineColor: "#262626",
+							textColor: "#262626",
+
+							// Notes
+							noteBkgColor: "#d946ef",
+							noteTextColor: "#ffffff",
+							noteBorderColor: "#d946ef",
+
+							// Sequence diagram specific
+							actorBkg: "#f3f3f5",
+							actorBorder: "#d946ef",
+							actorTextColor: "#262626",
+							actorLineColor: "#e8e8eb",
+
+							// Activation boxes
+							activationBkgColor: "#e8e8eb",
+							activationBorderColor: "#262626",
+
+							// Edge labels
+							edgeLabelBackground: "#fcfcfc",
+
+							// Loop and alt sections
+							loopTextColor: "#262626",
+							loopLineColor: "#262626",
+
+							// Flowchart specific
+							nodeBorder: "#d946ef",
+							nodeTextColor: "#262626",
+
+							// Dark mode flag - set to false for light mode base
+							darkMode: false,
 						},
 					},
 				},

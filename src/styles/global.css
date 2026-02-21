@@ -1952,8 +1952,16 @@
 
 /* ========================================
    MERMAID DIAGRAM THEMING
-   ======================================== */
+   ========================================
+   
+   Mermaid colors are now configured via themeVariables in astro.config.mjs
+   using the "base" theme. This approach is cleaner than CSS overrides.
+   
+   Light mode colors are set in themeVariables (hex values matching neobrutalism-light).
+   Dark mode adjustments are handled below with minimal CSS overrides.
+*/
 
+/* Container styling */
 .prose-content .mermaid {
 	margin: 1.5rem 0;
 	padding: 1rem;
@@ -1961,7 +1969,6 @@
 	background: var(--color-base-100);
 	box-shadow: var(--nr-shadow-sm);
 	overflow-x: auto;
-	/* Consistent minimum height for all diagrams */
 	min-height: 200px;
 	display: flex;
 	align-items: center;
@@ -1972,155 +1979,21 @@
 	max-width: 100%;
 	width: 100%;
 	height: auto;
-	/* Ensure SVG scales properly within container */
 	max-height: 400px;
 }
 
-/* Actor boxes (sequence diagrams) - Override mermaid default theme colors */
-/* Use ID prefix selector to match mermaid's inline ID styles like #mermaid-0 */
-.prose-content .mermaid [id^="mermaid-"] .actor,
-.prose-content .mermaid [id^="mermaid-"] g.actor rect,
-.prose-content .mermaid [id^="mermaid-"] g.actor path,
-.prose-content .mermaid svg .actor,
-.prose-content .mermaid svg g.actor rect,
-.prose-content .mermaid svg g.actor path {
-	fill: var(--color-base-200) !important;
-	stroke: var(--color-primary) !important;
-	stroke-width: 2px !important;
-}
-
-/* Force all actor-related rectangles - target specific mermaid fill colors */
-.prose-content .mermaid svg [class*="actor"] rect,
-.prose-content .mermaid svg g[class*="actor"] rect,
-.prose-content .mermaid [fill="#fff4dd"],
-.prose-content .mermaid [fill="#fdf4e3"],
-.prose-content .mermaid [fill^="#fff"],
-.prose-content .mermaid [fill^="#fdf"] {
-	fill: var(--color-base-200) !important;
-}
-
-/* Target specific mermaid stroke colors */
-.prose-content .mermaid [stroke="hsl(40.5882352941, 60%, 83.3333333333%)"],
-.prose-content .mermaid [stroke^="hsl(40"] {
-	stroke: var(--color-primary) !important;
-}
-
-.prose-content .mermaid .actor-line {
-	stroke: var(--color-base-300) !important;
-	stroke-width: 2px !important;
-}
-
-/* Message lines */
-.prose-content .mermaid .messageLine0,
-.prose-content .mermaid .messageLine1 {
-	stroke: var(--color-base-content) !important;
-	stroke-width: 2px !important;
-}
-
-/* Message text */
-.prose-content .mermaid .messageText {
-	fill: var(--color-base-content) !important;
-	font-family: var(--font-mono), ui-monospace, monospace !important;
-}
-
-/* Note boxes */
-.prose-content .mermaid .note {
-	fill: var(--color-primary) !important;
-	stroke: var(--color-primary) !important;
-	stroke-width: 2px !important;
-}
-
-.prose-content .mermaid .noteText {
-	fill: var(--color-primary-content) !important;
-	font-family: var(--font-mono), ui-monospace, monospace !important;
-}
-
-/* Nodes (flowcharts, etc) */
-.prose-content
-	.mermaid
-	:is(.node rect, .node polygon, .node path, .cluster rect, .actor) {
-	fill: var(--color-base-200) !important;
-	stroke: var(--color-primary) !important;
-	stroke-width: 2px !important;
-}
-
-/* Edges/connections */
-.prose-content .mermaid :is(.edgePath path, .flowchart-link, .relation) {
-	stroke: var(--color-base-content) !important;
-	stroke-width: 2px !important;
-}
-
-/* Arrowheads */
-.prose-content .mermaid :is(.arrowheadPath, marker path) {
-	fill: var(--color-base-content) !important;
-	stroke: var(--color-base-content) !important;
-}
-
-/* Text labels */
-.prose-content .mermaid :is(.nodeLabel, .edgeLabel, .cluster-label, text, .label) {
-	fill: var(--color-base-content) !important;
-	font-family: var(--font-mono), ui-monospace, monospace !important;
-}
-
-.prose-content .mermaid .edgeLabel {
-	background-color: var(--color-base-100) !important;
-	fill: var(--color-base-content) !important;
-}
-
-/* Entity boxes (ER diagrams) */
-.prose-content .mermaid .entityBox {
-	fill: var(--color-base-200) !important;
-	stroke: var(--color-primary) !important;
-	stroke-width: 2px !important;
-}
-
-.prose-content .mermaid .entityLabel {
-	fill: var(--color-base-content) !important;
-	font-family: var(--font-mono), ui-monospace, monospace !important;
-}
-
-/* Loops (sequence diagrams) */
-.prose-content .mermaid .loopLine {
-	stroke: var(--color-secondary) !important;
-	stroke-width: 2px !important;
-}
-
-.prose-content .mermaid .loopText {
-	fill: var(--color-secondary) !important;
-	font-family: var(--font-mono), ui-monospace, monospace !important;
-}
-
-/* Activation boxes (sequence diagrams) */
-.prose-content .mermaid .activation0,
-.prose-content .mermaid .activation1,
-.prose-content .mermaid .activation2 {
-	fill: var(--color-base-300) !important;
-	stroke: var(--color-base-content) !important;
-	stroke-width: 2px !important;
-}
-
-/* Section backgrounds (sequence diagrams) */
-.prose-content .mermaid .section0,
-.prose-content .mermaid .section1,
-.prose-content .mermaid .section2,
-.prose-content .mermaid .section3 {
-	fill: var(--color-base-200) !important;
-	stroke: var(--color-base-300) !important;
-}
-
-.prose-content .mermaid .sectionTitle0,
-.prose-content .mermaid .sectionTitle1,
-.prose-content .mermaid .sectionTitle2,
-.prose-content .mermaid .sectionTitle3 {
-	fill: var(--color-base-content) !important;
-	font-family: var(--font-mono), ui-monospace, monospace !important;
-}
-
-/* Dark mode adjustments */
+/* Dark mode adjustments - minimal overrides for theme switching */
 [data-theme="neobrutalism-dark"] .prose-content .mermaid {
 	background: var(--color-base-200);
 }
 
+/* Note backgrounds in dark mode need adjustment since themeVariables 
+   uses static hex colors. We use filter to shift the color slightly. */
+[data-theme="neobrutalism-dark"] .prose-content .mermaid .note {
+	filter: brightness(1.2);
+}
+
+/* Edge labels need background matching dark theme */
 [data-theme="neobrutalism-dark"] .prose-content .mermaid .edgeLabel {
 	background-color: var(--color-base-200) !important;
 }
