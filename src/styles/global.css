@@ -1976,21 +1976,32 @@
 	max-height: 400px;
 }
 
-/* Actor boxes (sequence diagrams) - HIGH SPECIFICITY */
-.prose-content .mermaid .actor,
-.prose-content .mermaid g.actor rect,
-.prose-content .mermaid svg .actor rect,
-.prose-content .mermaid g.actor path,
-.prose-content .mermaid svg .actor path {
+/* Actor boxes (sequence diagrams) - Override mermaid default theme colors */
+/* Use ID prefix selector to match mermaid's inline ID styles like #mermaid-0 */
+.prose-content .mermaid [id^="mermaid-"] .actor,
+.prose-content .mermaid [id^="mermaid-"] g.actor rect,
+.prose-content .mermaid [id^="mermaid-"] g.actor path,
+.prose-content .mermaid svg .actor,
+.prose-content .mermaid svg g.actor rect,
+.prose-content .mermaid svg g.actor path {
 	fill: var(--color-base-200) !important;
 	stroke: var(--color-primary) !important;
 	stroke-width: 2px !important;
 }
 
-/* Force all actor-related rectangles */
+/* Force all actor-related rectangles - target specific mermaid fill colors */
 .prose-content .mermaid svg [class*="actor"] rect,
-.prose-content .mermaid svg g[class*="actor"] rect {
+.prose-content .mermaid svg g[class*="actor"] rect,
+.prose-content .mermaid [fill="#fff4dd"],
+.prose-content .mermaid [fill="#fdf4e3"],
+.prose-content .mermaid [fill^="#fff"],
+.prose-content .mermaid [fill^="#fdf"] {
 	fill: var(--color-base-200) !important;
+}
+
+/* Target specific mermaid stroke colors */
+.prose-content .mermaid [stroke="hsl(40.5882352941, 60%, 83.3333333333%)"],
+.prose-content .mermaid [stroke^="hsl(40"] {
 	stroke: var(--color-primary) !important;
 }
 
