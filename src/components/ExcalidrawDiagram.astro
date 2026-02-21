@@ -1,8 +1,9 @@
 ---
-// ExcalidrawDiagram - Theme-aware diagram component using CSS filter approach
+// ExcalidrawDiagram - Theme-aware diagram component using class-replacement approach
 // Based on https://alexop.dev/posts/excalidraw-dark-mode-astro-diagrams/
-// Uses CSS filter inversion for dark mode instead of color replacement
-// Lazy loads via IntersectionObserver - fetch is deferred until near viewport
+// Parses SVG at runtime, strips hardcoded fill/stroke, adds semantic CSS classes
+// that map to DaisyUI theme variables for automatic light/dark adaptation.
+// Lazy loads via IntersectionObserver - fetch is deferred until near viewport.
 export interface Props {
   src: string;
   alt: string;
@@ -30,6 +31,67 @@ const { src, alt, caption, height = '400px' } = Astro.props;
 </figure>
 
 <script>
+  /**
+   * Strips hardcoded fill/stroke attributes from SVG elements and adds semantic
+   * CSS classes so DaisyUI theme variables control colors automatically.
+   *
+   * Classes added:
+   *   excalidraw-bg      - background rect (first direct-child rect of <svg>)
+   *   excalidraw-fill    - other filled rects and shapes
+   *   excalidraw-text    - text elements
+   *   excalidraw-stroke  - path/line/polyline/etc. strokes
+   *
+   * fill="none" and stroke="none" values are preserved (structural, not color).
+   */
+  function processExcalidrawSvg(svgString: string): string {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(svgString, 'image/svg+xml');
+    const svg = doc.documentElement;
+
+    svg.removeAttribute('width');
+    svg.removeAttribute('height');
+    svg.classList.add('excalidraw-svg');
+
+    // Background rect - first <rect> direct child of <svg>
+    const bgRect = svg.querySelector(':scope > rect:first-of-type');
+    if (bgRect) {
+      bgRect.removeAttribute('fill');
+      bgRect.removeAttribute('stroke');
+      bgRect.classList.add('excalidraw-bg');
+    }
+
+    // Other rects (boxes, cards)
+    doc.querySelectorAll('rect').forEach(rect => {
+      if (rect === bgRect) return;
+      if (rect.getAttribute('fill') === 'none') return;
+      rect.removeAttribute('fill');
+      rect.classList.add('excalidraw-fill');
+    });
+
+    // Text elements
+    doc.querySelectorAll('text').forEach(text => {
+      if (text.getAttribute('fill') === 'none') return;
+      text.removeAttribute('fill');
+      text.classList.add('excalidraw-text');
+    });
+
+    // Paths, lines, polylines, polygons, ellipses, circles
+    doc.querySelectorAll('path, line, polyline, polygon, ellipse, circle').forEach(el => {
+      const stroke = el.getAttribute('stroke');
+      const fill = el.getAttribute('fill');
+      if (stroke && stroke !== 'none') {
+        el.removeAttribute('stroke');
+        el.classList.add('excalidraw-stroke');
+      }
+      if (fill && fill !== 'none') {
+        el.removeAttribute('fill');
+        el.classList.add('excalidraw-fill');
+      }
+    });
+
+    return new XMLSerializer().serializeToString(svg);
+  }
+
   async function loadDiagram(container: HTMLElement) {
     const svgUrl = container.dataset.svgUrl;
     if (!svgUrl) return;
@@ -40,21 +102,7 @@ const { src, alt, caption, height = '400px' } = Astro.props;
         throw new Error(`Failed to fetch SVG: ${response.statusText}`);
       }
       const svgData = await response.text();
-      
-      // Parse and prepare SVG
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(svgData, 'image/svg+xml');
-      const svg = doc.documentElement;
-      
-      // Remove hardcoded dimensions to allow responsive scaling
-      svg.removeAttribute('width');
-      svg.removeAttribute('height');
-      svg.classList.add('excalidraw-svg');
-      
-      // Preserve original colors - no color replacement
-      // Dark mode is handled via CSS filter inversion
-      
-      const modifiedSvg = new XMLSerializer().serializeToString(svg);
+      const modifiedSvg = processExcalidrawSvg(svgData);
       container.innerHTML = modifiedSvg;
       container.dataset.loaded = 'true';
     } catch (error) {
@@ -133,12 +181,6 @@ const { src, alt, caption, height = '400px' } = Astro.props;
     justify-content: center;
     align-items: center;
     height: fit-content;
-    /* Light mode: no filter applied */
-  }
-
-  /* Dark mode: invert light colors to dark, rotate hue to restore color balance */
-  :global([data-theme="neobrutalism-dark"]) .excalidraw-container {
-    filter: invert(93%) hue-rotate(180deg);
   }
 
   /* Placeholder shown while diagram is off-screen or loading */
@@ -170,19 +212,32 @@ const { src, alt, caption, height = '400px' } = Astro.props;
     display: block;
   }
   
-  /* Dark mode: make SVG background transparent so it blends with dark theme */
-  /* Excalidraw SVGs typically have a white rect as first child for background */
-  :global([data-theme="neobrutalism-dark"]) .excalidraw-container :global(svg > rect:first-child) {
-    fill: transparent !important;
+  /* -----------------------------------------------------------------------
+     Semantic color classes applied by processExcalidrawSvg()
+     Maps Excalidraw's visual roles to DaisyUI theme variables.
+     DaisyUI updates the CSS variables automatically when data-theme changes.
+  ----------------------------------------------------------------------- */
+
+  /* Background rect - transparent so it inherits the figure's bg */
+  .excalidraw-container :global(.excalidraw-bg) {
+    fill: transparent;
   }
-  
-  /* Alternative: target any white/light background rects in the SVG */
-  :global([data-theme="neobrutalism-dark"]) .excalidraw-container :global(svg rect[fill="#ffffff"]),
-  :global([data-theme="neobrutalism-dark"]) .excalidraw-container :global(svg rect[fill="white"]),
-  :global([data-theme="neobrutalism-dark"]) .excalidraw-container :global(svg rect[fill="#fff"]) {
-    fill: transparent !important;
+
+  /* Filled shapes (boxes, cards, highlight rects) */
+  .excalidraw-container :global(.excalidraw-fill) {
+    fill: var(--color-base-200);
   }
-  
+
+  /* Text elements */
+  .excalidraw-container :global(.excalidraw-text) {
+    fill: var(--color-base-content);
+  }
+
+  /* Strokes (paths, arrows, borders, connectors) */
+  .excalidraw-container :global(.excalidraw-stroke) {
+    stroke: var(--color-base-content);
+  }
+
   .excalidraw-caption {
     margin-top: 1rem;
     font-size: 0.875rem;
