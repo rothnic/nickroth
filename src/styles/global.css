@@ -2030,6 +2030,7 @@
 
 /* Fix Mermaid text colors in dark mode - override static themeVariables */
 /* Aggressive selector list to catch all text elements in various diagram types */
+/* Must use !important to override inline styles applied by Mermaid with IDs like #mermaid-0 */
 [data-theme="neobrutalism-dark"] .prose-content .mermaid text,
 [data-theme="neobrutalism-dark"] .prose-content .mermaid .nodeLabel,
 [data-theme="neobrutalism-dark"] .prose-content .mermaid .label,
@@ -2040,7 +2041,11 @@
 [data-theme="neobrutalism-dark"] .prose-content .mermaid g text,
 [data-theme="neobrutalism-dark"] .prose-content .mermaid .node rect + text,
 [data-theme="neobrutalism-dark"] .prose-content .mermaid [class*="label"] text,
-[data-theme="neobrutalism-dark"] .prose-content .mermaid tspan {
+[data-theme="neobrutalism-dark"] .prose-content .mermaid tspan,
+/* Override ID-based inline styles from Mermaid (e.g., #mermaid-0 .messageText) */
+[data-theme="neobrutalism-dark"] .prose-content .mermaid [id^="mermaid-"] .messageText,
+[data-theme="neobrutalism-dark"] .prose-content .mermaid [id^="mermaid-"] text,
+[data-theme="neobrutalism-dark"] .prose-content .mermaid svg [style*="fill: #262626"] {
 	fill: var(--color-base-content) !important;
 	color: var(--color-base-content) !important;
 	stroke: none !important;

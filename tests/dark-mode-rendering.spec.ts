@@ -79,6 +79,36 @@ test.describe("Dark Mode Rendering", () => {
 		}
 	});
 
+	test("Mermaid messageText with ID selector is visible in dark mode", async ({ page }) => {
+		// Set dark mode
+		await page.evaluate(() => {
+			document.documentElement.setAttribute("data-theme", "neobrutalism-dark");
+		});
+
+		// Wait for Mermaid diagram to render
+		await page.waitForSelector(".prose-content .mermaid svg", { timeout: 10000 });
+
+		// Look for messageText elements (sequence diagram arrows/labels)
+		const messageText = page.locator(".prose-content .mermaid .messageText").first();
+
+		// Verify text is visible
+		await expect(messageText).toBeVisible();
+
+		// Get computed fill color - should override inline #262626 style
+		const fillColor = await messageText.evaluate((el) => {
+			return window.getComputedStyle(el).fill;
+		});
+
+		// Parse and check brightness
+		const rgbMatch = fillColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+		if (rgbMatch) {
+			const [, r, g, b] = rgbMatch.map(Number);
+			const brightness = (r + g + b) / 3;
+			// In dark mode, messageText should be bright to contrast against dark background
+			expect(brightness).toBeGreaterThan(128);
+		}
+	});
+
 	test("Heading hashes have correct color", async ({ page }) => {
 		// Set dark mode first
 		await page.evaluate(() => {
