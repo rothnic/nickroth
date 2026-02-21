@@ -3,6 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, fontProviders } from "astro/config";
 import rehypeMermaid from "rehype-mermaid";
 import rehypeExpressiveCode from "rehype-expressive-code";
+import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
 
 // https://astro.build/config
 export default defineConfig({
@@ -32,7 +33,8 @@ export default defineConfig({
 				[
 					rehypeExpressiveCode,
 					{
-						themes: ['github-light', 'github-dark'],
+						themes: ['laserwave'],
+						plugins: [pluginCollapsibleSections],
 						styleOverrides: {
 							borderRadius: '0',
 							borderWidth: '2px',

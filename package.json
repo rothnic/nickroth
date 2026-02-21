@@ -26,6 +26,7 @@
 		"@astrojs/check": "^0.9.4",
 		"@astrojs/mdx": "^4.3.6",
 		"@astrojs/tailwind": "^6.0.2",
+		"@expressive-code/plugin-collapsible-sections": "^0.41.6",
 		"@fontsource/jetbrains-mono": "^5.2.8",
 		"@fontsource/rubik-glitch": "^5.2.7",
 		"@fontsource/space-grotesk": "^5.2.10",

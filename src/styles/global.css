@@ -409,7 +409,8 @@
 	}
 
 	/* Override daisyUI bg-base-100 utility class on wrappers */
-	:where(.bg-base-100) {
+	/* Excludes component cards that need solid backgrounds */
+	:where(.bg-base-100):not(.feature-card):not(.card):not(.dropdown-content) {
 		background-color: transparent !important;
 	}
 

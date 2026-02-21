@@ -22,7 +22,7 @@ const { title = "Key Principles", features } = Astro.props as Props;
 	
 	<div class="grid gap-2 md:grid-cols-3">
 		{features.map((feature, i) => (
-			<div class="feature-card border border-base-300 bg-base-100 p-3 shadow-brutal-sm">
+			<div class="feature-card border border-base-300 bg-base-200 p-3 shadow-brutal-sm">
 				<div class={`h-0.5 w-8 mb-2 ${
 					i === 0 ? 'bg-primary' : 
 					i === 1 ? 'bg-secondary' : 
