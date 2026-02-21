@@ -184,7 +184,7 @@ The LLM emits raw text tokens. The AI SDK accumulates them and parses into valid
 This becomes even more important when batching multiple patches in one tool call (an array of operations). With partial object streaming, the AI SDK provides a valid array structure as objects accumulate - you can process each patch as it arrives. With whole object streaming, you'd wait even longer for ALL patches to complete before seeing any progress.
 Related documentation:
 
-- [LangChain streaming](https://js.langchain.com/docs/concepts/streaming/) and [structured output](https://js.langchain.com/docs/how_to/structured_output/)
+- [LangChain.js documentation](https://js.langchain.com/)
 - [Mastra agents and streaming](https://mastra.ai/en/docs/agents/overview)
 - [Vercel AI SDK streamObject](https://ai-sdk.dev/docs/reference/ai-sdk-core/stream-object)
 - [BAML streaming and partial parsing](https://docs.boundaryml.com/)
@@ -223,7 +223,7 @@ Stream or generate one complete typed object and replace the entire document sta
 - Small edits (like adding one skill) wait for the entire object to generate and validate
   - [AI SDK generateObject](https://ai-sdk.dev/docs/reference/ai-sdk-core/generate-object)
   - [Mastra structured output](https://mastra.ai/docs/agents/structured-output)
-  - [LangChain structured output](https://js.langchain.com/docs/how_to/structured_output/)
+  - [LangChain.js documentation](https://js.langchain.com/)
 
 ### Option C: Streaming JSON Patch (Chosen)
 
