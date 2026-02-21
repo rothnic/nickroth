@@ -375,7 +375,11 @@ const { src, alt, caption, height = '400px' } = Astro.props;
 
   /* Force all text elements to use theme-aware base-content color */
   /* This overrides any palette-mapped colors that might not contrast well */
-  .excalidraw-container :global(text) {
+  /* Must override .ex-black-fill and other palette classes applied to text */
+  .excalidraw-container :global(text),
+  .excalidraw-container :global(text[class*="fill"]),
+  .excalidraw-container :global(text.ex-black-fill),
+  .excalidraw-container :global(text.ex-white-fill) {
     fill: var(--color-base-content) !important;
   }
 
