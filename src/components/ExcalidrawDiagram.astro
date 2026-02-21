@@ -32,16 +32,125 @@ const { src, alt, caption, height = '400px' } = Astro.props;
 
 <script>
   /**
-   * Strips hardcoded fill/stroke attributes from SVG elements and adds semantic
-   * CSS classes so DaisyUI theme variables control colors automatically.
+   * Maps Excalidraw COLOR_PALETTE hex values to CSS class names.
+   * Light colors are the exact palette values. Dark colors are computed
+   * using Excalidraw's own applyDarkModeFilter: invert(93%) + hue-rotate(180deg).
    *
-   * Classes added:
-   *   excalidraw-bg      - background rect (first direct-child rect of <svg>)
-   *   excalidraw-fill    - other filled rects and shapes
-   *   excalidraw-text    - text elements
-   *   excalidraw-stroke  - path/line/polyline/etc. strokes
+   * Source: https://github.com/excalidraw/excalidraw/blob/master/packages/common/src/colors.ts
    *
-   * fill="none" and stroke="none" values are preserved (structural, not color).
+   * The CSS classes below define both fill and stroke variants:
+   *   ex-<name>-fill   (used on rect/path/ellipse fills)
+   *   ex-<name>-stroke (used on path/line strokes)
+   *
+   * Special classes:
+   *   ex-bg   - SVG background rect (always transparent)
+   *   ex-text - text elements (follow base-content)
+   */
+
+  // Normalize hex to lowercase 6-digit form for consistent lookup
+  function normalizeHex(hex: string): string {
+    hex = hex.toLowerCase().replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+    return '#' + hex;
+  }
+
+  // Map from normalized Excalidraw palette hex -> CSS class name
+  // Covers: black, white, gray[0-4], and all named colors at each shade [0-4]
+  // Class naming: ex-<colorname>-<index> (e.g. ex-blue-4, ex-green-1)
+  // Special: ex-black, ex-white, ex-gray-N
+  const COLOR_CLASS_MAP: Record<string, string> = {
+    // black / white / transparent
+    '#1e1e1e': 'ex-black',
+    '#ffffff': 'ex-white',
+    '#fff':    'ex-white',  // normalized below
+    '#000000': 'ex-black',
+    '#000':    'ex-black',
+    // gray [0..4] = [#f8f9fa, #e9ecef, #ced4da, #868e96, #343a40]
+    '#f8f9fa': 'ex-gray-0',
+    '#e9ecef': 'ex-gray-1',
+    '#ced4da': 'ex-gray-2',
+    '#868e96': 'ex-gray-3',
+    '#343a40': 'ex-gray-4',
+    // red [0..4] = [#fff5f5, #ffc9c9, #ff8787, #fa5252, #e03131]
+    '#fff5f5': 'ex-red-0',
+    '#ffc9c9': 'ex-red-1',
+    '#ff8787': 'ex-red-2',
+    '#fa5252': 'ex-red-3',
+    '#e03131': 'ex-red-4',
+    // pink [0..4] = [#fff0f6, #fcc2d7, #f783ac, #e64980, #c2255c]
+    '#fff0f6': 'ex-pink-0',
+    '#fcc2d7': 'ex-pink-1',
+    '#f783ac': 'ex-pink-2',
+    '#e64980': 'ex-pink-3',
+    '#c2255c': 'ex-pink-4',
+    // grape [0..4] = [#f8f0fc, #eebefa, #da77f2, #be4bdb, #9c36b5]
+    '#f8f0fc': 'ex-grape-0',
+    '#eebefa': 'ex-grape-1',
+    '#da77f2': 'ex-grape-2',
+    '#be4bdb': 'ex-grape-3',
+    '#9c36b5': 'ex-grape-4',
+    // violet [0..4] = [#f3f0ff, #d0bfff, #9775fa, #7950f2, #6741d9]
+    '#f3f0ff': 'ex-violet-0',
+    '#d0bfff': 'ex-violet-1',
+    '#9775fa': 'ex-violet-2',
+    '#7950f2': 'ex-violet-3',
+    '#6741d9': 'ex-violet-4',
+    // blue [0..4] = [#e7f5ff, #a5d8ff, #4dabf7, #228be6, #1971c2]
+    '#e7f5ff': 'ex-blue-0',
+    '#a5d8ff': 'ex-blue-1',
+    '#4dabf7': 'ex-blue-2',
+    '#228be6': 'ex-blue-3',
+    '#1971c2': 'ex-blue-4',
+    // cyan [0..4] = [#e3fafc, #99e9f2, #3bc9db, #15aabf, #0c8599]
+    '#e3fafc': 'ex-cyan-0',
+    '#99e9f2': 'ex-cyan-1',
+    '#3bc9db': 'ex-cyan-2',
+    '#15aabf': 'ex-cyan-3',
+    '#0c8599': 'ex-cyan-4',
+    // teal [0..4] = [#e6fcf5, #96f2d7, #38d9a9, #12b886, #099268]
+    '#e6fcf5': 'ex-teal-0',
+    '#96f2d7': 'ex-teal-1',
+    '#38d9a9': 'ex-teal-2',
+    '#12b886': 'ex-teal-3',
+    '#099268': 'ex-teal-4',
+    // green [0..4] = [#ebfbee, #b2f2bb, #69db7c, #40c057, #2f9e44]
+    '#ebfbee': 'ex-green-0',
+    '#b2f2bb': 'ex-green-1',
+    '#69db7c': 'ex-green-2',
+    '#40c057': 'ex-green-3',
+    '#2f9e44': 'ex-green-4',
+    // yellow [0..4] = [#fff9db, #ffec99, #ffd43b, #fab005, #f08c00]
+    '#fff9db': 'ex-yellow-0',
+    '#ffec99': 'ex-yellow-1',
+    '#ffd43b': 'ex-yellow-2',
+    '#fab005': 'ex-yellow-3',
+    '#f08c00': 'ex-yellow-4',
+    // orange [0..4] = [#fff4e6, #ffd8a8, #ffa94d, #fd7e14, #e8590c]
+    '#fff4e6': 'ex-orange-0',
+    '#ffd8a8': 'ex-orange-1',
+    '#ffa94d': 'ex-orange-2',
+    '#fd7e14': 'ex-orange-3',
+    '#e8590c': 'ex-orange-4',
+    // bronze [0..4] = [#f8f1ee, #eaddd7, #d2bab0, #a18072, #846358]
+    '#f8f1ee': 'ex-bronze-0',
+    '#eaddd7': 'ex-bronze-1',
+    '#d2bab0': 'ex-bronze-2',
+    '#a18072': 'ex-bronze-3',
+    '#846358': 'ex-bronze-4',
+  };
+
+  /**
+   * Returns the CSS class name for a given hex fill/stroke color.
+   * Falls back to 'ex-unknown' for colors not in the Excalidraw palette.
+   */
+  function colorClass(hex: string): string {
+    const norm = normalizeHex(hex);
+    return COLOR_CLASS_MAP[norm] ?? 'ex-unknown';
+  }
+
+  /**
+   * Processes an Excalidraw SVG: strips all hardcoded color attributes and
+   * replaces them with palette CSS classes so theme switching works via CSS.
    */
   function processExcalidrawSvg(svgString: string): string {
     const parser = new DOMParser();
@@ -52,27 +161,34 @@ const { src, alt, caption, height = '400px' } = Astro.props;
     svg.removeAttribute('height');
     svg.classList.add('excalidraw-svg');
 
-    // Background rect - first <rect> direct child of <svg>
+    // Background rect - first <rect> direct child of <svg> (always white in Excalidraw exports)
     const bgRect = svg.querySelector(':scope > rect:first-of-type');
     if (bgRect) {
       bgRect.removeAttribute('fill');
       bgRect.removeAttribute('stroke');
-      bgRect.classList.add('excalidraw-bg');
+      bgRect.classList.add('ex-bg');
     }
 
-    // Other rects (boxes, cards)
+    // All rects except background
     doc.querySelectorAll('rect').forEach(rect => {
       if (rect === bgRect) return;
-      if (rect.getAttribute('fill') === 'none') return;
+      const fill = rect.getAttribute('fill');
+      if (!fill || fill === 'none' || fill === 'transparent') return;
       rect.removeAttribute('fill');
-      rect.classList.add('excalidraw-fill');
+      rect.classList.add(colorClass(fill) + '-fill');
     });
 
-    // Text elements
+    // Text elements - always follow base-content
     doc.querySelectorAll('text').forEach(text => {
-      if (text.getAttribute('fill') === 'none') return;
+      const fill = text.getAttribute('fill');
+      if (fill === 'none') return;
       text.removeAttribute('fill');
-      text.classList.add('excalidraw-text');
+      // Excalidraw uses black (#1e1e1e) for text - map to ex-black which uses base-content
+      if (fill) {
+        text.classList.add(colorClass(fill) + '-fill');
+      } else {
+        text.classList.add('ex-text');
+      }
     });
 
     // Paths, lines, polylines, polygons, ellipses, circles
@@ -81,11 +197,11 @@ const { src, alt, caption, height = '400px' } = Astro.props;
       const fill = el.getAttribute('fill');
       if (stroke && stroke !== 'none') {
         el.removeAttribute('stroke');
-        el.classList.add('excalidraw-stroke');
+        el.classList.add(colorClass(stroke) + '-stroke');
       }
-      if (fill && fill !== 'none') {
+      if (fill && fill !== 'none' && fill !== 'transparent') {
         el.removeAttribute('fill');
-        el.classList.add('excalidraw-fill');
+        el.classList.add(colorClass(fill) + '-fill');
       }
     });
 
@@ -183,7 +299,6 @@ const { src, alt, caption, height = '400px' } = Astro.props;
     height: fit-content;
   }
 
-  /* Placeholder shown while diagram is off-screen or loading */
   .excalidraw-placeholder {
     width: 100%;
     display: flex;
@@ -193,7 +308,6 @@ const { src, alt, caption, height = '400px' } = Astro.props;
     padding: 2rem;
     color: color-mix(in oklab, var(--color-base-content) 40%, #0000);
     font-size: 0.875rem;
-    /* height is set inline to match container - prevents CLS */
     justify-content: center;
   }
 
@@ -202,41 +316,186 @@ const { src, alt, caption, height = '400px' } = Astro.props;
     height: 32px;
     opacity: 0.4;
   }
-  
+
   .excalidraw-container :global(svg) {
-    /* Stretch to fill container height, maintain aspect ratio */
     height: 100%;
     width: auto;
     max-width: 100%;
     max-height: 100%;
     display: block;
   }
-  
+
   /* -----------------------------------------------------------------------
-     Semantic color classes applied by processExcalidrawSvg()
-     Maps Excalidraw's visual roles to DaisyUI theme variables.
-     DaisyUI updates the CSS variables automatically when data-theme changes.
+     Excalidraw palette CSS custom properties.
+     One --ex-<name> var per color covers both fill and stroke classes.
+     Light values are exact Excalidraw palette hex.
+     Dark values computed via applyDarkModeFilter: invert(93%) + hue-rotate(180deg).
   ----------------------------------------------------------------------- */
 
-  /* Background rect - transparent so it inherits the figure's bg */
-  .excalidraw-container :global(.excalidraw-bg) {
-    fill: transparent;
+  :root {
+    --ex-black: #1e1e1e;    --ex-white: #ffffff;
+    --ex-gray-0: #f8f9fa;   --ex-gray-1: #e9ecef;   --ex-gray-2: #ced4da;   --ex-gray-3: #868e96;   --ex-gray-4: #343a40;
+    --ex-red-0: #fff5f5;    --ex-red-1: #ffc9c9;    --ex-red-2: #ff8787;    --ex-red-3: #fa5252;    --ex-red-4: #e03131;
+    --ex-pink-0: #fff0f6;   --ex-pink-1: #fcc2d7;   --ex-pink-2: #f783ac;   --ex-pink-3: #e64980;   --ex-pink-4: #c2255c;
+    --ex-grape-0: #f8f0fc;  --ex-grape-1: #eebefa;  --ex-grape-2: #da77f2;  --ex-grape-3: #be4bdb;  --ex-grape-4: #9c36b5;
+    --ex-violet-0: #f3f0ff; --ex-violet-1: #d0bfff; --ex-violet-2: #9775fa; --ex-violet-3: #7950f2; --ex-violet-4: #6741d9;
+    --ex-blue-0: #e7f5ff;   --ex-blue-1: #a5d8ff;   --ex-blue-2: #4dabf7;   --ex-blue-3: #228be6;   --ex-blue-4: #1971c2;
+    --ex-cyan-0: #e3fafc;   --ex-cyan-1: #99e9f2;   --ex-cyan-2: #3bc9db;   --ex-cyan-3: #15aabf;   --ex-cyan-4: #0c8599;
+    --ex-teal-0: #e6fcf5;   --ex-teal-1: #96f2d7;   --ex-teal-2: #38d9a9;   --ex-teal-3: #12b886;   --ex-teal-4: #099268;
+    --ex-green-0: #ebfbee;  --ex-green-1: #b2f2bb;  --ex-green-2: #69db7c;  --ex-green-3: #40c057;  --ex-green-4: #2f9e44;
+    --ex-yellow-0: #fff9db; --ex-yellow-1: #ffec99; --ex-yellow-2: #ffd43b; --ex-yellow-3: #fab005; --ex-yellow-4: #f08c00;
+    --ex-orange-0: #fff4e6; --ex-orange-1: #ffd8a8; --ex-orange-2: #ffa94d; --ex-orange-3: #fd7e14; --ex-orange-4: #e8590c;
+    --ex-bronze-0: #f8f1ee; --ex-bronze-1: #eaddd7; --ex-bronze-2: #d2bab0; --ex-bronze-3: #a18072; --ex-bronze-4: #846358;
   }
 
-  /* Filled shapes (boxes, cards, highlight rects) */
-  .excalidraw-container :global(.excalidraw-fill) {
-    fill: var(--color-base-200);
+  [data-theme="neobrutalism-dark"] {
+    --ex-black: #d3d3d3;    --ex-white: #121212;
+    --ex-gray-0: #202325;   --ex-gray-1: #232629;   --ex-gray-2: #404850;   --ex-gray-3: #6e757c;   --ex-gray-4: #b7bcc1;
+    --ex-red-0: #0e0000;    --ex-red-1: #5a2c2c;    --ex-red-2: #d93e3e;    --ex-red-3: #f47373;    --ex-red-4: #ff8383;
+    --ex-pink-0: #0e010b;   --ex-pink-1: #582438;   --ex-pink-2: #c45882;   --ex-pink-3: #df72a3;   --ex-pink-4: #ef87b0;
+    --ex-grape-0: #0e0414;  --ex-grape-1: #4c2060;  --ex-grape-2: #b563d0;  --ex-grape-3: #c86fd8;  --ex-grape-4: #d387e0;
+    --ex-violet-0: #0c0a1a; --ex-violet-1: #4a3b72; --ex-violet-2: #9178f5; --ex-violet-3: #a080f5; --ex-violet-4: #b595ff;
+    --ex-blue-0: #070f16;   --ex-blue-1: #154162;   --ex-blue-2: #5baad7;   --ex-blue-3: #5baad7;   --ex-blue-4: #56a2e8;
+    --ex-cyan-0: #000c0e;   --ex-cyan-1: #003940;   --ex-cyan-2: #1e7885;   --ex-cyan-3: #2b8fa0;   --ex-cyan-4: #3598a8;
+    --ex-teal-0: #000e0a;   --ex-teal-1: #00422b;   --ex-teal-2: #097555;   --ex-teal-3: #1e9e76;   --ex-teal-4: #32a783;
+    --ex-green-0: #020d04;  --ex-green-1: #043b0c;  --ex-green-2: #148024;  --ex-green-3: #2b9940;  --ex-green-4: #39994b;
+    --ex-yellow-0: #100700; --ex-yellow-1: #362600; --ex-yellow-2: #8a6100; --ex-yellow-3: #a06c00; --ex-yellow-4: #b86200;
+    --ex-orange-0: #0e0500; --ex-orange-1: #4c2b01; --ex-orange-2: #945200; --ex-orange-3: #da5700; --ex-orange-4: #f17634;
+    --ex-bronze-0: #0e0907; --ex-bronze-1: #3c2a22; --ex-bronze-2: #705048; --ex-bronze-3: #9e7a71; --ex-bronze-4: #ae9490;
   }
 
-  /* Text elements */
-  .excalidraw-container :global(.excalidraw-text) {
-    fill: var(--color-base-content);
-  }
+  .excalidraw-container :global(.ex-bg)            { fill: transparent; }
+  .excalidraw-container :global(.ex-text)           { fill: var(--color-base-content); }
+  .excalidraw-container :global(.ex-unknown-fill)   { fill: var(--color-base-200); }
+  .excalidraw-container :global(.ex-unknown-stroke) { stroke: var(--color-base-content); }
 
-  /* Strokes (paths, arrows, borders, connectors) */
-  .excalidraw-container :global(.excalidraw-stroke) {
-    stroke: var(--color-base-content);
-  }
+  /* Fill classes */
+  .excalidraw-container :global(.ex-black-fill)    { fill: var(--ex-black); }
+  .excalidraw-container :global(.ex-white-fill)    { fill: var(--ex-white); }
+  .excalidraw-container :global(.ex-gray-0-fill)   { fill: var(--ex-gray-0); }
+  .excalidraw-container :global(.ex-gray-1-fill)   { fill: var(--ex-gray-1); }
+  .excalidraw-container :global(.ex-gray-2-fill)   { fill: var(--ex-gray-2); }
+  .excalidraw-container :global(.ex-gray-3-fill)   { fill: var(--ex-gray-3); }
+  .excalidraw-container :global(.ex-gray-4-fill)   { fill: var(--ex-gray-4); }
+  .excalidraw-container :global(.ex-red-0-fill)    { fill: var(--ex-red-0); }
+  .excalidraw-container :global(.ex-red-1-fill)    { fill: var(--ex-red-1); }
+  .excalidraw-container :global(.ex-red-2-fill)    { fill: var(--ex-red-2); }
+  .excalidraw-container :global(.ex-red-3-fill)    { fill: var(--ex-red-3); }
+  .excalidraw-container :global(.ex-red-4-fill)    { fill: var(--ex-red-4); }
+  .excalidraw-container :global(.ex-pink-0-fill)   { fill: var(--ex-pink-0); }
+  .excalidraw-container :global(.ex-pink-1-fill)   { fill: var(--ex-pink-1); }
+  .excalidraw-container :global(.ex-pink-2-fill)   { fill: var(--ex-pink-2); }
+  .excalidraw-container :global(.ex-pink-3-fill)   { fill: var(--ex-pink-3); }
+  .excalidraw-container :global(.ex-pink-4-fill)   { fill: var(--ex-pink-4); }
+  .excalidraw-container :global(.ex-grape-0-fill)  { fill: var(--ex-grape-0); }
+  .excalidraw-container :global(.ex-grape-1-fill)  { fill: var(--ex-grape-1); }
+  .excalidraw-container :global(.ex-grape-2-fill)  { fill: var(--ex-grape-2); }
+  .excalidraw-container :global(.ex-grape-3-fill)  { fill: var(--ex-grape-3); }
+  .excalidraw-container :global(.ex-grape-4-fill)  { fill: var(--ex-grape-4); }
+  .excalidraw-container :global(.ex-violet-0-fill) { fill: var(--ex-violet-0); }
+  .excalidraw-container :global(.ex-violet-1-fill) { fill: var(--ex-violet-1); }
+  .excalidraw-container :global(.ex-violet-2-fill) { fill: var(--ex-violet-2); }
+  .excalidraw-container :global(.ex-violet-3-fill) { fill: var(--ex-violet-3); }
+  .excalidraw-container :global(.ex-violet-4-fill) { fill: var(--ex-violet-4); }
+  .excalidraw-container :global(.ex-blue-0-fill)   { fill: var(--ex-blue-0); }
+  .excalidraw-container :global(.ex-blue-1-fill)   { fill: var(--ex-blue-1); }
+  .excalidraw-container :global(.ex-blue-2-fill)   { fill: var(--ex-blue-2); }
+  .excalidraw-container :global(.ex-blue-3-fill)   { fill: var(--ex-blue-3); }
+  .excalidraw-container :global(.ex-blue-4-fill)   { fill: var(--ex-blue-4); }
+  .excalidraw-container :global(.ex-cyan-0-fill)   { fill: var(--ex-cyan-0); }
+  .excalidraw-container :global(.ex-cyan-1-fill)   { fill: var(--ex-cyan-1); }
+  .excalidraw-container :global(.ex-cyan-2-fill)   { fill: var(--ex-cyan-2); }
+  .excalidraw-container :global(.ex-cyan-3-fill)   { fill: var(--ex-cyan-3); }
+  .excalidraw-container :global(.ex-cyan-4-fill)   { fill: var(--ex-cyan-4); }
+  .excalidraw-container :global(.ex-teal-0-fill)   { fill: var(--ex-teal-0); }
+  .excalidraw-container :global(.ex-teal-1-fill)   { fill: var(--ex-teal-1); }
+  .excalidraw-container :global(.ex-teal-2-fill)   { fill: var(--ex-teal-2); }
+  .excalidraw-container :global(.ex-teal-3-fill)   { fill: var(--ex-teal-3); }
+  .excalidraw-container :global(.ex-teal-4-fill)   { fill: var(--ex-teal-4); }
+  .excalidraw-container :global(.ex-green-0-fill)  { fill: var(--ex-green-0); }
+  .excalidraw-container :global(.ex-green-1-fill)  { fill: var(--ex-green-1); }
+  .excalidraw-container :global(.ex-green-2-fill)  { fill: var(--ex-green-2); }
+  .excalidraw-container :global(.ex-green-3-fill)  { fill: var(--ex-green-3); }
+  .excalidraw-container :global(.ex-green-4-fill)  { fill: var(--ex-green-4); }
+  .excalidraw-container :global(.ex-yellow-0-fill) { fill: var(--ex-yellow-0); }
+  .excalidraw-container :global(.ex-yellow-1-fill) { fill: var(--ex-yellow-1); }
+  .excalidraw-container :global(.ex-yellow-2-fill) { fill: var(--ex-yellow-2); }
+  .excalidraw-container :global(.ex-yellow-3-fill) { fill: var(--ex-yellow-3); }
+  .excalidraw-container :global(.ex-yellow-4-fill) { fill: var(--ex-yellow-4); }
+  .excalidraw-container :global(.ex-orange-0-fill) { fill: var(--ex-orange-0); }
+  .excalidraw-container :global(.ex-orange-1-fill) { fill: var(--ex-orange-1); }
+  .excalidraw-container :global(.ex-orange-2-fill) { fill: var(--ex-orange-2); }
+  .excalidraw-container :global(.ex-orange-3-fill) { fill: var(--ex-orange-3); }
+  .excalidraw-container :global(.ex-orange-4-fill) { fill: var(--ex-orange-4); }
+  .excalidraw-container :global(.ex-bronze-0-fill) { fill: var(--ex-bronze-0); }
+  .excalidraw-container :global(.ex-bronze-1-fill) { fill: var(--ex-bronze-1); }
+  .excalidraw-container :global(.ex-bronze-2-fill) { fill: var(--ex-bronze-2); }
+  .excalidraw-container :global(.ex-bronze-3-fill) { fill: var(--ex-bronze-3); }
+  .excalidraw-container :global(.ex-bronze-4-fill) { fill: var(--ex-bronze-4); }
+
+  /* Stroke classes */
+  .excalidraw-container :global(.ex-black-stroke)    { stroke: var(--ex-black); }
+  .excalidraw-container :global(.ex-white-stroke)    { stroke: var(--ex-white); }
+  .excalidraw-container :global(.ex-gray-0-stroke)   { stroke: var(--ex-gray-0); }
+  .excalidraw-container :global(.ex-gray-1-stroke)   { stroke: var(--ex-gray-1); }
+  .excalidraw-container :global(.ex-gray-2-stroke)   { stroke: var(--ex-gray-2); }
+  .excalidraw-container :global(.ex-gray-3-stroke)   { stroke: var(--ex-gray-3); }
+  .excalidraw-container :global(.ex-gray-4-stroke)   { stroke: var(--ex-gray-4); }
+  .excalidraw-container :global(.ex-red-0-stroke)    { stroke: var(--ex-red-0); }
+  .excalidraw-container :global(.ex-red-1-stroke)    { stroke: var(--ex-red-1); }
+  .excalidraw-container :global(.ex-red-2-stroke)    { stroke: var(--ex-red-2); }
+  .excalidraw-container :global(.ex-red-3-stroke)    { stroke: var(--ex-red-3); }
+  .excalidraw-container :global(.ex-red-4-stroke)    { stroke: var(--ex-red-4); }
+  .excalidraw-container :global(.ex-pink-0-stroke)   { stroke: var(--ex-pink-0); }
+  .excalidraw-container :global(.ex-pink-1-stroke)   { stroke: var(--ex-pink-1); }
+  .excalidraw-container :global(.ex-pink-2-stroke)   { stroke: var(--ex-pink-2); }
+  .excalidraw-container :global(.ex-pink-3-stroke)   { stroke: var(--ex-pink-3); }
+  .excalidraw-container :global(.ex-pink-4-stroke)   { stroke: var(--ex-pink-4); }
+  .excalidraw-container :global(.ex-grape-0-stroke)  { stroke: var(--ex-grape-0); }
+  .excalidraw-container :global(.ex-grape-1-stroke)  { stroke: var(--ex-grape-1); }
+  .excalidraw-container :global(.ex-grape-2-stroke)  { stroke: var(--ex-grape-2); }
+  .excalidraw-container :global(.ex-grape-3-stroke)  { stroke: var(--ex-grape-3); }
+  .excalidraw-container :global(.ex-grape-4-stroke)  { stroke: var(--ex-grape-4); }
+  .excalidraw-container :global(.ex-violet-0-stroke) { stroke: var(--ex-violet-0); }
+  .excalidraw-container :global(.ex-violet-1-stroke) { stroke: var(--ex-violet-1); }
+  .excalidraw-container :global(.ex-violet-2-stroke) { stroke: var(--ex-violet-2); }
+  .excalidraw-container :global(.ex-violet-3-stroke) { stroke: var(--ex-violet-3); }
+  .excalidraw-container :global(.ex-violet-4-stroke) { stroke: var(--ex-violet-4); }
+  .excalidraw-container :global(.ex-blue-0-stroke)   { stroke: var(--ex-blue-0); }
+  .excalidraw-container :global(.ex-blue-1-stroke)   { stroke: var(--ex-blue-1); }
+  .excalidraw-container :global(.ex-blue-2-stroke)   { stroke: var(--ex-blue-2); }
+  .excalidraw-container :global(.ex-blue-3-stroke)   { stroke: var(--ex-blue-3); }
+  .excalidraw-container :global(.ex-blue-4-stroke)   { stroke: var(--ex-blue-4); }
+  .excalidraw-container :global(.ex-cyan-0-stroke)   { stroke: var(--ex-cyan-0); }
+  .excalidraw-container :global(.ex-cyan-1-stroke)   { stroke: var(--ex-cyan-1); }
+  .excalidraw-container :global(.ex-cyan-2-stroke)   { stroke: var(--ex-cyan-2); }
+  .excalidraw-container :global(.ex-cyan-3-stroke)   { stroke: var(--ex-cyan-3); }
+  .excalidraw-container :global(.ex-cyan-4-stroke)   { stroke: var(--ex-cyan-4); }
+  .excalidraw-container :global(.ex-teal-0-stroke)   { stroke: var(--ex-teal-0); }
+  .excalidraw-container :global(.ex-teal-1-stroke)   { stroke: var(--ex-teal-1); }
+  .excalidraw-container :global(.ex-teal-2-stroke)   { stroke: var(--ex-teal-2); }
+  .excalidraw-container :global(.ex-teal-3-stroke)   { stroke: var(--ex-teal-3); }
+  .excalidraw-container :global(.ex-teal-4-stroke)   { stroke: var(--ex-teal-4); }
+  .excalidraw-container :global(.ex-green-0-stroke)  { stroke: var(--ex-green-0); }
+  .excalidraw-container :global(.ex-green-1-stroke)  { stroke: var(--ex-green-1); }
+  .excalidraw-container :global(.ex-green-2-stroke)  { stroke: var(--ex-green-2); }
+  .excalidraw-container :global(.ex-green-3-stroke)  { stroke: var(--ex-green-3); }
+  .excalidraw-container :global(.ex-green-4-stroke)  { stroke: var(--ex-green-4); }
+  .excalidraw-container :global(.ex-yellow-0-stroke) { stroke: var(--ex-yellow-0); }
+  .excalidraw-container :global(.ex-yellow-1-stroke) { stroke: var(--ex-yellow-1); }
+  .excalidraw-container :global(.ex-yellow-2-stroke) { stroke: var(--ex-yellow-2); }
+  .excalidraw-container :global(.ex-yellow-3-stroke) { stroke: var(--ex-yellow-3); }
+  .excalidraw-container :global(.ex-yellow-4-stroke) { stroke: var(--ex-yellow-4); }
+  .excalidraw-container :global(.ex-orange-0-stroke) { stroke: var(--ex-orange-0); }
+  .excalidraw-container :global(.ex-orange-1-stroke) { stroke: var(--ex-orange-1); }
+  .excalidraw-container :global(.ex-orange-2-stroke) { stroke: var(--ex-orange-2); }
+  .excalidraw-container :global(.ex-orange-3-stroke) { stroke: var(--ex-orange-3); }
+  .excalidraw-container :global(.ex-orange-4-stroke) { stroke: var(--ex-orange-4); }
+  .excalidraw-container :global(.ex-bronze-0-stroke) { stroke: var(--ex-bronze-0); }
+  .excalidraw-container :global(.ex-bronze-1-stroke) { stroke: var(--ex-bronze-1); }
+  .excalidraw-container :global(.ex-bronze-2-stroke) { stroke: var(--ex-bronze-2); }
+  .excalidraw-container :global(.ex-bronze-3-stroke) { stroke: var(--ex-bronze-3); }
+  .excalidraw-container :global(.ex-bronze-4-stroke) { stroke: var(--ex-bronze-4); }
 
   .excalidraw-caption {
     margin-top: 1rem;
