@@ -170,6 +170,19 @@ const { src, alt, caption, height = '400px' } = Astro.props;
     display: block;
   }
   
+  /* Dark mode: make SVG background transparent so it blends with dark theme */
+  /* Excalidraw SVGs typically have a white rect as first child for background */
+  :global([data-theme="neobrutalism-dark"]) .excalidraw-container :global(svg > rect:first-child) {
+    fill: transparent !important;
+  }
+  
+  /* Alternative: target any white/light background rects in the SVG */
+  :global([data-theme="neobrutalism-dark"]) .excalidraw-container :global(svg rect[fill="#ffffff"]),
+  :global([data-theme="neobrutalism-dark"]) .excalidraw-container :global(svg rect[fill="white"]),
+  :global([data-theme="neobrutalism-dark"]) .excalidraw-container :global(svg rect[fill="#fff"]) {
+    fill: transparent !important;
+  }
+  
   .excalidraw-caption {
     margin-top: 1rem;
     font-size: 0.875rem;
