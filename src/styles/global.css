@@ -1807,6 +1807,29 @@
 /* Expressive code block spacing */
 .prose-content .expressive-code {
 	margin: 1.5rem 0 2.5rem 0;
+	/* Ensure code blocks respect container width */
+	max-width: 100%;
+	overflow-x: auto;
+}
+
+/* Ensure code blocks don't overflow their container */
+.prose-content .expressive-code pre,
+.prose-content .expressive-code code {
+	max-width: 100%;
+	/* Force wrapping when wrap: true is set */
+	white-space: pre-wrap !important;
+	word-wrap: break-word !important;
+	overflow-wrap: break-word !important;
+}
+
+/* Override any fixed widths from expressive-code */
+.prose-content .expressive-code .frame {
+	max-width: 100%;
+}
+
+.prose-content .expressive-code .ec-line {
+	/* Ensure lines wrap instead of extending forever */
+	white-space: pre-wrap !important;
 }
 
 /* Tables */
