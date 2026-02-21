@@ -112,29 +112,35 @@ const { src, alt, caption, height = '400px' } = Astro.props;
   
   async function loadDiagram(container: HTMLElement) {
     const svgUrl = container.dataset.svgUrl;
-    if (!svgUrl || container.dataset.loaded === 'true') return;
+    if (!svgUrl) return;
 
-    // Mark as loading to prevent duplicate fetches
-    container.dataset.loaded = 'true';
-
-    try {
-      const response = await fetch(svgUrl);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch SVG: ${response.statusText}`);
+    // Store original SVG data for theme re-processing
+    if (!container.dataset.svgData) {
+      try {
+        const response = await fetch(svgUrl);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch SVG: ${response.statusText}`);
+        }
+        const svgData = await response.text();
+        container.dataset.svgData = svgData;
+      } catch (error) {
+        console.error('Error loading Excalidraw diagram:', error);
+        const placeholder = container.querySelector('.excalidraw-placeholder');
+        if (placeholder) {
+          placeholder.innerHTML = '<span>Diagram unavailable</span>';
+        }
+        return;
       }
+    }
 
-      const svgData = await response.text();
+    // Process and render the SVG
+    const svgData = container.dataset.svgData;
+    if (svgData) {
       const modifiedSvg = modifySvg(svgData);
       container.innerHTML = modifiedSvg;
-    } catch (error) {
-      console.error('Error loading Excalidraw diagram:', error);
-      // Fallback: show error state in placeholder
-      const placeholder = container.querySelector('.excalidraw-placeholder');
-      if (placeholder) {
-        placeholder.innerHTML = '<span>Diagram unavailable</span>';
-      }
-      container.dataset.loaded = 'false';
     }
+    
+    container.dataset.loaded = 'true';
   }
 
   function initExcalidrawDiagrams() {
@@ -169,16 +175,47 @@ const { src, alt, caption, height = '400px' } = Astro.props;
       observer.observe(container);
     });
   }
+
+  // Watch for theme changes and re-render diagrams
+  function watchThemeChanges() {
+    // Watch for data-theme attribute changes (manual toggle)
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+          // Re-render all loaded diagrams
+          const containers = document.querySelectorAll<HTMLElement>('.excalidraw-container[data-loaded="true"]');
+          containers.forEach(container => {
+            container.innerHTML = '';
+            container.dataset.loaded = 'false';
+            loadDiagram(container);
+          });
+        }
+      });
+    });
+
+    // Observe the html element for theme changes
+    const htmlElement = document.documentElement;
+    if (htmlElement) {
+      observer.observe(htmlElement, { attributes: true });
+    }
+  }
   
   // Run on initial page load
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initExcalidrawDiagrams);
+    document.addEventListener('DOMContentLoaded', () => {
+      initExcalidrawDiagrams();
+      watchThemeChanges();
+    });
   } else {
     initExcalidrawDiagrams();
+    watchThemeChanges();
   }
   
   // Run on Astro page transitions
-  document.addEventListener('astro:page-load', initExcalidrawDiagrams);
+  document.addEventListener('astro:page-load', () => {
+    initExcalidrawDiagrams();
+    watchThemeChanges();
+  });
 </script>
 
 <style>
