@@ -20,7 +20,7 @@ import Callout from '../../components/Callout.astro';
 
 # AI-Powered Resume Builder with Real-Time Streaming
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> PROBLEM:</span> <span class="h2-title">Why iterative artifact edits fail at scale</span>
+## <span class="h2-prefix">PROBLEM:</span> <span class="h2-title">Why iterative artifact edits fail at scale</span>
 
 **You're in a conversation with your resume.**
 
@@ -86,7 +86,7 @@ These failure modes compound when multiple users, models, or edits operate concu
   ]}
 />
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> STREAMING TYPES:</span> <span class="h2-title">Text vs object vs partial-object streams</span>
+## <span class="h2-prefix">STREAMING TYPES:</span> <span class="h2-title">Text vs object vs partial-object streams</span>
 
 When building AI-powered interfaces, not all streaming is the same. Each stream type has different reliability characteristics and UX implications.
 
@@ -189,7 +189,7 @@ Related documentation:
 - [Vercel AI SDK streamObject](https://ai-sdk.dev/docs/reference/ai-sdk-core/stream-object)
 - [BAML streaming and partial parsing](https://docs.boundaryml.com/)
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> TOOLING OPTIONS:</span> <span class="h2-title">Approaches to structured document edits</span>
+## <span class="h2-prefix">TOOLING OPTIONS:</span> <span class="h2-title">Approaches to structured document edits</span>
 
 Given the problem and the streaming options available, three approaches were evaluated for implementing AI-driven document edits.
 
@@ -249,7 +249,7 @@ Emit [RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902) operations (`add`
 }
 ```
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> SOLUTION:</span> <span class="h2-title">Streaming JSON Patch with partial-object stabilization</span>
+## <span class="h2-prefix">SOLUTION:</span> <span class="h2-title">Streaming JSON Patch with partial-object stabilization</span>
 
 This implementation uses Option C--streaming JSON Patch with partial-object streams--because it uniquely combines the responsiveness of streaming with the precision of structured operations.
 
@@ -561,7 +561,7 @@ Independent paths can update in parallel without collisions.
 
 This gives effectively O(1)-style conflict checks for unrelated paths, while history remains append-only through versioned document snapshots.
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> ARCHITECTURE:</span> <span class="h2-title">System design and implementation</span>
+## <span class="h2-prefix">ARCHITECTURE:</span> <span class="h2-title">System design and implementation</span>
 
 <ExcalidrawDiagram
   src="/docs/project/resume-chatbot-architecture.svg"
@@ -624,7 +624,7 @@ This architecture separates concerns: the Chat Stream keeps the UI responsive wh
 
 
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> DEMO:</span> <span class="h2-title">Progressive patches in action</span>
+## <span class="h2-prefix">DEMO:</span> <span class="h2-title">Progressive patches in action</span>
 
 The demo shows progressive RFC 6902 patches being applied without full-document replacement. The user sees conversational feedback and artifact updates in parallel.
 
@@ -635,7 +635,7 @@ The demo shows progressive RFC 6902 patches being applied without full-document 
   caption="The resume chatbot applying surgical JSON patches in real-time"
 />
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> TESTING:</span> <span class="h2-title">Strategy and results</span>
+## <span class="h2-prefix">TESTING:</span> <span class="h2-title">Strategy and results</span>
 
 Testing AI-driven systems requires two complementary approaches. First, deterministic mocks test UI components' ability to process streaming patches in a controlled environment. Second, end-to-end tests with live LLMs verify that given a user command to make a change, the agent can achieve the desired result with its prompting.
 
@@ -645,13 +645,13 @@ By leveraging API mocks, test execution time for streaming patches dropped from 
 
 See the [testing strategy document](/work/resume-chatbot-testing-strategy) for implementation details.
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> HANDOFF:</span> <span class="h2-title">Deep dives and next reading</span>
+## <span class="h2-prefix">HANDOFF:</span> <span class="h2-title">Deep dives and next reading</span>
 
 - [Streaming JSON Patching Architecture](/work/resume-chatbot-streaming-architecture) - Detailed pipeline internals, lifecycle of patch operations, and failure handling patterns.
 - [Deterministic Testing for AI Streaming](/work/resume-chatbot-testing-strategy) - Mock-provider approach for repeatable streaming tests and measurable reliability results.
 - [Streaming Modes and Framework Benchmarking](/work/resume-chatbot-streaming-modes-benchmarking) - Comparative analysis of streaming modes across frameworks with performance tradeoffs.
 
-## <span class="h2-prefix"><span class="h2-hash" aria-hidden="true">##</span> NEXT STEPS:</span> <span class="h2-title">Generative design tools for rapid UX iteration</span>
+## <span class="h2-prefix">NEXT STEPS:</span> <span class="h2-title">Generative design tools for rapid UX iteration</span>
 
 The current implementation handles AI-driven edits well, but the next evolution is **collaborative editing** - where users can manually refine what the AI suggests, or make changes directly while the AI observes and learns.
 
