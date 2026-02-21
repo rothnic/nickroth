@@ -55,6 +55,45 @@ export default defineConfig({
 	// Note: expressive-code handles syntax highlighting automatically
 	// Do not set markdown.syntaxHighlight when using astro-expressive-code
 
+	// Configure expressive-code for regular Markdown files (.md)
+	// MDX files use the mdx() integration above
+	markdown: {
+		syntaxHighlight: false,
+		rehypePlugins: [
+			[
+				rehypeMermaid,
+				{
+					strategy: "inline-svg",
+					mermaidConfig: {
+						theme: "base",
+						themeVariables: {
+							fontFamily: "JetBrains Mono, ui-monospace, monospace",
+							fontSize: "15px",
+						},
+					},
+				},
+			],
+			[
+				rehypeExpressiveCode,
+				{
+					themes: ['laserwave'],
+					plugins: [pluginCollapsibleSections],
+					styleOverrides: {
+						borderRadius: '0',
+						borderWidth: '2px',
+						borderColor: 'var(--nr-border-color, #000)',
+						codeFontFamily: 'var(--font-mono), ui-monospace, monospace',
+						codeFontSize: '0.875rem',
+						codeLineHeight: '1.6',
+					},
+					useThemedScrollbars: false,
+					useThemedSelectionColors: false,
+					wrap: true,
+				},
+			],
+		],
+	},
+
 	output: "static",
 
 	// Update with your Cloudflare Pages URL
