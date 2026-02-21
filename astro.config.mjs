@@ -1,9 +1,10 @@
 import mdx from "@astrojs/mdx";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, fontProviders } from "astro/config";
-import rehypeMermaid from "rehype-mermaid";
-import rehypeExpressiveCode from "rehype-expressive-code";
-import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
+import {
+	rehypeMermaidPlugin,
+	rehypeExpressiveCodePlugin,
+} from "./rehype.config.mjs";
 
 // https://astro.build/config
 export default defineConfig({
@@ -16,83 +17,9 @@ export default defineConfig({
 			rehypePlugins: [
 				// Process mermaid diagrams FIRST (before expressive-code)
 				// This prevents expressive-code from capturing mermaid blocks
-				[
-					rehypeMermaid,
-					{
-						strategy: "inline-svg",
-						mermaidConfig: {
-							theme: "base",
-							themeVariables: {
-								// Typography
-								fontFamily: "JetBrains Mono, ui-monospace, monospace",
-								fontSize: "15px",
-								
-								// Base colors (light mode - neobrutalism-light theme)
-								background: "#fcfcfc",
-								primaryColor: "#f3f3f5",
-								primaryTextColor: "#262626",
-								primaryBorderColor: "#d946ef",
-								
-								// Secondary colors
-								secondaryColor: "#a3e635",
-								secondaryTextColor: "#262626",
-								secondaryBorderColor: "#262626",
-								
-								// Lines and text
-								lineColor: "#262626",
-								textColor: "#262626",
-								
-								// Notes
-								noteBkgColor: "#d946ef",
-								noteTextColor: "#ffffff",
-								noteBorderColor: "#d946ef",
-								
-								// Sequence diagram specific
-								actorBkg: "#f3f3f5",
-								actorBorder: "#d946ef",
-								actorTextColor: "#262626",
-								actorLineColor: "#e8e8eb",
-								
-								// Activation boxes
-								activationBkgColor: "#e8e8eb",
-								activationBorderColor: "#262626",
-								
-								// Edge labels
-								edgeLabelBackground: "#fcfcfc",
-								
-								// Loop and alt sections
-								loopTextColor: "#262626",
-								loopLineColor: "#262626",
-								
-								// Flowchart specific
-								nodeBorder: "#d946ef",
-								nodeTextColor: "#262626",
-								
-								// Dark mode flag - set to false for light mode base
-								darkMode: false,
-							},
-						},
-					},
-				],
+				rehypeMermaidPlugin,
 				// Then process code blocks with expressive-code
-				[
-					rehypeExpressiveCode,
-					{
-						themes: ['laserwave'],
-						plugins: [pluginCollapsibleSections],
-						styleOverrides: {
-							borderRadius: '0',
-							borderWidth: '2px',
-							borderColor: 'var(--nr-border-color, #000)',
-							codeFontFamily: 'var(--font-mono), ui-monospace, monospace',
-							codeFontSize: '0.875rem',
-							codeLineHeight: '1.6',
-						},
-						useThemedScrollbars: false,
-						useThemedSelectionColors: false,
-						wrap: true,
-					},
-				],
+				rehypeExpressiveCodePlugin,
 			],
 		}),
 	],
@@ -104,84 +31,7 @@ export default defineConfig({
 	// MDX files use the mdx() integration above
 	markdown: {
 		syntaxHighlight: false,
-		rehypePlugins: [
-			[
-				rehypeMermaid,
-				{
-					strategy: "inline-svg",
-					mermaidConfig: {
-						theme: "base",
-						themeVariables: {
-							// Typography
-							fontFamily: "JetBrains Mono, ui-monospace, monospace",
-							fontSize: "15px",
-
-							// Base colors (light mode - neobrutalism-light theme)
-							background: "#fcfcfc",
-							primaryColor: "#f3f3f5",
-							primaryTextColor: "#262626",
-							primaryBorderColor: "#d946ef",
-
-							// Secondary colors
-							secondaryColor: "#a3e635",
-							secondaryTextColor: "#262626",
-							secondaryBorderColor: "#262626",
-
-							// Lines and text
-							lineColor: "#262626",
-							textColor: "#262626",
-
-							// Notes
-							noteBkgColor: "#d946ef",
-							noteTextColor: "#ffffff",
-							noteBorderColor: "#d946ef",
-
-							// Sequence diagram specific
-							actorBkg: "#f3f3f5",
-							actorBorder: "#d946ef",
-							actorTextColor: "#262626",
-							actorLineColor: "#e8e8eb",
-
-							// Activation boxes
-							activationBkgColor: "#e8e8eb",
-							activationBorderColor: "#262626",
-
-							// Edge labels
-							edgeLabelBackground: "#fcfcfc",
-
-							// Loop and alt sections
-							loopTextColor: "#262626",
-							loopLineColor: "#262626",
-
-							// Flowchart specific
-							nodeBorder: "#d946ef",
-							nodeTextColor: "#262626",
-
-							// Dark mode flag - set to false for light mode base
-							darkMode: false,
-						},
-					},
-				},
-			],
-			[
-				rehypeExpressiveCode,
-				{
-					themes: ['laserwave'],
-					plugins: [pluginCollapsibleSections],
-					styleOverrides: {
-						borderRadius: '0',
-						borderWidth: '2px',
-						borderColor: 'var(--nr-border-color, #000)',
-						codeFontFamily: 'var(--font-mono), ui-monospace, monospace',
-						codeFontSize: '0.875rem',
-						codeLineHeight: '1.6',
-					},
-					useThemedScrollbars: false,
-					useThemedSelectionColors: false,
-					wrap: true,
-				},
-			],
-		],
+		rehypePlugins: [rehypeMermaidPlugin, rehypeExpressiveCodePlugin],
 	},
 
 	output: "static",
@@ -248,9 +98,9 @@ export default defineConfig({
 		// Applies to SVG files imported as components (e.g. import Logo from '../assets/logo.svg')
 		svgo: {
 			plugins: [
-				'preset-default',
+				"preset-default",
 				{
-					name: 'removeViewBox',
+					name: "removeViewBox",
 					active: false, // Preserve viewBox for responsive scaling
 				},
 			],
