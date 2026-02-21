@@ -1490,6 +1490,11 @@
 	line-height: 1.6;
 	color: color-mix(in oklab, var(--color-base-content) 85%, #0000);
 	counter-increment: list-counter;
+	text-indent: 0;
+}
+
+.prose-content ol li > * {
+	margin-left: 0;
 }
 
 .prose-content ol li:last-child {
