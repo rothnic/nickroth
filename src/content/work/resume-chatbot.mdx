@@ -267,9 +267,9 @@ This implementation uses Option C--streaming JSON Patch with partial-object stre
 
 In practice, the JSON Resume schema is used for data storage and validation (via Zod), but a custom renderer was built to match the application's visual style rather than using off-the-shelf HTML themes. This provides complete control over the presentation while benefiting from the standard's structured data model.
 
-```json
+```json collapse={3-28, 31-52, 55-66, 69-83, 86-98, 101-108, 111-120}
+// Full JSON Resume schema with collapsible sections
 {
-  // [!section:basics] Core identity and contact information
   "basics": {
     "name": "Nick Roth",
     "label": "Full-Stack Developer",
@@ -295,8 +295,7 @@ In practice, the JSON Resume schema is used for data storage and validation (via
       }
     ]
   },
-  // [!section-end]
-  // [!section:work] Professional experience with achievements
+
   "work": [
     {
       "name": "Acme Corp",
@@ -323,8 +322,7 @@ In practice, the JSON Resume schema is used for data storage and validation (via
       ]
     }
   ],
-  // [!section-end]
-  // [!section:education] Academic background and certifications
+
   "education": [
     {
       "institution": "University of Washington",
@@ -337,8 +335,7 @@ In practice, the JSON Resume schema is used for data storage and validation (via
       "courses": ["Distributed Systems", "Machine Learning", "Algorithms"]
     }
   ],
-  // [!section-end]
-  // [!section:skills] Technical competencies and proficiency levels
+
   "skills": [
     {
       "name": "TypeScript",
@@ -356,8 +353,7 @@ In practice, the JSON Resume schema is used for data storage and validation (via
       "keywords": ["AWS", "Docker", "Kubernetes", "Terraform"]
     }
   ],
-  // [!section-end]
-  // [!section:projects] Notable projects and open source contributions
+
   "projects": [
     {
       "name": "Resume Chatbot",
@@ -372,8 +368,7 @@ In practice, the JSON Resume schema is used for data storage and validation (via
       "url": "https://github.com/rothnic/resume-chatbot"
     }
   ],
-  // [!section-end]
-  // [!section:awards] Recognitions and achievements
+
   "awards": [
     {
       "title": "Engineering Excellence Award",
@@ -382,8 +377,7 @@ In practice, the JSON Resume schema is used for data storage and validation (via
       "summary": "For leading the successful platform migration"
     }
   ],
-  // [!section-end]
-  // [!section:publications] Articles, papers, and published works
+
   "publications": [
     {
       "name": "Streaming Architecture Patterns",
@@ -393,7 +387,6 @@ In practice, the JSON Resume schema is used for data storage and validation (via
       "summary": "Exploring real-time data patterns in modern web applications"
     }
   ]
-  // [!section-end]
 }
 ```
 

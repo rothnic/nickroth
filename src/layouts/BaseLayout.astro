@@ -52,6 +52,15 @@ const isHomepage = currentPath === "/" || currentPath === "";
     <Font cssVariable="--font-glitch" />
     <title>{title}</title>
     <ClientRouter />
+    <!-- Theme initialization - runs immediately to prevent flash of wrong theme -->
+    <script is:inline>
+      (function() {
+        const stored = localStorage.getItem('theme');
+        if (stored === 'neobrutalism-dark') {
+          document.documentElement.setAttribute('data-theme', 'neobrutalism-dark');
+        }
+      })();
+    </script>
     <script src="/src/scripts/theme.js" defer></script>
   </head>
   <script>

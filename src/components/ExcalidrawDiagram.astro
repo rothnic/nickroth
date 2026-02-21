@@ -1,7 +1,7 @@
 ---
-// ExcalidrawDiagram - Theme-aware diagram component using CSS variables
+// ExcalidrawDiagram - Theme-aware diagram component using CSS filter approach
 // Based on https://alexop.dev/posts/excalidraw-dark-mode-astro-diagrams/
-// Uses Excalidraw's official theme color mappings
+// Uses CSS filter inversion for dark mode instead of color replacement
 // Lazy loads via IntersectionObserver - fetch is deferred until near viewport
 export interface Props {
   src: string;
@@ -30,117 +30,40 @@ const { src, alt, caption, height = '400px' } = Astro.props;
 </figure>
 
 <script>
-  // Color mapping from Excalidraw's theme system
-  // Light mode colors that should be replaced with CSS variables
-  const LIGHT_COLORS: Record<string, string> = {
-    // Background/surface colors
-    '#ffffff': 'var(--excalidraw-bg)',
-    '#f5f5f5': 'var(--excalidraw-surface-high)',
-    '#ebebeb': 'var(--excalidraw-surface-mid)',
-    '#f1f0ff': 'var(--excalidraw-surface-low)',
-    '#ececf4': 'var(--excalidraw-surface-lowest)',
-    '#fff': 'var(--excalidraw-bg)',
-    'white': 'var(--excalidraw-bg)',
-    
-    // Text/content colors
-    '#1b1b1f': 'var(--excalidraw-text)',
-    '#1e1e1e': 'var(--excalidraw-text-secondary)',
-    '#121212': 'var(--excalidraw-text-muted)',
-    '#000000': 'var(--excalidraw-text)',
-    '#000': 'var(--excalidraw-text)',
-    'black': 'var(--excalidraw-text)',
-    
-    // Gray scale
-    '#3d3d3d': 'var(--excalidraw-gray-80)',
-    '#5c5c5c': 'var(--excalidraw-gray-70)',
-    '#7a7a7a': 'var(--excalidraw-gray-60)',
-    '#999999': 'var(--excalidraw-gray-50)',
-    '#b8b8b8': 'var(--excalidraw-gray-40)',
-    '#d6d6d6': 'var(--excalidraw-gray-30)',
-    '#242424': 'var(--excalidraw-gray-85)',
-    
-    // Brand/primary colors
-    '#6965db': 'var(--excalidraw-primary)',
-    '#5b57d1': 'var(--excalidraw-primary-darker)',
-    '#e3e2fe': 'var(--excalidraw-primary-light)',
-    
-    // Semantic colors
-    '#db6965': 'var(--excalidraw-danger)',
-    '#fceeca': 'var(--excalidraw-warning)',
-    '#cafccc': 'var(--excalidraw-success)',
-  };
-  
-  function modifySvg(svgString: string): string {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(svgString, 'image/svg+xml');
-    const svg = doc.documentElement;
-    
-    // Let SVG use intrinsic dimensions (hug its content)
-    svg.removeAttribute('width');
-    svg.removeAttribute('height');
-    svg.classList.add('excalidraw-svg');
-    
-    // Replace hardcoded colors with CSS variables
-    const allElements = svg.querySelectorAll('*');
-    allElements.forEach(el => {
-      const fill = el.getAttribute('fill');
-      const stroke = el.getAttribute('stroke');
-      if (fill && LIGHT_COLORS[fill.toLowerCase()]) {
-        el.setAttribute('fill', LIGHT_COLORS[fill.toLowerCase()]);
-      }
-      
-      if (stroke && LIGHT_COLORS[stroke.toLowerCase()]) {
-        el.setAttribute('stroke', LIGHT_COLORS[stroke.toLowerCase()]);
-      }
-      
-      // Handle style attribute with fill/stroke
-      const style = el.getAttribute('style');
-      if (style) {
-        let newStyle = style;
-        Object.entries(LIGHT_COLORS).forEach(([color, variable]) => {
-          const regex = new RegExp(color, 'gi');
-          newStyle = newStyle.replace(regex, variable);
-        });
-        if (newStyle !== style) {
-          el.setAttribute('style', newStyle);
-        }
-      }
-    });
-    
-    return new XMLSerializer().serializeToString(svg);
-  }
-  
   async function loadDiagram(container: HTMLElement) {
     const svgUrl = container.dataset.svgUrl;
     if (!svgUrl) return;
 
-    // Store original SVG data for theme re-processing
-    if (!container.dataset.svgData) {
-      try {
-        const response = await fetch(svgUrl);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch SVG: ${response.statusText}`);
-        }
-        const svgData = await response.text();
-        container.dataset.svgData = svgData;
-      } catch (error) {
-        console.error('Error loading Excalidraw diagram:', error);
-        const placeholder = container.querySelector('.excalidraw-placeholder');
-        if (placeholder) {
-          placeholder.innerHTML = '<span>Diagram unavailable</span>';
-        }
-        return;
+    try {
+      const response = await fetch(svgUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch SVG: ${response.statusText}`);
+      }
+      const svgData = await response.text();
+      
+      // Parse and prepare SVG
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(svgData, 'image/svg+xml');
+      const svg = doc.documentElement;
+      
+      // Remove hardcoded dimensions to allow responsive scaling
+      svg.removeAttribute('width');
+      svg.removeAttribute('height');
+      svg.classList.add('excalidraw-svg');
+      
+      // Preserve original colors - no color replacement
+      // Dark mode is handled via CSS filter inversion
+      
+      const modifiedSvg = new XMLSerializer().serializeToString(svg);
+      container.innerHTML = modifiedSvg;
+      container.dataset.loaded = 'true';
+    } catch (error) {
+      console.error('Error loading Excalidraw diagram:', error);
+      const placeholder = container.querySelector('.excalidraw-placeholder');
+      if (placeholder) {
+        placeholder.innerHTML = '<span>Diagram unavailable</span>';
       }
     }
-
-    // Process and render the SVG
-    const svgData = container.dataset.svgData;
-    if (svgData) {
-      const modifiedSvg = modifySvg(svgData);
-      container.innerHTML = modifiedSvg;
-    }
-    
-    container.dataset.loaded = 'true';
   }
 
   function initExcalidrawDiagrams() {
@@ -175,47 +98,16 @@ const { src, alt, caption, height = '400px' } = Astro.props;
       observer.observe(container);
     });
   }
-
-  // Watch for theme changes and re-render diagrams
-  function watchThemeChanges() {
-    // Watch for data-theme attribute changes (manual toggle)
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
-          // Re-render all loaded diagrams
-          const containers = document.querySelectorAll<HTMLElement>('.excalidraw-container[data-loaded="true"]');
-          containers.forEach(container => {
-            container.innerHTML = '';
-            container.dataset.loaded = 'false';
-            loadDiagram(container);
-          });
-        }
-      });
-    });
-
-    // Observe the html element for theme changes
-    const htmlElement = document.documentElement;
-    if (htmlElement) {
-      observer.observe(htmlElement, { attributes: true });
-    }
-  }
   
   // Run on initial page load
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      initExcalidrawDiagrams();
-      watchThemeChanges();
-    });
+    document.addEventListener('DOMContentLoaded', initExcalidrawDiagrams);
   } else {
     initExcalidrawDiagrams();
-    watchThemeChanges();
   }
   
   // Run on Astro page transitions
-  document.addEventListener('astro:page-load', () => {
-    initExcalidrawDiagrams();
-    watchThemeChanges();
-  });
+  document.addEventListener('astro:page-load', initExcalidrawDiagrams);
 </script>
 
 <style>
@@ -241,6 +133,12 @@ const { src, alt, caption, height = '400px' } = Astro.props;
     justify-content: center;
     align-items: center;
     height: fit-content;
+    /* Light mode: no filter applied */
+  }
+
+  /* Dark mode: invert light colors to dark, rotate hue to restore color balance */
+  :global([data-theme="neobrutalism-dark"]) .excalidraw-container {
+    filter: invert(93%) hue-rotate(180deg);
   }
 
   /* Placeholder shown while diagram is off-screen or loading */
@@ -278,72 +176,5 @@ const { src, alt, caption, height = '400px' } = Astro.props;
     color: var(--color-base-content);
     text-align: center;
     font-style: italic;
-  }
-</style>
-
-<style>
-  /* Scoped Excalidraw theme variables - only apply within this component */
-  .excalidraw-container {
-    /* Light mode (default) - Excalidraw colors */
-    --excalidraw-bg: #ffffff;
-    --excalidraw-surface-high: #f5f5f5;
-    --excalidraw-surface-mid: #ebebeb;
-    --excalidraw-surface-low: #f1f0ff;
-    --excalidraw-surface-lowest: #ececf4;
-    
-    --excalidraw-text: #1b1b1f;
-    --excalidraw-text-secondary: #1e1e1e;
-    --excalidraw-text-muted: #121212;
-    
-    --excalidraw-gray-80: #3d3d3d;
-    --excalidraw-gray-70: #5c5c5c;
-    --excalidraw-gray-60: #7a7a7a;
-    --excalidraw-gray-50: #999999;
-    --excalidraw-gray-40: #b8b8b8;
-    --excalidraw-gray-30: #d6d6d6;
-    --excalidraw-gray-85: #242424;
-    
-    --excalidraw-primary: #6965db;
-    --excalidraw-primary-darker: #5b57d1;
-    --excalidraw-primary-light: #e3e2fe;
-    
-    --excalidraw-danger: #db6965;
-    --excalidraw-warning: #fceeca;
-    --excalidraw-success: #cafccc;
-  }
-  
-  /* Dark mode - Excalidraw colors scoped to component */
-  :global([data-theme="neobrutalism-dark"]) .excalidraw-container {
-    --excalidraw-bg: #121212;
-    --excalidraw-surface-high: #2e2d39;
-    --excalidraw-surface-mid: #232329;
-    --excalidraw-surface-low: #2e2d39;
-    --excalidraw-surface-lowest: #1e1e1e;
-    
-    --excalidraw-text: #e3e3e8;
-    --excalidraw-text-secondary: #e3e3e8;
-    --excalidraw-text-muted: #e3e3e8;
-    
-    --excalidraw-gray-80: #b8b8b8;
-    --excalidraw-gray-70: #999999;
-    --excalidraw-gray-60: #7a7a7a;
-    --excalidraw-gray-50: #5c5c5c;
-    --excalidraw-gray-40: #3d3d3d;
-    --excalidraw-gray-30: #2e2e2e;
-    --excalidraw-gray-85: #d6d6d6;
-    
-    --excalidraw-primary: #a8a5ff;
-    --excalidraw-primary-darker: #b2aeff;
-    --excalidraw-primary-light: #4f4d6f;
-    
-    --excalidraw-danger: #ffa8a5;
-    --excalidraw-warning: #f5c354;
-    --excalidraw-success: #a5eba8;
-  }
-  
-  /* Smooth transitions for theme changes */
-  .excalidraw-container :global(.excalidraw-svg),
-  .excalidraw-container :global(.excalidraw-svg *) {
-    transition: fill 0.3s ease, stroke 0.3s ease;
   }
 </style>
