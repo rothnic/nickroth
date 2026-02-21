@@ -52,6 +52,13 @@ const {
     height: 100%;
     display: block;
     cursor: pointer;
+    z-index: 2;
+    transition: opacity 0.3s ease;
+  }
+
+  .lazy-video-wrapper.playing .lazy-video-poster {
+    opacity: 0;
+    pointer-events: none;
   }
 
   .lazy-video-poster img {
@@ -62,9 +69,19 @@ const {
   }
 
   .lazy-video-embed {
-    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .lazy-video-wrapper.playing .lazy-video-embed {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .lazy-video-play {
@@ -123,9 +140,7 @@ const {
     text-align: center;
   }
 
-  /* When active (replaced by iframe) */
-  .lazy-video-wrapper.playing .lazy-video-poster { display: none; }
-  .lazy-video-wrapper.playing .lazy-video-embed { display: block; }
+
 
   /* Dark mode */
   [data-theme="neobrutalism-dark"] .lazy-video-wrapper {
@@ -140,58 +155,83 @@ const {
 
 <script>
   function initLazyVideos() {
-  const wrappers = document.querySelectorAll('.lazy-video-wrapper');
+    const wrappers = document.querySelectorAll('.lazy-video-wrapper');
+    
     Array.from(wrappers).forEach((el) => {
       const wrapper = el as HTMLElement;
       if (wrapper.dataset.lazyVideoInit === 'true') return;
       wrapper.dataset.lazyVideoInit = 'true';
+      
       const poster = wrapper.querySelector('.lazy-video-poster') as HTMLElement | null;
       const embed = wrapper.querySelector('.lazy-video-embed') as HTMLElement | null;
-      if (!poster || !embed) return;
+      const url = wrapper.dataset.videoUrl;
+      
+      if (!poster || !embed || !url) return;
 
-      const activate = () => {
-        if (wrapper.classList.contains('playing')) return;
-        const url = wrapper.dataset.videoUrl;
-        if (!url) return;
+      let iframe: HTMLIFrameElement | null = null;
+      let isLoaded = false;
 
-        // Add autoplay parameter to Google Drive embeds
-        const autoplayUrl = url.includes('?') ? `${url}&autoplay=1` : `${url}?autoplay=1`;
-
-        const iframe = document.createElement('iframe');
-        iframe.src = autoplayUrl;
+      // Load the iframe in the background when near viewport
+      const loadIframe = () => {
+        if (isLoaded || iframe) return;
+        
+        iframe = document.createElement('iframe');
+        iframe.src = url;
         const posterImg = poster.querySelector('img') as HTMLImageElement | null;
         iframe.title = posterImg?.alt || 'Embedded video';
-        iframe.setAttribute('allow', 'autoplay; fullscreen; encrypted-media; picture-in-picture');
+        iframe.setAttribute('allow', 'fullscreen; encrypted-media; picture-in-picture');
         iframe.setAttribute('allowfullscreen', '');
         iframe.setAttribute('webkitallowfullscreen', '');
         iframe.setAttribute('mozallowfullscreen', '');
-        iframe.loading = 'lazy';
         iframe.referrerPolicy = 'no-referrer-when-downgrade';
         iframe.style.width = '100%';
         iframe.style.height = '100%';
         iframe.style.display = 'block';
         iframe.style.border = '0';
-
+        
+        // Load in background (hidden)
         embed.innerHTML = '';
         embed.appendChild(iframe);
-        wrapper.classList.add('playing');
-        embed.setAttribute('aria-hidden', 'false');
-
-        // Attempt to trigger play programmatically after iframe loads
-        iframe.onload = () => {
-          // Try to post play message to the iframe content
-          try {
-            iframe.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-          } catch (e) {
-            // Silent fail if cross-origin restrictions prevent postMessage
-          }
-        };
+        isLoaded = true;
       };
 
-      poster.addEventListener('click', activate);
+      // Show the already-loaded iframe
+      const showVideo = () => {
+        if (!isLoaded) {
+          loadIframe();
+        }
+        wrapper.classList.add('playing');
+        embed.setAttribute('aria-hidden', 'false');
+      };
+
+      // Use IntersectionObserver to preload when near viewport
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              // Preload iframe when within 200px of viewport
+              loadIframe();
+              observer.unobserve(wrapper);
+            }
+          });
+        },
+        {
+          rootMargin: '200px 0px',
+          threshold: 0
+        }
+      );
+
+      // Start observing
+      observer.observe(wrapper);
+
+      // User interaction handlers
+      poster.addEventListener('click', showVideo);
       poster.addEventListener('keydown', (e) => {
         const ke = e as KeyboardEvent;
-        if (ke.key === 'Enter' || ke.key === ' ') { ke.preventDefault(); activate(); }
+        if (ke.key === 'Enter' || ke.key === ' ') {
+          ke.preventDefault();
+          showVideo();
+        }
       });
     });
   }
