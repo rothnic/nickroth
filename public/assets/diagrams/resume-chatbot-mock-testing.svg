@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" role="img" aria-label="Mock Model Testing Flow Diagram">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="var(--color-base-content, #1a1a1a)"/>
+    </marker>
+    <filter id="shadow" x="0" y="0" width="120%" height="120%">
+      <feDropShadow dx="3" dy="3" stdDeviation="0" flood-color="rgba(0,0,0,0.2)"/>
+    </filter>
+    <filter id="shadow-large" x="0" y="0" width="130%" height="130%">
+      <feDropShadow dx="4" dy="4" stdDeviation="0" flood-color="rgba(0,0,0,0.25)"/>
+    </filter>
+  </defs>
+  <style>
+    :root {
+      --diagram-bg: var(--color-base-200, #f0f0f0);
+      --diagram-border: var(--color-base-content, #1a1a1a);
+      --diagram-text: currentColor;
+      --diagram-accent: var(--color-primary, #00bcd4);
+      --diagram-secondary: var(--color-secondary, #50fa7b);
+      --diagram-accent2: var(--color-accent, #ff0080);
+      --diagram-muted: var(--color-base-300, #d0d0d0);
+      --diagram-success: var(--color-success, #22c55e);
+    }
+    .bg-box { fill: var(--diagram-bg); stroke: var(--diagram-border); stroke-width: 3; }
+    .step-box { fill: var(--diagram-bg); stroke: var(--diagram-border); stroke-width: 2.5; }
+    .accent-box { fill: var(--diagram-accent); stroke: var(--diagram-border); stroke-width: 2; }
+    .secondary-box { fill: var(--diagram-secondary); stroke: var(--diagram-border); stroke-width: 2; }
+    .accent2-box { fill: var(--diagram-accent2); stroke: var(--diagram-border); stroke-width: 2; }
+    .muted-box { fill: var(--diagram-muted); stroke: var(--diagram-border); stroke-width: 2; }
+    .success-box { fill: var(--diagram-success); stroke: var(--diagram-border); stroke-width: 2; }
+    .text { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; fill: var(--diagram-text); }
+    .text-sm { font-size: 11px; }
+    .text-md { font-size: 13px; }
+    .text-lg { font-size: 15px; font-weight: 600; }
+    .text-title { font-size: 18px; font-weight: 700; }
+    .arrow { stroke: var(--diagram-border); stroke-width: 2.5; marker-end: url(#arrowhead); fill: none; }
+    .double-arrow { stroke: var(--diagram-border); stroke-width: 3; marker-end: url(#arrowhead); fill: none; }
+    .dashed-arrow { stroke: var(--diagram-border); stroke-width: 2; stroke-dasharray: 6,4; marker-end: url(#arrowhead); fill: none; }
+    .return-arrow { stroke: var(--diagram-border); stroke-width: 2; stroke-dasharray: 4,3; marker-start: url(#arrowhead); fill: none; }
+    .mock-badge { fill: var(--diagram-accent2); stroke: var(--diagram-border); stroke-width: 2; }
+  </style>
+  
+  <!-- Background -->
+  <rect x="0" y="0" width="900" height="600" fill="transparent"/>
+  
+  <!-- Title -->
+  <text x="450" y="35" class="text text-title" text-anchor="middle">Mock Model Testing Flow</text>
+  <text x="450" y="55" class="text text-md" text-anchor="middle" opacity="0.7">Deterministic, Reproducible End-to-End Testing with @ai-sdk/provider-utils</text>
+  
+  <!-- Playwright Test (Left) -->
+  <g transform="translate(30, 90)">
+    <rect x="0" y="0" width="180" height="480" class="accent-box" rx="8" filter="url(#shadow-large)"/>
+    <text x="90" y="35" class="text text-lg" text-anchor="middle">Playwright Test</text>
+    
+    <!-- Step 1 -->
+    <g transform="translate(15, 55)">
+      <rect x="0" y="0" width="150" height="75" class="bg-box" rx="6"/>
+      <text x="75" y="25" class="text text-md" text-anchor="middle" font-weight="600">1. Launch</text>
+      <text x="75" y="45" class="text text-sm" text-anchor="middle">Start browser</text>
+      <text x="75" y="62" class="text text-sm" text-anchor="middle">with mock env</text>
+    </g>
+    
+    <!-- Step 2 -->
+    <g transform="translate(15, 145)">
+      <rect x="0" y="0" width="150" height="75" class="bg-box" rx="6"/>
+      <text x="75" y="25" class="text text-md" text-anchor="middle" font-weight="600">2. Send Message</text>
+      <text x="75" y="45" class="text text-sm" text-anchor="middle">Type via UI</text>
+      <text x="75" y="62" class="text text-sm" text-anchor="middle">"Add Python..."</text>
+    </g>
+    
+    <!-- Step 3 -->
+    <g transform="translate(15, 235)">
+      <rect x="0" y="0" width="150" height="75" class="bg-box" rx="6"/>
+      <text x="75" y="25" class="text text-md" text-anchor="middle" font-weight="600">3. Wait for Stream</text>
+      <text x="75" y="45" class="text text-sm" text-anchor="middle">Poll for UI</text>
+      <text x="75" y="62" class="text text-sm" text-anchor="middle">updates</text>
+    </g>
+    
+    <!-- Step 4 -->
+    <g transform="translate(15, 325)">
+      <rect x="0" y="0" width="150" height="75" class="bg-box" rx="6"/>
+      <text x="75" y="25" class="text text-md" text-anchor="middle" font-weight="600">4. Assert State</text>
+      <text x="75" y="45" class="text text-sm" text-anchor="middle">Verify resume</text>
+      <text x="75" y="62" class="text text-sm" text-anchor="middle">contains Python</text>
+    </g>
+    
+    <!-- Success Badge -->
+    <g transform="translate(15, 415)">
+      <rect x="0" y="0" width="150" height="50" class="success-box" rx="6"/>
+      <text x="75" y="22" class="text text-md" text-anchor="middle" font-weight="600">✓ Deterministic</text>
+      <text x="75" y="40" class="text text-sm" text-anchor="middle">Same result every run</text>
+    </g>
+  </g>
+  
+  <!-- Arrow to API -->
+  <line x1="210" y1="240" x2="250" y2="240" class="arrow"/>
+  <text x="230" y="230" class="text text-sm" text-anchor="middle">HTTP</text>
+  
+  <!-- API Route (Center Left) -->
+  <g transform="translate(250, 90)">
+    <rect x="0" y="0" width="180" height="480" class="secondary-box" rx="8" filter="url(#shadow-large)"/>
+    <text x="90" y="35" class="text text-lg" text-anchor="middle">API Route</text>
+    
+    <!-- Receives request -->
+    <g transform="translate(15, 55)">
+      <rect x="0" y="0" width="150" height="60" class="bg-box" rx="6"/>
+      <text x="75" y="25" class="text text-md" text-anchor="middle" font-weight="600">Receives</text>
+      <text x="75" y="45" class="text text-sm" text-anchor="middle">POST /api/chat</text>
+    </g>
+    
+    <!-- Routes to mock -->
+    <g transform="translate(15, 130)">
+      <rect x="0" y="0" width="150" height="90" class="muted-box" rx="6"/>
+      <text x="75" y="25" class="text text-md" text-anchor="middle" font-weight="600">Routes to</text>
+      <text x="75" y="45" class="text text-md" text-anchor="middle" font-weight="600">Mock Provider</text>
+      <text x="75" y="68" class="text text-sm" text-anchor="middle">When TEST_MODE=true</text>
+      <text x="75" y="85" class="text text-sm" text-anchor="middle">or NODE_ENV=test</text>
+    </g>
+    
+    <!-- Same Pipeline -->
+    <g transform="translate(15, 235)">
+      <rect x="0" y="0" width="150" height="120" class="bg-box" rx="6"/>
+      <text x="75" y="25" class="text text-md" text-anchor="middle" font-weight="600">Same Pipeline</text>
+      <text x="75" y="48" class="text text-sm" text-anchor="middle">Identical code path</text>
+      <text x="75" y="68" class="text text-sm" text-anchor="middle">• streamText()</text>
+      <text x="75" y="85" class="text text-sm" text-anchor="middle">• generateObject()</text>
+      <text x="75" y="102" class="text text-sm" text-anchor="middle">• DataStream handler</text>
+    </g>
+    
+    <!-- Returns SSE -->
+    <g transform="translate(15, 370)">
+      <rect x="0" y="0" width="150" height="85" class="bg-box" rx="6"/>
+      <text x="75" y="25" class="text text-md" text-anchor="middle" font-weight="600">Returns SSE</text>
+      <text x="75" y="45" class="text text-sm" text-anchor="middle">Streams mock deltas</text>
+      <text x="75" y="62" class="text text-sm" text-anchor="middle">to client exactly</text>
+      <text x="75" y="79" class="text text-sm" text-anchor="middle">like real AI would</text>
+    </g>
+  </g>
+  
+  <!-- Arrow to Mock Models -->
+  <line x1="430" y1="240" x2="470" y2="240" class="arrow"/>
+  <text x="450" y="230" class="text text-sm" text-anchor="middle">calls</text>
+  
+  <!-- Mock Models (Center Right) -->
+  <g transform="translate(470, 90)">
+    <rect x="0" y="0" width="200" height="480" class="accent2-box" rx="8" filter="url(#shadow-large)"/>
+    <text x="100" y="35" class="text text-lg" text-anchor="middle">Mock Model Provider</text>
+    
+    <!-- Badge -->
+    <g transform="translate(50, 50)">
+      <rect x="0" y="0" width="100" height="22" class="mock-badge" rx="11"/>
+      <text x="50" y="15" class="text text-sm" text-anchor="middle" font-weight="600">MOCK</text>
+    </g>
+    
+    <!-- MockLanguageModelV1 (Chat) -->
+    <g transform="translate(15, 85)">
+      <rect x="0" y="0" width="170" height="140" class="bg-box" rx="6"/>
+      <text x="85" y="25" class="text text-md" text-anchor="middle" font-weight="600">MockLanguageModelV1</text>
+      <text x="85" y="45" class="text text-sm" text-anchor="middle" font-style="italic">Chat Responses</text>
+      
+      <rect x="15" y="60" width="140" height="65" class="muted-box" rx="4"/>
+      <text x="85" y="80" class="text text-sm" text-anchor="middle">Pre-recorded:</text>
+      <text x="85" y="98" class="text text-sm" text-anchor="middle">• Text deltas</text>
+      <text x="85" y="115" class="text text-sm" text-anchor="middle">• Tool calls</text>
+    </g>
+    
+    <!-- MockLanguageModelV1 (Patch) -->
+    <g transform="translate(15, 240)">
+      <rect x="0" y="0" width="170" height="140" class="bg-box" rx="6"/>
+      <text x="85" y="25" class="text text-md" text-anchor="middle" font-weight="600">MockLanguageModelV1</text>
+      <text x="85" y="45" class="text text-sm" text-anchor="middle" font-style="italic">Patch Generation</text>
+      
+      <rect x="15" y="60" width="140" height="65" class="muted-box" rx="4"/>
+      <text x="85" y="80" class="text text-sm" text-anchor="middle">Pre-recorded:</text>
+      <text x="85" y="98" class="text text-sm" text-anchor="middle">• JSON patches</text>
+      <text x="85" y="115" class="text text-sm" text-anchor="middle">• Object schema</text>
+    </g>
+    
+    <!-- Benefits -->
+    <g transform="translate(15, 395)">
+      <rect x="0" y="0" width="170" height="70" class="success-box" rx="6"/>
+      <text x="85" y="25" class="text text-md" text-anchor="middle" font-weight="600">Benefits</text>
+      <text x="85" y="45" class="text text-sm" text-anchor="middle">• No API costs</text>
+      <text x="85" y="62" class="text text-sm" text-anchor="middle">• Instant responses</text>
+    </g>
+  </g>
+  
+  <!-- Arrow to Client -->
+  <line x1="670" y1="240" x2="710" y2="240" class="arrow"/>
+  <text x="690" y="230" class="text text-sm" text-anchor="middle">SSE</text>
+  
+  <!-- Client Side (Right) -->
+  <g transform="translate(710, 90)">
+    <rect x="0" y="0" width="180" height="480" class="accent-box" rx="8" filter="url(#shadow-large)"/>
+    <text x="90" y="35" class="text text-lg" text-anchor="middle">Client Side</text>
+    
+    <!-- DataStreamHandler -->
+    <g transform="translate(15, 55)">
+      <rect x="0" y="0" width="150" height="75" class="bg-box" rx="6"/>
+      <text x="75" y="25" class="text text-md" text-anchor="middle" font-weight="600">DataStream</text>
+      <text x="75" y="45" class="text text-md" text-anchor="middle" font-weight="600">Handler</text>
+      <text x="75" y="65" class="text text-sm" text-anchor="middle">Same as production</text>
+    </g>
+    
+    <!-- UI Updates -->
+    <g transform="translate(15, 145)">
+      <rect x="0" y="0" width="150" height="90" class="bg-box" rx="6"/>
+      <text x="75" y="25" class="text text-md" text-anchor="middle" font-weight="600">UI Updates</text>
+      <text x="75" y="48" class="text text-sm" text-anchor="middle">• Message list</text>
+      <text x="75" y="68" class="text text-sm" text-anchor="middle">• Resume deltas</text>
+      <text x="75" y="88" class="text text-sm" text-anchor="middle">• Progress indicators</text>
+    </g>
+    
+    <!-- Deterministic State -->
+    <g transform="translate(15, 250)">
+      <rect x="0" y="0" width="150" height="110" class="secondary-box" rx="6"/>
+      <text x="75" y="25" class="text text-md" text-anchor="middle" font-weight="600">Deterministic</text>
+      <text x="75" y="45" class="text text-md" text-anchor="middle" font-weight="600">Final State</text>
+      <text x="75" y="68" class="text text-sm" text-anchor="middle">Same UI state every</text>
+      <text x="75" y="85" class="text text-sm" text-anchor="middle">test run because</text>
+      <text x="75" y="102" class="text text-sm" text-anchor="middle">mock is predictable</text>
+    </g>
+    
+    <!-- Assertion Target -->
+    <g transform="translate(15, 375)">
+      <rect x="0" y="0" width="150" height="90" class="success-box" rx="6"/>
+      <text x="75" y="25" class="text text-md" text-anchor="middle" font-weight="600">Assertion Target</text>
+      <text x="75" y="48" class="text text-sm" text-anchor="middle">Playwright verifies:</text>
+      <text x="75" y="68" class="text text-sm" text-anchor="middle">• Text content</text>
+      <text x="75" y="88" class="text text-sm" text-anchor="middle">• DOM structure</text>
+    </g>
+  </g>
+  
+  <!-- Return arrow (feedback loop visualization) -->
+  <path d="M 800 570 Q 850 570 850 500 Q 850 150 120 150 Q 50 150 50 200" class="return-arrow" fill="none"/>
+  <text x="450" y="135" class="text text-sm" text-anchor="middle" font-style="italic">Test completes and reports results</text>
+</svg>

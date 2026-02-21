@@ -301,6 +301,110 @@ import ArticleOutline from './ArticleOutline.astro';
     
     // Initialize the newly rendered container
     initBottomSheet();
+    
+    // Initialize the ArticleOutline inside the bottom sheet
+    // The outline component's script already ran on page load, but the bottom sheet
+    // content wasn't in the DOM yet since it's in a template
+    initArticleOutline();
+  }
+  
+  /**
+   * Initialize ArticleOutline - duplicated here since the component's script
+   * runs before the bottom sheet template is cloned into the DOM
+   */
+  function initArticleOutline() {
+    const outlines = document.querySelectorAll('.outline-bottom-sheet-container .article-outline:not(.initialized)');
+    
+    outlines.forEach((outline) => {
+      outline.classList.add('initialized');
+      
+      const list = outline.querySelector('.article-outline-list');
+      if (!list) return;
+      
+      // Find all headings in prose content
+      const proseContent = document.querySelector('.prose-content');
+      if (!proseContent) {
+        list.innerHTML = '<li class="text-sm text-base-content/40 italic px-3 py-2">No sections found</li>';
+        return;
+      }
+      
+      const headings = proseContent.querySelectorAll('h2, h3');
+      
+      if (headings.length === 0) {
+        list.innerHTML = '<li class="text-sm text-base-content/40 italic px-3 py-2">No sections found</li>';
+        return;
+      }
+      
+      // Generate outline items
+      const items: string[] = [];
+      let h2Count = 0;
+      
+      headings.forEach((heading, index) => {
+        const level = heading.tagName.toLowerCase() === 'h2' ? 2 : 3;
+        
+        // Skip the first H2 if it's "Impact Statement"
+        if (level === 2) {
+          h2Count++;
+          if (h2Count === 1 && heading.textContent?.trim().toLowerCase() === 'impact statement') {
+            return;
+          }
+        }
+        
+        // Ensure heading has an ID for navigation
+        let id = heading.id;
+        if (!id) {
+          id = `heading-${index}`;
+          heading.id = id;
+        }
+        
+        const text = heading.textContent?.trim() || 'Untitled';
+        items.push(`
+          <li data-level="${level}">
+            <a href="#${id}" data-outline-link="${id}">${text}</a>
+          </li>
+        `);
+      });
+      
+      if (items.length === 0) {
+        list.innerHTML = '<li class="text-sm text-base-content/40 italic px-3 py-2">No sections found</li>';
+        return;
+      }
+      
+      list.innerHTML = items.join('');
+      
+      // Re-attach click handlers since new links were just created
+      const outlineLinks = list.querySelectorAll('[data-outline-link]');
+      outlineLinks.forEach((link) => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const href = (link as HTMLAnchorElement).getAttribute('href');
+          if (!href) return;
+          
+          const target = document.querySelector(href);
+          if (!target) return;
+          
+          // Close bottom sheet first
+          const container = link.closest('.outline-bottom-sheet-container');
+          if (container) {
+            container.classList.remove('open');
+            const trigger = container.querySelector('.outline-trigger') as HTMLButtonElement;
+            if (trigger) trigger.setAttribute('aria-expanded', 'false');
+          }
+          
+          // Restore body styles
+          document.body.style.position = '';
+          document.body.style.top = '';
+          document.body.style.left = '';
+          document.body.style.right = '';
+          document.body.style.overflow = '';
+          
+          // Scroll to target
+          requestAnimationFrame(() => {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        });
+      });
+    });
   }
   
   /**

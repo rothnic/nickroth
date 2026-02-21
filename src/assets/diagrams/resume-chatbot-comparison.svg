@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 580" style="background: #fefefe;">
+  <defs>
+    <marker id="arrowhead-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#d32f2f"/>
+    </marker>
+    <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2e7d32"/>
+    </marker>
+    <marker id="arrowhead-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1976d2"/>
+    </marker>
+  </defs>
+
+  <text x="500" y="30" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#1a1a1a">
+    Streaming Approaches: Text vs Partial Object Streaming
+  </text>
+
+  <g transform="translate(30, 60)">
+    <rect x="0" y="0" width="450" height="35" rx="4" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+    <text x="225" y="23" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#1976d2">
+      Familiar: Text Streaming (ChatGPT-style)
+    </text>
+
+    <g transform="translate(20, 50)">
+      <rect x="0" y="0" width="410" height="55" rx="6" fill="#fafafa" stroke="#ddd" stroke-width="1"/>
+      <text x="10" y="20" font-family="system-ui, sans-serif" font-size="11" fill="#666">User:</text>
+      <text x="10" y="38" font-family="system-ui, sans-serif" font-size="10" fill="#333">"Add a new job to my resume"</text>
+    </g>
+
+    <line x1="225" y1="115" x2="225" y2="130" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowhead-blue)"/>
+
+    <g transform="translate(20, 140)">
+      <rect x="0" y="0" width="410" height="100" rx="6" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
+      <text x="205" y="18" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#1976d2">AI Response (streaming text)</text>
+
+      <rect x="15" y="30" width="380" height="55" rx="3" fill="#fff" stroke="#bbdefb" stroke-width="1"/>
+      <text x="25" y="48" font-family="monospace, sans-serif" font-size="8" fill="#666">"I'll add that job for you...</text>
+      <text x="25" y="62" font-family="monospace, sans-serif" font-size="8" fill="#333">Here's the updated experience section:</text>
+      <text x="25" y="76" font-family="monospace, sans-serif" font-size="8" fill="#2e7d32">Senior Developer at Tech Corp" ✅</text>
+    </g>
+
+    <g transform="translate(20, 260)">
+      <rect x="0" y="0" width="410" height="130" rx="6" fill="#ffebee" stroke="#ef5350" stroke-width="1"/>
+      <text x="205" y="20" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#c62828">⚠️ Challenges with Structured Data</text>
+
+      <text x="15" y="42" font-family="system-ui, sans-serif" font-size="9" fill="#666">• Works great for plain text/markdown</text>
+      <text x="15" y="58" font-family="system-ui, sans-serif" font-size="9" fill="#666">• But resumes have structured fields:</text>
+      <text x="30" y="74" font-family="monospace, sans-serif" font-size="8" fill="#333">company, title, dates, bullets[]</text>
+      <text x="15" y="92" font-family="system-ui, sans-serif" font-size="9" fill="#666">• How to stream update to just ONE field?</text>
+      <text x="15" y="110" font-family="system-ui, sans-serif" font-size="9" fill="#666">• Can't stream partial JSON objects easily</text>
+    </g>
+  </g>
+
+  <g transform="translate(520, 60)">
+    <rect x="0" y="0" width="450" height="35" rx="4" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="225" y="23" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#2e7d32">
+      Innovation: Partial Object Streaming
+    </text>
+
+    <g transform="translate(20, 50)">
+      <rect x="0" y="0" width="410" height="55" rx="6" fill="#fafafa" stroke="#ddd" stroke-width="1"/>
+      <text x="10" y="20" font-family="system-ui, sans-serif" font-size="11" fill="#666">User:</text>
+      <text x="10" y="38" font-family="system-ui, sans-serif" font-size="10" fill="#333">"Add a new job to my resume"</text>
+    </g>
+
+    <line x1="225" y1="115" x2="225" y2="130" stroke="#2e7d32" stroke-width="2" marker-end="url(#arrowhead-green)"/>
+
+    <g transform="translate(20, 140)">
+      <rect x="0" y="0" width="410" height="180" rx="6" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1"/>
+      <text x="205" y="18" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#2e7d32">AI Streams Partial JSON Objects</text>
+
+      <rect x="15" y="30" width="120" height="65" rx="3" fill="#fff" stroke="#c8e6c9" stroke-width="1"/>
+      <text x="75" y="45" text-anchor="middle" font-family="monospace, sans-serif" font-size="7" fill="#999">T+0ms</text>
+      <text x="75" y="60" text-anchor="middle" font-family="monospace, sans-serif" font-size="8" fill="#666">{"op": "add",</text>
+      <text x="75" y="75" text-anchor="middle" font-family="monospace, sans-serif" font-size="8" fill="#666">"path": ""}</text>
+
+      <rect x="145" y="30" width="120" height="65" rx="3" fill="#fff" stroke="#c8e6c9" stroke-width="1"/>
+      <text x="205" y="45" text-anchor="middle" font-family="monospace, sans-serif" font-size="7" fill="#999">T+50ms</text>
+      <text x="205" y="60" text-anchor="middle" font-family="monospace, sans-serif" font-size="8" fill="#333">{"op": "add",</text>
+      <text x="205" y="75" text-anchor="middle" font-family="monospace, sans-serif" font-size="8" fill="#ff6f00">"path": "/work"}</text>
+
+      <rect x="275" y="30" width="120" height="65" rx="3" fill="#fff3e0" stroke="#ff9800" stroke-width="2"/>
+      <text x="335" y="45" text-anchor="middle" font-family="monospace, sans-serif" font-size="7" fill="#e65100">T+100ms ✅ STABLE</text>
+      <text x="335" y="60" text-anchor="middle" font-family="monospace, sans-serif" font-size="8" fill="#333">{"op": "add",</text>
+      <text x="335" y="75" text-anchor="middle" font-family="monospace, sans-serif" font-size="8" fill="#2e7d32">"value": {...}}</text>
+
+      <text x="205" y="110" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#666">Partial objects stream in from AI SDK</text>
+      <text x="205" y="125" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#666">We wait for stabilization (path + value ready)</text>
+      <text x="205" y="140" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#666">Then apply surgical update to ONE field</text>
+
+      <rect x="50" y="155" width="310" height="18" rx="3" fill="#1976d2" fill-opacity="0.1" stroke="#1976d2" stroke-width="1"/>
+      <text x="205" y="168" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8" fill="#1976d2">
+        📚 See: Vercel AI SDK partialObjectStream docs
+      </text>
+    </g>
+
+    <g transform="translate(20, 340)">
+      <rect x="0" y="0" width="410" height="50" rx="6" fill="#fff8e1" stroke="#ffc107" stroke-width="1"/>
+      <text x="205" y="20" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f57c00">✨ Key Difference</text>
+      <text x="205" y="38" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#666">Complete object = replace everything</text>
+      <text x="205" y="50" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" fill="#666">Partial object stream = surgical field updates</text>
+    </g>
+  </g>
+
+  <g transform="translate(500, 530)">
+    <rect x="-450" y="0" width="900" height="40" rx="6" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="1"/>
+    <text x="0" y="18" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#7b1fa2">
+      🎯 The Insight: Text streams for chat UX, Partial Object streams for precise data mutations
+    </text>
+    <text x="0" y="33" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#666">
+      Both happen in parallel. User sees conversation while resume updates surgically in real-time.
+    </text>
+  </g>
+</svg>

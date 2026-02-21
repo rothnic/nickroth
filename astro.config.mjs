@@ -1,37 +1,38 @@
 import mdx from "@astrojs/mdx";
 import tailwindcss from "@tailwindcss/vite";
-import expressiveCode from "astro-expressive-code";
 import { defineConfig, fontProviders } from "astro/config";
+import {
+	rehypeMermaidPlugin,
+	rehypeExpressiveCodePlugin,
+} from "./rehype.config.mjs";
 
 // https://astro.build/config
 export default defineConfig({
 	prefetch: true,
-	
-	// Expressive Code must come BEFORE mdx()
+
 	integrations: [
-		expressiveCode({
-			// Dual themes for light/dark mode
-			themes: ['github-light', 'github-dark'],
-			// Map to our neobrutalism theme names
-			themeCssSelector: (theme) => 
-				theme.type === 'light' 
-					? '[data-theme="neobrutalism-light"]' 
-					: '[data-theme="neobrutalism-dark"]',
-			// Default word wrap enabled
-			defaultProps: {
-				wrap: true,
-			},
-			// Style frames to match neobrutalism
-			styleOverrides: {
-				borderRadius: '0',
-				borderWidth: '3px',
-				frames: {
-					shadowColor: 'transparent',
-				},
-			},
+		mdx({
+			// Disable default syntax highlighting so expressive-code can take over
+			syntaxHighlight: false,
+			rehypePlugins: [
+				// Process mermaid diagrams FIRST (before expressive-code)
+				// This prevents expressive-code from capturing mermaid blocks
+				rehypeMermaidPlugin,
+				// Then process code blocks with expressive-code
+				rehypeExpressiveCodePlugin,
+			],
 		}),
-		mdx(),
 	],
+
+	// Note: expressive-code handles syntax highlighting automatically
+	// Do not set markdown.syntaxHighlight when using astro-expressive-code
+
+	// Configure expressive-code for regular Markdown files (.md)
+	// MDX files use the mdx() integration above
+	markdown: {
+		syntaxHighlight: false,
+		rehypePlugins: [rehypeMermaidPlugin, rehypeExpressiveCodePlugin],
+	},
 
 	output: "static",
 
@@ -93,5 +94,18 @@ export default defineConfig({
 				fallbacks: ["cursive"],
 			},
 		],
+		// SVG optimization via SVGO at build time
+		// Applies to SVG files imported as components (e.g. import Logo from '../assets/logo.svg')
+		svgo: {
+			plugins: [
+				"preset-default",
+				{
+					name: "removeViewBox",
+					active: false, // Preserve viewBox for responsive scaling
+				},
+			],
+			floatPrecision: 2,
+			multipass: true,
+		},
 	},
 });

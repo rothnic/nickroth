@@ -9,7 +9,7 @@
     logs: false;
 }
 
-    @plugin "daisyui/theme" {
+@plugin "daisyui/theme" {
         name: "neobrutalism-light";
         default: true;
         color-scheme: light;
@@ -89,7 +89,7 @@
         --card-shadow: var(--nr-shadow-base);
     }
 
-    @plugin "daisyui/theme" {
+@plugin "daisyui/theme" {
         name: "neobrutalism-dark";
         prefersdark: true;
         color-scheme: dark;
@@ -171,12 +171,12 @@
     }
 
 @layer utilities {
-    /* ========================================
+	/* ========================================
        THEME-AGNOSTIC UTILITIES
            (No theme scoping needed)
            ======================================== */
-        
-        /* ========================================
+
+	/* ========================================
            ROTATION SYSTEM OVERVIEW
            
            This design system uses multiple approaches for rotation:
@@ -204,98 +204,98 @@
            - Prevents container rotation/translation on hover
            - Child elements can still have their own hover effects
            ======================================== */
-        
-        /* Base font family and box model */
-        * {
-            box-sizing: border-box;
-        }
-        
-        /* Cursor pointer for all interactive elements */
-        a, button, [role="button"], 
-        input[type="submit"], input[type="button"], input[type="reset"],
-        select, label[for], summary,
-        .btn, .link, .card[data-work-card], 
-        [onclick], [data-clickable] {
-            cursor: pointer;
-        }
-        
-        /* ========================================
+
+	/* Base font family and box model */
+	* {
+		box-sizing: border-box;
+	}
+
+	/* Cursor pointer for all interactive elements */
+	a,
+	button,
+	[role="button"],
+	input[type="submit"],
+	input[type="button"],
+	input[type="reset"],
+	select,
+	label[for],
+	summary,
+	.btn,
+	.link,
+	.card[data-work-card],
+	[onclick],
+	[data-clickable] {
+		cursor: pointer;
+	}
+
+	/* ========================================
            SOLID BACKGROUND UTILITIES
            Use these instead of bg-base-100 to ensure
            solid backgrounds in both light and dark modes
            ======================================== */
-        
-        /* Primary solid background - white in light, dark in dark */
-        .solid-bg {
-            background-color: #ffffff !important;
-        }
-        
-        [data-theme="neobrutalism-dark"] .solid-bg {
-            background-color: oklch(0.22 0.01 280) !important;
-        }
-        
-        /* Muted solid background - slightly darker than solid-bg */
-        .solid-bg-muted {
-            background-color: #f5f5f5 !important;
-        }
-        
-        [data-theme="neobrutalism-dark"] .solid-bg-muted {
-            background-color: oklch(0.25 0.02 280) !important;
-        }
-        
-        /* Card-specific solid backgrounds */
-        .solid-card {
-            background-color: #ffffff !important;
-        }
-        
-        [data-theme="neobrutalism-dark"] .solid-card {
-            background-color: oklch(0.22 0.01 280) !important;
-        }
-        
-        /* Dark-mode friendly badge styling for outline badges */
-        [data-theme="neobrutalism-dark"] .badge-outline {
-            background-color: transparent !important;
-            border-color: oklch(0.7 0.01 280) !important;
-            color: oklch(0.9 0.01 280) !important;
-        }
-        
-        [data-theme="neobrutalism-dark"] .badge-ghost {
-            background-color: oklch(0.3 0.02 280) !important;
-            color: oklch(0.85 0.01 280) !important;
-        }
-        
-        html {
-            font-family: var(--font-display), -apple-system, BlinkMacSystemFont, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-            font-weight: 400;
-            /* Prevent horizontal scrolling */
-            overflow-x: hidden;
-            max-width: 100%;
-            /* Smooth scrolling is controlled by JavaScript to avoid conflicts with view transitions */
-            /* scroll-behavior: smooth; */
-            /* Optimize touch scrolling on mobile */
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        /* ========================================
+
+	/* Primary solid background - uses DaisyUI theme colors */
+	.solid-bg {
+		background-color: var(--color-base-100) !important;
+	}
+
+	/* Muted solid background - uses DaisyUI theme colors */
+	.solid-bg-muted {
+		background-color: var(--color-base-200) !important;
+	}
+
+	/* Card-specific solid backgrounds - uses DaisyUI theme colors */
+	.solid-card {
+		background-color: var(--color-base-100) !important;
+	}
+
+	/* Dark-mode friendly badge styling for outline badges */
+	[data-theme="neobrutalism-dark"] .badge-outline {
+		background-color: transparent !important;
+		border-color: oklch(0.7 0.01 280) !important;
+		color: oklch(0.9 0.01 280) !important;
+	}
+
+	[data-theme="neobrutalism-dark"] .badge-ghost {
+		background-color: oklch(0.3 0.02 280) !important;
+		color: oklch(0.85 0.01 280) !important;
+	}
+
+	html {
+		font-family:
+			var(--font-display), -apple-system, BlinkMacSystemFont, sans-serif,
+			"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+			"Noto Color Emoji";
+		font-weight: 400;
+		/* Prevent horizontal scrolling */
+		overflow-x: hidden;
+		max-width: 100%;
+		/* Smooth scrolling is controlled by JavaScript to avoid conflicts with view transitions */
+		/* scroll-behavior: smooth; */
+		/* Optimize touch scrolling on mobile */
+		-webkit-overflow-scrolling: touch;
+	}
+
+	/* ========================================
            ACCESSIBILITY & PERFORMANCE
            Disable animations for users who prefer reduced motion
            ======================================== */
-        @media (prefers-reduced-motion: reduce) {
-            html {
-                scroll-behavior: auto;
-            }
-            
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
-        }
-        
-        /* ========================================
+	@media (prefers-reduced-motion: reduce) {
+		html {
+			scroll-behavior: auto;
+		}
+
+		*,
+		*::before,
+		*::after {
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.01ms !important;
+			scroll-behavior: auto !important;
+		}
+	}
+
+	/* ========================================
            PERFORMANT GRID BACKGROUND
            
            Uses a single tiled SVG image instead of multiple gradients
@@ -307,58 +307,58 @@
            - No competing backgrounds in child elements
            - Sections remain transparent by default
            ======================================== */
-        
-        /* Grid background attached to main scroller (html/body) */
-        html {
-            min-height: 100%;
-            margin: 0;
-            background-color: var(--color-base-100);
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><path d='M0 0H16M0 0V16' stroke='rgba(0,0,0,0.08)' stroke-width='1'/></svg>");
-            background-size: 16px 16px;
-            background-repeat: repeat;
-        }
-        
-        /* Dark mode grid - lighter stroke for visibility */
-        html[data-theme="neobrutalism-dark"] {
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><path d='M0 0H16M0 0V16' stroke='rgba(255,255,255,0.1)' stroke-width='1'/></svg>");
-        }
-        
-        body {
-            min-height: 100%;
-            margin: 0;
-            position: relative;
-            isolation: isolate;
-            /* Optimize touch scrolling on iOS */
-            -webkit-overflow-scrolling: touch;
-            /* Only allow vertical scrolling */
-            touch-action: pan-y;
-            /* Prevent horizontal scrolling but keep vertical visible for sticky */
-            overflow-x: hidden;
-            overflow-y: visible;
-            max-width: 100%;
-        }
-        
-        /* Subtle radial gradient overlay - layered on top of grid background */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            background: radial-gradient(
-                ellipse 800px 600px at top left,
-                var(--color-primary) 0%,
-                var(--color-secondary) 15%,
-                var(--color-accent) 30%,
-                transparent 50%
-            );
-            opacity: 0.08;
-        }
-        
-        /* ========================================
+
+	/* Grid background attached to main scroller (html/body) */
+	html {
+		min-height: 100%;
+		margin: 0;
+		background-color: var(--color-base-100);
+		background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><path d='M0 0H16M0 0V16' stroke='rgba(0,0,0,0.08)' stroke-width='1'/></svg>");
+		background-size: 16px 16px;
+		background-repeat: repeat;
+	}
+
+	/* Dark mode grid - lighter stroke for visibility */
+	html[data-theme="neobrutalism-dark"] {
+		background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><path d='M0 0H16M0 0V16' stroke='rgba(255,255,255,0.1)' stroke-width='1'/></svg>");
+	}
+
+	body {
+		min-height: 100%;
+		margin: 0;
+		position: relative;
+		isolation: isolate;
+		/* Optimize touch scrolling on iOS */
+		-webkit-overflow-scrolling: touch;
+		/* Only allow vertical scrolling */
+		touch-action: pan-y;
+		/* Prevent horizontal scrolling but keep vertical visible for sticky */
+		overflow-x: hidden;
+		overflow-y: visible;
+		max-width: 100%;
+	}
+
+	/* Subtle radial gradient overlay - layered on top of grid background */
+	body::before {
+		content: "";
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+		z-index: 0;
+		background: radial-gradient(
+			ellipse 800px 600px at top left,
+			var(--color-primary) 0%,
+			var(--color-secondary) 15%,
+			var(--color-accent) 30%,
+			transparent 50%
+		);
+		opacity: 0.08;
+	}
+
+	/* ========================================
            CSS PERFORMANCE BEST PRACTICES
            
            This design system follows paint/GPU optimization guidelines:
@@ -387,230 +387,310 @@
               - Disables all animations/transitions when requested
               - See @media block above
            ======================================== */
-        
-        /* ========================================
+
+	/* ========================================
            SECTION TYPES & LAYERING SYSTEM
            ======================================== */
-        
-        /* Make all default layout wrappers transparent - grid shows through */
-        :where(header, nav, main, section, footer, .container, .prose, .hero, .menu, .tabs) {
-            background-color: transparent !important;
-        }
-        
-        /* Override daisyUI bg-base-100 utility class on wrappers */
-        :where(.bg-base-100) {
-            background-color: transparent !important;
-        }
-        
-        /* Navbar gets a solid background with border for definition */
-        .navbar {
-            background-color: var(--color-base-100) !important;
-            border-bottom: 4px solid var(--nr-border-color);
-            position: relative;
-            z-index: 100; /* Ensure navbar stays above scrolling content */
-        }
-        
-        /* Dropdown menus need solid backgrounds to be readable */
-        .dropdown-content {
-            background-color: var(--color-base-100) !important;
-        }
-        
-        /* Base section - transparent by default, shows graph paper, handles vertical spacing */
-        section {
-            background: transparent !important;
-            position: relative;
-            padding: 4rem 0;
-            z-index: 1; /* above the fixed grid */
-            /* Ensure sections don't cause horizontal overflow */
-            overflow-x: hidden;
-            max-width: 100%;
-            /* Performance: Skip layout/paint for offscreen sections */
-            content-visibility: auto;
-            /* Provide estimated height to prevent layout jumps */
-            contain-intrinsic-size: auto 500px;
-            /* Isolate layout/paint work to this container */
-            contain: layout paint;
-        }
-        
-        /* Paper section - solid white overlay (extends .card)
+
+	/* Make all default layout wrappers transparent - grid shows through */
+	:where(
+			header,
+			nav,
+			main,
+			section,
+			footer,
+			.container,
+			.prose,
+			.hero,
+			.menu,
+			.tabs
+		) {
+		background-color: transparent !important;
+	}
+
+	/* Override daisyUI bg-base-100 utility class on wrappers */
+	/* Excludes component cards that need solid backgrounds */
+	:where(.bg-base-100):not(.feature-card):not(.card):not(.dropdown-content) {
+		background-color: transparent !important;
+	}
+
+	/* Navbar gets a solid background with border for definition */
+	.navbar {
+		background-color: var(--color-base-100) !important;
+		border-bottom: 4px solid var(--nr-border-color);
+		position: relative;
+		z-index: 100; /* Ensure navbar stays above scrolling content */
+	}
+
+	/* Dropdown menus need solid backgrounds to be readable */
+	.dropdown-content {
+		background-color: var(--color-base-100) !important;
+	}
+
+	/* Base section - transparent by default, shows graph paper, handles vertical spacing */
+	section {
+		background: transparent !important;
+		position: relative;
+		padding: 4rem 0;
+		z-index: 1; /* above the fixed grid */
+		/* Ensure sections don't cause horizontal overflow */
+		overflow-x: hidden;
+		max-width: 100%;
+		/* Performance: Skip layout/paint for offscreen sections */
+		content-visibility: auto;
+		/* Provide estimated height to prevent layout jumps */
+		contain-intrinsic-size: auto 500px;
+		/* Isolate layout/paint work to this container */
+		contain: layout paint;
+	}
+
+	/* Paper section - solid white overlay (extends .card)
            Usage: <div class="card paper shadow-brutal-sm"> or <section class="card section-paper shadow-brutal-sm">
            - .card provides: base background, positioning, border via theme variables
            - Add shadow utility class: .shadow-brutal-sm, .shadow-brutal, .shadow-brutal-lg, etc.
            - .paper/.section-paper provides: semantic class name for component identification
            - Note: .paper and .section-paper have no styles - use .card class for actual styling
         */
-        
-        /* Cards - intentional white panels for content separation */
-        .card {
-            position: relative;
-            z-index: 1;
-            background-color: var(--color-base-100) !important;
-            background-image: none;
-            /* DaisyUI automatically applies:
-               - border: var(--card-border-width) solid var(--card-border)
-               - For shadows, use utility classes: .shadow-brutal-sm, .shadow-brutal, .shadow-brutal-lg, .shadow-brutal-xl
-            */
-        }
-        
-        /* Rotated section - extends .card (see full definition near torn-gap styles)
+
+	/* Cards - intentional white panels for content separation
+       Canonical .card definition. Keep shared properties here; theme/variant
+       specifics are controlled via theme variables and later overrides.
+    */
+	.card {
+		position: relative;
+		z-index: 1;
+		background-color: var(--color-base-100) !important;
+		background-image: none;
+		/* DaisyUI applies border/shadow via theme variables; prefer utilities for shadows */
+		/* Border/shadow resolved by theme variables */
+	}
+
+	/* Rotated section - extends .card (see full definition near torn-gap styles)
            Duplicate removed - single definition below at line ~647 */
-        
-        /* Torn gap section - solid black band with jagged edge overlay */
-        .torn-gap {
-            position: relative;
-            z-index: 1;
-            background-color: oklch(0.15 0 0) !important;
-            background-image: none;
-            color: white;
-        }
-        
-        /* Jagged top edge for torn-gap sections */
-        .torn-gap::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: -24px;
-            height: 48px;
-            background: oklch(0.15 0 0);
-            -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100' preserveAspectRatio='none'><path d='M0,100 L0,40 60,80 120,40 180,80 240,40 300,80 360,40 420,80 480,40 540,80 600,40 660,80 720,40 780,80 840,40 900,80 960,40 1020,80 1080,40 1140,80 1200,40 1200,100 Z' fill='black'/></svg>") center / 100% 100% no-repeat;
-            mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100' preserveAspectRatio='none'><path d='M0,100 L0,40 60,80 120,40 180,80 240,40 300,80 360,40 420,80 480,40 540,80 600,40 660,80 720,40 780,80 840,40 900,80 960,40 1020,80 1080,40 1140,80 1200,40 1200,100 Z' fill='black'/></svg>") center / 100% 100% no-repeat;
-            pointer-events: none;
-        }
-        
-        /* Section content - handles horizontal padding and max-width */
-        .section-content {
-            padding-left: 1rem;
-            padding-right: 1rem;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
 
-        /* Fonts - using CSS variables from Astro's experimental fonts API */
-        .font-display {
-            font-family: var(--font-display), -apple-system, BlinkMacSystemFont, sans-serif;
-        }
+	/* Torn gap section - solid black band with jagged edge overlay */
+	.torn-gap {
+		position: relative;
+		z-index: 1;
+		background-color: oklch(0.15 0 0) !important;
+		background-image: none;
+		color: white;
+	}
 
-        .font-mono {
-            font-family: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
-        }
+	/* Jagged top edge for torn-gap sections */
+	.torn-gap::before {
+		content: "";
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: -24px;
+		height: 48px;
+		background: oklch(0.15 0 0);
+		-webkit-mask:
+			url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100' preserveAspectRatio='none'><path d='M0,100 L0,40 60,80 120,40 180,80 240,40 300,80 360,40 420,80 480,40 540,80 600,40 660,80 720,40 780,80 840,40 900,80 960,40 1020,80 1080,40 1140,80 1200,40 1200,100 Z' fill='black'/></svg>")
+			center / 100% 100% no-repeat;
+		mask:
+			url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100' preserveAspectRatio='none'><path d='M0,100 L0,40 60,80 120,40 180,80 240,40 300,80 360,40 420,80 480,40 540,80 600,40 660,80 720,40 780,80 840,40 900,80 960,40 1020,80 1080,40 1140,80 1200,40 1200,100 Z' fill='black'/></svg>")
+			center / 100% 100% no-repeat;
+		pointer-events: none;
+	}
 
-        .font-glitch {
-            font-family: var(--font-glitch), cursive;
-        }
+	/* Section content - handles horizontal padding and max-width */
+	.section-content {
+		padding-left: 1rem;
+		padding-right: 1rem;
+		max-width: 1200px;
+		margin-left: auto;
+		margin-right: auto;
+	}
 
-        /* Automatically apply correct text colors when using bg-* utility classes */
-        .bg-primary { 
-            background-color: var(--color-primary);
-            color: var(--color-primary-content); 
-        }
-        
-        /* Brand gradient - falls back to primary if gradient colors not defined */
-        .bg-brand {
-            background: linear-gradient(135deg, var(--color-gradient-start, var(--color-primary)) 0%, var(--color-gradient-end, var(--color-primary)) 100%);
-            color: var(--color-primary-content);
-        }
-        
-        /* Hero headshot gradient - falls back to theme colors if not defined */
-        .bg-hero-gradient {
-            background: linear-gradient(
-                to bottom right,
-                var(--color-hero-gradient-from, var(--color-primary)) 0%,
-                var(--color-hero-gradient-via, var(--color-secondary)) 50%,
-                var(--color-hero-gradient-to, var(--color-accent)) 100%
-            );
-        }
-        
-        .bg-secondary { color: var(--color-secondary-content); }
-        .bg-accent { color: var(--color-accent-content); }
-        .bg-neutral { color: var(--color-neutral-content); }
-        .bg-base-100 { color: var(--color-base-content); }
-        .bg-base-200 { color: var(--color-base-content); }
-        .bg-base-300 { color: var(--color-base-content); }
-        .bg-info { color: var(--color-info-content); }
-        .bg-success { color: var(--color-success-content); }
-        .bg-warning { color: var(--color-warning-content); }
-        .bg-error { color: var(--color-error-content); }
+	/* Fonts - using CSS variables from Astro's experimental fonts API */
+	.font-display {
+		font-family:
+			var(--font-display), -apple-system, BlinkMacSystemFont, sans-serif;
+	}
 
-        /* Shadow utilities */
-        .shadow-brutal-sm { box-shadow: var(--nr-shadow-sm); }
-        .shadow-brutal { box-shadow: var(--nr-shadow-base); }
-        .shadow-brutal-lg { box-shadow: var(--nr-shadow-lg); }
-        .shadow-brutal-xl { box-shadow: var(--nr-shadow-xl); }
-        .shadow-none { box-shadow: none !important; }
+	.font-mono {
+		font-family: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
+	}
 
-        /* Border utilities - override card defaults */
-        .border-none { border: none !important; }
+	.font-glitch {
+		font-family: var(--font-glitch), cursive;
+	}
 
-        /* Background utilities - override card defaults */
-        .bg-transparent { background: transparent !important; }
+	/* Automatically apply correct text colors when using bg-* utility classes */
+	.bg-primary {
+		background-color: var(--color-primary);
+		color: var(--color-primary-content);
+	}
 
-        /* Sticker rotations */
-        /* Rotation utilities - general purpose for badges, buttons, cards */
-        /* Use inline style="transform: rotate(Xdeg)" for base rotation */
-        /* These classes add antialiasing to rotated elements */
-        .rotate-1 { 
-            transform: rotate(-8deg);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            transform-style: preserve-3d;
-        }
-        .rotate-2 { 
-            transform: rotate(5deg);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            transform-style: preserve-3d;
-        }
-        .rotate-3 { 
-            transform: rotate(-3deg);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            transform-style: preserve-3d;
-        }
-        .rotate-4 { 
-            transform: rotate(12deg);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            transform-style: preserve-3d;
-        }
+	/* Brand gradient - falls back to primary if gradient colors not defined */
+	.bg-brand {
+		background: linear-gradient(
+			135deg,
+			var(--color-gradient-start, var(--color-primary)) 0%,
+			var(--color-gradient-end, var(--color-primary)) 100%
+		);
+		color: var(--color-primary-content);
+	}
 
-        /* Rotation antialiasing helper - use with inline transform styles */
-        .rotate-smooth {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            transform-style: preserve-3d;
-        }
+	/* Hero headshot gradient - falls back to theme colors if not defined */
+	.bg-hero-gradient {
+		background: linear-gradient(
+			to bottom right,
+			var(--color-hero-gradient-from, var(--color-primary)) 0%,
+			var(--color-hero-gradient-via, var(--color-secondary)) 50%,
+			var(--color-hero-gradient-to, var(--color-accent)) 100%
+		);
+	}
 
-        /* Button rotation angle utilities */
-        .btn-rotate-neg { --btn-rotate-angle: -1deg; }
-        .btn-rotate-0 { --btn-rotate-angle: 0deg; }
-        .btn-rotate-1 { --btn-rotate-angle: 1deg; }
-        .btn-rotate-2 { --btn-rotate-angle: 2deg; }
-        .btn-rotate-3 { --btn-rotate-angle: 3deg; }
-        .btn-rotate-neg-2 { --btn-rotate-angle: -2deg; }
-        .btn-rotate-neg-3 { --btn-rotate-angle: -3deg; }
+	.bg-secondary {
+		color: var(--color-secondary-content);
+	}
+	.bg-accent {
+		color: var(--color-accent-content);
+	}
+	.bg-neutral {
+		color: var(--color-neutral-content);
+	}
+	.bg-base-100 {
+		color: var(--color-base-content);
+	}
+	.bg-base-200 {
+		color: var(--color-base-content);
+	}
+	.bg-base-300 {
+		color: var(--color-base-content);
+	}
+	.bg-info {
+		color: var(--color-info-content);
+	}
+	.bg-success {
+		color: var(--color-success-content);
+	}
+	.bg-warning {
+		color: var(--color-warning-content);
+	}
+	.bg-error {
+		color: var(--color-error-content);
+	}
 
-        /* Border radius utilities */
-        .rounded-brutal-sm { border-radius: 0.25rem; }
-        .rounded-brutal { border-radius: 0.5rem; }
-        .rounded-brutal-lg { border-radius: 1rem; }
-        .rounded-brutal-xl { border-radius: 1.5rem; }
-        .rounded-brutal-full { border-radius: 9999px; }
+	/* Shadow utilities */
+	.shadow-brutal-sm {
+		box-shadow: var(--nr-shadow-sm);
+	}
+	.shadow-brutal {
+		box-shadow: var(--nr-shadow-base);
+	}
+	.shadow-brutal-lg {
+		box-shadow: var(--nr-shadow-lg);
+	}
+	.shadow-brutal-xl {
+		box-shadow: var(--nr-shadow-xl);
+	}
+	.shadow-none {
+		box-shadow: none !important;
+	}
 
-        /* Hover effects - composable using CSS custom properties */
-        
-        /* 
+	/* Border utilities - override card defaults */
+	.border-none {
+		border: none !important;
+	}
+
+	/* Background utilities - override card defaults */
+	.bg-transparent {
+		background: transparent !important;
+	}
+
+	/* Sticker rotations */
+	/* Rotation utilities - general purpose for badges, buttons, cards */
+	/* Use inline style="transform: rotate(Xdeg)" for base rotation */
+	/* These classes add antialiasing to rotated elements */
+	.rotate-1 {
+		transform: rotate(-8deg);
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		backface-visibility: hidden;
+		-webkit-backface-visibility: hidden;
+		transform-style: preserve-3d;
+	}
+	.rotate-2 {
+		transform: rotate(5deg);
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		backface-visibility: hidden;
+		-webkit-backface-visibility: hidden;
+		transform-style: preserve-3d;
+	}
+	.rotate-3 {
+		transform: rotate(-3deg);
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		backface-visibility: hidden;
+		-webkit-backface-visibility: hidden;
+		transform-style: preserve-3d;
+	}
+	.rotate-4 {
+		transform: rotate(12deg);
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		backface-visibility: hidden;
+		-webkit-backface-visibility: hidden;
+		transform-style: preserve-3d;
+	}
+
+	/* Rotation antialiasing helper - use with inline transform styles */
+	.rotate-smooth {
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		backface-visibility: hidden;
+		-webkit-backface-visibility: hidden;
+		transform-style: preserve-3d;
+	}
+
+	/* Button rotation angle utilities */
+	.btn-rotate-neg {
+		--btn-rotate-angle: -1deg;
+	}
+	.btn-rotate-0 {
+		--btn-rotate-angle: 0deg;
+	}
+	.btn-rotate-1 {
+		--btn-rotate-angle: 1deg;
+	}
+	.btn-rotate-2 {
+		--btn-rotate-angle: 2deg;
+	}
+	.btn-rotate-3 {
+		--btn-rotate-angle: 3deg;
+	}
+	.btn-rotate-neg-2 {
+		--btn-rotate-angle: -2deg;
+	}
+	.btn-rotate-neg-3 {
+		--btn-rotate-angle: -3deg;
+	}
+
+	/* Border radius utilities */
+	.rounded-brutal-sm {
+		border-radius: 0.25rem;
+	}
+	.rounded-brutal {
+		border-radius: 0.5rem;
+	}
+	.rounded-brutal-lg {
+		border-radius: 1rem;
+	}
+	.rounded-brutal-xl {
+		border-radius: 1.5rem;
+	}
+	.rounded-brutal-full {
+		border-radius: 9999px;
+	}
+
+	/* Hover effects - composable using CSS custom properties */
+
+	/* 
          * COMPOSABLE HOVER EFFECTS
          * 
          * Base class: .hover-effect (required)
@@ -627,77 +707,77 @@
          * Rotate: hover-rotate-1, hover-rotate-2, hover-rotate-3, hover-rotate-5
          *         hover-rotate-neg-1, hover-rotate-neg-2, hover-rotate-neg-3, hover-rotate-neg-5
          */
-        
-        /* Base hover utility - applies transition and anti-aliasing */
-        .hover-effect {
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            transform-style: preserve-3d;
-            
-            /* Default values - can be overridden by modifier classes */
-            --hover-translate-x: 0px;
-            --hover-translate-y: 0px;
-            --hover-scale: 1;
-            --hover-rotate: 0deg;
-        }
-        
-        /* Only apply hover effect on devices with real hover capability */
-        @media (hover: hover) {
-            .hover-effect:hover {
-                transform: 
-                    translate(var(--hover-translate-x), var(--hover-translate-y)) 
-                    scale(var(--hover-scale)) 
-                    rotate(var(--hover-rotate));
-                box-shadow: var(--hover-shadow, var(--nr-shadow-base));
-            }
-        }
-        
-        /* Lift effect modifiers */
-        .hover-lift {
-            --hover-translate-x: -6px;
-            --hover-translate-y: -6px;
-            --hover-shadow: var(--nr-shadow-xl);
-        }
-        
-        .hover-lift-sm {
-            --hover-translate-x: -3px;
-            --hover-translate-y: -3px;
-            --hover-shadow: var(--nr-shadow-lg);
-        }
-        
-        .hover-lift-lg {
-            --hover-translate-x: -8px;
-            --hover-translate-y: -8px;
-            --hover-shadow: var(--nr-shadow-xxl);
-        }
-        
-        /* Scale effect modifiers */
-        .hover-scale {
-            --hover-scale: 1.05;
-        }
-        
-        .hover-scale-sm {
-            --hover-scale: 1.02;
-        }
-        
-        .hover-scale-lg {
-            --hover-scale: 1.1;
-        }
-        
-        /* Disable hover effects - useful for containers with child elements that have hover effects
+
+	/* Base hover utility - applies transition and anti-aliasing */
+	.hover-effect {
+		transition:
+			transform 0.25s ease,
+			box-shadow 0.25s ease;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		backface-visibility: hidden;
+		-webkit-backface-visibility: hidden;
+		transform-style: preserve-3d;
+
+		/* Default values - can be overridden by modifier classes */
+		--hover-translate-x: 0px;
+		--hover-translate-y: 0px;
+		--hover-scale: 1;
+		--hover-rotate: 0deg;
+	}
+
+	/* Only apply hover effect on devices with real hover capability */
+	@media (hover: hover) {
+		.hover-effect:hover {
+			transform: translate(var(--hover-translate-x), var(--hover-translate-y))
+				scale(var(--hover-scale)) rotate(var(--hover-rotate));
+			box-shadow: var(--hover-shadow, var(--nr-shadow-base));
+		}
+	}
+
+	/* Lift effect modifiers */
+	.hover-lift {
+		--hover-translate-x: -6px;
+		--hover-translate-y: -6px;
+		--hover-shadow: var(--nr-shadow-xl);
+	}
+
+	.hover-lift-sm {
+		--hover-translate-x: -3px;
+		--hover-translate-y: -3px;
+		--hover-shadow: var(--nr-shadow-lg);
+	}
+
+	.hover-lift-lg {
+		--hover-translate-x: -8px;
+		--hover-translate-y: -8px;
+		--hover-shadow: var(--nr-shadow-xxl);
+	}
+
+	/* Scale effect modifiers */
+	.hover-scale {
+		--hover-scale: 1.05;
+	}
+
+	.hover-scale-sm {
+		--hover-scale: 1.02;
+	}
+
+	.hover-scale-lg {
+		--hover-scale: 1.1;
+	}
+
+	/* Disable hover effects - useful for containers with child elements that have hover effects
            This class prevents any transform/shadow changes on hover while preserving existing transforms
         */
-        .no-hover {
-            &:hover {
-                transform: translate(0, 0) rotate(0deg) !important;
-                box-shadow: var(--btn-shadow) !important;
-            }
-        }
-        
-        /* Stable hover lift - provides visual lift effect without shifting siblings
+	.no-hover {
+		&:hover {
+			transform: translate(0, 0) rotate(0deg) !important;
+			box-shadow: var(--btn-shadow) !important;
+		}
+	}
+
+	/* Stable hover lift - provides visual lift effect without shifting siblings
            Only uses transform (which doesn't affect layout) and shadow changes
            
            States:
@@ -709,237 +789,338 @@
            Note: No CSS transition to prevent layout shift during state changes.
            The instant state change feels snappy and intentional for neobrutalism.
         */
-        .hover-lift-stable:active {
-            transform: translate(2px, 2px) !important;
-            box-shadow: 4px 4px 0px 0px var(--nr-shadow-color) !important;
-        }
-        
-        .hover-lift-stable:focus-visible {
-            outline: 3px solid var(--color-primary);
-            outline-offset: 2px;
-        }
-        
-        /* Only apply hover effect on devices with real hover capability (not touch) */
-        @media (hover: hover) {
-            .hover-lift-stable:hover {
-                transform: translate(-2px, -2px) !important;
-                box-shadow: 10px 10px 0px 0px var(--nr-shadow-color) !important;
-            }
-            
-            /* Desktop: Return to resting when clicking while hovering */
-            .hover-lift-stable:hover:active {
-                transform: translate(0, 0) !important;
-                box-shadow: 8px 8px 0px 0px var(--nr-shadow-color) !important;
-            }
-        }
-        
-        /* Rotation effect modifiers - various angles */
-        .hover-rotate-1 { --hover-rotate: 1deg; }
-        .hover-rotate-2 { --hover-rotate: 2deg; }
-        .hover-rotate-3 { --hover-rotate: 3deg; }
-        .hover-rotate-5 { --hover-rotate: 5deg; }
-        .hover-rotate-neg-1 { --hover-rotate: -1deg; }
-        .hover-rotate-neg-2 { --hover-rotate: -2deg; }
-        .hover-rotate-neg-3 { --hover-rotate: -3deg; }
-        .hover-rotate-neg-5 { --hover-rotate: -5deg; }
-        
-        /* Legacy classes for backward compatibility */
-        .hover-rotate {
-            --hover-rotate: -3deg;
-        }
-        
-        /* Filter button click animation - brief pulse effect for visual feedback
+	.hover-lift-stable:active {
+		transform: translate(2px, 2px) !important;
+		box-shadow: 4px 4px 0px 0px var(--nr-shadow-color) !important;
+	}
+
+	.hover-lift-stable:focus-visible {
+		outline: 3px solid var(--color-primary);
+		outline-offset: 2px;
+	}
+
+	/* Only apply hover effect on devices with real hover capability (not touch) */
+	@media (hover: hover) {
+		.hover-lift-stable:hover {
+			transform: translate(-2px, -2px) !important;
+			box-shadow: 10px 10px 0px 0px var(--nr-shadow-color) !important;
+		}
+
+		/* Desktop: Return to resting when clicking while hovering */
+		.hover-lift-stable:hover:active {
+			transform: translate(0, 0) !important;
+			box-shadow: 8px 8px 0px 0px var(--nr-shadow-color) !important;
+		}
+	}
+
+	/* Rotation effect modifiers - various angles */
+	.hover-rotate-1 {
+		--hover-rotate: 1deg;
+	}
+	.hover-rotate-2 {
+		--hover-rotate: 2deg;
+	}
+	.hover-rotate-3 {
+		--hover-rotate: 3deg;
+	}
+	.hover-rotate-5 {
+		--hover-rotate: 5deg;
+	}
+	.hover-rotate-neg-1 {
+		--hover-rotate: -1deg;
+	}
+	.hover-rotate-neg-2 {
+		--hover-rotate: -2deg;
+	}
+	.hover-rotate-neg-3 {
+		--hover-rotate: -3deg;
+	}
+	.hover-rotate-neg-5 {
+		--hover-rotate: -5deg;
+	}
+
+	/* Legacy classes for backward compatibility */
+	.hover-rotate {
+		--hover-rotate: -3deg;
+	}
+
+	/* Filter button click animation - brief pulse effect for visual feedback
            IMPORTANT: Must INCLUDE the hover translate offset so we don't fight with hover lock */
-        @keyframes filter-btn-pulse {
-            0% { transform: translate(-2px, -2px) scale(1); }
-            50% { transform: translate(-2px, -2px) scale(0.95); filter: brightness(1.1); }
-            100% { transform: translate(-2px, -2px) scale(1); }
-        }
-        
-        .filter-btn-animate {
-            animation: filter-btn-pulse 0.2s ease-out;
-        }
-        
-        /* Lock hover state during page transition to prevent flicker */
-        .filter-btn-clicked {
-            /* Mirror the hover-lift-stable:hover styles */
-            transform: translate(-2px, -2px) !important;
-            box-shadow: 10px 10px 0px 0px var(--nr-shadow-color) !important;
-            /* Disable CSS transition to prevent double-bounce when animation ends */
-            transition: none !important;
-        }
-        
-        /* Filter buttons need pure JS control to avoid conflicts between:
+	@keyframes filter-btn-pulse {
+		0% {
+			transform: translate(-2px, -2px) scale(1);
+		}
+		50% {
+			transform: translate(-2px, -2px) scale(0.95);
+			filter: brightness(1.1);
+		}
+		100% {
+			transform: translate(-2px, -2px) scale(1);
+		}
+	}
+
+	.filter-btn-animate {
+		animation: filter-btn-pulse 0.2s ease-out;
+	}
+
+	/* Lock hover state during page transition to prevent flicker */
+	.filter-btn-clicked {
+		/* Mirror the hover-lift-stable:hover styles */
+		transform: translate(-2px, -2px) !important;
+		box-shadow: 10px 10px 0px 0px var(--nr-shadow-color) !important;
+		/* Disable CSS transition to prevent double-bounce when animation ends */
+		transition: none !important;
+	}
+
+	/* Filter buttons need pure JS control to avoid conflicts between:
            - :hover (lift up)
            - :active (push down)  
            This class provides a simpler, unified style that works consistently 
            on both mouse and touch devices.
         */
-        .filter-btn {
-            /* Smooth transitions for press effects */
-            transition: transform 0.1s ease-out, filter 0.1s ease-out, box-shadow 0.1s ease-out !important;
-            /* Resting shadow position */
-            box-shadow: 6px 6px 0px 0px var(--nr-shadow-color) !important;
-            /* Resting position */
-            transform: translate(0, 0) !important;
-        }
-        
-        /* Hover: subtle brightness increase (works on both mouse and touch) */
-        .filter-btn:hover {
-            filter: brightness(1.05);
-        }
-        
-        /* Press: Button drops toward shadow (neobrutalist press effect)
+	.filter-btn {
+		/* Smooth transitions for press effects */
+		transition:
+			transform 0.1s ease-out,
+			filter 0.1s ease-out,
+			box-shadow 0.1s ease-out !important;
+		/* Resting shadow position */
+		box-shadow: 6px 6px 0px 0px var(--nr-shadow-color) !important;
+		/* Resting position */
+		transform: translate(0, 0) !important;
+	}
+
+	/* Hover: subtle brightness increase (works on both mouse and touch) */
+	.filter-btn:hover {
+		filter: brightness(1.05);
+	}
+
+	/* Press: Button drops toward shadow (neobrutalist press effect)
            - Button moves 2px toward shadow
            - Shadow shrinks from 6px to 4px
            - Slight brightness dip for visual feedback */
-        .filter-btn:active,
-        .filter-btn.pressing {
-            transform: translate(2px, 2px) !important;
-            box-shadow: 4px 4px 0px 0px var(--nr-shadow-color) !important;
-            filter: brightness(0.95) !important;
-        }
-        
-        /* Focus visible for accessibility */
-        .filter-btn:focus-visible {
-            outline: 3px solid var(--color-primary);
-            outline-offset: 2px;
-        }
+	.filter-btn:active,
+	.filter-btn.pressing {
+		transform: translate(2px, 2px) !important;
+		box-shadow: 4px 4px 0px 0px var(--nr-shadow-color) !important;
+		filter: brightness(0.95) !important;
+	}
 
-        /* ========================================
+	/* Focus visible for accessibility */
+	.filter-btn:focus-visible {
+		outline: 3px solid var(--color-primary);
+		outline-offset: 2px;
+	}
+
+	/* ========================================
            WORK CARD STYLING
            ========================================
            Work cards use a smaller press animation than filter buttons
            because they have smaller shadows (shadow-xs).
         */
-        .card[data-work-card] {
-            /* Ensure consistent transition for visual effects */
-            transition: transform 0.1s ease-out, filter 0.1s ease-out, box-shadow 0.1s ease-out !important;
-            /* Disable any hover transform that might be inherited */
-            transform: translate(0, 0) !important;
-            /* Stable border - prevent any changes */
-            border: 2px solid var(--nr-border-color) !important;
-        }
-        
-        /* Hover: NO visual change whatsoever */
-        .card[data-work-card]:hover {
-            transform: translate(0, 0) !important;
-            filter: none !important;
-            outline: none !important;
-            /* Keep same border - no changes */
-            border: 2px solid var(--nr-border-color) !important;
-        }
-        
-        /* Active/Press: Small press animation (proportional to shadow-xs)
+	.card[data-work-card] {
+		/* Ensure consistent transition for visual effects */
+		transition:
+			transform 0.1s ease-out,
+			filter 0.1s ease-out,
+			box-shadow 0.1s ease-out !important;
+		/* Disable any hover transform that might be inherited */
+		transform: translate(0, 0) !important;
+		/* Stable border - prevent any changes */
+		border: 2px solid var(--nr-border-color) !important;
+	}
+
+	/* Hover: NO visual change whatsoever */
+	.card[data-work-card]:hover {
+		transform: translate(0, 0) !important;
+		filter: none !important;
+		outline: none !important;
+		/* Keep same border - no changes */
+		border: 2px solid var(--nr-border-color) !important;
+	}
+
+	/* Active/Press: Small press animation (proportional to shadow-xs)
            - Button moves 1px toward shadow (smaller than filter btn's 2px)
            - Shadow stays minimal
            - Subtle brightness dip */
-        .card[data-work-card]:active,
-        .card[data-work-card].pressing {
-            transform: translate(1px, 1px) !important;
-            box-shadow: 1px 1px 0px 0px var(--nr-shadow-color) !important;
-            filter: brightness(0.97) !important;
-            outline: none !important;
-        }
+	.card[data-work-card]:active,
+	.card[data-work-card].pressing {
+		transform: translate(1px, 1px) !important;
+		box-shadow: 1px 1px 0px 0px var(--nr-shadow-color) !important;
+		filter: brightness(0.97) !important;
+		outline: none !important;
+	}
 
-        /* Remove focus outline from the link inside work cards */
-        .card[data-work-card] a:focus,
-        .card[data-work-card] a:focus-visible {
-            outline: none !important;
-        }
+	/* Remove focus outline from the link inside work cards */
+	.card[data-work-card] a:focus,
+	.card[data-work-card] a:focus-visible {
+		outline: none !important;
+	}
 
-        /* Sticker positioning */
-        .sticker-container { position: relative; }
-        .sticker-top-left { position: absolute; top: 1rem; left: 1rem; }
-        .sticker-top-right { position: absolute; top: 1rem; right: 1rem; }
-        .sticker-bottom-left { position: absolute; bottom: 1rem; left: 1rem; }
-        .sticker-bottom-right { position: absolute; bottom: 1rem; right: 1rem; }
-        .sticker-top-center {
-            position: absolute;
-            top: 0.75rem;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .sticker-bottom-center {
-            position: absolute;
-            bottom: 0.75rem;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .sticker-middle-left {
-            position: absolute;
-            top: 50%;
-            left: 0.5rem;
-            transform: translateY(-50%);
-        }
-        .sticker-middle-right {
-            position: absolute;
-            top: 50%;
-            right: 0.5rem;
-            transform: translateY(-50%);
-        }
+	/* Sticker positioning */
+	.sticker-container {
+		position: relative;
+	}
+	.sticker-top-left {
+		position: absolute;
+		top: 1rem;
+		left: 1rem;
+	}
+	.sticker-top-right {
+		position: absolute;
+		top: 1rem;
+		right: 1rem;
+	}
+	.sticker-bottom-left {
+		position: absolute;
+		bottom: 1rem;
+		left: 1rem;
+	}
+	.sticker-bottom-right {
+		position: absolute;
+		bottom: 1rem;
+		right: 1rem;
+	}
+	.sticker-top-center {
+		position: absolute;
+		top: 0.75rem;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+	.sticker-bottom-center {
+		position: absolute;
+		bottom: 0.75rem;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+	.sticker-middle-left {
+		position: absolute;
+		top: 50%;
+		left: 0.5rem;
+		transform: translateY(-50%);
+	}
+	.sticker-middle-right {
+		position: absolute;
+		top: 50%;
+		right: 0.5rem;
+		transform: translateY(-50%);
+	}
 
-        /* Organic clip paths */
-        .organic-top {
-            clip-path: polygon(0 85%, 25% 95%, 50% 90%, 75% 95%, 100% 85%, 100% 0, 0 0);
-        }
+	/* Organic clip paths */
+	.organic-top {
+		clip-path: polygon(0 85%, 25% 95%, 50% 90%, 75% 95%, 100% 85%, 100% 0, 0 0);
+	}
 
-        .organic-bottom {
-            clip-path: polygon(0 0, 100% 0, 100% 40%, 90% 50%, 80% 45%, 70% 55%, 60% 50%, 50% 60%, 40% 50%, 30% 55%, 20% 45%, 10% 50%, 0 40%);
-        }
+	.organic-bottom {
+		clip-path: polygon(
+			0 0,
+			100% 0,
+			100% 40%,
+			90% 50%,
+			80% 45%,
+			70% 55%,
+			60% 50%,
+			50% 60%,
+			40% 50%,
+			30% 55%,
+			20% 45%,
+			10% 50%,
+			0 40%
+		);
+	}
 
-        .organic-both {
-            clip-path: polygon(
-                0 15%, 25% 5%, 50% 10%, 75% 5%, 100% 15%,
-                100% 85%, 75% 95%, 50% 90%, 25% 95%, 0 85%
-            );
-        }
+	.organic-both {
+		clip-path: polygon(
+			0 15%,
+			25% 5%,
+			50% 10%,
+			75% 5%,
+			100% 15%,
+			100% 85%,
+			75% 95%,
+			50% 90%,
+			25% 95%,
+			0 85%
+		);
+	}
 
-        /* ========================================
+	/* ========================================
            TORN SECTION & PAPER EFFECTS
            ======================================== */
-        
-        /* Torn gap - creates a ripped paper effect between sections */
-        .torn-gap {
-            position: relative;
-            background: oklch(0.15 0 0);
-            padding: 6rem 0;
-            margin: 0;
-            z-index: 5;
-            /* Prevent scrolling within this section */
-            overflow: visible; /* Changed from hidden to allow torn edges to extend */
-            /* Disable touch interactions on the marquee area */
-            touch-action: pan-y;
-            
-            /* Apply torn edges using clip-path on the section itself */
-            clip-path: polygon(
-                /* Top torn edge */
-                0% 0%, 3% 1.5%, 7% 0.8%, 12% 2%, 18% 0.5%, 25% 1.8%, 32% 1%, 
-                38% 2.3%, 45% 0.6%, 52% 1.9%, 58% 0.9%, 65% 2.1%, 72% 0.4%, 78% 1.6%, 
-                85% 1.1%, 91% 2.4%, 96% 1.3%, 100% 2.5%,
-                /* Right edge */
-                100% 2.5%, 100% 100%,
-                /* Bottom torn edge */
-                100% 98.5%, 96% 99.1%, 94% 98.4%, 88% 99.4%, 82% 98.8%, 76% 99.7%, 
-                69% 98.9%, 63% 99.5%, 56% 98.5%, 49% 99.3%, 42% 98.7%, 35% 99.6%, 
-                28% 98.9%, 21% 99.6%, 15% 98.6%, 9% 99.4%, 4% 99.1%, 0% 98.5%,
-                /* Left edge */
-                0% 98.5%, 0% 0%
-            );
-        }
-        
-        /* Add extra margin to sections following torn-gap */
-        .torn-gap + section,
-        .torn-gap + .rotated-section {
-            margin-top: 2rem;
-        }
-        
-        /* ========================================
+
+	/* Torn gap - creates a ripped paper effect between sections */
+	.torn-gap {
+		position: relative;
+		background: oklch(0.15 0 0);
+		padding: 6rem 0;
+		margin: 0;
+		z-index: 5;
+		/* Prevent scrolling within this section */
+		overflow: visible; /* Changed from hidden to allow torn edges to extend */
+		/* Disable touch interactions on the marquee area */
+		touch-action: pan-y;
+
+		/* Apply torn edges using clip-path on the section itself */
+		clip-path: polygon(
+			/* Top torn edge */
+			0% 0%,
+			3% 1.5%,
+			7% 0.8%,
+			12% 2%,
+			18% 0.5%,
+			25% 1.8%,
+			32% 1%,
+			38% 2.3%,
+			45% 0.6%,
+			52% 1.9%,
+			58% 0.9%,
+			65% 2.1%,
+			72% 0.4%,
+			78% 1.6%,
+			85% 1.1%,
+			91% 2.4%,
+			96% 1.3%,
+			100% 2.5%,
+			/* Right edge */
+			100% 2.5%,
+			100% 100%,
+			/* Bottom torn edge */
+			100% 98.5%,
+			96% 99.1%,
+			94% 98.4%,
+			88% 99.4%,
+			82% 98.8%,
+			76% 99.7%,
+			69% 98.9%,
+			63% 99.5%,
+			56% 98.5%,
+			49% 99.3%,
+			42% 98.7%,
+			35% 99.6%,
+			28% 98.9%,
+			21% 99.6%,
+			15% 98.6%,
+			9% 99.4%,
+			4% 99.1%,
+			0% 98.5%,
+			/* Left edge */
+			0% 98.5%,
+			0% 0%
+		);
+	}
+
+	/* Add extra margin to sections following torn-gap */
+	.torn-gap + section,
+	.torn-gap + .rotated-section {
+		margin-top: 2rem;
+	}
+
+	/* ========================================
            ROTATED SECTIONS
            Container sections with static rotation
            ======================================== */
-        
-        /* Rotated section - extends .card with rotation transforms
+
+	/* Rotated section - extends .card with rotation transforms
            
            ARCHITECTURE:
            - Base class (.rotated-section) provides container sizing and positioning
@@ -960,512 +1141,1004 @@
            
            Usage: <section class="card rotated-section rotated-section-lg shadow-brutal-xl">
         */
-        .rotated-section {
-            padding: 3rem;
-            margin: 4rem auto;
-            max-width: 1200px;
-            transform-style: preserve-3d;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            backface-visibility: hidden;
-            
-            /* Prevent ALL transitions - container must remain static */
-            transition: none;
-        }
-        
-        /* Rotation variants - use @apply to leverage Tailwind's rotate utilities */
-        .rotated-section-sm {
-            @apply -rotate-1;  /* -1deg rotation */
-        }
-        
-        .rotated-section-md {
-            @apply rotate-[1.5deg];  /* 1.5deg rotation */
-        }
-        
-        .rotated-section-lg {
-            @apply -rotate-2;  /* -2deg rotation */
-        }
-        }
+	.rotated-section {
+		padding: 3rem;
+		margin: 4rem auto;
+		max-width: 1200px;
+		transform-style: preserve-3d;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		backface-visibility: hidden;
 
-        /* ========================================
+		/* Prevent ALL transitions - container must remain static */
+		transition: none;
+	}
+
+	/* Rotation variants - use @apply to leverage Tailwind's rotate utilities */
+	.rotated-section-sm {
+		@apply -rotate-1; /* -1deg rotation */
+	}
+
+	.rotated-section-md {
+		@apply rotate-[1.5deg]; /* 1.5deg rotation */
+	}
+
+	.rotated-section-lg {
+		@apply -rotate-2; /* -2deg rotation */
+	}
+}
+
+/* ========================================
            CUSTOM BADGE HEIGHT UTILITIES
            (Project-specific, not part of theme)
            ======================================== */
-        
-        /* Badge height modifiers - add vertical padding for "chunky" badges */
-        .badge-height-xs {
-            padding-top: 0.25rem;
-            padding-bottom: 0.25rem;
-        }
 
-        .badge-height-sm {
-            padding-top: 0.375rem;
-            padding-bottom: 0.375rem;
-        }
+/* Badge height modifiers - add vertical padding for "chunky" badges */
+.badge-height-xs {
+	padding-top: 0.25rem;
+	padding-bottom: 0.25rem;
+}
 
-        .badge-height-md {
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
-        }
+.badge-height-sm {
+	padding-top: 0.375rem;
+	padding-bottom: 0.375rem;
+}
 
-        .badge-height-lg {
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
-        }
+.badge-height-md {
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+}
 
-        .badge-height-xl {
-            padding-top: 0.625rem;
-            padding-bottom: 0.625rem;
-        }
+.badge-height-lg {
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+}
 
-        /* ========================================
+.badge-height-xl {
+	padding-top: 0.625rem;
+	padding-bottom: 0.625rem;
+}
+
+/* ========================================
            PROSE CONTENT - RICH TEXT STYLING
            For MDX/Markdown blog-like content
            ======================================== */
-        
-        .prose-content {
-            /* Base typography */
-            font-size: 1.0625rem;
-            line-height: 1.75;
-            color: oklch(0.25 0 0);
-            
-            /* Max-width for readability (~65 chars) */
-            max-width: 75ch;
-        }
-        
-        /* First-level headings - remove from MDX as we have header */
-        .prose-content h1 {
-            display: none; /* Hide duplicate H1 - title is in header */
-        }
-        
-        /* Second-level headings - major sections */
-        .prose-content h2 {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--color-primary);
-            margin-top: 3rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 3px solid var(--color-base-300);
-            letter-spacing: -0.025em;
-        }
-        
-        .prose-content h2:first-child {
-            margin-top: 0;
-        }
-        
-        /* Third-level headings - subsections */
-        .prose-content h3 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: oklch(0.2 0 0);
-            margin-top: 2rem;
-            margin-bottom: 0.75rem;
-        }
-        
-        /* Fourth-level headings */
-        .prose-content h4 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: oklch(0.3 0 0);
-            margin-top: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        /* Paragraphs */
-        .prose-content p {
-            margin-bottom: 1.25rem;
-            color: oklch(0.35 0 0);
-        }
-        
-        .prose-content p:last-child {
-            margin-bottom: 0;
-        }
-        
-        /* Strong/bold text */
-        .prose-content strong {
-            font-weight: 700;
-            color: oklch(0.2 0 0);
-        }
-        
-        /* Emphasis/italic */
-        .prose-content em {
-            font-style: italic;
-        }
-        
-        /* Links */
-        .prose-content a {
-            color: var(--color-primary);
-            font-weight: 500;
-            text-decoration: none;
-            border-bottom: 2px solid transparent;
-            transition: border-color 0.2s ease;
-        }
-        
-        .prose-content a:hover {
-            border-bottom-color: var(--color-primary);
-        }
-        
-        /* Unordered lists */
-        .prose-content ul {
-            margin: 0.75rem 0;
-            padding-left: 0;
-            list-style: none;
-        }
-        
-        /* Reduce top margin when list follows a paragraph */
-        .prose-content p + ul,
-        .prose-content p + ol {
-            margin-top: 0.5rem;
-        }
-        
-        .prose-content ul li {
-            position: relative;
-            padding-left: 1.5rem;
-            margin-bottom: 0.25rem;
-            line-height: 1.5; /* Tighter than body text for cohesive items */
-            color: oklch(0.35 0 0);
-        }
-        
-        /* Bold text at start of list items (list headings) */
-        .prose-content li strong:first-child,
-        .prose-content li > strong {
-            color: oklch(0.2 0 0);
-            font-weight: 700;
-        }
-        
-        /* Remove margin from last item in list */
-        .prose-content ul li:last-child {
-            margin-bottom: 0;
-        }
-        
-        .prose-content ul li::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0.5rem;
-            width: 6px;
-            height: 6px;
-            background-color: var(--color-primary);
-            border-radius: 0;
-        }
-        
-        /* Nested lists */
-        .prose-content ul ul {
-            margin: 0.25rem 0 0 0;
-        }
-        
-        .prose-content ul ul li::before {
-            background-color: var(--color-accent);
-            width: 5px;
-            height: 5px;
-        }
-        
-        /* Ordered lists */
-        .prose-content ol {
-            margin: 0.75rem 0;
-            padding-left: 0;
-            list-style: none;
-            counter-reset: list-counter;
-        }
-        
-        .prose-content ol li {
-            position: relative;
-            padding-left: 2.25rem;
-            margin-bottom: 0.25rem;
-            line-height: 1.5;
-            color: oklch(0.35 0 0);
-            counter-increment: list-counter;
-        }
-        
-        .prose-content ol li:last-child {
-            margin-bottom: 0;
-        }
-        
-        .prose-content ol li::before {
-            content: counter(list-counter);
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 1.5rem;
-            height: 1.5rem;
-            background-color: var(--color-primary);
-            color: white;
-            font-weight: 700;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 0;
-        }
-        
-        /* Blockquotes */
-        .prose-content blockquote {
-            margin: 2rem 0;
-            padding: 1.5rem 1.5rem 1.5rem 2rem;
-            background-color: var(--color-primary);
-            background-opacity: 0.05;
-            border-left: 4px solid var(--color-primary);
-            font-style: italic;
-            color: oklch(0.3 0 0);
-        }
-        
-        .prose-content blockquote p {
-            margin-bottom: 0;
-        }
-        
-        /* Code - inline */
-        .prose-content code {
-            font-family: var(--font-mono), ui-monospace, monospace;
-            font-size: 0.875em;
-            background-color: oklch(0.95 0.01 280);
-            color: var(--color-accent);
-            padding: 0.1em 0.35em;
-            border-radius: 0;
-            border: 1px solid oklch(0.9 0.02 280);
-            font-weight: 500;
-        }
-        
-        /* Code - blocks (Expressive Code handles most styling) */
-        .prose-content .expressive-code {
-            margin: 1.5rem 0;
-            font-family: var(--font-mono), ui-monospace, monospace;
-        }
-        
-        /* Reduce top margin when code follows a heading */
-        .prose-content h3 + .expressive-code,
-        .prose-content h4 + .expressive-code,
-        .prose-content p + .expressive-code {
-            margin-top: 0.75rem;
-        }
-        
-        .prose-content pre code {
-            font-size: 0.875rem;
-            line-height: 1.6;
-        }
-        
-        /* Show copy button on touch devices (no hover capability) */
-        @media (hover: none) {
-            .expressive-code .copy button {
-                opacity: 1 !important;
-            }
-        }
-        
-        /* Tables */
-        .prose-content table {
-            margin: 1.5rem 0;
-            border-collapse: collapse;
-            font-size: 0.9375rem;
-            border: 3px solid oklch(0.2 0 0);
-            width: 100%;
-            /* Use table-layout: auto to allow content to determine column widths */
-            table-layout: auto;
-        }
-        
-        /* Wrap tables in a scrollable container on mobile */
-        @media (max-width: 640px) {
-            .prose-content table {
-                display: block;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                /* Let content width determine table width, fill container if content is narrower */
-                width: fit-content;
-                min-width: 100%;
-                max-width: 100%;
-            }
-            
-            .prose-content thead,
-            .prose-content tbody {
-                display: table-row-group;
-            }
-            
-            .prose-content tr {
-                display: table-row;
-            }
-            
-            .prose-content th,
-            .prose-content td {
-                display: table-cell;
-            }
-        }
-        
-        /* Table scrollbar styling (mobile) */
-        @media (max-width: 640px) {
-            .prose-content table::-webkit-scrollbar {
-                height: 4px;
-            }
-            
-            .prose-content table::-webkit-scrollbar-track {
-                background: oklch(0.95 0 0);
-            }
-            
-            .prose-content table::-webkit-scrollbar-thumb {
-                background: oklch(0.7 0 0);
-                border-radius: 2px;
-            }
-        }
-        
-        .prose-content thead {
-            background-color: oklch(0.2 0 0);
-        }
-        
-        .prose-content th {
-            padding: 0.75rem 1rem;
-            text-align: left;
-            font-weight: 700;
-            color: white;
-            text-transform: uppercase;
-            font-size: 0.8125rem;
-            letter-spacing: 0.05em;
-            /* Prevent line breaks in headers for consistency */
-            white-space: nowrap;
-            /* Prevent overflow */
-            overflow-wrap: break-word;
-            word-break: normal;
-        }
-        
-        .prose-content td {
-            padding: 0.75rem 1rem;
-            border-top: 1px solid oklch(0.9 0.01 280);
-            color: oklch(0.35 0 0);
-        }
-        
-        /* First column: prevent wrapping for labels */
-        .prose-content td:first-child {
-            white-space: nowrap;
-            font-weight: 500;
-        }
-        
-        /* On mobile, allow minimal wrapping to enable horizontal scroll when needed */
-        @media (max-width: 640px) {
-            .prose-content td {
-                /* Allow wrapping only on very long words, not short phrases */
-                white-space: nowrap;
-            }
-            
-            .prose-content td:first-child {
-                /* First column stays nowrap */
-                white-space: nowrap;
-            }
-        }
-        
-        .prose-content tbody tr:nth-child(even) {
-            background-color: oklch(0.98 0 0);
-        }
-        
-        /* Horizontal rules */
-        .prose-content hr {
-            margin: 3rem 0;
-            border: none;
-            height: 3px;
-            background-color: oklch(0.9 0.01 280);
-        }
-        
-        /* Images */
-        .prose-content img {
-            max-width: 100%;
-            height: auto;
-            margin: 2rem 0;
-            border: 3px solid oklch(0.2 0 0);
-        }
-        
-        /* Dark mode adjustments */
-        [data-theme="neobrutalism-dark"] .prose-content {
-            color: oklch(0.9 0.01 280);
-        }
-        
-        [data-theme="neobrutalism-dark"] .prose-content p,
-        [data-theme="neobrutalism-dark"] .prose-content li {
-            color: oklch(0.85 0.01 280); /* Increased from 0.8 for better contrast */
-        }
-        
-        [data-theme="neobrutalism-dark"] .prose-content h2,
-        [data-theme="neobrutalism-dark"] .prose-content h3,
-        [data-theme="neobrutalism-dark"] .prose-content h4 {
-            color: oklch(0.97 0.01 280);
-            border-color: oklch(0.4 0 0);
-        }
-        
-        [data-theme="neobrutalism-dark"] .prose-content strong {
-            color: oklch(0.97 0.01 280);
-        }
-        
-        /* Dark mode: list item strong text (list headings) */
-        [data-theme="neobrutalism-dark"] .prose-content li strong {
-            color: oklch(0.97 0.01 280);
-        }
-        
-        /* Dark mode: links need high contrast */
-        [data-theme="neobrutalism-dark"] .prose-content a {
-            color: oklch(0.75 0.25 330); /* Bright magenta */
-        }
-        
-        [data-theme="neobrutalism-dark"] .prose-content a:hover {
-            color: oklch(0.85 0.25 330);
-        }
-        
-        [data-theme="neobrutalism-dark"] .prose-content code {
-            background-color: oklch(0.25 0.02 280);
-            border-color: oklch(0.4 0.02 280);
-            color: oklch(0.9 0.15 330); /* Light magenta for visibility */
-        }
-        
-        /* Dark mode: blockquotes */
-        [data-theme="neobrutalism-dark"] .prose-content blockquote {
-            background-color: oklch(0.22 0.02 280);
-            border-left-color: var(--color-primary);
-        }
-        
-        [data-theme="neobrutalism-dark"] .prose-content table {
-            border-color: oklch(0.5 0.01 280);
-        }
-        
-        [data-theme="neobrutalism-dark"] .prose-content thead {
-            background-color: oklch(0.25 0 0);
-        }
-        
-        [data-theme="neobrutalism-dark"] .prose-content th {
-            color: oklch(0.95 0 0);
-        }
-        
-        [data-theme="neobrutalism-dark"] .prose-content tbody tr:nth-child(even) {
-            background-color: oklch(0.22 0.01 280);
-        }
-        
-        [data-theme="neobrutalism-dark"] .prose-content td {
-            border-top-color: oklch(0.35 0.01 280);
-            color: oklch(0.85 0.01 280);
-        }
-        
-        /* Dark mode: first column (labels) */
-        [data-theme="neobrutalism-dark"] .prose-content td:first-child {
-            color: oklch(0.9 0.01 280);
-        }
 
-        /* ========================================
+.prose-content {
+	/* Base typography */
+	font-size: 1.0625rem;
+	line-height: 1.75;
+	color: var(--color-base-content);
+
+	/* Max-width for readability (~65 chars) */
+	max-width: 75ch;
+}
+
+/* First-level headings - remove from MDX as we have header */
+.prose-content h1 {
+	display: none; /* Hide duplicate H1 - title is in header */
+}
+
+/* TL;DR Block improvements */
+.prose-content .tldr-block {
+	margin: 1.5rem 0;
+	padding: 1rem 1.25rem;
+	background: var(--color-base-200);
+	border-left: 4px solid var(--color-primary);
+	border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.prose-content .tldr-block .tldr-label {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 0.8rem;
+	font-weight: 700;
+	color: var(--color-primary);
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	margin-bottom: 0.5rem;
+}
+
+.prose-content .tldr-block .tldr-content {
+	font-size: 0.95rem;
+	line-height: 1.5;
+	color: color-mix(in oklab, var(--color-base-content) 85%, #0000);
+	margin: 0 0 0.75rem 0;
+}
+
+.prose-content .tldr-block .tldr-list {
+	margin: 0;
+	padding-left: 0;
+	list-style: none;
+}
+
+.prose-content .tldr-block .tldr-list li {
+	position: relative;
+	padding-left: 1.25rem;
+	margin-bottom: 0.5rem;
+	font-size: 0.9rem;
+	line-height: 1.4;
+	color: color-mix(in oklab, var(--color-base-content) 75%, #0000);
+}
+
+.prose-content .tldr-block .tldr-list li:last-child {
+	margin-bottom: 0;
+}
+
+.prose-content .tldr-block .tldr-list li::before {
+	content: "→";
+	position: absolute;
+	left: 0;
+	color: var(--color-primary);
+	font-weight: 700;
+	background: none;
+	width: auto;
+	height: auto;
+	border-radius: 0;
+}
+
+.prose-content .tldr-block .tldr-list li strong {
+	font-weight: 600;
+	color: var(--color-base-content);
+}
+
+/* Second-level headings - major sections */
+.prose-content h2 {
+	font-size: 1.4rem;
+	font-weight: 600;
+	color: var(--color-primary);
+	margin-top: 3rem;
+	margin-bottom: 1.15rem;
+	padding-bottom: 0.65rem;
+	border-bottom: 0;
+	letter-spacing: -0.025em;
+	line-height: 1.2;
+	position: relative;
+}
+
+.prose-content h2::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 2px;
+	background: linear-gradient(
+		90deg,
+		color-mix(in oklch, var(--color-primary) 78%, var(--color-base-300)),
+		color-mix(in oklch, var(--color-secondary) 58%, var(--color-base-300))
+	);
+}
+
+.prose-content h2:first-child {
+	margin-top: 0;
+}
+
+/* Heading prefix styling with pseudo-element hashes
+   Hashes are injected via ::before so they don't appear in document outline
+   h2 uses .h2-prefix/.h2-title split, h3/h4 use direct pseudo elements */
+
+/* H2 with prefix - shows ## via ::before on the prefix */
+.prose-content h2:has(.h2-prefix) {
+	/* No padding needed - hash is on the prefix element */
+}
+
+.prose-content h2 .h2-prefix {
+	font-family:
+		var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+		monospace;
+	font-size: 0.95em;
+	font-weight: 700;
+	color: var(--color-primary);
+	margin-right: 0.35rem;
+	vertical-align: baseline;
+	letter-spacing: 0.02em;
+}
+
+/* Inject ## before the prefix content - matches h2-prefix color */
+.prose-content h2 .h2-prefix::before {
+	content: "## ";
+	color: inherit;
+	font-weight: 400;
+	opacity: 0.4;
+}
+
+/* H3 - shows # via ::before pseudo element (only direct children of prose-content) */
+.prose-content > h3::before {
+	content: "# ";
+	font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	color: var(--color-base-content);
+	font-weight: 400;
+	opacity: 0.4;
+	font-size: 0.9em;
+}
+
+/* H4 - shows #### via ::before pseudo element (only direct children of prose-content) */
+.prose-content > h4::before {
+	content: "#### ";
+	font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	color: var(--color-base-content);
+	font-weight: 400;
+	opacity: 0.4;
+	font-size: 0.85em;
+}
+
+/* H2 Title - secondary, descriptive text */
+.prose-content h2 .h2-title {
+	font-weight: 500;
+	color: color-mix(in oklab, var(--color-base-content) 70%, #0000);
+	font-size: 0.9em;
+}
+
+.prose-content h1 {
+	background: linear-gradient(
+		90deg,
+		var(--color-primary),
+		color-mix(in oklch, var(--color-primary) 64%, var(--color-secondary))
+	);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+/* Strong text - inline emphasis uses muted purple */
+.prose-content strong {
+	color: color-mix(
+		in oklab,
+		var(--color-primary) 65%,
+		var(--color-base-content)
+	);
+	font-weight: 700;
+}
+
+/* Links - developer-style cyan-teal */
+.prose-content a {
+	color: var(--color-info);
+	font-weight: 500;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 3px;
+}
+
+.prose-content a:hover {
+	color: color-mix(in oklab, var(--color-info) 80%, white);
+}
+
+/* Third-level headings - subsections */
+.prose-content h3 {
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: var(--color-base-content);
+	margin-top: 2rem;
+	margin-bottom: 0.75rem;
+}
+
+/* Fourth-level headings */
+.prose-content h4 {
+	font-size: 1.125rem;
+	font-weight: 600;
+	color: color-mix(in oklab, var(--color-base-content) 85%, #0000);
+	margin-top: 1.5rem;
+	margin-bottom: 0.5rem;
+}
+
+/* Paragraphs */
+.prose-content p {
+	margin-bottom: 1.5rem;
+	color: color-mix(in oklch, var(--color-base-content) 85%, transparent);
+}
+
+.prose-content p:last-child {
+	margin-bottom: 0;
+}
+
+/* Emphasis/italic */
+.prose-content em {
+	font-style: italic;
+}
+
+/* Unordered lists */
+.prose-content ul {
+	margin: 1.3rem 0;
+	padding-left: 0;
+	list-style: none;
+}
+
+.prose-content h2 + ul {
+	margin-top: 1.8rem;
+}
+
+/* Reduce top margin when list follows a paragraph */
+.prose-content p + ul,
+.prose-content p + ol {
+	margin-top: 0.5rem;
+}
+
+.prose-content ul li {
+	position: relative;
+	padding-left: 1.5rem;
+	margin: 0.6rem 0.25rem;
+	line-height: 1.35;
+	color: color-mix(in oklab, var(--color-base-content) 75%, #0000);
+	font-weight: 400;
+}
+
+/* Bold text at start of list items - styled as technical labels */
+.prose-content li strong:first-child,
+.prose-content li > strong:first-child {
+	font-family:
+		var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+		monospace;
+	font-size: 0.9em;
+	font-weight: 600;
+	color: var(--color-primary);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.prose-content li > strong {
+	color: var(--color-base-content);
+	font-weight: 600;
+}
+
+/* Remove margin from last item in list */
+.prose-content ul li:last-child {
+	margin-bottom: 0;
+}
+
+.prose-content ul li::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0.62em;
+	width: 6px;
+	height: 6px;
+	background-color: var(--color-primary);
+	border-radius: 0;
+}
+
+/* Nested lists */
+.prose-content ul ul {
+	margin: 0.25rem 0 0 0;
+}
+
+.prose-content ul ul li::before {
+	background-color: var(--color-accent);
+	width: 5px;
+	height: 5px;
+}
+
+/* Ordered lists */
+.prose-content ol {
+	margin: 0.75rem 0;
+	padding-left: 0;
+	list-style: none;
+	counter-reset: list-counter;
+}
+
+.prose-content ol li {
+	position: relative;
+	padding-left: 2.75rem;
+	margin-bottom: 1rem;
+	line-height: 1.6;
+	color: color-mix(in oklab, var(--color-base-content) 85%, #0000);
+	counter-increment: list-counter;
+	text-indent: 0;
+}
+
+.prose-content ol li > * {
+	margin-left: 0;
+}
+
+.prose-content ol li:last-child {
+	margin-bottom: 0;
+}
+
+.prose-content ol li::before {
+	content: counter(list-counter);
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 1.5rem;
+	height: 1.5rem;
+	background-color: var(--color-primary);
+	color: white;
+	font-weight: 700;
+	font-size: 0.8rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 0;
+}
+
+/* Structured list items with metrics/comparables */
+.prose-content ul.comparable-list li {
+	padding-left: 0;
+	display: flex;
+	align-items: baseline;
+	gap: 1rem;
+	margin: 0 0 0.5rem 0;
+}
+
+.prose-content ul.comparable-list li::before {
+	display: none;
+}
+
+.prose-content .drift-compare {
+	margin: 1.4rem 0 1.6rem;
+	display: grid;
+	gap: 1rem;
+	grid-template-columns: 1fr;
+}
+
+.prose-content .drift-item {
+	border: 2px solid var(--nr-border-color);
+	background: var(--color-base-100);
+	padding: 0;
+	position: relative;
+	overflow: hidden;
+}
+
+.prose-content .drift-item::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 4px;
+	background: var(--color-primary);
+}
+
+.prose-content .drift-item:nth-child(2)::before {
+	background: var(--color-secondary);
+}
+
+.prose-content .drift-item:nth-child(3)::before {
+	background: var(--color-accent);
+}
+
+.prose-content .drift-item:nth-child(4)::before {
+	background: var(--color-warning);
+}
+
+.prose-content .drift-item:nth-child(5)::before {
+	background: var(--color-info);
+}
+
+.prose-content .drift-item .drift-label {
+	font-family: var(--font-mono), ui-monospace, monospace;
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--color-base-content);
+	background: var(--color-base-200);
+	padding: 0.5rem 1rem;
+	border-bottom: 2px solid var(--nr-border-color);
+	margin: 0;
+}
+
+.prose-content .drift-item .drift-content {
+	padding: 0.75rem 1rem;
+}
+
+.prose-content .drift-item .drift-content p {
+	margin: 0;
+	color: color-mix(in oklab, var(--color-base-content) 85%, #0000);
+	line-height: 1.5;
+	font-size: 0.9375rem;
+}
+
+.prose-content .drift-item .drift-content p + p {
+	margin-top: 0.5rem;
+}
+
+.prose-content .drift-item .drift-content strong {
+	font-weight: 700;
+	color: var(--color-base-content);
+	text-transform: none;
+	font-family: inherit;
+	letter-spacing: 0;
+}
+
+.prose-content .drift-item .drift-content strong:first-child {
+	color: var(--color-success);
+}
+
+.prose-content .drift-item .drift-content p:last-child strong {
+	color: var(--color-error);
+}
+
+@media (min-width: 768px) {
+	.prose-content .drift-compare {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+.prose-content .metric-label {
+	font-family:
+		var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+		monospace;
+	font-size: 0.85em;
+	font-weight: 600;
+	color: var(--color-primary);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	min-width: 5rem;
+	flex-shrink: 0;
+}
+
+.prose-content .metric-value {
+	font-weight: 700;
+	color: var(--color-primary);
+}
+
+.prose-content .metric-before {
+	color: var(--color-error);
+}
+
+.prose-content .metric-after {
+	color: var(--color-success);
+}
+
+/* Numerical callouts in text */
+.prose-content .stat-callout {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 0.9em;
+	font-weight: 700;
+	color: var(--color-primary);
+	background: var(--color-base-200);
+	padding: 0.1rem 0.4rem;
+	border-radius: 0.2rem;
+}
+
+.prose-content .stat-positive {
+	color: var(--color-success);
+	background: color-mix(
+		in oklab,
+		var(--color-success) 15%,
+		var(--color-base-100)
+	);
+}
+
+.prose-content .stat-negative {
+	color: var(--color-error);
+	background: color-mix(
+		in oklab,
+		var(--color-error) 15%,
+		var(--color-base-100)
+	);
+}
+
+/* Blockquotes */
+.prose-content blockquote {
+	margin: 2rem 0;
+	padding: 1.5rem 1.5rem 1.5rem 2rem;
+	/* Use color-mix to create a low-opacity overlay of the primary color.
+       background-opacity is nonstandard and ignored by browsers. */
+	background-color: color-mix(in oklch, var(--color-primary) 5%, transparent);
+	border-left: 4px solid var(--color-primary);
+	font-style: italic;
+	color: color-mix(in oklab, var(--color-base-content) 80%, #0000);
+}
+
+.prose-content blockquote p {
+	margin-bottom: 0;
+}
+
+/* Code - inline */
+.prose-content :not(pre) > code {
+	font-family: var(--font-mono), ui-monospace, monospace;
+	font-size: 0.875em;
+	background-color: var(--color-base-200);
+	color: var(--color-accent);
+	padding: 0.1em 0.35em;
+	border-radius: 0;
+	border: 1px solid var(--color-base-300);
+	font-weight: 500;
+}
+
+/* Code - blocks (Shiki styling) */
+.prose-content pre {
+	margin: 1.5rem 0;
+	padding: 1rem;
+	border: 2px solid var(--nr-border-color);
+	background: var(--color-base-100);
+	border-radius: 0;
+	overflow-x: auto;
+	max-width: 100%;
+	font-family: var(--font-mono), ui-monospace, monospace;
+	position: relative;
+}
+
+/* Reduce top margin when code follows a heading */
+.prose-content h3 + pre,
+.prose-content h4 + pre,
+.prose-content p + pre {
+	margin-top: 0.75rem;
+}
+
+/* Shiki code blocks */
+.prose-content pre.astro-code {
+	margin: 1.5rem 0;
+	padding: 1rem;
+	border: 2px solid var(--nr-border-color);
+	background: var(--color-base-100);
+	border-radius: 0;
+	overflow-x: auto;
+	max-width: 100%;
+	font-family: var(--font-mono), ui-monospace, monospace;
+	position: relative;
+}
+
+.prose-content pre code {
+	font-size: 0.875rem;
+	line-height: 1.6;
+	font-family: var(--font-mono), ui-monospace, monospace;
+	display: block;
+	white-space: pre;
+	word-wrap: normal;
+	overflow-wrap: normal;
+}
+
+/* Mobile code block improvements */
+@media (max-width: 640px) {
+	.prose-content pre,
+	.prose-content pre.astro-code {
+		margin: 1rem 0;
+		border-left: 2px solid var(--nr-border-color);
+		border-right: 2px solid var(--nr-border-color);
+		box-shadow: none;
+		padding: 0.75rem;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		max-width: 100%;
+		width: 100%;
+	}
+
+	.prose-content pre code {
+		font-size: 0.75rem;
+		line-height: 1.5;
+	}
+}
+
+/* Ensure code blocks don't break layout on very small screens */
+@media (max-width: 400px) {
+	.prose-content pre,
+	.prose-content pre.astro-code {
+		padding: 0.5rem;
+	}
+
+	.prose-content pre code {
+		font-size: 0.6875rem;
+	}
+}
+
+/* Dark mode code block adjustments */
+[data-theme="neobrutalism-dark"] .prose-content pre,
+[data-theme="neobrutalism-dark"] .prose-content pre.astro-code {
+	border-color: var(--nr-border-color);
+}
+
+/* Ensure code blocks are responsive */
+@media (max-width: 640px) {
+	.prose-content pre,
+	.prose-content pre.astro-code {
+		margin: 1rem -1rem;
+		border-left: none;
+		border-right: none;
+		box-shadow: none;
+		padding: 0.75rem;
+	}
+
+	.prose-content pre code {
+		font-size: 0.8125rem;
+	}
+}
+
+/* Expressive code block spacing */
+.prose-content .expressive-code {
+	margin: 1.5rem 0 2.5rem 0;
+	/* Ensure code blocks respect container width */
+	max-width: 100%;
+	overflow-x: auto;
+}
+
+/* Ensure code blocks don't overflow their container */
+.prose-content .expressive-code pre,
+.prose-content .expressive-code code {
+	max-width: 100%;
+	/* Force wrapping when wrap: true is set */
+	white-space: pre-wrap !important;
+	word-wrap: break-word !important;
+	overflow-wrap: break-word !important;
+}
+
+/* Override any fixed widths from expressive-code */
+.prose-content .expressive-code .frame {
+	max-width: 100%;
+}
+
+.prose-content .expressive-code .ec-line {
+	/* Ensure lines wrap instead of extending forever */
+	white-space: pre-wrap !important;
+}
+
+/* Tables */
+.prose-content table {
+	margin: 1.5rem 0;
+	border-collapse: collapse;
+	font-size: 0.9375rem;
+	border: 3px solid var(--nr-border-color);
+	width: 100%;
+	/* Use table-layout: auto to allow content to determine column widths */
+	table-layout: auto;
+}
+
+/* Wrap tables in a scrollable container on mobile */
+@media (max-width: 640px) {
+	.prose-content table {
+		display: block;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		/* Let content width determine table width, fill container if content is narrower */
+		width: fit-content;
+		min-width: 100%;
+		max-width: 100%;
+	}
+
+	.prose-content thead,
+	.prose-content tbody {
+		display: table-row-group;
+	}
+
+	.prose-content tr {
+		display: table-row;
+	}
+
+	.prose-content th,
+	.prose-content td {
+		display: table-cell;
+	}
+}
+
+/* Table scrollbar styling (mobile) */
+@media (max-width: 640px) {
+	.prose-content table::-webkit-scrollbar {
+		height: 4px;
+	}
+
+	.prose-content table::-webkit-scrollbar-track {
+		background: var(--color-base-200);
+	}
+
+	.prose-content table::-webkit-scrollbar-thumb {
+		background: color-mix(in oklab, var(--color-base-content) 60%, #0000);
+		border-radius: 2px;
+	}
+}
+
+.prose-content thead {
+	background-color: var(--color-neutral);
+}
+
+.prose-content th {
+	padding: 0.75rem 1rem;
+	text-align: left;
+	font-weight: 700;
+	color: var(--color-neutral-content);
+	text-transform: uppercase;
+	font-size: 0.8125rem;
+	letter-spacing: 0.05em;
+	/* Prevent line breaks in headers for consistency */
+	white-space: nowrap;
+	/* Prevent overflow */
+	overflow-wrap: break-word;
+	word-break: normal;
+}
+
+.prose-content td {
+	padding: 0.75rem 1rem;
+	border-top: 1px solid var(--color-base-300);
+	color: color-mix(in oklab, var(--color-base-content) 85%, #0000);
+}
+
+/* First column: prevent wrapping for labels */
+.prose-content td:first-child {
+	white-space: nowrap;
+	font-weight: 500;
+}
+
+/* On mobile, allow minimal wrapping to enable horizontal scroll when needed */
+@media (max-width: 640px) {
+	.prose-content td {
+		/* Allow wrapping only on very long words, not short phrases */
+		white-space: nowrap;
+	}
+
+	.prose-content td:first-child {
+		/* First column stays nowrap */
+		white-space: nowrap;
+	}
+}
+
+.prose-content tbody tr:nth-child(even) {
+	background-color: var(--color-base-200);
+}
+
+/* Horizontal rules */
+.prose-content hr {
+	margin: 3rem 0;
+	border: none;
+	height: 3px;
+	background-color: var(--color-base-300);
+}
+
+/* Images */
+.prose-content img {
+	max-width: 100%;
+	height: auto;
+	margin: 2rem 0;
+	border: 3px solid var(--nr-border-color);
+}
+
+/* ========================================
+   MERMAID DIAGRAM THEMING
+   ========================================
+   
+   Mermaid colors are now configured via themeVariables in astro.config.mjs
+   using the "base" theme. This approach is cleaner than CSS overrides.
+   
+   Light mode colors are set in themeVariables (hex values matching neobrutalism-light).
+   Dark mode adjustments are handled below with minimal CSS overrides.
+*/
+
+/* Container styling */
+.prose-content .mermaid {
+	margin: 1.5rem 0;
+	padding: 1rem;
+	border: 2px solid var(--nr-border-color);
+	background: var(--color-base-100);
+	box-shadow: var(--nr-shadow-sm);
+	overflow-x: auto;
+	min-height: 200px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.prose-content .mermaid svg {
+	max-width: 100%;
+	width: 100%;
+	height: auto;
+	max-height: 400px;
+}
+
+/* Dark mode adjustments - minimal overrides for theme switching */
+[data-theme="neobrutalism-dark"] .prose-content .mermaid {
+	background: var(--color-base-200);
+}
+
+/* Note backgrounds in dark mode need adjustment since themeVariables 
+   uses static hex colors. We use filter to shift the color slightly. */
+[data-theme="neobrutalism-dark"] .prose-content .mermaid .note {
+	filter: brightness(1.2);
+}
+
+/* Edge labels need background matching dark theme */
+[data-theme="neobrutalism-dark"] .prose-content .mermaid .edgeLabel {
+	background-color: var(--color-base-200) !important;
+}
+
+/* Fix Mermaid text colors in dark mode - override static themeVariables */
+/* Aggressive selector list to catch all text elements in various diagram types */
+[data-theme="neobrutalism-dark"] .prose-content .mermaid text,
+[data-theme="neobrutalism-dark"] .prose-content .mermaid .nodeLabel,
+[data-theme="neobrutalism-dark"] .prose-content .mermaid .label,
+[data-theme="neobrutalism-dark"] .prose-content .mermaid .node text,
+[data-theme="neobrutalism-dark"] .prose-content .mermaid .actor text,
+[data-theme="neobrutalism-dark"] .prose-content .mermaid .messageText,
+[data-theme="neobrutalism-dark"] .prose-content .mermaid .label text,
+[data-theme="neobrutalism-dark"] .prose-content .mermaid g text,
+[data-theme="neobrutalism-dark"] .prose-content .mermaid .node rect + text,
+[data-theme="neobrutalism-dark"] .prose-content .mermaid [class*="label"] text,
+[data-theme="neobrutalism-dark"] .prose-content .mermaid tspan {
+	fill: var(--color-base-content) !important;
+	color: var(--color-base-content) !important;
+	stroke: none !important;
+}
+
+/* Dark mode adjustments - only elements that need special dark-specific overrides */
+/* Most text colors are now handled by CSS variables in the base styles */
+
+[data-theme="neobrutalism-dark"] .prose-content :not(pre) > code {
+	background-color: oklch(0.25 0.02 280);
+	border-color: oklch(0.4 0.02 280);
+	color: oklch(0.9 0.15 330); /* Light magenta for visibility */
+}
+
+/* Dark mode: blockquotes */
+[data-theme="neobrutalism-dark"] .prose-content blockquote {
+	background-color: oklch(0.22 0.02 280);
+	border-left-color: var(--color-primary);
+}
+
+[data-theme="neobrutalism-dark"] .prose-content table {
+	border-color: oklch(0.5 0.01 280);
+}
+
+[data-theme="neobrutalism-dark"] .prose-content thead {
+	background-color: oklch(0.25 0 0);
+}
+
+[data-theme="neobrutalism-dark"] .prose-content tbody tr:nth-child(even) {
+	background-color: oklch(
+		0.22 0.01 280
+	); /* Darker than base-200 for visible striping */
+}
+
+/* ========================================
            VIEW TRANSITION ANIMATIONS
            ======================================== */
-        
-        /* Custom bounce easing for nav button animation */
-        :root {
-            --bounce-easing: linear(
-                0, 0.2037 0.99%, 0.7062 1.98%, 1 2.97%, 0.8996 4.97%, 
-                0.8252 6.96%, 0.7634 8.95%, 0.7135 10.94%, 0.6747 12.93%, 
-                0.646 14.92%, 0.6267 16.91%, 0.616 18.9%, 0.6133 20.9%, 
-                0.618 22.89%, 0.6293 24.88%, 0.6465 26.87%, 0.6689 28.86%, 
-                0.6961 30.85%, 0.7275 32.84%, 0.7628 34.83%, 0.8016 36.82%, 
-                0.8436 38.81%, 0.8885 40.8%, 0.9359 42.79%, 0.9856 44.78%, 
-                1.0373 46.77%, 1.0906 48.76%, 1.1453 50.75%, 1.1996 52.74%, 
-                1.253 54.73%, 1.3053 56.72%, 1.3563 58.71%, 1.4057 60.7%, 
-                1.4533 62.69%, 1.4988 64.68%, 1.5418 66.67%, 1.5822 68.66%, 
-                1.6196 70.65%, 1.6539 72.64%, 1.6848 74.63%, 1.7121 76.62%, 
-                1.7356 78.61%, 1.7552 80.6%, 1.7706 82.59%, 1.7816 84.58%, 
-                1.788 86.57%, 1.7896 88.56%, 1.7862 90.55%, 1.7777 92.54%, 
-                1.7638 94.53%, 1.7444 96.52%, 1.7192 98.51%, 1.6881 100%
-            );
-        }
-        
-        /* ========================================
+
+/* Custom bounce easing for nav button animation */
+:root {
+	--bounce-easing: linear(
+		0,
+		0.2037 0.99%,
+		0.7062 1.98%,
+		1 2.97%,
+		0.8996 4.97%,
+		0.8252 6.96%,
+		0.7634 8.95%,
+		0.7135 10.94%,
+		0.6747 12.93%,
+		0.646 14.92%,
+		0.6267 16.91%,
+		0.616 18.9%,
+		0.6133 20.9%,
+		0.618 22.89%,
+		0.6293 24.88%,
+		0.6465 26.87%,
+		0.6689 28.86%,
+		0.6961 30.85%,
+		0.7275 32.84%,
+		0.7628 34.83%,
+		0.8016 36.82%,
+		0.8436 38.81%,
+		0.8885 40.8%,
+		0.9359 42.79%,
+		0.9856 44.78%,
+		1.0373 46.77%,
+		1.0906 48.76%,
+		1.1453 50.75%,
+		1.1996 52.74%,
+		1.253 54.73%,
+		1.3053 56.72%,
+		1.3563 58.71%,
+		1.4057 60.7%,
+		1.4533 62.69%,
+		1.4988 64.68%,
+		1.5418 66.67%,
+		1.5822 68.66%,
+		1.6196 70.65%,
+		1.6539 72.64%,
+		1.6848 74.63%,
+		1.7121 76.62%,
+		1.7356 78.61%,
+		1.7552 80.6%,
+		1.7706 82.59%,
+		1.7816 84.58%,
+		1.788 86.57%,
+		1.7896 88.56%,
+		1.7862 90.55%,
+		1.7777 92.54%,
+		1.7638 94.53%,
+		1.7444 96.52%,
+		1.7192 98.51%,
+		1.6881 100%
+	);
+}
+
+/* ========================================
            NAVBAR ACTIVE BACKGROUND VIEW TRANSITIONS
            ========================================
            
@@ -1488,893 +2161,1150 @@
            
            The :only-child selector detects appear/disappear vs morph.
         */
-        
-        /* Nav active background - slides between nav items */
-        ::view-transition-old(nav-active-bg),
-        ::view-transition-new(nav-active-bg) {
-            /* Disable default fade animations - we want pure position/size morph */
-            animation: none;
-            /* Fix height to prevent snapping during morph */
-            height: 100%;
-        }
-        
-        /* When nav-active-bg disappears (going to home page), fade out quickly */
-        ::view-transition-old(nav-active-bg):only-child {
-            animation: simple-fade-out 0.2s ease-out forwards;
-        }
-        
-        /* When nav-active-bg appears (leaving home page), simple fade in */
-        ::view-transition-new(nav-active-bg):only-child {
-            animation: simple-fade-in 0.25s ease-out both;
-        }
-        
-        @keyframes simple-fade-out {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-        
-        @keyframes simple-fade-in {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        /* Smooth horizontal morph with ease-in-out (no overshoot) */
-        ::view-transition-group(nav-active-bg) {
-            animation-duration: 0.3s;
-            animation-timing-function: ease-in-out;
-            /* Background stays behind text during transition (z-index: 0) */
-            z-index: 0;
-            /* Prevent height changes from affecting layout */
-            overflow: hidden;
-            contain: layout;
-        }
 
-        /* Nav text labels - stay above the active background during transitions
+/* Nav active background - slides between nav items */
+::view-transition-old(nav-active-bg),
+::view-transition-new(nav-active-bg) {
+	/* Disable default fade animations - we want pure position/size morph */
+	animation: none;
+	/* Fix height to prevent snapping during morph */
+	height: 100%;
+}
+
+/* When nav-active-bg disappears (going to home page), fade out quickly */
+::view-transition-old(nav-active-bg):only-child {
+	animation: simple-fade-out 0.2s ease-out forwards;
+}
+
+/* When nav-active-bg appears (leaving home page), simple fade in */
+::view-transition-new(nav-active-bg):only-child {
+	animation: simple-fade-in 0.25s ease-out both;
+}
+
+@keyframes simple-fade-out {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes simple-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+/* Smooth horizontal morph with ease-in-out (no overshoot) */
+::view-transition-group(nav-active-bg) {
+	animation-duration: 0.3s;
+	animation-timing-function: ease-in-out;
+	/* Background stays behind text during transition (z-index: 0) */
+	z-index: 0;
+	/* Prevent height changes from affecting layout */
+	overflow: hidden;
+	contain: layout;
+}
+
+/* Nav text labels - stay above the active background during transitions
            CRITICAL: Without explicit transition:name on text, the text becomes
            part of the main-navbar group and ends up BELOW nav-active-bg */
-        ::view-transition-group(nav-text-work),
-        ::view-transition-group(nav-text-approach),
-        ::view-transition-group(nav-text-background),
-        ::view-transition-group(nav-text-contact) {
-            /* Text stays above the background (z-index: 1 > 0) */
-            z-index: 1;
-            /* Prevent layout shift */
-            contain: layout;
-        }
-        
-        /* Nav text appears - simple fade (home → internal) */
-        ::view-transition-new(nav-text-work):only-child,
-        ::view-transition-new(nav-text-approach):only-child,
-        ::view-transition-new(nav-text-background):only-child,
-        ::view-transition-new(nav-text-contact):only-child {
-            animation: simple-fade-in 0.25s ease-out both;
-        }
-        
-        /* Nav text disappears - quick fade (internal → home) */
-        ::view-transition-old(nav-text-work):only-child,
-        ::view-transition-old(nav-text-approach):only-child,
-        ::view-transition-old(nav-text-background):only-child,
-        ::view-transition-old(nav-text-contact):only-child {
-            animation: simple-fade-out 0.15s ease-out both;
-        }
+::view-transition-group(nav-text-work),
+::view-transition-group(nav-text-approach),
+::view-transition-group(nav-text-background),
+::view-transition-group(nav-text-contact) {
+	/* Text stays above the background (z-index: 1 > 0) */
+	z-index: 1;
+	/* Prevent layout shift */
+	contain: layout;
+}
 
-        /* Page header - simple fade instead of morph to avoid distracting expand/contract */
-        ::view-transition-group(page-header-container) {
-            /* Prevent any size/position morphing on the container */
-            animation: none !important;
-        }
-        
-        ::view-transition-image-pair(page-header-container) {
-            /* Disable default crossfade isolation */
-            isolation: auto;
-        }
-        
-        ::view-transition-old(page-header-container),
-        ::view-transition-new(page-header-container) {
-            /* Prevent any transform animations */
-            animation: none;
-            mix-blend-mode: normal;
-            /* Keep elements in place */
-            object-fit: none;
-            overflow: clip;
-        }
-        
-        /* Page header fade animations - smooth crossfade during navigation */
-        ::view-transition-old(page-header-container) {
-            animation: page-header-fade-out 0.15s ease-out forwards;
-        }
-        
-        ::view-transition-new(page-header-container) {
-            animation: page-header-fade-in 0.15s ease-in 0.05s forwards;
-            opacity: 0;
-        }
-        
-        @keyframes page-header-fade-out {
-            from { opacity: 1; transform: none; }
-            to { opacity: 0; transform: none; }
-        }
-        
-        @keyframes page-header-fade-in {
-            from { opacity: 0; transform: none; }
-            to { opacity: 1; transform: none; }
-        }
-        
-        /* Header title and subtitle - content-based transition names
+/* Nav text appears - simple fade (home → internal) */
+::view-transition-new(nav-text-work):only-child,
+::view-transition-new(nav-text-approach):only-child,
+::view-transition-new(nav-text-background):only-child,
+::view-transition-new(nav-text-contact):only-child {
+	animation: simple-fade-in 0.25s ease-out both;
+}
+
+/* Nav text disappears - quick fade (internal → home) */
+::view-transition-old(nav-text-work):only-child,
+::view-transition-old(nav-text-approach):only-child,
+::view-transition-old(nav-text-background):only-child,
+::view-transition-old(nav-text-contact):only-child {
+	animation: simple-fade-out 0.15s ease-out both;
+}
+
+/* Page header - simple fade instead of morph to avoid distracting expand/contract */
+::view-transition-group(page-header-container) {
+	/* Prevent any size/position morphing on the container */
+	animation: none !important;
+}
+
+::view-transition-image-pair(page-header-container) {
+	/* Disable default crossfade isolation */
+	isolation: auto;
+}
+
+::view-transition-old(page-header-container),
+::view-transition-new(page-header-container) {
+	/* Prevent any transform animations */
+	animation: none;
+	mix-blend-mode: normal;
+	/* Keep elements in place */
+	object-fit: none;
+	overflow: clip;
+}
+
+/* Page header fade animations - smooth crossfade during navigation */
+::view-transition-old(page-header-container) {
+	animation: page-header-fade-out 0.15s ease-out forwards;
+}
+
+::view-transition-new(page-header-container) {
+	animation: page-header-fade-in 0.15s ease-in 0.05s forwards;
+	opacity: 0;
+}
+
+@keyframes page-header-fade-out {
+	from {
+		opacity: 1;
+		transform: none;
+	}
+	to {
+		opacity: 0;
+		transform: none;
+	}
+}
+
+@keyframes page-header-fade-in {
+	from {
+		opacity: 0;
+		transform: none;
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+/* Header title and subtitle - content-based transition names
            When the same name appears on both pages (same content),
            the browser morphs seamlessly making it appear static.
            When content differs, each gets its own transition. */
-        [class*="::view-transition-group(header-title-"],
-        [class*="::view-transition-group(header-subtitle-"] {
-            animation: none !important;
-        }
+[class*="::view-transition-group(header-title-"],
+[class*="::view-transition-group(header-subtitle-"] {
+	animation: none !important;
+}
 
-        /* Work category filter container transition behavior is handled in the 
+/* Work category filter container transition behavior is handled in the 
            "WORK CARD VIEW TRANSITIONS" section. Uses transition:persist for 
            element stability with delayed fade-in for detail-to-list navigation. */
 
-        /* Preserve cursor pointer on all interactive elements during view transitions */
-        ::view-transition-old(*),
-        ::view-transition-new(*),
-        ::view-transition-image-pair(*) {
-            cursor: inherit;
-        }
-        
-        /* Ensure navbar and buttons maintain pointer during transitions */
-        ::view-transition-group(nav-active-bg),
-        ::view-transition-group(work-category-filter-container) {
-            cursor: pointer;
-        }
+/* Preserve cursor pointer on all interactive elements during view transitions */
+::view-transition-old(*),
+::view-transition-new(*),
+::view-transition-image-pair(*) {
+	cursor: inherit;
+}
 
-        /* Ensure text in nav buttons stays above the transitioning background */
-        .navbar .btn-group .btn {
-            z-index: 1;
-        }
+/* Ensure navbar and buttons maintain pointer during transitions */
+::view-transition-group(nav-active-bg),
+::view-transition-group(work-category-filter-container) {
+	cursor: pointer;
+}
 
-        /* ========================================
+/* Ensure text in nav buttons stays above the transitioning background */
+.navbar .btn-group .btn {
+	z-index: 1;
+}
+
+/* ========================================
            SHARED STYLES (BOTH THEMES)
            ======================================== */
-        [data-theme="neobrutalism-light"],
-        [data-theme="neobrutalism-dark"] {
-            /* Buttons */
-            .btn {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: calc(var(--size-field) * 4);
-                --btn-shadow: 8px 8px 0px 0px var(--nr-shadow-color);
-                --btn-shadow-colored: 8px 8px 0px 0px var(--nr-shadow-color);
-                --btn-shadow-hover: 4px 4px 0px 0px var(--nr-shadow-color);
-                border-width: var(--btn-border-width);
-                border-color: var(--btn-border);
-                border-style: solid;
-                border-radius: var(--rounded-btn);
-                box-shadow: var(--btn-shadow);
-                transform: translate(0, 0) rotate(0deg);
-                font-weight: var(--font-weight-black);
-                text-transform: var(--btn-text-case);
-                transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out, background-color 0.2s ease-in-out;
-                --btn-rotate-angle: 1deg;
-                /* Anti-aliasing for crisp rendering */
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
+[data-theme="neobrutalism-light"],
+[data-theme="neobrutalism-dark"] {
+	/* Buttons */
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: calc(var(--size-field) * 4);
+		--btn-shadow: 8px 8px 0px 0px var(--nr-shadow-color);
+		--btn-shadow-colored: 8px 8px 0px 0px var(--nr-shadow-color);
+		--btn-shadow-hover: 4px 4px 0px 0px var(--nr-shadow-color);
+		border-width: var(--btn-border-width);
+		border-color: var(--btn-border);
+		border-style: solid;
+		border-radius: var(--rounded-btn);
+		box-shadow: var(--btn-shadow);
+		transform: translate(0, 0) rotate(0deg);
+		font-weight: var(--font-weight-black);
+		text-transform: var(--btn-text-case);
+		transition:
+			transform 0.2s ease-in-out,
+			box-shadow 0.2s ease-in-out,
+			color 0.2s ease-in-out,
+			background-color 0.2s ease-in-out;
+		--btn-rotate-angle: 1deg;
+		/* Anti-aliasing for crisp rendering */
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
 
-                &:hover:not(.hover-effect):not(.hover-lift):not(.hover-lift-stable):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]):not(.filter-btn) {
-                    box-shadow: var(--btn-shadow-hover);
-                    transform: translate(2px, 2px) rotate(var(--btn-rotate-angle));
-                }
+		&:hover:not(.hover-effect):not(.hover-lift):not(.hover-lift-stable):not(
+				.hover-scale
+			):not(.hover-rotate):not([class*="hover-rotate-"]):not(.filter-btn) {
+			box-shadow: var(--btn-shadow-hover);
+			transform: translate(2px, 2px) rotate(var(--btn-rotate-angle));
+		}
 
-                &:active:not(.filter-btn) {
-                    box-shadow: var(--nr-shadow-pressed);
-                    transform: translate(0, 0) rotate(0deg);
-                }
+		&:active:not(.filter-btn) {
+			box-shadow: var(--nr-shadow-pressed);
+			transform: translate(0, 0) rotate(0deg);
+		}
 
-                &:focus-visible {
-                    outline: 3px solid var(--btn-focus-border);
-                    outline-offset: 2px;
-                    box-shadow: var(--nr-shadow-focus);
-                }
+		&:focus-visible {
+			outline: 3px solid var(--btn-focus-border);
+			outline-offset: 2px;
+			box-shadow: var(--nr-shadow-focus);
+		}
 
-                &:disabled,
-                &[disabled],
-                &[aria-disabled="true"] {
-                    opacity: 0.6;
-                    cursor: not-allowed;
-                    box-shadow: var(--nr-shadow-sm);
-                    transform: none;
-                }
-            }
+		&:disabled,
+		&[disabled],
+		&[aria-disabled="true"] {
+			opacity: 0.6;
+			cursor: not-allowed;
+			box-shadow: var(--nr-shadow-sm);
+			transform: none;
+		}
+	}
 
-            .btn-primary {
-                background-color: var(--color-primary);
-                color: var(--color-primary-content);
-            }
+	.btn-primary {
+		background-color: var(--color-primary);
+		color: var(--color-primary-content);
+	}
 
-            .btn-secondary {
-                background-color: var(--color-secondary);
-                color: var(--color-secondary-content);
-            }
+	.btn-secondary {
+		background-color: var(--color-secondary);
+		color: var(--color-secondary-content);
+	}
 
-            .btn-accent {
-                background-color: var(--color-accent);
-                color: var(--color-accent-content);
-            }
+	.btn-accent {
+		background-color: var(--color-accent);
+		color: var(--color-accent-content);
+	}
 
-            .btn-neutral {
-                background-color: var(--color-neutral);
-                color: var(--color-neutral-content);
-            }
+	.btn-neutral {
+		background-color: var(--color-neutral);
+		color: var(--color-neutral-content);
+	}
 
-            .btn-info {
-                background-color: var(--color-info);
-                color: var(--color-info-content);
-            }
+	.btn-info {
+		background-color: var(--color-info);
+		color: var(--color-info-content);
+	}
 
-            .btn-success {
-                background-color: var(--color-success);
-                color: var(--color-success-content);
-            }
+	.btn-success {
+		background-color: var(--color-success);
+		color: var(--color-success-content);
+	}
 
-            .btn-warning {
-                background-color: var(--color-warning);
-                color: var(--color-warning-content);
-            }
+	.btn-warning {
+		background-color: var(--color-warning);
+		color: var(--color-warning-content);
+	}
 
-            .btn-error {
-                background-color: var(--color-error);
-                color: var(--color-error-content);
-            }
+	.btn-error {
+		background-color: var(--color-error);
+		color: var(--color-error-content);
+	}
 
-            .btn-outline,
-            .btn-ghost {
-                color: var(--color-base-content);
-                background-color: var(--color-base-100);
-                
-                &:hover {
-                    background-color: var(--color-base-100);
-                }
-            }
+	.btn-outline,
+	.btn-ghost {
+		color: var(--color-base-content);
+		background-color: var(--color-base-100);
 
-            .btn-ghost {
-                border-width: 2px;
-                box-shadow: var(--nr-shadow-sm);
+		&:hover {
+			background-color: var(--color-base-100);
+		}
+	}
 
-                &:hover {
-                    background-color: var(--color-base-200);
-                }
-            }
+	.btn-ghost {
+		border-width: 2px;
+		box-shadow: var(--nr-shadow-sm);
 
-            /* Navbar buttons - reduce shadow for active page buttons */
-            .navbar .btn-primary {
-                box-shadow: var(--nr-shadow-sm);
-                transform: translate(2px, 2px);
+		&:hover {
+			background-color: var(--color-base-200);
+		}
+	}
 
-                &:hover {
-                    box-shadow: var(--btn-shadow-hover);
-                    transform: translate(2px, 2px) rotate(var(--btn-rotate-angle));
-                }
+	/* Navbar buttons - reduce shadow for active page buttons */
+	.navbar .btn-primary {
+		box-shadow: var(--nr-shadow-sm);
+		transform: translate(2px, 2px);
 
-                &:active {
-                    box-shadow: var(--nr-shadow-pressed);
-                    transform: translate(4px, 4px) rotate(0deg);
-                }
-            }
+		&:hover {
+			box-shadow: var(--btn-shadow-hover);
+			transform: translate(2px, 2px) rotate(var(--btn-rotate-angle));
+		}
 
-            /* Nav active background element - positioned absolutely to morph between buttons */
-            .nav-active-bg {
-                position: absolute;
-                top: 2px;
-                left: 2px;
-                right: 2px;
-                bottom: 2px;
-                background: linear-gradient(135deg, var(--color-gradient-start, var(--color-primary)) 0%, var(--color-gradient-end, var(--color-primary)) 100%);
-                border: 2px solid black;
-                border-radius: 0; /* Square edges to match ROTH badge */
-                z-index: 0;
-            }
+		&:active {
+			box-shadow: var(--nr-shadow-pressed);
+			transform: translate(4px, 4px) rotate(0deg);
+		}
+	}
 
-            /* Active nav button styling */
-            .navbar .btn-group .btn.active {
-                position: relative;
-                color: var(--color-primary-content);
-                background-color: transparent;
-                
-                /* No hover effects on active nav item */
-                &:hover {
-                    background-color: transparent;
-                    transform: none;
-                    box-shadow: none;
-                }
-            }
+	/* Nav active background element - positioned absolutely to morph between buttons */
+	.nav-active-bg {
+		position: absolute;
+		top: 2px;
+		left: 2px;
+		right: 2px;
+		bottom: 2px;
+		background: linear-gradient(
+			135deg,
+			var(--color-gradient-start, var(--color-primary)) 0%,
+			var(--color-gradient-end, var(--color-primary)) 100%
+		);
+		border: 2px solid black;
+		border-radius: 0; /* Square edges to match ROTH badge */
+		z-index: 0;
+	}
 
-            .btn-square {
-                width: 3rem;
-                height: 3rem;
-                padding: 0;
-            }
+	/* Active nav button styling */
+	.navbar .btn-group .btn.active {
+		position: relative;
+		color: var(--color-primary-content);
+		background-color: transparent;
 
-            .btn-circle {
-                width: 3rem;
-                height: 3rem;
-                padding: 0;
-                border-radius: 9999px;
-            }
+		/* No hover effects on active nav item */
+		&:hover {
+			background-color: transparent;
+			transform: none;
+			box-shadow: none;
+		}
+	}
 
-            .btn-xs { 
-                padding: 0.375rem 0.875rem; 
-                font-size: 0.75rem; 
-                box-shadow: 2px 2px 0px 0px var(--nr-shadow-color);
-                &:hover { box-shadow: 1px 1px 0px 0px var(--nr-shadow-color); }
-            }
-            .btn-sm { 
-                padding: 0.5rem 1.25rem; 
-                font-size: 0.875rem; 
-                box-shadow: 4px 4px 0px 0px var(--nr-shadow-color);
-                &:hover { box-shadow: 2px 2px 0px 0px var(--nr-shadow-color); }
-            }
-            .btn-lg { padding: 1.125rem 1.75rem; font-size: 1.125rem; }
-            .btn-xl { padding: 1.375rem 2rem; font-size: 1.25rem; }
+	.btn-square {
+		width: 3rem;
+		height: 3rem;
+		padding: 0;
+	}
 
-            /* Button Groups */
-            .btn-group {
-                display: inline-flex;
-                flex-wrap: nowrap;
-                gap: 0;
+	.btn-circle {
+		width: 3rem;
+		height: 3rem;
+		padding: 0;
+		border-radius: 9999px;
+	}
 
-                & > .btn {
-                    margin: 0;
-                    border-radius: 0;
+	.btn-xs {
+		padding: 0.375rem 0.875rem;
+		font-size: 0.75rem;
+		box-shadow: 2px 2px 0px 0px var(--nr-shadow-color);
+		&:hover {
+			box-shadow: 1px 1px 0px 0px var(--nr-shadow-color);
+		}
+	}
+	.btn-sm {
+		padding: 0.5rem 1.25rem;
+		font-size: 0.875rem;
+		box-shadow: 4px 4px 0px 0px var(--nr-shadow-color);
+		&:hover {
+			box-shadow: 2px 2px 0px 0px var(--nr-shadow-color);
+		}
+	}
+	.btn-lg {
+		padding: 1.125rem 1.75rem;
+		font-size: 1.125rem;
+	}
+	.btn-xl {
+		padding: 1.375rem 2rem;
+		font-size: 1.25rem;
+	}
 
-                    &:first-child {
-                        border-top-left-radius: var(--rounded-btn);
-                        border-bottom-left-radius: var(--rounded-btn);
-                    }
+	/* Button Groups */
+	.btn-group {
+		display: inline-flex;
+		flex-wrap: nowrap;
+		gap: 0;
 
-                    &:last-child {
-                        border-top-right-radius: var(--rounded-btn);
-                        border-bottom-right-radius: var(--rounded-btn);
-                    }
+		& > .btn {
+			margin: 0;
+			border-radius: 0;
 
-                    &:not(:first-child) {
-                        margin-left: -4px; /* Overlap by border width to prevent double borders */
-                    }
-                }
-            }
+			&:first-child {
+				border-top-left-radius: var(--rounded-btn);
+				border-bottom-left-radius: var(--rounded-btn);
+			}
 
-            /* Navbar button groups - special styling with press-down hover effect */
-            .navbar .btn-group {
-                & > .btn {
-                    /* Disable rotation angle for these buttons */
-                    --btn-rotate-angle: 0deg;
-                    
-                    /* Override shadow custom properties for button groups */
-                    --btn-shadow: none;
-                    --btn-shadow-hover: none;
-                    --btn-shadow-colored: none;
-                    
-                    /* Reset transform and shadow for button groups */
-                    transform: none;
-                    box-shadow: none;
-                    
-                    /* Remove all borders from nav buttons */
-                    border: none;
-                    
-                    /* Ensure buttons don't have background colors that could overlay */
-                    background-color: transparent;
-                }
-                
-                /* Override default button hover behavior for grouped buttons (inactive buttons) */
-                & > .btn:hover:not(.active):not(.hover-effect):not(.hover-lift):not(.hover-lift-stable):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]) {
-                    /* Subtle brightness on hover instead of transform */
-                    filter: brightness(1.05);
-                    background-color: transparent !important;
-                    box-shadow: none !important;
-                    transform: none !important;
-                }
+			&:last-child {
+				border-top-right-radius: var(--rounded-btn);
+				border-bottom-right-radius: var(--rounded-btn);
+			}
 
-                /* Override hover for active buttons - no effect at all */
-                & > .btn.active:hover {
-                    opacity: 1 !important;
-                    box-shadow: none !important;
-                    transform: none !important;
-                }
+			&:not(:first-child) {
+				margin-left: -4px; /* Overlap by border width to prevent double borders */
+			}
+		}
+	}
 
-                /* Also override active state (when clicking) */
-                & > .btn:active {
-                    /* Subtle brightness down on press */
-                    filter: brightness(0.95);
-                    box-shadow: none !important;
-                    transform: none !important;
-                }
+	/* Navbar button groups - special styling with press-down hover effect */
+	.navbar .btn-group {
+		& > .btn {
+			/* Disable rotation angle for these buttons */
+			--btn-rotate-angle: 0deg;
 
-                /* Override focus-visible state */
-                & > .btn:focus-visible {
-                    box-shadow: none !important;
-                }
-            }
-            
-            /* Theme toggle - fix icon positioning */
-            .navbar-end .swap {
-                /* Ensure consistent dimensions */
-                width: 2.5rem;
-                height: 2.5rem;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                
-                /* Fix icon positioning within swap */
-                & svg {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    width: 1.5rem;
-                    height: 1.5rem;
-                }
-            }
+			/* Override shadow custom properties for button groups */
+			--btn-shadow: none;
+			--btn-shadow-hover: none;
+			--btn-shadow-colored: none;
 
-            /* Cards */
-            .card {
-                border-width: var(--border);
-                border-color: var(--nr-border-color);
-                border-style: solid;
-                border-radius: var(--radius-box);
-                box-shadow: var(--nr-shadow-base);
-                background: var(--color-base-100) !important;  /* Cards should have solid backgrounds */
-                transform: translate(0, 0);
-                /* Anti-aliasing for crisp rendering */
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
+			/* Reset transform and shadow for button groups */
+			transform: none;
+			box-shadow: none;
 
-                /* HOVER SYSTEM: Apply transitions only to cards that will have hover effects
-                   Excludes .rotated-section and .no-hover to prevent unwanted container animations */
-                &:not(.rotated-section):not(.no-hover) {
-                    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-                }
+			/* Remove all borders from nav buttons */
+			border: none;
 
-                /* HOVER EFFECT: Lift cards on hover with increased shadow
-                   EXCLUSIONS:
-                   - .hover-effect, .hover-lift, .hover-scale, .hover-rotate: Use custom hover classes
-                   - [class*="hover-rotate-"]: Use specific rotation hover modifiers
-                   - .rotated-section: Container sections must remain static (child elements can still hover)
-                   - .no-hover: Explicitly disabled hover effects
-                   - [data-work-card]: Work cards use their own simplified hover system
-                */
-                &:hover:not(.hover-effect):not(.hover-lift):not(.hover-lift-stable):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]):not(.rotated-section):not(.no-hover):not([data-work-card]) {
-                    transform: translate(-4px, -4px);
-                    box-shadow: var(--nr-shadow-lg);
-                }
-            }
+			/* Ensure buttons don't have background colors that could overlay */
+			background-color: transparent;
+		}
 
-            /* Badges */
-            .badge {
-                font-weight: var(--font-weight-black);
-                text-transform: uppercase;
-                border-width: 2px;
-                border-color: var(--nr-border-color);
-                border-style: solid;
-                border-radius: var(--radius-selector);
-                box-shadow: var(--nr-shadow-sm);
-                letter-spacing: var(--nr-letter-spacing-tight);
-                height: auto; /* Override DaisyUI's fixed height to allow padding control */
-                /* Anti-aliasing for crisp rendering */
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
-            }
+		/* Override default button hover behavior for grouped buttons (inactive buttons) */
+		&
+			> .btn:hover:not(.active):not(.hover-effect):not(.hover-lift):not(
+				.hover-lift-stable
+			):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]) {
+			/* Subtle brightness on hover instead of transform */
+			filter: brightness(1.05);
+			background-color: transparent !important;
+			box-shadow: none !important;
+			transform: none !important;
+		}
 
-            .badge-primary {
-                background-color: var(--color-primary);
-                color: var(--color-primary-content);
-            }
+		/* Override hover for active buttons - no effect at all */
+		& > .btn.active:hover {
+			opacity: 1 !important;
+			box-shadow: none !important;
+			transform: none !important;
+		}
 
-            .badge-secondary {
-                background-color: var(--color-secondary);
-                color: var(--color-secondary-content);
-            }
+		/* Also override active state (when clicking) */
+		& > .btn:active {
+			/* Subtle brightness down on press */
+			filter: brightness(0.95);
+			box-shadow: none !important;
+			transform: none !important;
+		}
 
-            .badge-accent {
-                background-color: var(--color-accent);
-                color: var(--color-accent-content);
-            }
+		/* Override focus-visible state */
+		& > .btn:focus-visible {
+			box-shadow: none !important;
+		}
+	}
 
-            .badge-neutral {
-                background-color: var(--color-neutral);
-                color: var(--color-neutral-content);
-            }
+	/* Theme toggle - fix icon positioning */
+	.navbar-end .swap {
+		/* Ensure consistent dimensions */
+		width: 2.5rem;
+		height: 2.5rem;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 
-            .badge-info {
-                background-color: var(--color-info);
-                color: var(--color-info-content);
-            }
+		/* Fix icon positioning within swap */
+		& svg {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 1.5rem;
+			height: 1.5rem;
+		}
+	}
 
-            .badge-success {
-                background-color: var(--color-success);
-                color: var(--color-success-content);
-            }
+	/* Theme-specific .card overrides are authored via theme variables and component
+   rules. Shared behavior is defined in the canonical .card block above.
+*/
 
-            .badge-warning {
-                background-color: var(--color-warning);
-                color: var(--color-warning-content);
-            }
+	/* Badges */
+	.badge {
+		font-weight: var(--font-weight-black);
+		text-transform: uppercase;
+		border-width: 2px;
+		border-color: var(--nr-border-color);
+		border-style: solid;
+		border-radius: var(--radius-selector);
+		box-shadow: var(--nr-shadow-sm);
+		letter-spacing: var(--nr-letter-spacing-tight);
+		height: auto; /* Override DaisyUI's fixed height to allow padding control */
+		/* Anti-aliasing for crisp rendering */
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
 
-            .badge-error {
-                background-color: var(--color-error);
-                color: var(--color-error-content);
-            }
+	.badge-primary {
+		background-color: var(--color-primary);
+		color: var(--color-primary-content);
+	}
 
-            /* Form elements */
-            .input,
-            .textarea,
-            .select,
-            .file-input {
-                border-width: var(--border);
-                border-color: var(--nr-border-color);
-                border-style: solid;
-                border-radius: var(--radius-field);
-                box-shadow: var(--nr-shadow-sm);
-                transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+	.badge-secondary {
+		background-color: var(--color-secondary);
+		color: var(--color-secondary-content);
+	}
 
-                &:focus {
-                    border-color: var(--nr-border-color);
-                    box-shadow: var(--nr-shadow-focus);
-                    outline: none;
-                }
-            }
+	.badge-accent {
+		background-color: var(--color-accent);
+		color: var(--color-accent-content);
+	}
 
-            .checkbox,
-            .radio,
-            .toggle {
-                border-width: var(--border);
-                border-color: var(--nr-border-color);
-                border-style: solid;
-            }
+	.badge-neutral {
+		background-color: var(--color-neutral);
+		color: var(--color-neutral-content);
+	}
 
-            /* Navigation */
-            .navbar {
-                border-bottom-width: var(--border);
-                border-color: var(--nr-border-color);
-                border-style: solid;
-                box-shadow: var(--nr-shadow-sm);
-            }
+	.badge-info {
+		background-color: var(--color-info);
+		color: var(--color-info-content);
+	}
 
-            .tabs-bordered .tab {
-                border-bottom-width: var(--border);
-                border-color: var(--nr-border-color);
-                border-style: solid;
-            }
+	.badge-success {
+		background-color: var(--color-success);
+		color: var(--color-success-content);
+	}
 
-            /* Utility components */
-            .toast,
-            .collapse,
-            .tooltip {
-                border-width: var(--border);
-                border-color: var(--nr-border-color);
-                border-style: solid;
-                box-shadow: var(--nr-shadow-sm);
-            }
+	.badge-warning {
+		background-color: var(--color-warning);
+		color: var(--color-warning-content);
+	}
 
-            /* Hero title badge */
-            .hero-title-badge {
-                background: linear-gradient(135deg, var(--color-gradient-start, var(--color-primary)) 0%, var(--color-gradient-end, var(--color-primary)) 100%);
-                color: var(--color-primary-content);
-                border-width: 4px;
-                border-color: var(--nr-border-color);
-                box-shadow: var(--nr-shadow-base);
-                padding: 0.5rem 1rem;
-                font-weight: 900;
-                text-transform: uppercase;
-                display: inline-block;
-            }
+	.badge-error {
+		background-color: var(--color-error);
+		color: var(--color-error-content);
+	}
 
-            /* Hero components */
-            .hero-title {
-                color: var(--color-base-content);
-            }
+	/* Form elements */
+	.input,
+	.textarea,
+	.select,
+	.file-input {
+		border-width: var(--border);
+		border-color: var(--nr-border-color);
+		border-style: solid;
+		border-radius: var(--radius-field);
+		box-shadow: var(--nr-shadow-sm);
+		transition:
+			box-shadow 0.2s ease-in-out,
+			border-color 0.2s ease-in-out;
 
-            .hero-card-frame {
-                /* Gradient now applied via .bg-hero-gradient utility class */
-                border-color: var(--nr-border-color);
-            }
+		&:focus {
+			border-color: var(--nr-border-color);
+			box-shadow: var(--nr-shadow-focus);
+			outline: none;
+		}
+	}
 
-            .hero-card-inner {
-                background: transparent;
-                border-color: var(--nr-border-color);
-            }
+	.checkbox,
+	.radio,
+	.toggle {
+		border-width: var(--border);
+		border-color: var(--nr-border-color);
+		border-style: solid;
+	}
 
-            .hero-decoration {
-                border-color: var(--nr-border-color);
-            }
+	/* Navigation */
+	.navbar {
+		border-bottom-width: var(--border);
+		border-color: var(--nr-border-color);
+		border-style: solid;
+		box-shadow: var(--nr-shadow-sm);
+	}
 
-            /* Sticker effect */
-            .sticker {
-                transform: rotate(-3deg);
-                /* Enhanced anti-aliasing for smooth rotation rendering */
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
-                backface-visibility: hidden;
-                -webkit-backface-visibility: hidden;
-                transform-style: preserve-3d;
-                will-change: transform;
-                image-rendering: crisp-edges;
+	.tabs-bordered .tab {
+		border-bottom-width: var(--border);
+		border-color: var(--nr-border-color);
+		border-style: solid;
+	}
 
-                &:nth-child(2n) {
-                    transform: rotate(2deg);
-                }
+	/* Utility components */
+	.toast,
+	.collapse,
+	.tooltip {
+		border-width: var(--border);
+		border-color: var(--nr-border-color);
+		border-style: solid;
+		box-shadow: var(--nr-shadow-sm);
+	}
 
-                &:before {
-                    content: "";
-                    border-radius: inherit;
-                    z-index: -1;
-                    background: #fff3;
-                    position: absolute;
-                    inset: -2px;
-                }
-            }
-        }
+	/* Hero title badge */
+	.hero-title-badge {
+		background: linear-gradient(
+			135deg,
+			var(--color-gradient-start, var(--color-primary)) 0%,
+			var(--color-gradient-end, var(--color-primary)) 100%
+		);
+		color: var(--color-primary-content);
+		border-width: 4px;
+		border-color: var(--nr-border-color);
+		box-shadow: var(--nr-shadow-base);
+		padding: 0.5rem 1rem;
+		font-weight: 900;
+		text-transform: uppercase;
+		display: inline-block;
+	}
 
-        /* ========================================
+	/* Hero components */
+	.hero-title {
+		color: var(--color-base-content);
+	}
+
+	.hero-card-frame {
+		/* Gradient now applied via .bg-hero-gradient utility class */
+		border-color: var(--nr-border-color);
+	}
+
+	.hero-card-inner {
+		background: transparent;
+		border-color: var(--nr-border-color);
+	}
+
+	.hero-decoration {
+		border-color: var(--nr-border-color);
+	}
+
+	/* Sticker effect */
+	.sticker {
+		transform: rotate(-3deg);
+		/* Enhanced anti-aliasing for smooth rotation rendering */
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		backface-visibility: hidden;
+		-webkit-backface-visibility: hidden;
+		transform-style: preserve-3d;
+		will-change: transform;
+		image-rendering: crisp-edges;
+
+		&:nth-child(2n) {
+			transform: rotate(2deg);
+		}
+
+		&:before {
+			content: "";
+			border-radius: inherit;
+			z-index: -1;
+			background: #fff3;
+			position: absolute;
+			inset: -2px;
+		}
+	}
+}
+
+/* ========================================
            LIGHT MODE OVERRIDES
            ======================================== */
-        [data-theme="neobrutalism-light"] {
-            /* Button borders */
-            .btn:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]) {
-                --btn-border: #000000;
-                --btn-hover-border: #000000;
-                --btn-focus-border: #000000;
-            }
+[data-theme="neobrutalism-light"] {
+	/* Button borders */
+	.btn:not([class*="border-primary"]):not([class*="border-secondary"]):not(
+			[class*="border-accent"]
+		):not([class*="border-neutral"]):not([class*="border-info"]):not(
+			[class*="border-success"]
+		):not([class*="border-warning"]):not([class*="border-error"]):not(
+			[class*="border-base"]
+		) {
+		--btn-border: #000000;
+		--btn-hover-border: #000000;
+		--btn-focus-border: #000000;
+	}
 
-            /* Auto-apply black borders to bg-* utility classes */
-            .bg-primary:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-secondary:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-accent:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-neutral:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-base-100:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-base-200:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-base-300:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-info:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-success:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-warning:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-error:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]) {
-                border-color: #000000;
-            }
+	/* Auto-apply black borders to bg-* utility classes */
+	.bg-primary:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-secondary:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-accent:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-neutral:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-base-100:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-base-200:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-base-300:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-info:not([class*="border-primary"]):not([class*="border-secondary"]):not(
+			[class*="border-accent"]
+		):not([class*="border-neutral"]):not([class*="border-info"]):not(
+			[class*="border-success"]
+		):not([class*="border-warning"]):not([class*="border-error"]):not(
+			[class*="border-base"]
+		),
+	.bg-success:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-warning:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-error:not([class*="border-primary"]):not([class*="border-secondary"]):not(
+			[class*="border-accent"]
+		):not([class*="border-neutral"]):not([class*="border-info"]):not(
+			[class*="border-success"]
+		):not([class*="border-warning"]):not([class*="border-error"]):not(
+			[class*="border-base"]
+		) {
+		border-color: #000000;
+	}
 
-            /* Graph paper texture */
-            .texture-grain::before {
-                background-image:
-                    repeating-linear-gradient(
-                        0deg,
-                        transparent,
-                        transparent 19px,
-                        rgba(0, 0, 0, 0.04) 19px,
-                        rgba(0, 0, 0, 0.04) 20px
-                    ),
-                    repeating-linear-gradient(
-                        90deg,
-                        transparent,
-                        transparent 19px,
-                        rgba(0, 0, 0, 0.04) 19px,
-                        rgba(0, 0, 0, 0.04) 20px
-                    );
-            }
+	/* Graph paper texture */
+	.texture-grain::before {
+		background-image:
+			repeating-linear-gradient(
+				0deg,
+				transparent,
+				transparent 19px,
+				rgba(0, 0, 0, 0.04) 19px,
+				rgba(0, 0, 0, 0.04) 20px
+			),
+			repeating-linear-gradient(
+				90deg,
+				transparent,
+				transparent 19px,
+				rgba(0, 0, 0, 0.04) 19px,
+				rgba(0, 0, 0, 0.04) 20px
+			);
+	}
 
-            /* Hero background gradient */
-            .hero-bg {
-                background: transparent;
-                /* Graph paper shows through from body */
-            }
-        }
+	/* Hero background gradient */
+	.hero-bg {
+		background: transparent;
+		/* Graph paper shows through from body */
+	}
+}
 
-        /* ========================================
+/* ========================================
            DARK MODE OVERRIDES
            ======================================== */
-        [data-theme="neobrutalism-dark"] {
-            /* Button borders */
-            .btn:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]) {
-                --btn-border: #ffffff;
-                --btn-hover-border: #ffffff;
-                --btn-focus-border: #ffffff;
-            }
+[data-theme="neobrutalism-dark"] {
+	/* Button borders */
+	.btn:not([class*="border-primary"]):not([class*="border-secondary"]):not(
+			[class*="border-accent"]
+		):not([class*="border-neutral"]):not([class*="border-info"]):not(
+			[class*="border-success"]
+		):not([class*="border-warning"]):not([class*="border-error"]):not(
+			[class*="border-base"]
+		) {
+		--btn-border: #ffffff;
+		--btn-hover-border: #ffffff;
+		--btn-focus-border: #ffffff;
+	}
 
-            /* Auto-apply white borders to bg-* utility classes */
-            .bg-primary:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-secondary:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-accent:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-neutral:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-base-100:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-base-200:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-base-300:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-info:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-success:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-warning:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]),
-            .bg-error:not([class*="border-primary"]):not([class*="border-secondary"]):not([class*="border-accent"]):not([class*="border-neutral"]):not([class*="border-info"]):not([class*="border-success"]):not([class*="border-warning"]):not([class*="border-error"]):not([class*="border-base"]) {
-                border-color: #ffffff;
-            }
+	/* Auto-apply white borders to bg-* utility classes */
+	.bg-primary:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-secondary:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-accent:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-neutral:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-base-100:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-base-200:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-base-300:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-info:not([class*="border-primary"]):not([class*="border-secondary"]):not(
+			[class*="border-accent"]
+		):not([class*="border-neutral"]):not([class*="border-info"]):not(
+			[class*="border-success"]
+		):not([class*="border-warning"]):not([class*="border-error"]):not(
+			[class*="border-base"]
+		),
+	.bg-success:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-warning:not([class*="border-primary"]):not(
+			[class*="border-secondary"]
+		):not([class*="border-accent"]):not([class*="border-neutral"]):not(
+			[class*="border-info"]
+		):not([class*="border-success"]):not([class*="border-warning"]):not(
+			[class*="border-error"]
+		):not([class*="border-base"]),
+	.bg-error:not([class*="border-primary"]):not([class*="border-secondary"]):not(
+			[class*="border-accent"]
+		):not([class*="border-neutral"]):not([class*="border-info"]):not(
+			[class*="border-success"]
+		):not([class*="border-warning"]):not([class*="border-error"]):not(
+			[class*="border-base"]
+		) {
+		border-color: #ffffff;
+	}
 
-            /* Graph paper texture */
-            .texture-grain::before {
-                background-image:
-                    repeating-linear-gradient(
-                        0deg,
-                        transparent,
-                        transparent 19px,
-                        rgba(255, 255, 255, 0.04) 19px,
-                        rgba(255, 255, 255, 0.04) 20px
-                    ),
-                    repeating-linear-gradient(
-                        90deg,
-                        transparent,
-                        transparent 19px,
-                        rgba(255, 255, 255, 0.04) 19px,
-                        rgba(255, 255, 255, 0.04) 20px
-                    );
-            }
+	/* Graph paper texture */
+	.texture-grain::before {
+		background-image:
+			repeating-linear-gradient(
+				0deg,
+				transparent,
+				transparent 19px,
+				rgba(255, 255, 255, 0.04) 19px,
+				rgba(255, 255, 255, 0.04) 20px
+			),
+			repeating-linear-gradient(
+				90deg,
+				transparent,
+				transparent 19px,
+				rgba(255, 255, 255, 0.04) 19px,
+				rgba(255, 255, 255, 0.04) 20px
+			);
+	}
 
-            /* Disable texture-grain grid overlay for hero in dark mode, use hero-bg grid instead */
-            .hero-bg.texture-grain::before {
-                background-image: none;
-            }
+	/* Disable texture-grain grid overlay for hero in dark mode, use hero-bg grid instead */
+	.hero-bg.texture-grain::before {
+		background-image: none;
+	}
 
-            /* Hero background - transparent to show fixed grid */
-            .hero-bg {
-                background: transparent;
-                /* Graph paper shows through from body::before pseudo-element */
-            }
-        }
+	/* Hero background - transparent to show fixed grid */
+	.hero-bg {
+		background: transparent;
+		/* Graph paper shows through from body::before pseudo-element */
+	}
+}
 
-        /* ========================================
+/* ========================================
            SHARED EFFECTS (NOT THEME-DEPENDENT)
            ======================================== */
-        
-        /* Texture grain base */
-        .texture-grain {
-            position: relative;
 
-            &::before {
-                content: "";
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                pointer-events: none;
-            }
-        }
+/* Texture grain base */
+.texture-grain {
+	position: relative;
 
-        /* Glitch effect */
-        @keyframes glitch-1 {
-            0%, 100% { transform: translate(0); }
-            10% { transform: translate(-2px, -2px); }
-            20% { transform: translate(2px, 2px); }
-            30% { transform: translate(-2px, 2px); }
-            40% { transform: translate(2px, -2px); }
-            50% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            70% { transform: translate(-2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            90% { transform: translate(-2px, -2px); }
-        }
+	&::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		pointer-events: none;
+	}
+}
 
-        @keyframes glitch-2 {
-            0%, 100% { transform: translate(0); }
-            10% { transform: translate(2px, 2px); }
-            20% { transform: translate(-2px, -2px); }
-            30% { transform: translate(2px, -2px); }
-            40% { transform: translate(-2px, 2px); }
-            50% { transform: translate(2px, 2px); }
-            60% { transform: translate(-2px, -2px); }
-            70% { transform: translate(2px, -2px); }
-            80% { transform: translate(-2px, 2px); }
-            90% { transform: translate(2px, 2px); }
-        }
+/* Glitch effect */
+@keyframes glitch-1 {
+	0%,
+	100% {
+		transform: translate(0);
+	}
+	10% {
+		transform: translate(-2px, -2px);
+	}
+	20% {
+		transform: translate(2px, 2px);
+	}
+	30% {
+		transform: translate(-2px, 2px);
+	}
+	40% {
+		transform: translate(2px, -2px);
+	}
+	50% {
+		transform: translate(-2px, -2px);
+	}
+	60% {
+		transform: translate(2px, 2px);
+	}
+	70% {
+		transform: translate(-2px, 2px);
+	}
+	80% {
+		transform: translate(2px, -2px);
+	}
+	90% {
+		transform: translate(-2px, -2px);
+	}
+}
 
-        .glitch-effect {
-            position: relative;
-            z-index: 1;
+@keyframes glitch-2 {
+	0%,
+	100% {
+		transform: translate(0);
+	}
+	10% {
+		transform: translate(2px, 2px);
+	}
+	20% {
+		transform: translate(-2px, -2px);
+	}
+	30% {
+		transform: translate(2px, -2px);
+	}
+	40% {
+		transform: translate(-2px, 2px);
+	}
+	50% {
+		transform: translate(2px, 2px);
+	}
+	60% {
+		transform: translate(-2px, -2px);
+	}
+	70% {
+		transform: translate(2px, -2px);
+	}
+	80% {
+		transform: translate(-2px, 2px);
+	}
+	90% {
+		transform: translate(2px, 2px);
+	}
+}
 
-            &::before,
-            &::after {
-                content: attr(data-text);
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                opacity: 0;
-                pointer-events: none;
-            }
+.glitch-effect {
+	position: relative;
+	z-index: 1;
 
-            &:hover::before {
-                animation: glitch-1 0.3s infinite;
-                color: #ff0080;
-                opacity: 0.7;
-                z-index: -1;
-            }
+	&::before,
+	&::after {
+		content: attr(data-text);
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		opacity: 0;
+		pointer-events: none;
+	}
 
-            &:hover::after {
-                animation: glitch-2 0.3s infinite;
-                color: #00ffff;
-                opacity: 0.7;
-                z-index: -2;
-            }
-        }
+	&:hover::before {
+		animation: glitch-1 0.3s infinite;
+		color: #ff0080;
+		opacity: 0.7;
+		z-index: -1;
+	}
 
-        /* Animations */
-        /* Disable expensive continuous animations on mobile for better performance */
-        @media (max-width: 768px) {
-            .animate-spin-slow,
-            .animate-bounce-slow,
-            .animate-sway,
-            .animate-pulse-shadow {
-                animation: none;
-            }
-        }
-        
-        @keyframes marquee-left {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
+	&:hover::after {
+		animation: glitch-2 0.3s infinite;
+		color: #00ffff;
+		opacity: 0.7;
+		z-index: -2;
+	}
+}
 
-        @keyframes marquee-right {
-            0% { transform: translateX(-50%); }
-            100% { transform: translateX(0); }
-        }
+/* Animations */
+/* Disable expensive continuous animations on mobile for better performance */
+@media (max-width: 768px) {
+	.animate-spin-slow,
+	.animate-bounce-slow,
+	.animate-sway,
+	.animate-pulse-shadow {
+		animation: none;
+	}
+}
 
-        @keyframes spin-slow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+@keyframes marquee-left {
+	0% {
+		transform: translateX(0);
+	}
+	100% {
+		transform: translateX(-50%);
+	}
+}
 
-        @keyframes bounce-slow {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
+@keyframes marquee-right {
+	0% {
+		transform: translateX(-50%);
+	}
+	100% {
+		transform: translateX(0);
+	}
+}
 
-        @keyframes sway {
-            0%, 100% { transform: translateX(0) rotate(45deg); }
-            50% { transform: translateX(15px) rotate(45deg); }
-        }
+@keyframes spin-slow {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
 
-        @keyframes pulse-shadow {
-            0%, 100% { box-shadow: var(--nr-shadow-base); }
-            50% { box-shadow: var(--nr-shadow-xl); }
-        }
+@keyframes bounce-slow {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-20px);
+	}
+}
 
-        /* Pop-in animation - scale from 0 to 1 with bounce (universal, works on any element) */
-        /* Note: This only animates scale and opacity, preserving any transform on the element */
-        @keyframes pop-in {
-            0% { 
-                scale: 0;
-                opacity: 0;
-            }
-            50% {
-                scale: 1.1;
-            }
-            100% { 
-                scale: 1;
-                opacity: 1;
-            }
-        }
+@keyframes sway {
+	0%,
+	100% {
+		transform: translateX(0) rotate(45deg);
+	}
+	50% {
+		transform: translateX(15px) rotate(45deg);
+	}
+}
 
-        .animate-marquee-left { animation: marquee-left 20s linear infinite; }
-        .animate-marquee-right { animation: marquee-right 25s linear infinite; }
-        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
-        .animate-bounce-slow { animation: bounce-slow 4s ease-in-out infinite; }
-        .animate-sway { animation: sway 5s ease-in-out infinite; }
-        .animate-pulse-shadow { animation: pulse-shadow 2.5s ease-in-out infinite; }
+@keyframes pulse-shadow {
+	0%,
+	100% {
+		box-shadow: var(--nr-shadow-base);
+	}
+	50% {
+		box-shadow: var(--nr-shadow-xl);
+	}
+}
 
-        /* Pop-in animation - works universally on any element */
-        .animate-pop-in {
-            animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
+/* Pop-in animation - scale from 0 to 1 with bounce (universal, works on any element) */
+/* Note: This only animates scale and opacity, preserving any transform on the element */
+@keyframes pop-in {
+	0% {
+		scale: 0;
+		opacity: 0;
+	}
+	50% {
+		scale: 1.1;
+	}
+	100% {
+		scale: 1;
+		opacity: 1;
+	}
+}
 
-        /* Stagger delays for sequential animations */
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-        .delay-4 { animation-delay: 0.4s; }
-        .delay-5 { animation-delay: 0.5s; }
-        .delay-6 { animation-delay: 0.6s; }
+.animate-marquee-left {
+	animation: marquee-left 20s linear infinite;
+}
+.animate-marquee-right {
+	animation: marquee-right 25s linear infinite;
+}
+.animate-spin-slow {
+	animation: spin-slow 20s linear infinite;
+}
+.animate-bounce-slow {
+	animation: bounce-slow 4s ease-in-out infinite;
+}
+.animate-sway {
+	animation: sway 5s ease-in-out infinite;
+}
+.animate-pulse-shadow {
+	animation: pulse-shadow 2.5s ease-in-out infinite;
+}
 
-        /* 
+/* Pop-in animation - works universally on any element */
+.animate-pop-in {
+	animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Stagger delays for sequential animations */
+.delay-1 {
+	animation-delay: 0.1s;
+}
+.delay-2 {
+	animation-delay: 0.2s;
+}
+.delay-3 {
+	animation-delay: 0.3s;
+}
+.delay-4 {
+	animation-delay: 0.4s;
+}
+.delay-5 {
+	animation-delay: 0.5s;
+}
+.delay-6 {
+	animation-delay: 0.6s;
+}
+
+/* 
          * Universal hover effects that work WITH existing transforms
          * 
          * STRATEGY: Use nested wrappers when combining rotation + hover scale
@@ -2391,166 +3321,185 @@
          *   <span class="badge rotate-2">Badge</span>
          */
 
-        /* Hover scale effect - uses scale property to work with transform: rotate() */
-        .hover-scale-up {
-            transition: scale 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), rotate 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+/* Hover scale effect - uses scale property to work with transform: rotate() */
+.hover-scale-up {
+	transition:
+		scale 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+		rotate 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-            &:hover {
-                scale: 1.1;
-            }
-        }
+	&:hover {
+		scale: 1.1;
+	}
+}
 
-        .hover-scale-up-sm {
-            transition: scale 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), rotate 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+.hover-scale-up-sm {
+	transition:
+		scale 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+		rotate 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-            &:hover {
-                scale: 1.05;
-            }
-        }
+	&:hover {
+		scale: 1.05;
+	}
+}
 
-        .hover-scale-up-lg {
-            transition: scale 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), rotate 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+.hover-scale-up-lg {
+	transition:
+		scale 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+		rotate 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-            &:hover {
-                scale: 1.15;
-            }
-        }
+	&:hover {
+		scale: 1.15;
+	}
+}
 
-        /* Hover rotate effect - adds slight rotation change using rotate property */
-        /* Note: rotate property is ADDITIVE to transform: rotate(), so both work together */
-        .hover-rotate-more {
-            &:hover {
-                rotate: 3deg;
-            }
-        }
+/* Hover rotate effect - adds slight rotation change using rotate property */
+/* Note: rotate property is ADDITIVE to transform: rotate(), so both work together */
+.hover-rotate-more {
+	&:hover {
+		rotate: 3deg;
+	}
+}
 
-        .hover-rotate-more-neg {
-            &:hover {
-                rotate: -3deg;
-            }
-        }
+.hover-rotate-more-neg {
+	&:hover {
+		rotate: -3deg;
+	}
+}
 
-        .hover-rotate-wiggle {
-            &:hover {
-                rotate: 2deg;
-            }
-        }
+.hover-rotate-wiggle {
+	&:hover {
+		rotate: 2deg;
+	}
+}
 
-        .hover-rotate-wiggle-neg {
-            &:hover {
-                rotate: -2deg;
-            }
-        }
+.hover-rotate-wiggle-neg {
+	&:hover {
+		rotate: -2deg;
+	}
+}
 
-        /* Hover shadow boost - increases shadow depth */
-        .hover-shadow-boost {
-            transition: box-shadow 0.2s ease;
-            
-            &:hover {
-                box-shadow: 5px 5px 0px 0px var(--nr-shadow-color) !important;
-            }
-        }
+/* Hover shadow boost - increases shadow depth */
+.hover-shadow-boost {
+	transition: box-shadow 0.2s ease;
 
-        .hover-shadow-boost-lg {
-            transition: box-shadow 0.2s ease;
-            
-            &:hover {
-                box-shadow: 8px 8px 0px 0px var(--nr-shadow-color) !important;
-            }
-        }
+	&:hover {
+		box-shadow: 5px 5px 0px 0px var(--nr-shadow-color) !important;
+	}
+}
 
-        /* Scroll animations */
-        /* Respect reduced motion preferences */
-        @media (prefers-reduced-motion: reduce) {
-            .fade-in-up,
-            .slide-in-left,
-            .slide-in-right,
-            .scale-in {
-                opacity: 1 !important;
-                transform: none !important;
-                transition: none !important;
-            }
-        }
-        
-        .fade-in-up {
-            opacity: 0 !important;
-            transform: translateY(40px) !important;
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
-            /* GPU acceleration hint for smoother animations */
-            will-change: opacity, transform;
+.hover-shadow-boost-lg {
+	transition: box-shadow 0.2s ease;
 
-            &.visible {
-                opacity: 1 !important;
-                transform: translateY(0) !important;
-                /* Remove will-change after animation completes to free resources */
-                will-change: auto;
-            }
-        }
+	&:hover {
+		box-shadow: 8px 8px 0px 0px var(--nr-shadow-color) !important;
+	}
+}
 
-        .slide-in-left {
-            opacity: 0 !important;
-            transform: translateX(-80px) !important;
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
-            will-change: opacity, transform;
+/* Scroll animations */
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+	.fade-in-up,
+	.slide-in-left,
+	.slide-in-right,
+	.scale-in {
+		opacity: 1 !important;
+		transform: none !important;
+		transition: none !important;
+	}
+}
 
-            &.visible {
-                opacity: 1 !important;
-                transform: translateX(0) !important;
-                will-change: auto;
-            }
-        }
+.fade-in-up {
+	opacity: 0 !important;
+	transform: translateY(40px) !important;
+	transition:
+		opacity 0.8s ease-out,
+		transform 0.8s ease-out !important;
+	/* GPU acceleration hint for smoother animations */
+	will-change: opacity, transform;
 
-        .slide-in-right {
-            opacity: 0 !important;
-            transform: translateX(80px) !important;
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
-            will-change: opacity, transform;
+	&.visible {
+		opacity: 1 !important;
+		transform: translateY(0) !important;
+		/* Remove will-change after animation completes to free resources */
+		will-change: auto;
+	}
+}
 
-            &.visible {
-                opacity: 1 !important;
-                transform: translateX(0) !important;
-                will-change: auto;
-            }
-        }
+.slide-in-left {
+	opacity: 0 !important;
+	transform: translateX(-80px) !important;
+	transition:
+		opacity 0.8s ease-out,
+		transform 0.8s ease-out !important;
+	will-change: opacity, transform;
 
-        .scale-in {
-            opacity: 0 !important;
-            transform: scale(0.7) !important;
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
-            will-change: opacity, transform;
+	&.visible {
+		opacity: 1 !important;
+		transform: translateX(0) !important;
+		will-change: auto;
+	}
+}
 
-            &.visible {
-                opacity: 1 !important;
-                transform: scale(1) !important;
-                will-change: auto;
-            }
-        }
+.slide-in-right {
+	opacity: 0 !important;
+	transform: translateX(80px) !important;
+	transition:
+		opacity 0.8s ease-out,
+		transform 0.8s ease-out !important;
+	will-change: opacity, transform;
 
-        /* View transitions */
-        html[data-vt-nav] body {
-            pointer-events: none;
-        }
-        
-        /* Disable hover effects during view transitions to prevent animations */
-        html[data-vt-nav] .card:hover:not(.hover-effect):not(.hover-lift):not(.hover-lift-stable):not(.hover-scale):not(.hover-rotate):not([class*="hover-rotate-"]):not(.rotated-section):not(.no-hover) {
-            transform: translate(0, 0) !important;
-            box-shadow: var(--nr-shadow-base) !important;
-        }
+	&.visible {
+		opacity: 1 !important;
+		transform: translateX(0) !important;
+		will-change: auto;
+	}
+}
 
-        /* Fix layout shift during view transitions - ensure navbar maintains consistent height */
-        .navbar {
-            contain: layout;
-            min-height: 4rem;
-            max-height: 4rem;
-        }
+.scale-in {
+	opacity: 0 !important;
+	transform: scale(0.7) !important;
+	transition:
+		opacity 0.8s ease-out,
+		transform 0.8s ease-out !important;
+	will-change: opacity, transform;
 
-        ::view-transition-old(root),
-        ::view-transition-new(root) {
-            animation-duration: .45s;
-            animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-        }
-        
-        /* ========================================
+	&.visible {
+		opacity: 1 !important;
+		transform: scale(1) !important;
+		will-change: auto;
+	}
+}
+
+/* View transitions */
+html[data-vt-nav] body {
+	pointer-events: none;
+}
+
+/* Disable hover effects during view transitions to prevent animations */
+html[data-vt-nav]
+.card:hover:not(.hover-effect):not(.hover-lift):not(.hover-lift-stable):not(
+	.hover-scale
+):not(.hover-rotate):not([class*="hover-rotate-"]):not(.rotated-section):not(
+	.no-hover
+) {
+	transform: translate(0, 0) !important;
+	box-shadow: var(--nr-shadow-base) !important;
+}
+
+/* Fix layout shift during view transitions - ensure navbar maintains consistent height */
+.navbar {
+	contain: layout;
+	min-height: 4rem;
+	max-height: 4rem;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation-duration: 0.45s;
+	animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* ========================================
            WORK CARD VIEW TRANSITIONS
            ========================================
            
@@ -2611,62 +3560,60 @@
            
            ======================================== */
 
-        
-        /* Work card transition groups - must fly ABOVE the filter bar */
-        ::view-transition-group(work-card),
-        ::view-transition-group(work-img),
-        ::view-transition-group(work-body),
-        ::view-transition-group(work-title),
-        ::view-transition-group(work-impact) {
-            z-index: 100;
-            animation-duration: 0.35s;
-            animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
-        }
-        
-        
-        /* Spring animations for cards appearing/disappearing during filter changes */
-        @keyframes card-spring-in {
-            0% {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.02);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        
-        @keyframes card-spring-out {
-            0% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-        }
-        
-        /* Class-based card animations for filter transitions */
-        .card-entering {
-            animation: card-spring-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-        }
-        
-        .card-exiting {
-            animation: card-spring-out 0.2s ease-out both;
-        }
-        
-        /* Work page header - stays put during category navigation */
-        ::view-transition-group(work-header) {
-            animation-duration: 0.25s;
-            animation-timing-function: ease-out;
-        }
-        
-        /* ----------------------------------------
+/* Work card transition groups - must fly ABOVE the filter bar */
+::view-transition-group(work-card),
+::view-transition-group(work-img),
+::view-transition-group(work-body),
+::view-transition-group(work-title),
+::view-transition-group(work-impact) {
+	z-index: 100;
+	animation-duration: 0.35s;
+	animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Spring animations for cards appearing/disappearing during filter changes */
+@keyframes card-spring-in {
+	0% {
+		opacity: 0;
+		transform: scale(0.9);
+	}
+	50% {
+		opacity: 1;
+		transform: scale(1.02);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes card-spring-out {
+	0% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	100% {
+		opacity: 0;
+		transform: scale(0.95);
+	}
+}
+
+/* Class-based card animations for filter transitions */
+.card-entering {
+	animation: card-spring-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.card-exiting {
+	animation: card-spring-out 0.2s ease-out both;
+}
+
+/* Work page header - stays put during category navigation */
+::view-transition-group(work-header) {
+	animation-duration: 0.25s;
+	animation-timing-function: ease-out;
+}
+
+/* ----------------------------------------
            FILTER BAR APPEAR/DISAPPEAR ANIMATIONS
            ----------------------------------------
            
@@ -2697,147 +3644,148 @@
            • Fades out in 0.15s
            • Quick exit so it doesn't compete with expanding card
            ---------------------------------------- */
-        
-        /* Category filter container - z-index below morphing cards */
-        ::view-transition-group(work-category-filter-container),
-        ::view-transition-group(filter-fade-left),
-        ::view-transition-group(filter-fade-right) {
-            z-index: 10;
-        }
-        
-        @keyframes filter-bar-delayed-fade-in {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-        
-        /* Filter bar APPEARS: navigating TO listing from any other page
+
+/* Category filter container - z-index below morphing cards */
+::view-transition-group(work-category-filter-container),
+::view-transition-group(filter-fade-left),
+::view-transition-group(filter-fade-right) {
+	z-index: 10;
+}
+
+@keyframes filter-bar-delayed-fade-in {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+/* Filter bar APPEARS: navigating TO listing from any other page
            No delay - appears with page content */
-        ::view-transition-new(work-category-filter-container):only-child {
-            animation: filter-bar-delayed-fade-in 0.25s ease-out both !important;
-        }
-        
-        /* Filter bar DISAPPEARS: navigating FROM listing to detail */
-        ::view-transition-old(work-category-filter-container):only-child {
-            /* Quick fade out to clear space for expanding card */
-            animation: filter-bar-delayed-fade-in 0.15s ease-out reverse both !important;
-        }
-        
-        /* Same treatment for the fade overlays */
-        ::view-transition-new(filter-fade-left):only-child,
-        ::view-transition-new(filter-fade-right):only-child {
-            animation: filter-bar-delayed-fade-in 0.25s ease-out both;
-        }
-        
-        ::view-transition-old(filter-fade-left):only-child,
-        ::view-transition-old(filter-fade-right):only-child {
-            animation: filter-bar-delayed-fade-in 0.15s ease-out reverse both;
-        }
+::view-transition-new(work-category-filter-container):only-child {
+	animation: filter-bar-delayed-fade-in 0.25s ease-out both !important;
+}
 
+/* Filter bar DISAPPEARS: navigating FROM listing to detail */
+::view-transition-old(work-category-filter-container):only-child {
+	/* Quick fade out to clear space for expanding card */
+	animation: filter-bar-delayed-fade-in 0.15s ease-out reverse both !important;
+}
 
-        
-        
-        /* ========================================
+/* Same treatment for the fade overlays */
+::view-transition-new(filter-fade-left):only-child,
+::view-transition-new(filter-fade-right):only-child {
+	animation: filter-bar-delayed-fade-in 0.25s ease-out both;
+}
+
+::view-transition-old(filter-fade-left):only-child,
+::view-transition-old(filter-fade-right):only-child {
+	animation: filter-bar-delayed-fade-in 0.15s ease-out reverse both;
+}
+
+/* ========================================
            NAVBAR VIEW TRANSITIONS
            ======================================== */
-        
-        /* Navbar appears - snap down with bounce (when navigating from homepage to internal pages) */
-        ::view-transition-new(main-navbar):only-child {
-            animation: navbar-snap-down 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-        }
-        
-        /* Navbar disappears - quick fade out (when navigating to homepage) */
-        ::view-transition-old(main-navbar):only-child {
-            animation: navbar-fade-out 0.2s ease-out forwards;
-        }
-        
-        /* Navbar morphs between pages - smooth transition (internal navigation) */
-        ::view-transition-group(main-navbar) {
-            animation-duration: 0.5s;
-            animation-timing-function: ease-in-out;
-        }
-        
-        @keyframes navbar-snap-down {
-            from {
-                opacity: 0;
-                transform: translateY(-100%) scale(0.95);
-            }
-            60% {
-                transform: translateY(8px) scale(1.02);
-            }
-            80% {
-                transform: translateY(-4px) scale(0.98);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-        
-        @keyframes navbar-fade-out {
-            from {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-        }
-        
-        /* ========================================
+
+/* Navbar appears - snap down with bounce (when navigating from homepage to internal pages) */
+::view-transition-new(main-navbar):only-child {
+	animation: navbar-snap-down 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)
+		forwards;
+}
+
+/* Navbar disappears - quick fade out (when navigating to homepage) */
+::view-transition-old(main-navbar):only-child {
+	animation: navbar-fade-out 0.2s ease-out forwards;
+}
+
+/* Navbar morphs between pages - smooth transition (internal navigation) */
+::view-transition-group(main-navbar) {
+	animation-duration: 0.5s;
+	animation-timing-function: ease-in-out;
+}
+
+@keyframes navbar-snap-down {
+	from {
+		opacity: 0;
+		transform: translateY(-100%) scale(0.95);
+	}
+	60% {
+		transform: translateY(8px) scale(1.02);
+	}
+	80% {
+		transform: translateY(-4px) scale(0.98);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@keyframes navbar-fade-out {
+	from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	to {
+		opacity: 0;
+		transform: translateY(-20px);
+	}
+}
+
+/* ========================================
            WORK PAGE NAVIGATION TRANSITIONS
            Keep these subtle to focus on card animation
            ======================================== */
-        
-        /* Back navigation button - quick fade */
-        ::view-transition-new(work-back-nav):only-child {
-            animation: simple-fade-in 0.25s ease-out 0.1s backwards;
-        }
-        
-        /* Footer navigation - quick fade */
-        ::view-transition-new(work-footer-nav):only-child {
-            animation: simple-fade-in 0.25s ease-out 0.1s backwards;
-        }
-        
-        /* Hide when leaving */
-        ::view-transition-old(work-back-nav):only-child,
-        ::view-transition-old(work-footer-nav):only-child {
-            animation: nav-button-fade-out 0.2s ease-out forwards;
-        }
-        
-        /* Pop-in animation - scale and fade with slight overshoot */
-        @keyframes nav-button-pop-in {
-            0% {
-                opacity: 0;
-                transform: translateY(-10px) scale(0.9);
-            }
-            70% {
-                transform: translateY(2px) scale(1.02);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-        
-        @keyframes nav-button-fade-out {
-            from {
-                opacity: 1;
-                transform: scale(1);
-            }
-            to {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-        }
 
+/* Back navigation button - quick fade */
+::view-transition-new(work-back-nav):only-child {
+	animation: simple-fade-in 0.25s ease-out 0.1s backwards;
+}
+
+/* Footer navigation - quick fade */
+::view-transition-new(work-footer-nav):only-child {
+	animation: simple-fade-in 0.25s ease-out 0.1s backwards;
+}
+
+/* Hide when leaving */
+::view-transition-old(work-back-nav):only-child,
+::view-transition-old(work-footer-nav):only-child {
+	animation: nav-button-fade-out 0.2s ease-out forwards;
+}
+
+/* Pop-in animation - scale and fade with slight overshoot */
+@keyframes nav-button-pop-in {
+	0% {
+		opacity: 0;
+		transform: translateY(-10px) scale(0.9);
+	}
+	70% {
+		transform: translateY(2px) scale(1.02);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@keyframes nav-button-fade-out {
+	from {
+		opacity: 1;
+		transform: scale(1);
+	}
+	to {
+		opacity: 0;
+		transform: scale(0.95);
+	}
+}
 
 @layer utilities {
-    .scrollbar-hide {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
-    .scrollbar-hide::-webkit-scrollbar {
-        display: none;
-    }
+	.scrollbar-hide {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+	.scrollbar-hide::-webkit-scrollbar {
+		display: none;
+	}
 }

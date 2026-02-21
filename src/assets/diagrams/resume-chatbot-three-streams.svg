@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" role="img" aria-label="Resume Chatbot Three-Stream Architecture">
+  <defs>
+    <!-- Rough sketch filter for hand-drawn look -->
+    <filter id="rough-paper" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    
+    <!-- Hand-drawn arrow marker -->
+    <marker id="sketch-arrow" markerWidth="12" markerHeight="10" refX="10" refY="5" orient="auto">
+      <path d="M 0,0 L 12,5 L 0,10 L 2,5 Z" fill="#1a1a1a" />
+    </marker>
+    
+    <!-- Soft drop shadow -->
+    <filter id="soft-shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="3" dy="4" stdDeviation="1" flood-color="rgba(0,0,0,0.15)"/>
+    </filter>
+    
+    <!-- Hard shadow for boxes -->
+    <filter id="hard-shadow" x="0" y="0" width="120%" height="120%">
+      <feDropShadow dx="4" dy="4" stdDeviation="0" flood-color="rgba(0,0,0,0.2)" />
+    </filter>
+  </defs>
+
+  <style>
+    /* Sketchy/handwritten style typography */
+    .title { 
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif; 
+      font-size: 28px; 
+      font-weight: bold;
+      fill: #1a1a1a;
+    }
+    .lane-title { 
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif; 
+      font-size: 16px; 
+      font-weight: bold;
+      fill: #333;
+    }
+    .box-label { 
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif; 
+      font-size: 14px; 
+      font-weight: 600;
+      fill: #1a1a1a;
+    }
+    .small-label { 
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif; 
+      font-size: 11px; 
+      fill: #444;
+    }
+    .arrow-label {
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif; 
+      font-size: 10px;
+      font-style: italic;
+      fill: #666;
+    }
+    
+    /* Sketchy box styles with rough edges */
+    .sketch-box {
+      stroke: #1a1a1a;
+      stroke-width: 2.5;
+      filter: url(#hard-shadow);
+    }
+    .sketch-box:hover {
+      filter: url(#hard-shadow) brightness(1.05);
+    }
+    
+    /* Lane backgrounds */
+    .backend-lane { fill: #f3e8ff; }
+    .chat-lane { fill: #dbeafe; }
+    .artifact-lane { fill: #dcfce7; }
+    
+    /* Box colors */
+    .backend-box { fill: #e9d5ff; }
+    .chat-box { fill: #bfdbfe; }
+    .artifact-box { fill: #bbf7d0; }
+    
+    /* Sketchy arrows */
+    .sketch-arrow {
+      stroke: #1a1a1a;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      marker-end: url(#sketch-arrow);
+    }
+    .dashed-arrow {
+      stroke-dasharray: 6,4;
+    }
+    
+    /* Cross-lane connection arrows (colored) */
+    .conn-backend-chat { stroke: #9333ea; }
+    .conn-backend-artifact { stroke: #ea580c; }
+    .conn-artifact-chat { stroke: #16a34a; }
+    
+    /* Lane dividers */
+    .lane-divider {
+      stroke: #d1d5db;
+      stroke-width: 2;
+      stroke-dasharray: 8,4;
+    }
+  </style>
+
+  <!-- Background -->
+  <rect width="1000" height="650" fill="#fafafa"/>
+  
+  <!-- Grid pattern for sketch feel -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#e5e7eb" stroke-width="0.5"/>
+  </pattern>
+  <rect width="1000" height="650" fill="url(#grid)"/>
+
+  <!-- Title -->
+  <text x="500" y="40" text-anchor="middle" class="title">Three-Stream Architecture</text>
+
+  <!-- LANE 1: BACKEND STREAM (Top) -->
+  <!-- Lane background -->
+  <rect x="20" y="70" width="960" height="170" rx="12" class="backend-lane sketch-box" opacity="0.5"/>
+  
+  <!-- Lane label -->
+  <rect x="30" y="85" width="140" height="28" rx="8" fill="#c084fc" stroke="#7c3aed" stroke-width="2"/>
+  <text x="100" y="104" text-anchor="middle" class="lane-title" fill="#fff">BACKEND STREAM</text>
+  
+  <!-- Backend boxes -->
+  <!-- User Request -->
+  <rect x="80" y="130" width="130" height="85" rx="10" class="backend-box sketch-box"/>
+  <text x="145" y="160" text-anchor="middle" class="box-label">User Request</text>
+  <text x="145" y="180" text-anchor="middle" class="small-label">Intent + Context</text>
+  <text x="145" y="195" text-anchor="middle" class="small-label">Resume ID</text>
+  
+  <!-- AI Agent -->
+  <rect x="280" y="130" width="160" height="85" rx="10" class="backend-box sketch-box"/>
+  <text x="360" y="155" text-anchor="middle" class="box-label">AI Agent</text>
+  <text x="360" y="172" text-anchor="middle" class="small-label">Intent Parsing</text>
+  <text x="360" y="187" text-anchor="middle" class="small-label">Tool Routing</text>
+  <text x="360" y="202" text-anchor="middle" class="small-label">Patch Generation</text>
+  
+  <!-- Functions cloud -->
+  <ellipse cx="540" cy="172" rx="90" ry="45" class="backend-box sketch-box"/>
+  <text x="540" y="165" text-anchor="middle" class="small-label">Generate JSON Patch</text>
+  <text x="540" y="180" text-anchor="middle" class="small-label">RFC 6902 Format</text>
+  
+  <!-- Structured Patches -->
+  <rect x="700" y="130" width="140" height="85" rx="10" class="backend-box sketch-box"/>
+  <text x="770" y="160" text-anchor="middle" class="box-label">Structured Patches</text>
+  <text x="770" y="180" text-anchor="middle" class="small-label">[{ op: "replace",</text>
+  <text x="770" y="195" text-anchor="middle" class="small-label">path: "/skills/0",</text>
+  <text x="770" y="210" text-anchor="middle" class="small-label">value: "React" }]</text>
+
+  <!-- LANE 2: CHAT STREAM (Middle) -->
+  <!-- Lane background -->
+  <rect x="20" y="255" width="960" height="170" rx="12" class="chat-lane sketch-box" opacity="0.5"/>
+  
+  <!-- Lane label -->
+  <rect x="30" y="270" width="140" height="28" rx="8" fill="#60a5fa" stroke="#2563eb" stroke-width="2"/>
+  <text x="100" y="289" text-anchor="middle" class="lane-title" fill="#fff">CHAT STREAM</text>
+  
+  <!-- Chat boxes -->
+  <!-- User Input -->
+  <rect x="80" y="310" width="130" height="95" rx="10" class="chat-box sketch-box"/>
+  <text x="145" y="340" text-anchor="middle" class="box-label">User Input</text>
+  <text x="145" y="360" text-anchor="middle" class="small-label">"Add React to my</text>
+  <text x="145" y="375" text-anchor="middle" class="small-label">skills list"</text>
+  <text x="145" y="392" text-anchor="middle" class="small-label" fill="#2563eb">→ Sent to Backend</text>
+  
+  <!-- Chat Interface -->
+  <rect x="280" y="310" width="160" height="95" rx="10" class="chat-box sketch-box"/>
+  <text x="360" y="338" text-anchor="middle" class="box-label">Chat Interface</text>
+  <text x="360" y="358" text-anchor="middle" class="small-label">Message Streaming</text>
+  <text x="360" y="373" text-anchor="middle" class="small-label">Response Rendering</text>
+  <text x="360" y="388" text-anchor="middle" class="small-label">History Management</text>
+  
+  <!-- Streaming -->
+  <ellipse cx="540" cy="357" rx="85" ry="42" class="chat-box sketch-box"/>
+  <text x="540" y="350" text-anchor="middle" class="box-label">Streaming...</text>
+  <text x="540" y="370" text-anchor="middle" class="small-label">SSE / WebSocket</text>
+  
+  <!-- Assistant Response -->
+  <rect x="700" y="310" width="140" height="95" rx="10" class="chat-box sketch-box"/>
+  <text x="770" y="340" text-anchor="middle" class="box-label">Assistant Response</text>
+  <text x="770" y="360" text-anchor="middle" class="small-label">"Done! I've added</text>
+  <text x="770" y="375" text-anchor="middle" class="small-label">React to your</text>
+  <text x="770" y="390" text-anchor="middle" class="small-label">skills."</text>
+
+  <!-- LANE 3: ARTIFACT STREAM (Bottom) -->
+  <!-- Lane background -->
+  <rect x="20" y="440" width="960" height="185" rx="12" class="artifact-lane sketch-box" opacity="0.5"/>
+  
+  <!-- Lane label -->
+  <rect x="30" y="455" width="155" height="28" rx="8" fill="#4ade80" stroke="#16a34a" stroke-width="2"/>
+  <text x="107" y="474" text-anchor="middle" class="lane-title" fill="#064e3b">ARTIFACT STREAM</text>
+  
+  <!-- Artifact boxes -->
+  <!-- Patch Tool -->
+  <rect x="80" y="495" width="130" height="110" rx="10" class="artifact-box sketch-box"/>
+  <text x="145" y="525" text-anchor="middle" class="box-label">Patch Tool</text>
+  <text x="145" y="545" text-anchor="middle" class="small-label">Receives patch</text>
+  <text x="145" y="562" text-anchor="middle" class="small-label">from Backend</text>
+  <text x="145" y="579" text-anchor="middle" class="small-label">Validates JSON</text>
+  <text x="145" y="596" text-anchor="middle" class="small-label">Schema check</text>
+  
+  <!-- Resume Document -->
+  <rect x="280" y="495" width="160" height="110" rx="10" class="artifact-box sketch-box"/>
+  <text x="360" y="525" text-anchor="middle" class="box-label">Resume Document</text>
+  <text x="360" y="545" text-anchor="middle" class="small-label">Apply Patches</text>
+  <text x="360" y="562" text-anchor="middle" class="small-label">Surgical Updates</text>
+  <text x="360" y="579" text-anchor="middle" class="small-label">Version Control</text>
+  <text x="360" y="596" text-anchor="middle" class="small-label">Persistence</text>
+  
+  <!-- Live UI -->
+  <rect x="700" y="495" width="140" height="110" rx="10" class="artifact-box sketch-box"/>
+  <text x="770" y="525" text-anchor="middle" class="box-label">Live UI Updates</text>
+  <text x="770" y="545" text-anchor="middle" class="small-label">Real-time render</text>
+  <text x="770" y="562" text-anchor="middle" class="small-label">Diff highlighting</text>
+  <text x="770" y="579" text-anchor="middle" class="small-label">Smooth transitions</text>
+  <text x="770" y="596" text-anchor="middle" class="small-label">Sync across views</text>
+  
+  <!-- Visual: Resume JSON representation -->
+  <g transform="translate(500, 515)">
+    <rect x="0" y="0" width="150" height="80" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="75" y="22" text-anchor="middle" class="box-label" font-size="12">resume.json</text>
+    <text x="10" y="42" class="small-label" font-size="9">{</text>
+    <text x="20" y="55" class="small-label" font-size="9">"skills": [</text>
+    <text x="30" y="68" class="small-label" font-size="9">"React", ✨</text>
+    <text x="20" y="80" class="small-label" font-size="9">]</text>
+    <text x="10" y="92" class="small-label" font-size="9">}</text>
+  </g>
+
+  <!-- === INTRA-LANE ARROWS (horizontal flow) === -->
+  
+  <!-- Backend flow -->
+  <path d="M 210 172 Q 245 172 280 172" class="sketch-arrow"/>
+  <path d="M 440 172 Q 470 172 500 172" class="sketch-arrow"/>
+  <path d="M 630 172 Q 665 172 700 172" class="sketch-arrow"/>
+  
+  <!-- Chat flow -->
+  <path d="M 210 357 Q 245 357 280 357" class="sketch-arrow"/>
+  <path d="M 440 357 Q 470 357 500 357" class="sketch-arrow dashed-arrow"/>
+  <path d="M 625 357 Q 662 357 700 357" class="sketch-arrow"/>
+  
+  <!-- Artifact flow -->
+  <path d="M 210 550 Q 245 550 280 550" class="sketch-arrow"/>
+  <path d="M 440 550 Q 470 550 500 555" class="sketch-arrow"/>
+  <path d="M 650 550 Q 675 550 700 550" class="sketch-arrow"/>
+
+  <!-- === CROSS-LANE ARROWS (between channels) === -->
+  
+  <!-- Backend → Chat: Response text -->
+  <path d="M 440 215 Q 440 235 440 255" class="sketch-arrow conn-backend-chat" stroke-dasharray="4,3"/>
+  <rect x="365" y="228" width="150" height="18" rx="4" fill="#f3e8ff" stroke="#9333ea" stroke-width="1"/>
+  <text x="440" y="241" text-anchor="middle" class="arrow-label" fill="#7c3aed">response text</text>
+  
+  <!-- Backend → Artifact: Tool call with patch -->
+  <path d="M 360 215 Q 360 350 360 495" class="sketch-arrow conn-backend-artifact"/>
+  <rect x="295" y="345" width="130" height="18" rx="4" fill="#ffedd5" stroke="#ea580c" stroke-width="1"/>
+  <text x="360" y="358" text-anchor="middle" class="arrow-label" fill="#c2410c">tool call + patch</text>
+  
+  <!-- Artifact → Chat: Live update notification -->
+  <path d="M 700 550 Q 625 550 625 405" class="sketch-arrow conn-artifact-chat" stroke-dasharray="5,3"/>
+  <rect x="640" y="465" width="120" height="18" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="700" y="478" text-anchor="middle" class="arrow-label" fill="#15803d">live update</text>
+  
+  <!-- Chat → Backend: User message -->
+  <path d="M 280 330 Q 220 330 220 250 Q 220 215 280 215" class="sketch-arrow conn-backend-chat" stroke-dasharray="4,3"/>
+  <rect x="150" y="225" width="100" height="18" rx="4" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+  <text x="200" y="238" text-anchor="middle" class="arrow-label" fill="#1d4ed8">user msg</text>
+
+  <!-- Legend/Key -->
+  <g transform="translate(780, 75)">
+    <rect x="0" y="0" width="190" height="90" rx="8" fill="#fff" stroke="#d1d5db" stroke-width="2"/>
+    <text x="95" y="22" text-anchor="middle" class="box-label" font-size="12">Parallel Processing</text>
+    
+    <line x1="15" y1="38" x2="45" y2="38" stroke="#9333ea" stroke-width="2"/>
+    <text x="55" y="42" class="small-label">Backend ↔ Chat</text>
+    
+    <line x1="15" y1="55" x2="45" y2="55" stroke="#ea580c" stroke-width="2"/>
+    <text x="55" y="59" class="small-label">Backend → Artifact</text>
+    
+    <line x1="15" y1="72" x2="45" y2="72" stroke="#16a34a" stroke-width="2"/>
+    <text x="55" y="76" class="small-label">Artifact → Chat</text>
+  </g>
+
+  <!-- Note about parallel execution -->
+  <text x="500" y="635" text-anchor="middle" class="small-label" fill="#6b7280" font-style="italic">
+    All three streams process simultaneously — user sees chat responses while resume updates in real-time
+  </text>
+
+</svg>

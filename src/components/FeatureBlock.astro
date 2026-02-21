@@ -1,0 +1,42 @@
+---
+// FeatureBlock - A lightweight TL;DR/feature highlight component for MDX
+// "Soft brutal" design: accent lines, hairline borders, minimal chrome
+
+export interface Feature {
+	title: string;
+	description: string;
+}
+
+export interface Props {
+	title?: string;
+	features: Feature[];
+}
+
+const { title = "Key Principles", features } = Astro.props as Props;
+---
+
+<section class="feature-block py-2 pt-1 px-2 mb-4">
+	{title && (
+		<p class="text-sm md:text-base tracking-[0.12em] uppercase mb-2 font-mono font-semibold text-primary">
+			{title}
+		</p>
+	)}
+	
+	<div class="grid gap-2 md:grid-cols-3">
+		{features.map((feature, i) => (
+			<div class="feature-card border border-base-300 bg-base-200 p-3 shadow-brutal-sm">
+				<div class={`h-0.5 w-8 mb-2 ${
+					i === 0 ? 'bg-primary' : 
+					i === 1 ? 'bg-secondary' : 
+					'bg-accent'
+				}`}></div>
+				<h4 class="text-sm font-semibold tracking-wide mb-0.5 text-base-content">
+					{feature.title}
+				</h4>
+				<p class="text-sm leading-snug opacity-75">
+					{feature.description}
+				</p>
+			</div>
+		))}
+	</div>
+</section>

@@ -1,0 +1,241 @@
+---
+interface Props {
+  videoUrl: string;
+  thumbnailSrc: string;
+  thumbnailAlt: string;
+  caption?: string;
+  aspectRatio?: string;
+}
+
+const {
+  videoUrl,
+  thumbnailSrc,
+  thumbnailAlt,
+  caption,
+  aspectRatio = '16/9',
+} = Astro.props as Props;
+---
+
+<figure class="lazy-video-container">
+  <div class="lazy-video-wrapper" data-video-url={videoUrl} style={`aspect-ratio: ${aspectRatio};`}>
+    <div class="lazy-video-poster" role="button" tabindex="0" aria-label={`Play video: ${thumbnailAlt}`}>
+      <img src={thumbnailSrc} alt={thumbnailAlt} loading="lazy" />
+      <div class="lazy-video-play">
+        <span class="play-circle" aria-hidden="true"></span>
+        <span class="play-triangle" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <div class="lazy-video-embed" aria-hidden="true"></div>
+  </div>
+
+  {caption && <figcaption class="lazy-video-caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .lazy-video-container {
+    margin: 2rem 0;
+  }
+
+  .lazy-video-wrapper {
+    position: relative;
+    width: 100%;
+    border: 3px solid oklch(0.2 0 0);
+    background: oklch(0.95 0 0);
+    overflow: hidden;
+    box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+  }
+
+  .lazy-video-poster {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: pointer;
+    z-index: 2;
+    transition: opacity 0.3s ease;
+  }
+
+  .lazy-video-wrapper.playing .lazy-video-poster {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .lazy-video-poster img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .lazy-video-embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .lazy-video-wrapper.playing .lazy-video-embed {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .lazy-video-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.35);
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    transition: transform 150ms ease, opacity 150ms ease;
+  }
+
+  .lazy-video-poster:hover .lazy-video-play,
+  .lazy-video-poster:focus .lazy-video-play {
+    transform: translate(-50%, -50%) scale(1.06);
+    opacity: 1;
+  }
+
+  /* Play icon: circle + triangle made with CSS */
+  .play-circle {
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    left: 0; top: 0;
+  }
+
+  .play-triangle {
+    position: relative;
+    width: 0;
+    height: 0;
+    border-left: 14px solid rgba(255,255,255,0.95);
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    margin-left: 6px; /* nudges triangle visually centered */
+  }
+
+  .lazy-video-embed :global(iframe) {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: 0;
+  }
+
+  .lazy-video-caption {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: oklch(0.5 0 0);
+    font-style: italic;
+    text-align: center;
+  }
+
+
+
+  /* Dark mode */
+  [data-theme="neobrutalism-dark"] .lazy-video-wrapper {
+    background: oklch(0.2 0 0);
+    border-color: oklch(0.4 0 0);
+  }
+
+  [data-theme="neobrutalism-dark"] .lazy-video-caption {
+    color: oklch(0.6 0 0);
+  }
+</style>
+
+<script>
+  function initLazyVideos() {
+    const wrappers = document.querySelectorAll('.lazy-video-wrapper');
+    
+    Array.from(wrappers).forEach((el) => {
+      const wrapper = el as HTMLElement;
+      if (wrapper.dataset.lazyVideoInit === 'true') return;
+      wrapper.dataset.lazyVideoInit = 'true';
+      
+      const poster = wrapper.querySelector('.lazy-video-poster') as HTMLElement | null;
+      const embed = wrapper.querySelector('.lazy-video-embed') as HTMLElement | null;
+      const url = wrapper.dataset.videoUrl;
+      
+      if (!poster || !embed || !url) return;
+
+      let iframe: HTMLIFrameElement | null = null;
+      let isLoaded = false;
+
+      // Load the iframe in the background when near viewport
+      const loadIframe = () => {
+        if (isLoaded || iframe) return;
+        
+        iframe = document.createElement('iframe');
+        iframe.src = url;
+        const posterImg = poster.querySelector('img') as HTMLImageElement | null;
+        iframe.title = posterImg?.alt || 'Embedded video';
+        iframe.setAttribute('allow', 'fullscreen; encrypted-media; picture-in-picture');
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('webkitallowfullscreen', '');
+        iframe.setAttribute('mozallowfullscreen', '');
+        iframe.referrerPolicy = 'no-referrer-when-downgrade';
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.display = 'block';
+        iframe.style.border = '0';
+        
+        // Load in background (hidden)
+        embed.innerHTML = '';
+        embed.appendChild(iframe);
+        isLoaded = true;
+      };
+
+      // Show the already-loaded iframe
+      const showVideo = () => {
+        if (!isLoaded) {
+          loadIframe();
+        }
+        wrapper.classList.add('playing');
+        embed.setAttribute('aria-hidden', 'false');
+      };
+
+      // Use IntersectionObserver to preload when near viewport
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              // Preload iframe when within 200px of viewport
+              loadIframe();
+              observer.unobserve(wrapper);
+            }
+          });
+        },
+        {
+          rootMargin: '200px 0px',
+          threshold: 0
+        }
+      );
+
+      // Start observing
+      observer.observe(wrapper);
+
+      // User interaction handlers
+      poster.addEventListener('click', showVideo);
+      poster.addEventListener('keydown', (e) => {
+        const ke = e as KeyboardEvent;
+        if (ke.key === 'Enter' || ke.key === ' ') {
+          ke.preventDefault();
+          showVideo();
+        }
+      });
+    });
+  }
+
+  initLazyVideos();
+  document.addEventListener('astro:after-swap', initLazyVideos);
+</script>
