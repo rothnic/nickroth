@@ -269,38 +269,131 @@ In practice, the JSON Resume schema is used for data storage and validation (via
 
 ```json
 {
+  // [!section:basics] Core identity and contact information
   "basics": {
     "name": "Nick Roth",
     "label": "Full-Stack Developer",
     "email": "nick@example.com",
-    "summary": "Backend engineer with 8+ years experience",
-    "location": { "city": "San Francisco", "countryCode": "US" }
+    "phone": "(555) 123-4567",
+    "url": "https://nickroth.com",
+    "summary": "Backend engineer with 8+ years experience building scalable systems",
+    "location": {
+      "city": "San Francisco",
+      "countryCode": "US",
+      "region": "California"
+    },
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "username": "nickroth",
+        "url": "https://linkedin.com/in/nickroth"
+      },
+      {
+        "network": "GitHub",
+        "username": "rothnic",
+        "url": "https://github.com/rothnic"
+      }
+    ]
   },
+  // [!section-end]
+  // [!section:work] Professional experience with achievements
   "work": [
     {
-      "company": "Acme Corp",
+      "name": "Acme Corp",
       "position": "Senior Engineer",
+      "url": "https://acme.example",
       "startDate": "2022-01",
-      "highlights": ["Led API redesign", "Reduced latency by 40%"]
+      "endDate": null,
+      "summary": "Leading backend architecture for payment processing platform",
+      "highlights": [
+        "Led API redesign reducing latency by 40%",
+        "Migrated legacy monolith to microservices",
+        "Built real-time event streaming pipeline"
+      ]
+    },
+    {
+      "name": "TechStart Inc",
+      "position": "Full-Stack Developer",
+      "startDate": "2019-06",
+      "endDate": "2021-12",
+      "summary": "Full-stack development for SaaS analytics platform",
+      "highlights": [
+        "Implemented customer-facing dashboard with React",
+        "Optimized PostgreSQL queries reducing load times by 60%"
+      ]
     }
   ],
+  // [!section-end]
+  // [!section:education] Academic background and certifications
   "education": [
     {
       "institution": "University of Washington",
-      "studyType": "Computer Science",
-      "startDate": "2014-09"
+      "url": "https://uw.edu",
+      "area": "Computer Science",
+      "studyType": "Bachelor of Science",
+      "startDate": "2014-09",
+      "endDate": "2018-06",
+      "score": "3.8 GPA",
+      "courses": ["Distributed Systems", "Machine Learning", "Algorithms"]
     }
   ],
+  // [!section-end]
+  // [!section:skills] Technical competencies and proficiency levels
   "skills": [
-    { "name": "TypeScript", "level": "advanced" },
-    { "name": "Python", "level": "intermediate" }
+    {
+      "name": "TypeScript",
+      "level": "advanced",
+      "keywords": ["Node.js", "React", "Next.js"]
+    },
+    {
+      "name": "Python",
+      "level": "intermediate",
+      "keywords": ["Django", "FastAPI", "Data Processing"]
+    },
+    {
+      "name": "Infrastructure",
+      "level": "intermediate",
+      "keywords": ["AWS", "Docker", "Kubernetes", "Terraform"]
+    }
   ],
+  // [!section-end]
+  // [!section:projects] Notable projects and open source contributions
   "projects": [
     {
       "name": "Resume Chatbot",
-      "description": "AI-powered resume editor with streaming JSON patches"
+      "description": "AI-powered resume editor with streaming JSON patches",
+      "highlights": [
+        "Built with Next.js and Vercel AI SDK",
+        "Implements RFC 6902 JSON Patch for surgical edits",
+        "Real-time collaborative editing with SSE"
+      ],
+      "keywords": ["AI", "Streaming", "JSON Patch"],
+      "startDate": "2024-11",
+      "url": "https://github.com/rothnic/resume-chatbot"
+    }
+  ],
+  // [!section-end]
+  // [!section:awards] Recognitions and achievements
+  "awards": [
+    {
+      "title": "Engineering Excellence Award",
+      "date": "2023-12",
+      "awarder": "Acme Corp",
+      "summary": "For leading the successful platform migration"
+    }
+  ],
+  // [!section-end]
+  // [!section:publications] Articles, papers, and published works
+  "publications": [
+    {
+      "name": "Streaming Architecture Patterns",
+      "publisher": "Tech Blog",
+      "releaseDate": "2024-03",
+      "url": "https://nickroth.com/blog/streaming-patterns",
+      "summary": "Exploring real-time data patterns in modern web applications"
     }
   ]
+  // [!section-end]
 }
 ```
 
