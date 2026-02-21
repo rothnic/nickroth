@@ -373,6 +373,12 @@ const { src, alt, caption, height = '400px' } = Astro.props;
   .excalidraw-container :global(.ex-unknown-fill)   { fill: var(--color-base-200); }
   .excalidraw-container :global(.ex-unknown-stroke) { stroke: var(--color-base-content); }
 
+  /* Force all text elements to use theme-aware base-content color */
+  /* This overrides any palette-mapped colors that might not contrast well */
+  .excalidraw-container :global(text) {
+    fill: var(--color-base-content) !important;
+  }
+
   /* Fill classes */
   .excalidraw-container :global(.ex-black-fill)    { fill: var(--ex-black); }
   .excalidraw-container :global(.ex-white-fill)    { fill: var(--ex-white); }

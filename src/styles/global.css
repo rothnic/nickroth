@@ -1334,37 +1334,29 @@
 	letter-spacing: 0.02em;
 }
 
-/* Inject ## before the prefix content */
+/* Inject ## before the prefix content - matches h2-prefix color */
 .prose-content h2 .h2-prefix::before {
 	content: "## ";
-	color: var(--color-primary);
+	color: inherit;
 	font-weight: 400;
 	opacity: 0.4;
 }
 
-/* H3 - shows # via ::before pseudo element */
-.prose-content h3 {
-	/* Hash injected via ::before */
-}
-
-.prose-content h3::before {
+/* H3 - shows # via ::before pseudo element (only direct children of prose-content) */
+.prose-content > h3::before {
 	content: "# ";
 	font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-	color: var(--color-primary);
+	color: var(--color-base-content);
 	font-weight: 400;
 	opacity: 0.4;
 	font-size: 0.9em;
 }
 
-/* H4 - shows #### via ::before pseudo element */
-.prose-content h4 {
-	/* Hash injected via ::before */
-}
-
-.prose-content h4::before {
+/* H4 - shows #### via ::before pseudo element (only direct children of prose-content) */
+.prose-content > h4::before {
 	content: "#### ";
 	font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-	color: var(--color-primary);
+	color: var(--color-base-content);
 	font-weight: 400;
 	opacity: 0.4;
 	font-size: 0.85em;
@@ -2037,14 +2029,21 @@
 }
 
 /* Fix Mermaid text colors in dark mode - override static themeVariables */
+/* Aggressive selector list to catch all text elements in various diagram types */
 [data-theme="neobrutalism-dark"] .prose-content .mermaid text,
 [data-theme="neobrutalism-dark"] .prose-content .mermaid .nodeLabel,
 [data-theme="neobrutalism-dark"] .prose-content .mermaid .label,
 [data-theme="neobrutalism-dark"] .prose-content .mermaid .node text,
 [data-theme="neobrutalism-dark"] .prose-content .mermaid .actor text,
-[data-theme="neobrutalism-dark"] .prose-content .mermaid .messageText {
+[data-theme="neobrutalism-dark"] .prose-content .mermaid .messageText,
+[data-theme="neobrutalism-dark"] .prose-content .mermaid .label text,
+[data-theme="neobrutalism-dark"] .prose-content .mermaid g text,
+[data-theme="neobrutalism-dark"] .prose-content .mermaid .node rect + text,
+[data-theme="neobrutalism-dark"] .prose-content .mermaid [class*="label"] text,
+[data-theme="neobrutalism-dark"] .prose-content .mermaid tspan {
 	fill: var(--color-base-content) !important;
 	color: var(--color-base-content) !important;
+	stroke: none !important;
 }
 
 /* Dark mode adjustments - only elements that need special dark-specific overrides */
