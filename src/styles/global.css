@@ -1953,11 +1953,22 @@
 	max-height: 400px;
 }
 
-/* Actor boxes (sequence diagrams) */
-.prose-content .mermaid .actor {
+/* Actor boxes (sequence diagrams) - HIGH SPECIFICITY */
+.prose-content .mermaid .actor,
+.prose-content .mermaid g.actor rect,
+.prose-content .mermaid svg .actor rect,
+.prose-content .mermaid g.actor path,
+.prose-content .mermaid svg .actor path {
 	fill: var(--color-base-200) !important;
 	stroke: var(--color-primary) !important;
 	stroke-width: 2px !important;
+}
+
+/* Force all actor-related rectangles */
+.prose-content .mermaid svg [class*="actor"] rect,
+.prose-content .mermaid svg g[class*="actor"] rect {
+	fill: var(--color-base-200) !important;
+	stroke: var(--color-primary) !important;
 }
 
 .prose-content .mermaid .actor-line {
