@@ -15,7 +15,7 @@ roleCategory: "FULL-STACK DEVELOPER"
 
 import LazyVideo from '../../components/LazyVideo.astro';
 import FeatureBlock from '../../components/FeatureBlock.astro';
-import ExcalidrawDiagram from '../../components/ExcalidrawDiagram.astro';
+import ExcalidrawDiagram from '../../components/diagram/ExcalidrawDiagram.astro';
 import Callout from '../../components/Callout.astro';
 
 # AI-Powered Resume Builder with Real-Time Streaming
@@ -267,8 +267,7 @@ This implementation uses Option C--streaming JSON Patch with partial-object stre
 
 In practice, the JSON Resume schema is used for data storage and validation (via Zod), but a custom renderer was built to match the application's visual style rather than using off-the-shelf HTML themes. This provides complete control over the presentation while benefiting from the standard's structured data model.
 
-```json collapse={3-28, 31-52, 55-66, 69-83, 86-98, 101-108, 111-120}
-// Full JSON Resume schema with collapsible sections
+```json title="resume.json" collapse={10-118}
 {
   "basics": {
     "name": "Nick Roth",
@@ -612,13 +611,28 @@ The document pane renders structured state; the chat pane explains intent and co
 
 This architecture separates concerns: the Chat Stream keeps the UI responsive while the Patch Stream performs guarded, auditable mutations.
 
-1. User sends a message to the Conversation Agent, which produces the Chat Stream for UI feedback.
-2. The Chat Stream emits text while the planner evaluates intent in parallel.
-3. When intent requires a document change, the planner emits a Semantic Tool Call that starts the Patch Stream.
-4. The Patch Tool immediately loads the document and streams a snapshot to the Artifact UI so users see the current state.
-5. A nested Patch LLM generates RFC 6902 patch ops incrementally, sending Partial-Object updates.
-6. Once patches stabilize, the Patch Apply step commits them to the Resume Database.
-7. The updated artifact state streams back to the Artifact UI and synchronizes with the Chat UI.
+**Use Case: User requests a resume update**
+
+1. **User** sends a message to the **Conversation Agent**  
+   *Example: "Add machine learning skills to my resume"*
+
+2. **Chat Stream** responds immediately for UI feedback  
+   The agent streams: *"I'll help you add ML skills..."* while processing in parallel.
+
+3. **Planner** evaluates intent  
+   Determines `Intent: UPDATE_RESUME` and triggers `Tool: PATCH_STREAM`
+
+4. **Patch Tool** starts the **Patch Stream**  
+   Loads the document from the **Resume Database** and streams a snapshot to the **Artifact UI**
+
+5. **Patch LLM** generates **RFC 6902 operations** incrementally  
+   Each partial patch streams to the UI as it stabilizes, showing live preview of changes.
+
+6. **Patch Apply** commits validated operations  
+   Once patches stabilize, they're validated and committed to the database.
+
+7. **Synchronization** across all channels  
+   Updated state streams to the **Artifact UI** and confirmation appears in the **Chat UI**.
 
 **Key benefits:** Low conversational latency, auditable edits via small RFC 6902 operations, and safe incremental updates with validation.
 

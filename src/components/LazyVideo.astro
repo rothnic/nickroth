@@ -193,6 +193,12 @@ const {
         embed.innerHTML = '';
         embed.appendChild(iframe);
         isLoaded = true;
+        
+        // Auto-show the video once iframe loads so user can play with 1 click
+        iframe.addEventListener('load', () => {
+          wrapper.classList.add('playing');
+          embed.setAttribute('aria-hidden', 'false');
+        });
       };
 
       // Show the already-loaded iframe

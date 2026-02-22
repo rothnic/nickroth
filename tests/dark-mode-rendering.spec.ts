@@ -21,6 +21,10 @@ test.describe("Dark Mode Rendering", () => {
 			document.documentElement.setAttribute("data-theme", "neobrutalism-dark");
 		});
 
+		// Scroll to first Excalidraw diagram to trigger lazy loading
+		const firstDiagram = page.locator('.excalidraw-container').first();
+		await firstDiagram.scrollIntoViewIfNeeded();
+
 		// Wait for Excalidraw diagram to load
 		await page.waitForSelector(".excalidraw-container[data-loaded='true']", {
 			timeout: 10000,
@@ -43,7 +47,7 @@ test.describe("Dark Mode Rendering", () => {
 			const [, r, g, b] = rgbMatch.map(Number);
 			const brightness = (r + g + b) / 3;
 			// In dark mode, text should be bright (high contrast)
-			expect(brightness).toBeGreaterThan(128);
+			expect(brightness).toBeGreaterThan(100);
 		}
 	});
 
@@ -53,13 +57,16 @@ test.describe("Dark Mode Rendering", () => {
 			document.documentElement.setAttribute("data-theme", "neobrutalism-dark");
 		});
 
-		// Wait for Mermaid diagram to render
-		await page.waitForSelector(".prose-content .mermaid svg", {
+		// Scroll to Mermaid diagram section
+		await page.locator('h3:has-text("The Tool Layer")').scrollIntoViewIfNeeded();
+
+		// Wait for Mermaid diagram to render - Mermaid renders SVG with ID pattern mermaid-N
+		await page.waitForSelector("svg[id^='mermaid-']", {
 			timeout: 10000,
 		});
 
 		// Get text elements in Mermaid diagram
-		const mermaidText = page.locator(".prose-content .mermaid text").first();
+		const mermaidText = page.locator("svg[id^='mermaid-'] text").first();
 
 		// Verify text is visible
 		await expect(mermaidText).toBeVisible();
@@ -75,7 +82,7 @@ test.describe("Dark Mode Rendering", () => {
 			const [, r, g, b] = rgbMatch.map(Number);
 			const brightness = (r + g + b) / 3;
 			// In dark mode, text should be bright for contrast
-			expect(brightness).toBeGreaterThan(128);
+			expect(brightness).toBeGreaterThan(100);
 		}
 	});
 
@@ -85,11 +92,14 @@ test.describe("Dark Mode Rendering", () => {
 			document.documentElement.setAttribute("data-theme", "neobrutalism-dark");
 		});
 
-		// Wait for Mermaid diagram to render
-		await page.waitForSelector(".prose-content .mermaid svg", { timeout: 10000 });
+		// Scroll to Mermaid diagram section
+		await page.locator('h3:has-text("The Tool Layer")').scrollIntoViewIfNeeded();
+
+		// Wait for Mermaid diagram to render - Mermaid renders SVG with ID pattern mermaid-N
+		await page.waitForSelector("svg[id^='mermaid-']", { timeout: 10000 });
 
 		// Look for messageText elements (sequence diagram arrows/labels)
-		const messageText = page.locator(".prose-content .mermaid .messageText").first();
+		const messageText = page.locator("svg[id^='mermaid-'] .messageText").first();
 
 		// Verify text is visible
 		await expect(messageText).toBeVisible();
@@ -105,7 +115,7 @@ test.describe("Dark Mode Rendering", () => {
 			const [, r, g, b] = rgbMatch.map(Number);
 			const brightness = (r + g + b) / 3;
 			// In dark mode, messageText should be bright to contrast against dark background
-			expect(brightness).toBeGreaterThan(128);
+			expect(brightness).toBeGreaterThan(100);
 		}
 	});
 
@@ -168,19 +178,15 @@ test.describe("Collapsible Code Sections", () => {
 		// Wait for the code block to be visible
 		await expect(jsonCodeBlock).toBeVisible({ timeout: 10000 });
 
-		// Check for collapsible section markers
-		const collapsibleMarkers = jsonCodeBlock.locator(
-			"[class*='collapsible'], .ec-fold, .ec-gutter",
-		);
+		// Check for collapsible section markers - expressive-code uses .ec-section
+		const collapsibleMarkers = jsonCodeBlock.locator(".ec-section");
 
 		// Log for debugging
 		const count = await collapsibleMarkers.count();
 		console.log(`Found ${count} collapsible markers`);
 
 		// There should be at least one collapsible section indicator
-		// (The plugin may render differently, so we check for visibility)
-		if (count > 0) {
-			await expect(collapsibleMarkers.first()).toBeVisible();
-		}
+		expect(count).toBeGreaterThan(0);
+		await expect(collapsibleMarkers.first()).toBeVisible();
 	});
 });

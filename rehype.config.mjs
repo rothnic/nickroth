@@ -59,7 +59,7 @@ export const mermaidThemeVariables = {
 // Expressive Code configuration - shared between MDX and Markdown processing
 export const expressiveCodeConfig = {
 	themes: ["laserwave"],
-	plugins: [pluginCollapsibleSections],
+	plugins: [pluginCollapsibleSections()],
 	styleOverrides: {
 		borderRadius: "0",
 		borderWidth: "2px",
