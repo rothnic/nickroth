@@ -367,8 +367,11 @@ const { src, alt, caption, height = '400px' } = Astro.props;
 
   /* Text elements: Only override black text to use base-content for proper contrast in dark mode.
      Colored text (ex-red-4-fill, etc.) keeps its palette color via the CSS variables above.
-     This ensures black text (#1e1e1e) becomes light in dark mode, while red text stays red. */
-  .excalidraw-container :global(text.ex-black-fill) {
+     This ensures black text (#1e1e1e) becomes light in dark mode, while red text stays red.
+     
+     NOTE: These rules must be global (not scoped to .excalidraw-container) because the SVG
+     can be moved to the modal by DiagramExpandWrapper, where it loses the container context. */
+  :global(text.ex-black-fill) {
     fill: var(--color-base-content) !important;
   }
 
