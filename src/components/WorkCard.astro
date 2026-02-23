@@ -252,7 +252,7 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
       <!-- Main Content Column -->
       <div class="lg:col-span-3">
         {Content && (
-          <div class="solid-bg rounded-none sm:rounded-xl border-y-2 border-x-0 sm:border-2 border-base-300 p-4 sm:p-6 shadow-sm">
+          <div class="solid-bg rounded-none sm:rounded-xl border-y-2 border-x-0 sm:border-2 border-base-300 pt-0 sm:pt-0 px-4 sm:px-6 pb-4 sm:pb-6 shadow-sm">
             <div class="prose-content">
               <Content />
             </div>
@@ -349,3 +349,5 @@ const dateRange = `${formatDate(startDate)} – ${endDate ? formatDate(endDate) 
   setupHoverPreload();
   document.addEventListener('astro:page-load', setupHoverPreload);
 </script>
+
+<script src="../scripts/heading-anchor-links.ts" />

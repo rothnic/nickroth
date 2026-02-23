@@ -209,11 +209,14 @@ class MermaidDiagramModal {
 	}
 
 	handleMouseDown(e: MouseEvent) {
+		// Only start dragging on left mouse button (button 0)
+		if (e.button !== 0) return;
 		this.isDragging = true;
 		this.lastX = e.clientX;
 		this.lastY = e.clientY;
 		if (this.container) this.container.style.cursor = "grabbing";
 	}
+
 
 	handleMouseMove(e: MouseEvent) {
 		if (!this.isDragging) return;

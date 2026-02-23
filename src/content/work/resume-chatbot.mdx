@@ -17,27 +17,37 @@ import LazyVideo from '../../components/LazyVideo.astro';
 import FeatureBlock from '../../components/FeatureBlock.astro';
 import ExcalidrawDiagram from '../../components/diagram/ExcalidrawDiagram.astro';
 import Callout from '../../components/Callout.astro';
+import IntroScreenshot from '../../assets/images/projects/resume-chatbot-intro-screenshot.png';
 
 # AI-Powered Resume Builder with Real-Time Streaming
 
-## <span class="h2-prefix">PROBLEM:</span> <span class="h2-title">Why iterative artifact edits fail at scale</span>
+## <span class="h2-prefix">THE CHALLENGE:</span> <span class="h2-title">When AI document editing goes off the rails</span>
 
 **You're in a conversation with your resume.**
 
-You type: *"Add Python to my skills and tighten up that Backend Engineer summary to highlight the API work."* You expect surgical precision - a new skill entry here, a rewritten paragraph there, everything else untouched.
+You type: *"Add Python to my skills and tighten up that Backend Engineer summary to highlight the API work."* You expect surgical precision-a new skill entry here, a rewritten paragraph there, everything else untouched.
 
 But that's not how AI-driven document editing usually works.
 
-Without structure, the same request might rewrite your entire skills section, drop half your job history, or generate a summary that sounds nothing like you. Worse, agents often read only portions of the document and make assumptions about the rest. As patches accumulate on top of incorrect assumptions, errors compound. The problem isn't the AI's intent - it's the lack of **constraints**.
+Without structure, the same request might rewrite your entire skills section, drop half your job history, or generate a summary that sounds nothing like you. Worse, agents often read only portions of the document and make assumptions about the rest. As patches accumulate on top of incorrect assumptions, errors compound. The problem isn't the AI's intent-it's the lack of **constraints**.
 
-**Real-time collaboration requires three things:**
+<figure class="media-figure">
+  <img src={IntroScreenshot.src} alt="Resume chatbot interface orientation: left = chat pane, right = artifact pane" style={{width: '100%', maxHeight: '560px', objectFit: 'cover'}} />
+  <figcaption>
+    Interface orientation - left: chat pane (where you type requests and see conversational feedback); right: artifact pane (structured resume view that updates as patches are applied). Chat intent drives artifact updates in real time.
+  </figcaption>
+</figure>
+
+<section>
+
+## <span class="h2-prefix">REAL-TIME COLLABORATION:</span> <span class="h2-title">Three core requirements</span>
 
 <FeatureBlock
   title=""
   features={[
     {
       title: "A Schema",
-      description: "Every resume field follows a predictable structure - skills, experience, projects - so the UI renders consistently no matter who edits what"
+      description: "Every resume field follows a predictable structure-skills, experience, projects-so the UI renders consistently no matter who edits what"
     },
     {
       title: "Live Feedback",
@@ -45,61 +55,65 @@ Without structure, the same request might rewrite your entire skills section, dr
     },
     {
       title: "Surgical Updates",
-      description: "Modifications target exactly what you specify without touching adjacent content - whether the AI makes them or you do"
+      description: "Modifications target exactly what you specify without touching adjacent content-whether the AI makes them or you do"
     }
   ]}
-/>
-
-This is the story of building that system.
-
-<ExcalidrawDiagram
-  src="/docs/project/resume-chatbot-simple.svg"
-  alt="Resume chatbot concept diagram showing user request flowing through AI processing to structured resume output"
-  height="500px"
 />
 
 **Core challenges with AI-driven document edits:**
 
-- **Partial context windows** - Edits apply to a slice and drop linked context, even when the user expects global context to be preserved
-- **Ambiguous match targets** - Similar text blocks cause the wrong node to be rewritten instead of the exact entry selected by the user
-- **Patch sequencing drift** - Multiple edits that should apply cleanly instead cause newline boundaries to shift and list formatting to degrade
-- **Unstable insertion behavior** - Partial output causes jumps, placeholders, and visual jitter instead of smooth text appearance
-- **Rich-format constraints** - Markdown-first edits break typed structures downstream, even when fields should stay validated and schema-safe
+- **Partial context windows**-Edits apply to a slice and drop linked context, even when the user expects global context to be preserved
+- **Ambiguous match targets**-Similar text blocks cause the wrong node to be rewritten instead of the exact entry selected by the user
+- **Patch sequencing drift**-Multiple edits that should apply cleanly instead cause newline boundaries to shift and list formatting to degrade
+- **Unstable insertion behavior**-Partial output causes jumps, placeholders, and visual jitter instead of smooth text appearance
+- **Rich-format constraints**-Markdown-first edits break typed structures downstream, even when fields should stay validated and schema-safe
 
 These failure modes compound when multiple users, models, or edits operate concurrently. Small unpredictabilities become merge conflicts, audit blind spots, and a poor UX that erodes trust.
 
-<FeatureBlock
-  title="Key Principles"
-  features={[
-    {
-      title: "Collaborative Interface",
-      description: "User and AI work together inside explicit structure and constraints"
-    },
-    {
-      title: "Surgical Precision",
-      description: "Targeted updates apply only where intended, without full document replacement"
-    },
-    {
-      title: "Managed Revisions",
-      description: "Clear patch history makes recovery and review straightforward"
-    }
-  ]}
-/>
+</section>
 
-## <span class="h2-prefix">STREAMING TYPES:</span> <span class="h2-title">Text vs object vs partial-object streams</span>
+## <span class="h2-prefix">STRUCTURED DATA:</span> <span class="h2-title">The foundation for reliable editing</span>
 
-When building AI-powered interfaces, not all streaming is the same. Each stream type has different reliability characteristics and UX implications.
+The solution to unpredictable AI edits is structure. When every piece of content has a defined location and format, changes become precise and isolated.
+
+**Why structure prevents errors:**
+
+- **Isolation**-Each field lives at a specific path (`/skills/0/name`), so edits can't accidentally bleed into adjacent content
+- **Validation**-Schema enforcement catches malformed data before it reaches the document
+- **Predictability**-The UI knows exactly how to render each field type, regardless of who made the change
+
+[JSON Resume](https://jsonresume.org/) serves as the data format-an open-source standard for representing resume data as structured JSON. This format provides a simple yet extensible schema that covers all essential resume sections: basics, work experience, education, skills, projects, and more.
+
+**Why JSON Resume:**
+
+- **Established standard**-Widely adopted schema with clear documentation and community support
+- **Built-in validation**-JSON Schema definition enables automated validation of resume structure and data types
+- **Existing tooling**-Ecosystem includes renderers for HTML export and PDF generation
+- **Extensible design**-Custom properties can be added for domain-specific needs while maintaining compatibility
+- **Portable format**-Plain JSON enables easy data migration and interoperability
+
+In practice, the JSON Resume schema is used for data storage and validation (via Zod), but a custom renderer was built to match the application's visual style rather than using off-the-shelf HTML themes. This provides complete control over the presentation while benefiting from the standard's structured data model.
+
+Structured paths are unambiguous: a pointer like `/skills/0/name` refers to the first skill's name. Contrastingly, asking "find JavaScript in the text" can hit many places, match partial phrases, or pick the wrong list. With JSON Pointers and RFC 6902 patches we target exact keys and array indices.
+
+Finally, mutations are validated with a schema layer (Zod in this stack). Zod catches missing required fields, wrong types, and invalid shapes before a patch is applied, so the editor never writes malformed resume state.
+
+**But structure introduces a new challenge.** Traditional structured editing feels batch-based and slow. You make a request, wait for the AI to process, and then see the complete result. This breaks the conversational flow users expect from chat interfaces. The question becomes: *Can we have both the reliability of structured data and the responsiveness of streaming text?*
+
+## <span class="h2-prefix">THE STREAMING PARADOX:</span> <span class="h2-title">Structure vs. real-time feedback</span>
+
+When building AI-powered interfaces, not all streaming is the same. Each stream type has different reliability characteristics and UX implications-and this creates a fundamental tension.
 
 ### Text Streams
 
-Human-facing response text for conversational flow. Great for chat, but problematic for structured edits at scale. A large sequence of edits often results in accidentally overwriting information or duplicating headings - especially as the context grows for the primary agent.
+Human-facing response text for conversational flow. Great for chat, but problematic for structured edits at scale. A large sequence of edits often results in accidentally overwriting information or duplicating headings-especially as the context grows for the primary agent.
 
 Text streams also limit the ability to provide rich, custom rendering. A spreadsheet rendered as Markdown is difficult to edit precisely. An agent can't practically make small edits to a Markdown table cell without regenerating the entire table.
 
-Yet text streaming has one clear advantage: you can follow along as the agent works. You see the edits happening in real-time, like watching a human collaborator type.
+Yet text streaming has one clear advantage: **you can follow along as the agent works**. You see the edits happening in real-time, like watching a human collaborator type.
 
 <Callout type="tip" label="Core Challenge">
-  How to combine **rich custom rendering** with **streaming edits**? The goal is to watch the agent work in real-time, like a human collaborator typing, but structured components - tables, code blocks, resumes - are also needed that plain text can't provide.
+  How to combine **rich custom rendering** with **streaming edits**? The goal is to watch the agent work in real-time, like a human collaborator typing, but structured components-tables, code blocks, resumes-are also needed that plain text can't provide.
 </Callout>
 
 ### Object/Tool-Call Streams
@@ -115,73 +129,104 @@ Machine-facing structured outputs for deterministic actions. Frameworks like the
 
 The challenge: tools like `addSkill` are **schema-specific**. Each field pattern needs its own tool definition, so the approach doesn't transfer to other document types. A spreadsheet editor would need entirely different tools (`addColumn`, `updateCell`), and a code editor would need yet another set. This fragments prompting strategies and prevents reuse across domains.
 
-Even with streaming, the user still waits for each complete tool call before seeing updates - and the complexity of managing dozens of field-specific tools grows quickly.
+Even with streaming, the user still waits for each complete tool call before seeing updates-and the complexity of managing dozens of field-specific tools grows quickly.
 
-### Partial-Object Streams
+### The Fundamental Tension
 
-The Vercel AI SDK's `streamObject` can return objects in two modes:
+We need structure for reliability, but we want streaming for UX. Traditional approaches force a choice:
 
-**Complete objects**: Wait for the entire object to validate against your schema before emitting. The user sees nothing until the full object is ready.
+- **Text streaming** = great UX, no structure
+- **Full object streaming** = great structure, poor UX (wait for everything)
 
-**Partial objects** (the approach used here): Receive `DeepPartial<YourSchema>` as tokens arrive. Each emission is valid JSON but may not satisfy your schema yet. You decide when it's "complete enough" to use.
+The gap: Can we stream structured updates? To answer that, we need to understand how LLM streaming actually works under the hood.
+
+## <span class="h2-prefix">HOW STREAMING WORKS:</span> <span class="h2-title">From tokens to structured objects</span>
+
+Quick summary
+
+- Text streaming is immediate and human-friendly, but free-form.
+- JSON streaming is structured and safe, but partial tokens can be invalid until they stabilize.
+- Two practical shapes let you act earlier: array-of-ops and partial-object streaming.
+
+### 1: Text streaming, the familiar case
+
+```text
+User: "Tighten my summary to highlight API work."
+AI stream: "Sure. I'll update your summary to focus on API design, reliability, and performance."
+// UI receives: "S", "Su", "Sur", ...
+```
+
+Why it's easy: tokens are plain text so the UI can append them immediately. No parsing, no schema checks.
+
+### 2: Why JSON streaming is harder
+
+- Tokens still arrive incrementally, but partial JSON can be syntactically invalid or misleading.
+- The client must decide when a streamed JSON fragment is "complete enough" to apply.
+
+Example (danger of applying too early):
+
+```text
+// Token stream: "{", " \"op\": ", "\"repl", "ace\"", ...
+// Intermediate parse could produce an invalid or truncated object if abused
+```
+
+### 3: Two schema shapes that let you act earlier
+
+- Array-of-ops: stream an array where each element is a full RFC 6902 operation. Apply each element as it parses.
+
+```json
+[ { "op": "replace", "path": "/summary", "value": "..." },
+  { "op": "add", "path": "/skills/-", "value": { "name": "Python" } }
+]
+```
+
+- Partial-object strategy: stream objects that may evolve. Gate on minimal fields (op + complete pointer + value started) and show progressive previews until the value stabilizes.
+
+```json
+{ "op": "replace", "path": "/skills/2/name" }
+{ "op": "replace", "path": "/skills/2/name", "value": "Py" }
+{ "op": "replace", "path": "/skills/2/name", "value": "Python" }
+```
+
+When to use each
+
+- Use array-of-ops when you can emit independent, self-contained operations and want deterministic apply points.
+- Use partial-object streaming when you need live, typing-like previews for nested text fields without waiting for entire objects.
+
+### 4: Practical gating rules (minimum "complete enough")
+
+- op exists and is one of: add, replace, remove
+- path is a syntactically complete JSON Pointer
+- if op requires a value, the value has at least started streaming (non-null)
+
+Compact stabilizer pseudocode
 
 ```ts
-// Using partial object stream - updates arrive as they are generated
-const result = streamObject({ model, schema: patchSchema, prompt });
-
 for await (const partial of result.partialObjectStream) {
-  // partial is DeepPartial<PatchOperation> - valid JSON, but may not match schema yet
-  // The task: decide when it's safe to apply
-  if (isCompleteEnough(partial)) {
-    applyPatch(document, partial);
-  }
+  if (!isValidOp(partial)) continue
+  if (requiresValue(partial.op) && !hasStartedValue(partial)) continue
+  if (!isCompletePointer(partial.path)) continue
+  applyPatch(document, partial)
 }
 ```
 
-**How it works step by step:**
+**UI guidance for nested text fields**
 
-The LLM emits raw text tokens. The AI SDK accumulates them and parses into valid JSON at each step:
+- Render a typing preview for streaming strings instead of committing final state immediately.
+- Treat array insertions ("/skills/-") as safe once the nested object's keys are present enough to render.
+- Debounce short bursts (100-300ms) and require a token-change threshold to avoid jitter.
 
-```javascript
-// LLM begins emitting: '{ "op": "repl'
-// AI SDK accumulates and parses as valid JSON:
-{ "op": "repl" }
+**When can I use this pattern? (gating checklist)**
 
-// More tokens arrive: 'ace", "path": "/summary"'
-// AI SDK now parses complete op + path:
-{ "op": "replace", "path": "/summary" }
+- Small, path-scoped edits where operations target explicit JSON Pointers.
+- Interfaces that need live previews, not immediate final commits, for long string fields.
+- Systems that accept RFC 6902 operations and can validate/rollback patches.
 
-// Value starts streaming: ', "value": "S'
-{ "op": "replace", "path": "/summary", "value": "S" }
+**Benefits of partial-object stabilization**
 
-// Continues building: 'enior bac'
-{ "op": "replace", "path": "/summary", "value": "Senior bac" }
-
-// Complete value: 'kend engineer with 8+ years'
-{ "op": "replace", "path": "/summary", "value": "Senior backend engineer with 8+ years experience" }
-```
-
-**Key insight**: The AI SDK guarantees valid JSON at each step, but it doesn't guarantee the object matches your schema. That's the implementation's responsibility. In Example 1 above, having complete `op` and `path` might be "complete enough" to start showing the edit in progress, even before the full `value` arrives.
-
-**Streaming object values** works the same way - nested properties fill in as tokens arrive:
-
-```javascript
-// Object value starts building
-{ "op": "add", "path": "/skills/-", "value": { "nam": undefined } }
-
-// Key completes, next property starts  
-{ "op": "add", "path": "/skills/-", "value": { "name": "Pytho", "level": undefined } }
-
-// Values stream in character by character
-{ "op": "add", "path": "/skills/-", "value": { "name": "Python", "level": "intermedia" } }
-
-// Complete object
-{ "op": "add", "path": "/skills/-", "value": { "name": "Python", "level": "intermediate" } }
-```
-
-**Why this matters**: Without partial objects, you'd wait for the entire operation to complete before showing anything. With partial objects, you can start rendering progress immediately - but you need a stabilization layer to decide what's safe to display vs what's still incomplete.
-
-This becomes even more important when batching multiple patches in one tool call (an array of operations). With partial object streaming, the AI SDK provides a valid array structure as objects accumulate - you can process each patch as it arrives. With whole object streaming, you'd wait even longer for ALL patches to complete before seeing any progress.
+- Immediate, path-accurate feedback in the UI.
+- Avoids full-document replacement.
+- Keeps nested text readable with progressive previews until stabilization.
 
 **Related documentation:**
 
@@ -190,7 +235,9 @@ This becomes even more important when batching multiple patches in one tool call
 - [Vercel AI SDK streamObject](https://ai-sdk.dev/docs/reference/ai-sdk-core/stream-object)
 - [BAML streaming and partial parsing](https://docs.boundaryml.com/)
 
-## <span class="h2-prefix">TOOLING OPTIONS:</span> <span class="h2-title">Approaches to structured document edits</span>
+Now that we understand how partial streaming works mechanically, let's evaluate the different approaches for building reliable document editing on top of it.
+
+## <span class="h2-prefix">EVALUATING OPTIONS:</span> <span class="h2-title">Three approaches to structured edits</span>
 
 Given the problem and the streaming options available, three approaches were evaluated for implementing AI-driven document edits.
 
@@ -207,7 +254,7 @@ Create many discrete tools like `addWorkItem`, `replaceSummary`, `updateSkill`, 
 
 - Tool count grows with every new field pattern
 - Streaming contracts fragment across tools
-- Cross-document reuse collapses - each new document type needs its own complete tool suite
+- Cross-document reuse collapses-each new document type needs its own complete tool suite
 
 ### Option B: Full-Object Structured Generation
 
@@ -234,7 +281,7 @@ Emit [RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902) operations (`add`
 
 - Low-latency, path-scoped updates with deterministic apply semantics
 - One mutation model works across nested objects, arrays, and other structured documents
-- Enables true incremental rendering - users see changes as they arrive
+- Enables true incremental rendering-users see changes as they arrive
 
 **Core principles:**
 
@@ -250,23 +297,22 @@ Emit [RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902) operations (`add`
 }
 ```
 
-## <span class="h2-prefix">SOLUTION:</span> <span class="h2-title">Streaming JSON Patch with partial-object stabilization</span>
+**Why JSON Patch wins:**
 
-This implementation uses Option C--streaming JSON Patch with partial-object streams--because it uniquely combines the responsiveness of streaming with the precision of structured operations.
+Unlike schema-specific tools, RFC 6902 operations are universal. The same `add`, `replace`, and `remove` verbs work for resumes, spreadsheets, code files, or any JSON document. This means:
+
+- **Reusable prompting**-The same instructions work across document types
+- **Simpler mental model**-Six operations cover all mutations
+- **Standard tooling**-Existing libraries for validation, testing, and diffing
+- **Auditable history**-Every change is an explicit, reversible operation
+
+## <span class="h2-prefix">THE SOLUTION:</span> <span class="h2-title">Streaming JSON Patch with partial-object stabilization</span>
+
+This implementation uses Option C-streaming JSON Patch with partial-object streams-because it uniquely combines the responsiveness of streaming with the precision of structured operations.
 
 ### The Data Model: JSON Resume as Stable Surface
 
-[JSON Resume](https://jsonresume.org/) serves as the data format - an open-source standard for representing resume data as structured JSON. This format provides a simple yet extensible schema that covers all essential resume sections: basics, work experience, education, skills, projects, and more.
-
-**Why JSON Resume:**
-
-- **Established standard** - Widely adopted schema with clear documentation and community support
-- **Built-in validation** - JSON Schema definition enables automated validation of resume structure and data types
-- **Existing tooling** - Ecosystem includes renderers for HTML export and PDF generation
-- **Extensible design** - Custom properties can be added for domain-specific needs while maintaining compatibility
-- **Portable format** - Plain JSON enables easy data migration and interoperability
-
-In practice, the JSON Resume schema is used for data storage and validation (via Zod), but a custom renderer was built to match the application's visual style rather than using off-the-shelf HTML themes. This provides complete control over the presentation while benefiting from the standard's structured data model.
+[JSON Resume](https://jsonresume.org/) serves as the data format-an open-source standard for representing resume data as structured JSON. This format provides a simple yet extensible schema that covers all essential resume sections: basics, work experience, education, skills, projects, and more.
 
 ```json title="resume.json" collapse={10-118}
 {
@@ -390,10 +436,6 @@ In practice, the JSON Resume schema is used for data storage and validation (via
 }
 ```
 
-Structured paths are unambiguous: a pointer like `/skills/0/name` refers to the first skill's name. Contrastingly, asking "find JavaScript in the text" can hit many places, match partial phrases, or pick the wrong list. With JSON Pointers and RFC 6902 patches we target exact keys and array indices.
-
-Finally, mutations are validated with a schema layer (Zod in this stack). Zod catches missing required fields, wrong types, and invalid shapes before a patch is applied, so the editor never writes malformed resume state.
-
 ### The Tool Layer: Nested Streaming Architecture
 
 The chat agent handles intent and explanation. The patch tool handles state mutation. Inside that tool, a nested model streams patch objects.
@@ -426,7 +468,7 @@ The streaming tool layer uses two distinct schemas working in coordination: the 
 
 #### Tool Schema (Outer Layer)
 
-The `patchResume` tool schema defines the tool's interface - the input it expects from the main chat agent:
+The `patchResume` tool schema defines the tool's interface-the input it expects from the main chat agent:
 
 ```typescript
 // Schema for the tool call itself
@@ -461,7 +503,7 @@ const patchOperationSchema = z.object({
 });
 ```
 
-The key difference: the **tool schema** defines what the tool *receives* (structured data), while the **patch schema** defines what gets *streamed* (partial objects that stabilize into valid operations). The streaming layer doesn't see the tool schema - it sees the patch operations being built token by token until they form complete, valid JSON Patch operations.
+The key difference: the **tool schema** defines what the tool *receives* (structured data), while the **patch schema** defines what gets *streamed* (partial objects that stabilize into valid operations). The streaming layer doesn't see the tool schema-it sees the patch operations being built token by token until they form complete, valid JSON Patch operations.
 
 <Callout type="tip" label="Optimization Note">
   The `z.union` for `value` could be refined per-operation. For `remove` operations, `value` is unused. For `add`/`replace`, the value type depends on the target path. One could use discriminated unions keyed on `op`, but that increases schema complexity. Balance simplicity against precision based on validation needs.
@@ -561,7 +603,7 @@ Independent paths can update in parallel without collisions.
 
 This gives effectively O(1)-style conflict checks for unrelated paths, while history remains append-only through versioned document snapshots.
 
-## <span class="h2-prefix">ARCHITECTURE:</span> <span class="h2-title">System design and implementation</span>
+## <span class="h2-prefix">SYSTEM ARCHITECTURE:</span> <span class="h2-title">Putting it all together</span>
 
 <ExcalidrawDiagram
   src="/docs/project/resume-chatbot-architecture.svg"
@@ -608,7 +650,7 @@ The document pane renders structured state; the chat pane explains intent and co
 - Patch-apply confirmations provide immediate trust signals.
 - The same operation stream powers both visual diff and persisted history.
 
-### System Architecture: Three Synchronized Channels
+### Three Synchronized Channels
 
 This architecture separates concerns: the Chat Stream keeps the UI responsive while the Patch Stream performs guarded, auditable mutations.
 
@@ -637,7 +679,23 @@ This architecture separates concerns: the Chat Stream keeps the UI responsive wh
 
 **Key benefits:** Low conversational latency, auditable edits via small RFC 6902 operations, and safe incremental updates with validation.
 
-
+<FeatureBlock
+  title="Key Principles"
+  features={[
+    {
+      title: "Collaborative Interface",
+      description: "User and AI work together inside explicit structure and constraints"
+    },
+    {
+      title: "Surgical Precision",
+      description: "Targeted updates apply only where intended, without full document replacement"
+    },
+    {
+      title: "Managed Revisions",
+      description: "Clear patch history makes recovery and review straightforward"
+    }
+  ]}
+/>
 
 ## <span class="h2-prefix">DEMO:</span> <span class="h2-title">Progressive patches in action</span>
 
@@ -654,7 +712,7 @@ The demo shows progressive RFC 6902 patches being applied without full-document 
 
 Testing AI-driven systems requires two complementary approaches. First, deterministic mocks test UI components' ability to process streaming patches in a controlled environment. Second, end-to-end tests with live LLMs verify that given a user command to make a change, the agent can achieve the desired result with its prompting.
 
-Eval frameworks like [Langfuse](https://langfuse.com/) and [Evalite](https://evalite.dev/) add framework-agnostic evaluation capabilities. These might include LLM-as-judge combined with deterministic checks - like verifying structured data exists in the resume where expected after processing a request.
+Eval frameworks like [Langfuse](https://langfuse.com/) and [Evalite](https://evalite.dev/) add framework-agnostic evaluation capabilities. These might include LLM-as-judge combined with deterministic checks-like verifying structured data exists in the resume where expected after processing a request.
 
 By leveraging API mocks, test execution time for streaming patches dropped from `28s` to `9s`.
 
@@ -662,29 +720,29 @@ See the [testing strategy document](/work/resume-chatbot-testing-strategy) for i
 
 ## <span class="h2-prefix">HANDOFF:</span> <span class="h2-title">Deep dives and next reading</span>
 
-- [Streaming JSON Patching Architecture](/work/resume-chatbot-streaming-architecture) - Detailed pipeline internals, lifecycle of patch operations, and failure handling patterns.
-- [Deterministic Testing for AI Streaming](/work/resume-chatbot-testing-strategy) - Mock-provider approach for repeatable streaming tests and measurable reliability results.
-- [Streaming Modes and Framework Benchmarking](/work/resume-chatbot-streaming-modes-benchmarking) - Comparative analysis of streaming modes across frameworks with performance tradeoffs.
+- [Streaming JSON Patching Architecture](/work/resume-chatbot-streaming-architecture)-Detailed pipeline internals, lifecycle of patch operations, and failure handling patterns.
+- [Deterministic Testing for AI Streaming](/work/resume-chatbot-testing-strategy)-Mock-provider approach for repeatable streaming tests and measurable reliability results.
+- [Streaming Modes and Framework Benchmarking](/work/resume-chatbot-streaming-modes-benchmarking)-Comparative analysis of streaming modes across frameworks with performance tradeoffs.
 
 ## <span class="h2-prefix">NEXT STEPS:</span> <span class="h2-title">Generative design tools for rapid UX iteration</span>
 
-The current implementation handles AI-driven edits well, but the next evolution is **collaborative editing** - where users can manually refine what the AI suggests, or make changes directly while the AI observes and learns.
+The current implementation handles AI-driven edits well, but the next evolution is **collaborative editing**-where users can manually refine what the AI suggests, or make changes directly while the AI observes and learns.
 
 ### Rapid Prototyping with Generative Design Tools
 
-To explore this UX, I use generative design tools like **Figma Make**, **Google Stitch**, and **v0.dev** instead of traditional Figma. These tools produce interactive React applications that are faster to iterate on because you don't have to manually wire up user flows. The interactions are built-in, so you can immediately test if a flow makes sense or needs revision.
+To explore this UX, I use generative design tools like [Figma Make](https://www.figma.com/make), [Google Stitch](https://stitch.withgoogle.com/), and [v0.dev](https://v0.dev/) instead of traditional Figma. These tools produce interactive React applications that are faster to iterate on because you don't have to manually wire up user flows. The interactions are built-in, so you can immediately test if a flow makes sense or needs revision.
 
 **Why this approach wins:**
 
-- **Discover edge cases faster** - Interactive prototypes reveal usability issues that static mockups miss
-- **Fail cheap** - It's easier to discard a generated direction that doesn't work than to rebuild something you coded from scratch
-- **Focus on UX, not implementation** - You validate the concept before committing engineering time
+- **Discover edge cases faster**-Interactive prototypes reveal usability issues that static mockups miss
+- **Fail cheap**-It's easier to discard a generated direction that doesn't work than to rebuild something you coded from scratch
+- **Focus on UX, not implementation**-You validate the concept before committing engineering time
 
 **Tool comparisons:**
 
-- **v0.dev** - Most opinionated, uses shadcn/ui components and Next.js patterns. Produces the most usable code if you want to adapt components directly.
-- **Google Stitch** - Best for whole-application iterations. Uses Gemini Nano to generate visual representations quickly, then converts to HTML that agents can integrate. Great for exploring multiple directions fast.
-- **Figma Make** - Balanced approach for component-to-page level design with interactive behaviors.
+- **[v0.dev](https://v0.dev/)**-Most opinionated, uses shadcn/ui components and Next.js patterns. Produces the most usable code if you want to adapt components directly.
+- **[Google Stitch](https://stitch.withgoogle.com/)**-Best for whole-application iterations. Uses Gemini Nano to generate visual representations quickly, then converts to HTML that agents can integrate. Great for exploring multiple directions fast.
+- **[Figma Make](https://www.figma.com/make)**-Balanced approach for component-to-page level design with interactive behaviors.
 
 For a deeper comparison of these tools and how to choose the right one for your workflow, see [AI-Assisted Design: From Prompt to Production](/work/ai-assisted-design).
 
@@ -698,7 +756,7 @@ Here's a walkthrough of a Figma Make project I used to explore the collaborative
   videoUrl="https://drive.google.com/file/d/1SwAcHBqOzuL-U4nXO9W7K5ZXlYXNrBs_/preview"
   thumbnailSrc="/assets/images/projects/resume-chatbot-figma-make-thumb.webp"
   thumbnailAlt="Figma Make prototype exploring collaborative editing UX"
-  caption="Exploring collaborative editing flows with Figma Make - testing manual refinement alongside AI suggestions"
+  caption="Exploring collaborative editing flows with Figma Make-testing manual refinement alongside AI suggestions"
 />
 
 The goal: seamless handoff between AI suggestions and manual edits, with clear visual indicators of who changed what and when.

@@ -53,8 +53,12 @@ const { src, alt, caption, height = '400px' } = Astro.props;
    */
 
   // Normalize hex to lowercase 6-digit form for consistent lookup
+  // Handles 3-digit, 6-digit, and 8-digit (with alpha) hex codes
   function normalizeHex(hex: string): string {
     hex = hex.toLowerCase().replace('#', '');
+    // Handle 8-digit hex (RRGGBBAA) - strip alpha channel
+    if (hex.length === 8) hex = hex.slice(0, 6);
+    // Handle 3-digit hex
     if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
     return '#' + hex;
   }
@@ -174,44 +178,107 @@ const { src, alt, caption, height = '400px' } = Astro.props;
       bgRect.classList.add('ex-bg');
     }
 
-    // All rects except background
-    doc.querySelectorAll('rect').forEach(rect => {
-      if (rect === bgRect) return;
-      const fill = rect.getAttribute('fill');
-      if (!fill || fill === 'none' || fill === 'transparent') return;
-      rect.removeAttribute('fill');
-      rect.classList.add(colorClass(fill) + '-fill');
+    // Create a group for FILLED shapes that will get the inversion filter in dark mode
+    // Lines, strokes, and text stay outside this group so they use base-content directly
+    const shapesGroup = doc.createElementNS('http://www.w3.org/2000/svg', 'g');
+    shapesGroup.classList.add('excalidraw-shapes');
+
+    // Move FILLED shape elements into the shapes group
+    // We need to be careful about the order - process in reverse to avoid index issues
+    const allElements = Array.from(svg.children);
+    for (const el of allElements) {
+      // Skip the background rect (already handled), text elements, and line elements
+      if (el === bgRect || el.tagName === 'text') continue;
+      
+      // Only move FILLED shapes into the shapes group
+      // Lines/arrows (path, line, polyline, polygon) stay outside to use base-content
+      // We check if they have a fill attribute - if they do, they're shapes; if only stroke, they're lines
+      const fill = el.getAttribute('fill');
+      const stroke = el.getAttribute('stroke');
+      const hasFill = fill && fill !== 'none' && fill !== 'transparent';
+      const hasStroke = stroke && stroke !== 'none';
+      
+      // Move to shapes group only if:
+      // 1. It's a rect, ellipse, or circle (always filled shapes)
+      // 2. It's a path/polyline/polygon with a fill (filled shapes)
+      // Keep outside (for base-content) if:
+      // 1. It's a line (always a stroke)
+      // 2. It's a path/polyline/polygon with only stroke, no fill (lines/arrows)
+      if (['rect', 'ellipse', 'circle'].includes(el.tagName)) {
+        shapesGroup.appendChild(el);
+      } else if (['path', 'polyline', 'polygon'].includes(el.tagName) && hasFill) {
+        shapesGroup.appendChild(el);
+      }
+      // Note: line elements and stroke-only paths stay outside shapesGroup
+    }
+    
+    // Insert the shapes group after the background rect (or at the beginning if no bg)
+    if (bgRect && bgRect.nextSibling) {
+      svg.insertBefore(shapesGroup, bgRect.nextSibling);
+    } else if (bgRect) {
+      svg.appendChild(shapesGroup);
+    } else {
+      svg.insertBefore(shapesGroup, svg.firstChild);
+    }
+
+    // Process shapes within the shapes group (fills AND strokes)
+    shapesGroup.querySelectorAll('rect, ellipse, circle, path, polyline, polygon').forEach(el => {
+      const fill = el.getAttribute('fill');
+      const stroke = el.getAttribute('stroke');
+      
+      // Process fill
+      if (fill && fill !== 'none' && fill !== 'transparent') {
+        el.removeAttribute('fill');
+        el.classList.add(colorClass(fill) + '-fill');
+      }
+      
+      // Process stroke (for elements in shapes group that also have strokes)
+      if (stroke && stroke !== 'none') {
+        el.removeAttribute('stroke');
+        el.classList.add(colorClass(stroke) + '-stroke');
+      }
     });
 
-    // Text elements - always follow base-content
+    // Text elements stay outside shapesGroup and use base-content
     doc.querySelectorAll('text').forEach(text => {
       const fill = text.getAttribute('fill');
       if (fill === 'none') return;
       text.removeAttribute('fill');
-      // Excalidraw uses black (#1e1e1e) for text - map to ex-black which uses base-content
       if (fill) {
         text.classList.add(colorClass(fill) + '-fill');
       } else {
         text.classList.add('ex-text');
       }
     });
-
-    // Paths, lines, polylines, polygons, ellipses, circles
-    doc.querySelectorAll('path, line, polyline, polygon, ellipse, circle').forEach(el => {
+    
+    // Process LINES (outside shapes group) - these use base-content
+    // Lines are: line elements, and paths/polygons with only stroke (no fill)
+    svg.querySelectorAll('line').forEach(el => {
       const stroke = el.getAttribute('stroke');
-      const fill = el.getAttribute('fill');
       if (stroke && stroke !== 'none') {
         el.removeAttribute('stroke');
         el.classList.add(colorClass(stroke) + '-stroke');
       }
-      if (fill && fill !== 'none' && fill !== 'transparent') {
-        el.removeAttribute('fill');
-        el.classList.add(colorClass(fill) + '-fill');
+    });
+    
+    // Process stroke-only paths/polygons (lines/arrows) outside shapes group
+    svg.querySelectorAll('path, polyline, polygon').forEach(el => {
+      // Skip if this element is inside the shapes group (already processed)
+      if (el.closest('.excalidraw-shapes')) return;
+      
+      const stroke = el.getAttribute('stroke');
+      const fill = el.getAttribute('fill');
+      const hasFill = fill && fill !== 'none' && fill !== 'transparent';
+      
+      if (stroke && stroke !== 'none' && !hasFill) {
+        el.removeAttribute('stroke');
+        el.classList.add(colorClass(stroke) + '-stroke');
       }
     });
 
     return new XMLSerializer().serializeToString(svg);
   }
+
 
   async function loadDiagram(container: HTMLElement) {
     const svgUrl = container.dataset.svgUrl;
@@ -328,7 +395,7 @@ const { src, alt, caption, height = '400px' } = Astro.props;
      Dark values computed via applyDarkModeFilter: invert(93%) + hue-rotate(180deg).
   ----------------------------------------------------------------------- */
 
-  :root {
+  :global(:root) {
     --ex-black: #1e1e1e;    --ex-white: #ffffff;
     --ex-gray-0: #f8f9fa;   --ex-gray-1: #e9ecef;   --ex-gray-2: #ced4da;   --ex-gray-3: #868e96;   --ex-gray-4: #343a40;
     --ex-red-0: #fff5f5;    --ex-red-1: #ffc9c9;    --ex-red-2: #ff8787;    --ex-red-3: #fa5252;    --ex-red-4: #e03131;
@@ -348,78 +415,68 @@ const { src, alt, caption, height = '400px' } = Astro.props;
      When colors are inverted, light becomes dark and dark becomes light.
      By swapping the indices (0↔4, 1↔3), we ensure proper contrast is maintained.
      Then apply the inversion filter to get the final dark mode colors. */
-  [data-theme="neobrutalism-dark"] {
-    /* Swap gray colors: 0↔4, 1↔3 */
+  :global([data-theme="neobrutalism-dark"]) {
     --ex-gray-0: #343a40;   --ex-gray-4: #f8f9fa;
     --ex-gray-1: #868e96;   --ex-gray-3: #e9ecef;
-    /* Swap red colors: 0↔4, 1↔3, 2 stays */
     --ex-red-0: #e03131;    --ex-red-4: #fff5f5;
     --ex-red-1: #fa5252;    --ex-red-3: #ffc9c9;
-    /* Swap pink colors: 0↔4, 1↔3, 2 stays */
     --ex-pink-0: #c2255c;   --ex-pink-4: #fff0f6;
     --ex-pink-1: #e64980;   --ex-pink-3: #fcc2d7;
-    /* Swap grape colors: 0↔4, 1↔3, 2 stays */
     --ex-grape-0: #9c36b5;  --ex-grape-4: #f8f0fc;
     --ex-grape-1: #be4bdb;  --ex-grape-3: #eebefa;
-    /* Swap violet colors: 0↔4, 1↔3, 2 stays */
     --ex-violet-0: #6741d9; --ex-violet-4: #f3f0ff;
     --ex-violet-1: #7950f2; --ex-violet-3: #d0bfff;
-    /* Swap blue colors: 0↔4, 1↔3, 2 stays */
     --ex-blue-0: #1971c2;   --ex-blue-4: #e7f5ff;
     --ex-blue-1: #228be6;   --ex-blue-3: #a5d8ff;
-    /* Swap cyan colors: 0↔4, 1↔3, 2 stays */
     --ex-cyan-0: #0c8599;   --ex-cyan-4: #e3fafc;
     --ex-cyan-1: #15aabf;   --ex-cyan-3: #99e9f2;
-    /* Swap teal colors: 0↔4, 1↔3, 2 stays */
     --ex-teal-0: #099268;   --ex-teal-4: #e6fcf5;
     --ex-teal-1: #12b886;   --ex-teal-3: #96f2d7;
-    /* Swap green colors: 0↔4, 1↔3, 2 stays */
     --ex-green-0: #2f9e44;  --ex-green-4: #ebfbee;
     --ex-green-1: #40c057;  --ex-green-3: #b2f2bb;
-    /* Swap yellow colors: 0↔4, 1↔3, 2 stays */
     --ex-yellow-0: #f08c00; --ex-yellow-4: #fff9db;
-    --ex-yellow-1: #fab005; --ex-ex-yellow-3: #ffec99;
-    /* Swap orange colors: 0↔4, 1↔3, 2 stays */
+    --ex-yellow-1: #fab005; --ex-yellow-3: #ffec99;
     --ex-orange-0: #e8590c; --ex-orange-4: #fff4e6;
     --ex-orange-1: #fd7e14; --ex-orange-3: #ffd8a8;
-    /* Swap bronze colors: 0↔4, 1↔3, 2 stays */
     --ex-bronze-0: #846358; --ex-bronze-4: #f8f1ee;
     --ex-bronze-1: #a18072; --ex-bronze-3: #eaddd7;
-    /* Swap black/white */
     --ex-black: #ffffff;
     --ex-white: #1e1e1e;
   }
 
-  /* Dark mode: Apply inversion filter to get final colors */
-  [data-theme="neobrutalism-dark"] .excalidraw-container :global(svg),
-  [data-theme="neobrutalism-dark"] .diagram-modal-svg-container :global(svg.excalidraw-svg) {
-    filter: invert(93%) hue-rotate(180deg);
-  }
+  /* Dark mode relies purely on CSS variable swapping (0↔4, 1↔3) for colors.
+     No filters applied - they cause colors to become nearly white.
+     Black/white elements use base-content for proper contrast. */
 
   :global(.ex-bg)            { fill: transparent; }
-  :global(.ex-text)           { fill: var(--color-base-content); }
-  :global(.ex-unknown-fill)   { fill: var(--color-base-200); }
+  :global(.ex-text)          { fill: var(--color-base-content); }
+  :global(.ex-unknown-fill)  { fill: var(--color-base-200); }
   :global(.ex-unknown-stroke) { stroke: var(--color-base-content); }
 
-  /* Text elements: Only override black text to use base-content for proper contrast in dark mode.
-     Colored text (ex-red-4-fill, etc.) keeps its palette color via the CSS variables above.
-     This ensures black text (#1e1e1e) becomes light in dark mode, while red text stays red.
-     
-     NOTE: These rules must be global (not scoped to .excalidraw-container) because the SVG
-     can be moved to the modal by DiagramExpandWrapper, where it loses the container context. */
+  /* Text elements: Black text uses base-content for proper contrast.
+     Colored text uses the palette which is already swapped in dark mode. */
   :global(text.ex-black-fill) {
     fill: var(--color-base-content) !important;
   }
+  
+  /* Colored text uses palette variables (automatically swapped in dark mode) */
+  :global(text.ex-text) {
+    fill: var(--color-base-content) !important;
+  }
 
-  /* Line/Path strokes: Override black strokes to use base-content for proper contrast in dark mode.
-     This ensures lines/arrows remain visible in both light and dark modes.
-     Must be global since SVG can be moved to modal. */
+  /* Line/Path strokes: Black strokes use base-content for visibility.
+     Colored strokes use palette which is already swapped in dark mode.
+     Note: Strokes outside .excalidraw-shapes don't get the inversion filter,
+     so we need to manually swap their colors in dark mode. */
   :global(path.ex-black-stroke),
   :global(line.ex-black-stroke),
   :global(polyline.ex-black-stroke),
   :global(polygon.ex-black-stroke) {
     stroke: var(--color-base-content) !important;
   }
+
+  /* Note: Colored strokes use palette variables which are swapped in dark mode.
+     CSS variable swapping (0↔4, 1↔3) handles the color inversion automatically. */
 
   /* Fill classes */
   :global(.ex-black-fill)    { fill: var(--ex-black); }
