@@ -344,17 +344,55 @@ const { src, alt, caption, height = '400px' } = Astro.props;
     --ex-bronze-0: #f8f1ee; --ex-bronze-1: #eaddd7; --ex-bronze-2: #d2bab0; --ex-bronze-3: #a18072; --ex-bronze-4: #846358;
   }
 
-  /* Dark mode: Use CSS filter to invert colors, matching Excalidraw's approach
-     Excalidraw uses: invert(93%) hue-rotate(180deg) in applyDarkModeFilter()
-     This is more accurate than manual color mapping */
+  /* Dark mode: Swap color indices to maintain proper contrast after inversion
+     When colors are inverted, light becomes dark and dark becomes light.
+     By swapping the indices (0↔4, 1↔3), we ensure proper contrast is maintained.
+     Then apply the inversion filter to get the final dark mode colors. */
+  [data-theme="neobrutalism-dark"] {
+    /* Swap gray colors: 0↔4, 1↔3 */
+    --ex-gray-0: #343a40;   --ex-gray-4: #f8f9fa;
+    --ex-gray-1: #868e96;   --ex-gray-3: #e9ecef;
+    /* Swap red colors: 0↔4, 1↔3, 2 stays */
+    --ex-red-0: #e03131;    --ex-red-4: #fff5f5;
+    --ex-red-1: #fa5252;    --ex-red-3: #ffc9c9;
+    /* Swap pink colors: 0↔4, 1↔3, 2 stays */
+    --ex-pink-0: #c2255c;   --ex-pink-4: #fff0f6;
+    --ex-pink-1: #e64980;   --ex-pink-3: #fcc2d7;
+    /* Swap grape colors: 0↔4, 1↔3, 2 stays */
+    --ex-grape-0: #9c36b5;  --ex-grape-4: #f8f0fc;
+    --ex-grape-1: #be4bdb;  --ex-grape-3: #eebefa;
+    /* Swap violet colors: 0↔4, 1↔3, 2 stays */
+    --ex-violet-0: #6741d9; --ex-violet-4: #f3f0ff;
+    --ex-violet-1: #7950f2; --ex-violet-3: #d0bfff;
+    /* Swap blue colors: 0↔4, 1↔3, 2 stays */
+    --ex-blue-0: #1971c2;   --ex-blue-4: #e7f5ff;
+    --ex-blue-1: #228be6;   --ex-blue-3: #a5d8ff;
+    /* Swap cyan colors: 0↔4, 1↔3, 2 stays */
+    --ex-cyan-0: #0c8599;   --ex-cyan-4: #e3fafc;
+    --ex-cyan-1: #15aabf;   --ex-cyan-3: #99e9f2;
+    /* Swap teal colors: 0↔4, 1↔3, 2 stays */
+    --ex-teal-0: #099268;   --ex-teal-4: #e6fcf5;
+    --ex-teal-1: #12b886;   --ex-teal-3: #96f2d7;
+    /* Swap green colors: 0↔4, 1↔3, 2 stays */
+    --ex-green-0: #2f9e44;  --ex-green-4: #ebfbee;
+    --ex-green-1: #40c057;  --ex-green-3: #b2f2bb;
+    /* Swap yellow colors: 0↔4, 1↔3, 2 stays */
+    --ex-yellow-0: #f08c00; --ex-yellow-4: #fff9db;
+    --ex-yellow-1: #fab005; --ex-ex-yellow-3: #ffec99;
+    /* Swap orange colors: 0↔4, 1↔3, 2 stays */
+    --ex-orange-0: #e8590c; --ex-orange-4: #fff4e6;
+    --ex-orange-1: #fd7e14; --ex-orange-3: #ffd8a8;
+    /* Swap bronze colors: 0↔4, 1↔3, 2 stays */
+    --ex-bronze-0: #846358; --ex-bronze-4: #f8f1ee;
+    --ex-bronze-1: #a18072; --ex-bronze-3: #eaddd7;
+    /* Swap black/white */
+    --ex-black: #ffffff;
+    --ex-white: #1e1e1e;
+  }
+
+  /* Dark mode: Apply inversion filter to get final colors */
   [data-theme="neobrutalism-dark"] .excalidraw-container :global(svg),
   [data-theme="neobrutalism-dark"] .diagram-modal-svg-container :global(svg.excalidraw-svg) {
-    filter: invert(93%) hue-rotate(180deg);
-  }
-  
-  /* Preserve white backgrounds in dark mode - don't invert them */
-  [data-theme="neobrutalism-dark"] .excalidraw-container :global(svg) .ex-bg,
-  [data-theme="neobrutalism-dark"] .diagram-modal-svg-container :global(svg.excalidraw-svg) .ex-bg {
     filter: invert(93%) hue-rotate(180deg);
   }
 
