@@ -590,13 +590,14 @@ const uniqueId = Math.random().toString(36).slice(2, 11);
 
   .diagram-modal-body {
     flex: 1;
-    overflow: visible;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     background: var(--color-base-100);
     cursor: grab;
     touch-action: none;
+    position: relative;
   }
 
   .diagram-modal-body:active {
@@ -604,11 +605,10 @@ const uniqueId = Math.random().toString(36).slice(2, 11);
   }
 
   .diagram-modal-svg-wrapper {
-    /* Container for positioning */
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
+    /* Container for positioning - clip zoomed content */
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
   }
 
   .diagram-modal-svg-container {
