@@ -107,8 +107,9 @@ export const patchResume = ({ session, dataStream }) => tool({
     
     // 4. Stream patches as they arrive
     for await (const partial of patchResult.partialObjectStream) {
-      for (const patch of partial.patches || []) {
-        currentContent = applyPatch(currentContent, [patch]);
+      if (partial.patches?.length) {
+        // Apply all patches in the partial object at once for efficiency
+        currentContent = applyPatch(currentContent, partial.patches);
         dataStream.write({
           type: "data-resumeDelta",
           data: JSON.stringify(currentContent),
@@ -308,10 +309,3 @@ Closing notes
 
 The streaming JSON patching approach gives us fine-grained, auditable, and efficient updates for structured documents. It moves intent handling into the conversation layer and makes the patch tool the single source of truth for document modifications.
 
-Links and further reading
-
-- Vercel AI SDK `streamObject`: https://ai.sdk.dev/docs/reference/ai-sdk-core/stream-object
-- fast-json-patch: https://github.com/Starcounter-Jack/JSON-Patch
-- RFC 6902: https://datatracker.ietf.org/doc/html/rfc6902
-- JSON Resume Schema: https://jsonresume.org/schema
-- Zod: https://zod.dev
