@@ -1287,7 +1287,7 @@
 	font-weight: 600;
 	color: var(--color-primary);
 	margin-top: 3rem;
-	margin-bottom: 1.15rem;
+	margin-bottom: 1.6rem;
 	padding-bottom: 0.65rem;
 	border-bottom: 0;
 	letter-spacing: -0.025em;
@@ -1407,7 +1407,7 @@
 	font-size: 1.25rem;
 	font-weight: 700;
 	color: var(--color-base-content);
-	margin-top: 2rem;
+	margin-top: 2.8rem;
 	margin-bottom: 1.4rem;
 	line-height: 1.2;
 }
@@ -1440,7 +1440,7 @@
 
 /* Unordered lists */
 .prose-content ul {
-	margin: 1.3rem 0;
+	margin: 2rem 0;
 	padding-left: 0;
 	list-style: none;
 }
@@ -2058,6 +2058,10 @@ html[data-theme="neobrutalism-dark"] .prose-content .mermaid .nodeLabel,
 html[data-theme="neobrutalism-dark"] .prose-content .mermaid .label,
 html[data-theme="neobrutalism-dark"] .prose-content .mermaid .node text,
 html[data-theme="neobrutalism-dark"] .prose-content .mermaid .actor text,
+html[data-theme="neobrutalism-dark"] .prose-content .mermaid .actor-box text,
+html[data-theme="neobrutalism-dark"] .prose-content .mermaid [class*="actor"] text,
+html[data-theme="neobrutalism-dark"] .prose-content .mermaid .actor tspan,
+html[data-theme="neobrutalism-dark"] .prose-content .mermaid .actor-box tspan,
 html[data-theme="neobrutalism-dark"] .prose-content .mermaid .messageText,
 html[data-theme="neobrutalism-dark"] .prose-content .mermaid .label text,
 html[data-theme="neobrutalism-dark"] .prose-content .mermaid g text,
@@ -2079,6 +2083,30 @@ html[data-theme="neobrutalism-dark"] .prose-content svg [style*="fill:rgb(38, 38
 	fill: var(--color-base-content) !important;
 	color: var(--color-base-content) !important;
 	stroke: none !important;
+}
+
+/* Mermaid diagrams in expand modal - must work when SVG is moved outside .prose-content */
+html[data-theme="neobrutalism-dark"] #mermaid-diagram-modal svg[id^="mermaid-"] text,
+html[data-theme="neobrutalism-dark"] #mermaid-diagram-modal svg[id^="mermaid-"] .actor text,
+html[data-theme="neobrutalism-dark"] #mermaid-diagram-modal svg[id^="mermaid-"] .actor-box text,
+html[data-theme="neobrutalism-dark"] #mermaid-diagram-modal svg[id^="mermaid-"] [class*="actor"] text,
+html[data-theme="neobrutalism-dark"] #mermaid-diagram-modal svg[id^="mermaid-"] .messageText,
+html[data-theme="neobrutalism-dark"] #mermaid-diagram-modal svg[id^="mermaid-"] .label,
+html[data-theme="neobrutalism-dark"] #mermaid-diagram-modal svg[id^="mermaid-"] .nodeLabel,
+html[data-theme="neobrutalism-dark"] #mermaid-diagram-modal svg[id^="mermaid-"] tspan,
+html[data-theme="neobrutalism-dark"] .diagram-modal-svg-container svg[id^="mermaid-"] text,
+html[data-theme="neobrutalism-dark"] .diagram-modal-svg-container svg[id^="mermaid-"] .actor text,
+html[data-theme="neobrutalism-dark"] .diagram-modal-svg-container svg[id^="mermaid-"] tspan {
+	fill: var(--color-base-content) !important;
+	color: var(--color-base-content) !important;
+	stroke: none !important;
+}
+
+/* Ensure Mermaid actor boxes have proper contrast in dark mode */
+html[data-theme="neobrutalism-dark"] svg[id^="mermaid-"] .actor-box,
+html[data-theme="neobrutalism-dark"] svg[id^="mermaid-"] .actor {
+	fill: var(--color-base-200) !important;
+	stroke: var(--color-base-300) !important;
 }
 
 /* Dark mode adjustments - only elements that need special dark-specific overrides */
