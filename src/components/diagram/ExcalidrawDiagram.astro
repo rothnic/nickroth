@@ -375,6 +375,16 @@ const { src, alt, caption, height = '400px' } = Astro.props;
     fill: var(--color-base-content) !important;
   }
 
+  /* Line/Path strokes: Override black strokes to use base-content for proper contrast in dark mode.
+     This ensures lines/arrows remain visible in both light and dark modes.
+     Must be global since SVG can be moved to modal. */
+  :global(path.ex-black-stroke),
+  :global(line.ex-black-stroke),
+  :global(polyline.ex-black-stroke),
+  :global(polygon.ex-black-stroke) {
+    stroke: var(--color-base-content) !important;
+  }
+
   /* Fill classes */
   :global(.ex-black-fill)    { fill: var(--ex-black); }
   :global(.ex-white-fill)    { fill: var(--ex-white); }

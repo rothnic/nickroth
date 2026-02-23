@@ -182,7 +182,8 @@ The LLM emits raw text tokens. The AI SDK accumulates them and parses into valid
 **Why this matters**: Without partial objects, you'd wait for the entire operation to complete before showing anything. With partial objects, you can start rendering progress immediately - but you need a stabilization layer to decide what's safe to display vs what's still incomplete.
 
 This becomes even more important when batching multiple patches in one tool call (an array of operations). With partial object streaming, the AI SDK provides a valid array structure as objects accumulate - you can process each patch as it arrives. With whole object streaming, you'd wait even longer for ALL patches to complete before seeing any progress.
-Related documentation:
+
+**Related documentation:**
 
 - [LangChain.js documentation](https://js.langchain.com/)
 - [Mastra agents and streaming](https://mastra.ai/en/docs/agents/overview)

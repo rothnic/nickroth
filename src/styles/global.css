@@ -410,7 +410,7 @@
 
 	/* Override daisyUI bg-base-100 utility class on wrappers */
 	/* Excludes component cards that need solid backgrounds */
-	:where(.bg-base-100):not(.feature-card):not(.card):not(.dropdown-content) {
+	:where(.bg-base-100):not(.feature-card):not(.card):not(.dropdown-content):not(.navbar) {
 		background-color: transparent !important;
 	}
 
@@ -2107,6 +2107,16 @@ html[data-theme="neobrutalism-dark"] svg[id^="mermaid-"] .actor-box,
 html[data-theme="neobrutalism-dark"] svg[id^="mermaid-"] .actor {
 	fill: var(--color-base-200) !important;
 	stroke: var(--color-base-300) !important;
+}
+
+/* Mermaid diagram lines in dark mode - override dark stroke colors */
+html[data-theme="neobrutalism-dark"] svg[id^="mermaid-"] .messageLine0,
+html[data-theme="neobrutalism-dark"] svg[id^="mermaid-"] .messageLine1,
+html[data-theme="neobrutalism-dark"] svg[id^="mermaid-"] [class*="messageLine"],
+html[data-theme="neobrutalism-dark"] svg[id^="mermaid-"] line,
+html[data-theme="neobrutalism-dark"] svg[id^="mermaid-"] path[stroke*="#262626"],
+html[data-theme="neobrutalism-dark"] svg[id^="mermaid-"] path[stroke*="#1e1e1e"] {
+	stroke: var(--color-base-content) !important;
 }
 
 /* Dark mode adjustments - only elements that need special dark-specific overrides */
