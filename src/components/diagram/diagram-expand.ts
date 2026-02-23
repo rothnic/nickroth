@@ -246,36 +246,53 @@ function initMermaidExpand() {
 	const modal = new MermaidDiagramModal();
 
 	mermaidDiagrams.forEach((svg, index) => {
-		if (svg.parentElement?.querySelector(".diagram-expand-btn")) return;
+		// Skip if already wrapped
+		if (svg.closest(".diagram-figure")) return;
 
-		let container = svg.parentElement;
-		if (!container?.classList.contains("mermaid-wrapper")) {
-			const wrapper = document.createElement("div");
-			wrapper.className = "mermaid-wrapper";
-			wrapper.style.position = "relative";
-			wrapper.style.display = "inline-block";
-
-			svg.parentNode?.insertBefore(wrapper, svg);
-			wrapper.appendChild(svg);
-			container = wrapper;
-		}
-
-		const expandBtn = document.createElement("button");
-		expandBtn.className = "diagram-expand-btn";
-		expandBtn.type = "button";
-		expandBtn.setAttribute("aria-label", "Expand diagram to full screen");
-		expandBtn.innerHTML = `
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span class="sr-only">Expand</span>
-    `;
-
-		expandBtn.addEventListener("click", () => {
+		const uniqueId = `mermaid-${Date.now()}-${index}`;
+		
+		// Create the wrapper structure matching DiagramExpandWrapper
+		const figure = document.createElement("figure");
+		figure.className = "diagram-figure";
+		figure.setAttribute("data-diagram-id", uniqueId);
+		
+		// Create toolbar
+		const toolbar = document.createElement("div");
+		toolbar.className = "diagram-toolbar";
+		toolbar.innerHTML = `
+			<span class="diagram-label">Diagram</span>
+			<button 
+				class="diagram-expand-btn" 
+				type="button" 
+				aria-label="Expand diagram to full screen"
+				data-expand-btn
+			>
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+				<span>Expand</span>
+			</button>
+		`;
+		
+		// Create container for the SVG
+		const container = document.createElement("div");
+		container.className = "diagram-container";
+		container.setAttribute("data-diagram-wrapper", "");
+		container.setAttribute("aria-label", "Mermaid diagram");
+		
+		// Move SVG into container
+		svg.parentNode?.insertBefore(figure, svg);
+		container.appendChild(svg);
+		
+		// Assemble the structure
+		figure.appendChild(toolbar);
+		figure.appendChild(container);
+		
+		// Bind expand button
+		const expandBtn = toolbar.querySelector("[data-expand-btn]") as HTMLButtonElement;
+		expandBtn?.addEventListener("click", () => {
 			modal.open(svg.outerHTML);
 		});
-
-		container.appendChild(expandBtn);
 	});
 }
 
