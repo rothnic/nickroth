@@ -56,7 +56,10 @@
 		syncToggle(currentTheme, event.newDocument);
 	}
 
-	document.addEventListener("DOMContentLoaded", initTheme);
+	// Astro bundles this as a module so DOMContentLoaded has already fired -
+	// call initTheme directly. Also hook astro:page-load for view transitions.
+	initTheme();
+	document.addEventListener("astro:page-load", initTheme);
 	document.addEventListener("change", handleThemeChange);
 	document.addEventListener("astro:before-swap", handlePageSwap);
 })();

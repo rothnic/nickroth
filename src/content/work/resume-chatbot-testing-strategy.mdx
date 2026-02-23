@@ -1,0 +1,315 @@
+---
+title: "Deterministic Testing for AI Streaming"
+description: "How mock language models and Playwright stability patterns enable reliable end-to-end testing of AI streaming applications."
+company: "Personal Project"
+role: "Full-Stack Developer"
+startDate: 2024-11-01
+featured: false
+tags: ["Testing", "Playwright", "AI", "Mock Models"]
+image: "../../assets/images/projects/resume-chatbot.png"
+category: "AI APPLICATION"
+impact: "100% TEST STABILITY WITH 68% FASTER EXECUTION THROUGH MOCK MODELS AND EVENT-DRIVEN SYNCHRONIZATION."
+stack: ["PLAYWRIGHT", "MOCK MODELS", "VERCEL AI SDK", "NEXT.JS"]
+roleCategory: "FULL-STACK DEVELOPER"
+parentProject: "resume-chatbot"
+---
+
+# Deterministic Testing for AI Streaming
+
+This article documents a deterministic testing strategy for the resume-chatbot. It describes concrete patterns and small helper implementations used to make token-by-token streaming testable and repeatable. The focus is engineering: what we implemented, why, and the tradeoffs.
+
+Testing problem and scope
+
+AI-driven chat flows are nondeterministic. A production model will produce different token sequences on different invocations. That variability is fine for users, but it breaks end-to-end tests that expect stable DOM changes or a stable final JSON document.
+
+Streaming magnifies the issue. Content arrives incrementally, so timing, buffering, and transforms affect observable behavior. Tests that rely on fixed timeouts, heuristic waits, or visual completion are brittle.
+
+Additional sources of flakiness include client-side animations, hydration ordering, and transforms that alter timing semantics (for example, smoothing token emission). The testing strategy reduces surface area by fixing model outputs, exposing reliable readiness signals, and instrumenting the pipeline for observability.
+
+Baseline metrics and impact
+
+- Stability when running tests against live models: ~50% intermittent failures.
+- Average runtime per test against live models: ~28.8s.
+- After the deterministic mock approach: stability ~100%, average runtime ~9.2s.
+
+Testing goals
+
+- Determinism: identical inputs must yield identical observable outputs.
+- Speed: remove external network/model latency for most CI runs.
+- Diagnosability: provide compact artifacts to reproduce failures locally.
+- Fidelity: allow token-level or tool-call level assertions when necessary.
+
+Design principle: keep tests simple and explicit. The mock must emulate the production protocol precisely. Tests verify contracts and state transitions rather than arbitrary visual details.
+
+<figure class="my-10 border-4 border-base-content bg-base-100 p-3 shadow-[8px_8px_0_0_rgba(0,0,0,0.9)]">
+  <img src="/assets/diagrams/resume-chatbot-mock-testing.svg" alt="Deterministic testing flow for mock model streams" loading="lazy" />
+  <figcaption class="mt-3 text-sm font-semibold uppercase tracking-wide text-base-content/65">
+    Deterministic test harness: fixed stream frames, synchronized UI waits, and reproducible assertions.
+  </figcaption>
+</figure>
+
+Mock language models
+
+We implement a mock language model that mirrors the Vercel AI SDK streaming contract. The mock returns a ReadableStream-like object whose frames match the production model: stream-start, text-start/text-delta/text-end, tool-call, and finish frames.
+
+Key mock requirements
+
+- API parity: the mock exposes the same public API surface as the real provider so swapping is a configuration change.
+- Deterministic mapping: the mock emits a stable sequence for identical prompts, optionally selected from a prompt->chunks map.
+- Configurable timing: per-chunk delays are configurable so tests can emulate backpressure and pauses.
+- Inspectability: tests can capture emitted frames to assert on stream content and ordering.
+
+Minimal mock factory (TypeScript)
+
+```typescript
+import { MockLanguageModelV2 } from 'ai/test';
+import { simulateReadableStream } from 'ai';
+
+type Chunk = { delayMs?: number; part: LanguageModelV2StreamPart };
+
+export function createMockChatModel(config: { promptMap?: Record<string, Chunk[]> } = {}) {
+  return new MockLanguageModelV2({
+    provider: 'mock-provider',
+    modelId: 'mock-chat',
+    doStream: async ({ prompt }) => {
+      const chunks = config.promptMap?.[prompt] ?? defaultChunksForPrompt(prompt);
+      return { stream: simulateReadableStream({ chunks }) };
+    },
+  });
+}
+```
+
+Notes:
+
+- defaultChunksForPrompt is a test helper that returns a canonical chunk sequence for common fixture prompts.
+- The mock does not try to replicate model internals, only the observable streaming contract.
+
+Stream protocol contract and frames
+
+The application expects a simple, strict stream contract. The mock must follow it exactly.
+
+- stream-start: initial marker for the session.
+- text-start / text-delta / text-end: grouped deltas for conversational text.
+- tool-call: frames that contain toolCallId, toolName, and input (stringified JSON). Tool calls are used to trigger server-side tools such as patchResume.
+- finish: final marker with finishReason and usage metadata.
+
+Representative chunk sequence
+
+```typescript
+const chunks: LanguageModelV2StreamPart[] = [
+  { type: 'stream-start', warnings: [] },
+  { type: 'text-start', id: '1' },
+  { type: 'text-delta', id: '1', delta: "I'll add Python to your skills." },
+  { type: 'text-end', id: '1' },
+  {
+    type: 'tool-call',
+    toolCallId: 'call-123',
+    toolName: 'patchResume',
+    input: JSON.stringify({ id: 'doc-1', changes: [{ description: 'Add Python' }] }),
+  },
+  { type: 'finish', finishReason: 'stop', usage: { promptTokens: 10, completionTokens: 5 } },
+];
+```
+
+Deterministic tool-call frame checks
+
+Tool-call frames are deterministic contract points between the conversation layer and side-effecting tools. Tests should verify three properties:
+
+1. Shape: required fields are present and typed correctly.
+2. Semantics: input JSON conforms to the tool's input schema.
+3. Ordering: tool-call frames appear at the expected point in the stream relative to surrounding text frames.
+
+Small assertion helper used in parser unit tests
+
+```typescript
+function assertToolCallFrame(frame: LanguageModelV2StreamPart, expectedTool: string) {
+  if (frame.type !== 'tool-call') throw new Error('frame.type !== tool-call');
+  if (frame.toolName !== expectedTool) throw new Error('unexpected toolName');
+  JSON.parse(frame.input); // will throw if invalid
+}
+```
+
+Playwright stability patterns and readiness signals
+
+The Playwright layer should avoid fixed sleeps and rely on explicit readiness signals.
+
+Practices:
+
+- Disable animations in test builds and set prefers-reduced-motion.
+- Add a global hydrated marker set from the root layout once client code is mounted: body.classList.add('hydrated'). Tests wait for body.hydrated before interacting.
+- Components expose data-ready and data-status attributes to indicate initialization and streaming lifecycle.
+- Prefer waiting for attributes or custom window events over visual snapshots.
+
+Example Playwright page object (TypeScript)
+
+```typescript
+import { Page } from '@playwright/test';
+
+export class ChatPage {
+  constructor(public page: Page) {}
+
+  get chatInput() { return this.page.getByTestId('chat-input'); }
+
+  async submitMessage(text: string) {
+    await this.chatInput.fill(text);
+    await this.chatInput.press('Enter');
+    await this.waitForStreamingToFinish();
+  }
+
+  async waitForStreamingToStart(timeout = 15_000) {
+    await this.page.waitForFunction(() => {
+      const el = document.querySelector('[data-testid="chat-input"]');
+      return el && el.getAttribute('data-status') !== 'ready';
+    }, null, { timeout });
+  }
+
+  async waitForStreamingToFinish(timeout = 120_000) {
+    await this.page.waitForFunction(() => {
+      const el = document.querySelector('[data-testid="chat-input"]');
+      return el && el.getAttribute('data-status') === 'ready';
+    }, null, { timeout });
+  }
+}
+```
+
+Page object guidance
+
+- Keep page objects minimal and composable. High-level methods should encapsulate both action and readiness waits.
+- Expose lower-level sync primitives for tests that require token-level introspection.
+
+Common pitfalls and how to avoid them
+
+- Missing stream-start: the SDK or parser may reject frames if stream-start is absent. The mock must include it.
+- smoothStream enabled during tests: this transform alters timing semantics. Ensure it is disabled when PLAYWRIGHT=1.
+- Non-string tool-call inputs: always stringify JSON for tool-call.input.
+- Relying on visual animations: disable transitions in the test build.
+
+Results, benchmarks, and interpretation
+
+After adopting mocks and the patterns above we observed the following in CI runs using the mock provider:
+
+| Metric | Before | After | Notes |
+|---|---:|---:|---|
+| Avg duration per test | ~28.8s | ~9.2s | mocks remove network/model latency |
+| Stability | ~50% | 100% | deterministic streams remove variability |
+| Token throughput variance | high | low | configurable per mock |
+
+The numbers above reflect our controlled test environment and the specific fixtures used. See "Benchmark interpretation" for how to interpret these numbers.
+
+Failure triage checklist and steps
+
+When a previously passing deterministic test fails, follow this ordered checklist to quickly identify root causes:
+
+1. Re-run the CI job with expanded logs. Inspect the mock prompt selection and emitted chunk sequence.
+2. Confirm environment flags are set in the runner: PLAYWRIGHT or NEXT_PUBLIC_PLAYWRIGHT.
+3. Verify test build transforms: ensure smoothStream and any production-only pacing transforms are disabled.
+4. Capture hydration and readiness attributes from the failing run to ensure the test waited for body.hydrated and component data-ready flags.
+5. If the mock emitted the expected frames but the client state diverged, fetch the serialized partial bundles produced by the mock and compare them to the stabilizer rules in the streaming architecture article.
+6. If all of the above pass, isolate the regression to a single test and reproduce locally with the same fixture.
+
+CI hardening recommendations and artifacts
+
+- Pin Node and pnpm with Volta on CI. That removes environment drift across runners.
+- Run Playwright with `--retries=1` initially for flaky suites while you fix root causes, but aim for zero retries.
+- Upload structured artifacts on failure: mock prompt, chunk timestamps, parsed frames, and final resume JSON.
+- Keep test logs compact: sample token events and upload full traces only when requested.
+
+Benchmark interpretation
+
+- Run benchmarks repeatedly (>30 samples) and report the median plus interquartile range; single-run means are unreliable for long-tail distributions.
+- Split benchmarks into two categories: network-free (mock) and production-simulated (mock configured with production-like delays). This separates harness performance from production realism.
+
+Test coverage plan and fidelity tiers
+
+Organize tests by fidelity and contract boundaries:
+
+- Unit tests: parsers, stabilizer functions, and small helpers. These run quickly and do not use a browser.
+- Integration tests: tool-call handling, patch validation with fast-json-patch, and the stabilizer running against representative partial streams.
+- End-to-end tests: Playwright flows that exercise the UI, storage, and mock provider. Keep fixtures small and focused.
+
+Golden fixtures and comparison testing practices
+
+Store small golden fixtures representing expected final resume JSON for canonical flows. When a test fails, CI should present a compact JSON diff that shows the minimal patch to convert expected -> actual.
+
+Example end-to-end comparison (Playwright)
+
+```typescript
+const expected = loadFixture('goldens/updated-resume.json');
+const actual = await getFinalResumeFromClient(page);
+expect(actual).toEqual(expected);
+```
+
+Observability and logging signals
+
+Capture the following structured signals on test runs and upload them as JSON artifacts when a failure occurs:
+
+- Mock prompt and promptMap key used.
+- Emitted chunk timestamps and per-chunk metadata.
+- Parsed frames as seen by the client parser (sampled).
+- Final resume JSON snapshot and a compact diff against the golden fixture.
+
+Keep per-test artifact sizes small. Use sampling and only include full token traces on demand.
+
+Token-level assertions and guidance
+
+Token-level assertions are narrow checks used to verify framing or stabilizer behavior. Keep them focused and infrequent. Example checks:
+
+- Tool-call appears before text-end for the same message id.
+- A text-delta contains an expected substring.
+
+Example token-level check via page-exposed events
+
+```typescript
+const frames = await page.evaluate(() => (window as any).__TEST_STREAM_EVENTS || []);
+expect(frames.some(f => f.type === 'tool-call' && f.toolName === 'patchResume')).toBe(true);
+```
+
+Avoiding brittle DOM assertions and favored checks
+
+Prefer state-based checks over structure-based checks. When DOM assertions are necessary, target stable attributes such as data-testid or data-path. Avoid pixel-based snapshots in CI; use them only as local debugging aids.
+
+Small unit test example: stabilizer behavior
+
+```typescript
+import { stabilizePatchStream } from '~/lib/stabilizer';
+
+test('stabilizer buffers until pointer completes', async () => {
+  const partials = [
+    { patches: [{ path: '/ski' }] },
+    { patches: [{ path: 'lls/0/keywords/-' }] },
+  ];
+  const out: any[] = [];
+  for await (const b of stabilizePatchStream(toAsyncIterable(partials))) out.push(b);
+  expect(out.length).toBe(1);
+  expect(out[0].patches[0].path).toBe('/skills/0/keywords/-');
+});
+```
+
+Cross-links
+
+- [Resume Chatbot Overview](/work/resume-chatbot)
+- [Streaming JSON Patching Architecture](/work/resume-chatbot-streaming-architecture)
+
+External references
+
+- Playwright: https://playwright.dev
+- Vercel AI SDK Testing: https://ai.sdk.dev/docs/reference/ai-sdk-core/mock-language-model
+- MockLanguageModelV2: https://ai.sdk.dev
+- simulateReadableStream: https://ai.sdk.dev
+
+Appendix: test-mode environment detection
+
+```typescript
+export function isTestEnvironment() {
+  return Boolean(process.env.PLAYWRIGHT === '1' || process.env.NEXT_PUBLIC_PLAYWRIGHT === '1');
+}
+```
+
+Notes
+
+This article is focused on testing patterns. The parent overview documents product motivation and the streaming architecture article covers the stabilizer and path rules in detail.
+
+Related content and where to look next
+
+- Streaming architecture and stabilizer rules: [/work/resume-chatbot-streaming-architecture](/work/resume-chatbot-streaming-architecture)
+- Parent project overview and glossary: [/work/resume-chatbot](/work/resume-chatbot)
