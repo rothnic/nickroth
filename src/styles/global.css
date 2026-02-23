@@ -2119,6 +2119,20 @@ html[data-theme="neobrutalism-dark"] svg[id^="mermaid-"] path[stroke*="#1e1e1e"]
 	stroke: var(--color-base-content) !important;
 }
 
+/* Mermaid arrowhead markers in dark mode - ensure arrowheads match line colors */
+html[data-theme="neobrutalism-dark"] svg[id^="mermaid-"] marker[id*="arrowhead"] path,
+html[data-theme="neobrutalism-dark"] svg[id^="mermaid-"] marker[id*="arrow"] path,
+html[data-theme="neobrutalism-dark"] svg[id^="mermaid-"] defs marker path {
+	fill: var(--color-base-content) !important;
+	stroke: var(--color-base-content) !important;
+}
+
+/* Additional Mermaid dark mode fixes for various arrow styles */
+html[data-theme="neobrutalism-dark"] svg[id^="mermaid-"] .arrowheadPath,
+html[data-theme="neobrutalism-dark"] svg[id^="mermaid-"] [class*="arrow"] {
+	fill: var(--color-base-content) !important;
+}
+
 /* Dark mode adjustments - only elements that need special dark-specific overrides */
 /* Most text colors are now handled by CSS variables in the base styles */
 

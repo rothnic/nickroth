@@ -344,20 +344,18 @@ const { src, alt, caption, height = '400px' } = Astro.props;
     --ex-bronze-0: #f8f1ee; --ex-bronze-1: #eaddd7; --ex-bronze-2: #d2bab0; --ex-bronze-3: #a18072; --ex-bronze-4: #846358;
   }
 
-  [data-theme="neobrutalism-dark"] {
-    --ex-black: #d3d3d3;    --ex-white: #121212;
-    --ex-gray-0: #202325;   --ex-gray-1: #232629;   --ex-gray-2: #404850;   --ex-gray-3: #6e757c;   --ex-gray-4: #b7bcc1;
-    --ex-red-0: #0e0000;    --ex-red-1: #5a2c2c;    --ex-red-2: #d93e3e;    --ex-red-3: #f47373;    --ex-red-4: #ff8383;
-    --ex-pink-0: #0e010b;   --ex-pink-1: #582438;   --ex-pink-2: #c45882;   --ex-pink-3: #df72a3;   --ex-pink-4: #ef87b0;
-    --ex-grape-0: #0e0414;  --ex-grape-1: #4c2060;  --ex-grape-2: #b563d0;  --ex-grape-3: #c86fd8;  --ex-grape-4: #d387e0;
-    --ex-violet-0: #0c0a1a; --ex-violet-1: #4a3b72; --ex-violet-2: #9178f5; --ex-violet-3: #a080f5; --ex-violet-4: #b595ff;
-    --ex-blue-0: #070f16;   --ex-blue-1: #154162;   --ex-blue-2: #5baad7;   --ex-blue-3: #5baad7;   --ex-blue-4: #56a2e8;
-    --ex-cyan-0: #000c0e;   --ex-cyan-1: #003940;   --ex-cyan-2: #1e7885;   --ex-cyan-3: #2b8fa0;   --ex-cyan-4: #3598a8;
-    --ex-teal-0: #000e0a;   --ex-teal-1: #00422b;   --ex-teal-2: #097555;   --ex-teal-3: #1e9e76;   --ex-teal-4: #32a783;
-    --ex-green-0: #020d04;  --ex-green-1: #043b0c;  --ex-green-2: #148024;  --ex-green-3: #2b9940;  --ex-green-4: #39994b;
-    --ex-yellow-0: #100700; --ex-yellow-1: #362600; --ex-yellow-2: #8a6100; --ex-yellow-3: #a06c00; --ex-yellow-4: #b86200;
-    --ex-orange-0: #0e0500; --ex-orange-1: #4c2b01; --ex-orange-2: #945200; --ex-orange-3: #da5700; --ex-orange-4: #f17634;
-    --ex-bronze-0: #0e0907; --ex-bronze-1: #3c2a22; --ex-bronze-2: #705048; --ex-bronze-3: #9e7a71; --ex-bronze-4: #ae9490;
+  /* Dark mode: Use CSS filter to invert colors, matching Excalidraw's approach
+     Excalidraw uses: invert(93%) hue-rotate(180deg) in applyDarkModeFilter()
+     This is more accurate than manual color mapping */
+  [data-theme="neobrutalism-dark"] .excalidraw-container :global(svg),
+  [data-theme="neobrutalism-dark"] .diagram-modal-svg-container :global(svg.excalidraw-svg) {
+    filter: invert(93%) hue-rotate(180deg);
+  }
+  
+  /* Preserve white backgrounds in dark mode - don't invert them */
+  [data-theme="neobrutalism-dark"] .excalidraw-container :global(svg) .ex-bg,
+  [data-theme="neobrutalism-dark"] .diagram-modal-svg-container :global(svg.excalidraw-svg) .ex-bg {
+    filter: invert(93%) hue-rotate(180deg);
   }
 
   :global(.ex-bg)            { fill: transparent; }
