@@ -984,7 +984,7 @@ class Product {
   name string
   price float
   storage string?
-  inStock boolean
+  inStock boolean?
 }
 
 function ExtractProduct(text: string) -> Product {
@@ -1018,7 +1018,7 @@ from pydantic import BaseModel
 class Product(BaseModel):
     name: str
     price: float
-    storage: str = None
+    storage: str | None = None
     in_stock: bool
 
 client = instructor.patch(OpenAI())
