@@ -12,7 +12,7 @@ export const siteAuthor: Author = {
 	sameAs: [
 		"https://github.com/rothnic",
 		"https://linkedin.com/in/nickroth",
-		"https://twitter.com/nickroth",
+		"https://twitter.com/rothnic",
 	],
 };
 
@@ -28,7 +28,7 @@ export const siteMetadata = {
 	type: "website",
 	favicon: "/favicon.svg",
 	ogImage: "https://www.nickroth.com/assets/images/nick-headshot.webp",
-	twitterHandle: "@nickroth",
+	twitterHandle: "@rothnic",
 };
 
 /**
