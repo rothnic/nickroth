@@ -53,3 +53,9 @@ docs/archive
 test-results/
 playwright-report/
 playwright/.cache/
+
+# OpenCode / memsearch session logs
+.memsearch/
+
+# Husky (using lefthook instead)
+.husky/
