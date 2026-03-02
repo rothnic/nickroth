@@ -130,6 +130,9 @@ const breadcrumbs = !isHomepage
     {breadcrumbs && <SchemaOrg type="BreadcrumbList" breadcrumbs={breadcrumbs} />}
     {isHomepage && <SchemaOrg type="WebSite" siteName={siteMetadata.title} siteUrl={siteMetadata.url} />}
     
+    
+    <!-- Sitemap discovery -->
+    <link rel="sitemap" href="/sitemap-index.xml" />
     <ClientRouter />
     
     <!-- Theme initialization -->
