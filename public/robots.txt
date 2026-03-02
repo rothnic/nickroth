@@ -16,7 +16,7 @@ Allow: /notes/
 Allow: /work/
 
 # Sitemap location
-Sitemap: https://www.nickroth.com/sitemap.xml
+Sitemap: https://www.nickroth.com/sitemap-index.xml
 
 # Crawl rate hint (optional, respectful crawlers may honor this)
 # Crawl-delay: 10

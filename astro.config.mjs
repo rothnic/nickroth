@@ -1,4 +1,5 @@
 import mdx from "@astrojs/mdx";
+import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, fontProviders } from "astro/config";
 import {
@@ -21,6 +22,24 @@ export default defineConfig({
 				// Then process code blocks with expressive-code
 				rehypeExpressiveCodePlugin,
 			],
+		}),
+		sitemap({
+			// Custom serialization to add changefreq and priority
+			serialize(item) {
+				// Add changefreq based on URL patterns
+				if (item.url === 'https://www.nickroth.com/') {
+					item.changefreq = 'weekly';
+					item.priority = 1.0;
+				} else if (item.url.includes('/work/')) {
+					item.changefreq = 'monthly';
+					item.priority = 0.8;
+				} else {
+					item.changefreq = 'monthly';
+					item.priority = 0.7;
+				}
+				item.lastmod = new Date().toISOString();
+				return item;
+			},
 		}),
 	],
 
