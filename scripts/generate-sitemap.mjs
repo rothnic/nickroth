@@ -1,13 +1,16 @@
 import { getCollection } from "astro:content";
-import type { APIRoute } from "astro";
+import { writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
 const siteUrl = "https://www.nickroth.com";
 
 /**
- * Generate dynamic sitemap.xml
- * Includes all static pages, work articles, capabilities, and notes
+ * Generate sitemap.xml before build
+ * Run with: node scripts/generate-sitemap.mjs
  */
-export const GET: APIRoute = async () => {
+async function generateSitemap() {
+	console.log("Generating sitemap.xml...");
+
 	// Get all content collections
 	const workEntries = await getCollection("work");
 
@@ -26,8 +29,7 @@ export const GET: APIRoute = async () => {
 	// Generate URLs for static pages
 	const staticUrls = staticPages.map((page) => {
 		const url = page.path ? `${siteUrl}/${page.path}/` : `${siteUrl}/`;
-		return `
-  <url>
+		return `  <url>
     <loc>${url}</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
     <changefreq>${page.changefreq}</changefreq>
@@ -39,8 +41,7 @@ export const GET: APIRoute = async () => {
 		const url = `${siteUrl}/work/${entry.slug}/`;
 		const lastmod =
 			entry.data.startDate?.toISOString() || new Date().toISOString();
-		return `
-  <url>
+		return `  <url>
     <loc>${url}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
@@ -48,20 +49,24 @@ export const GET: APIRoute = async () => {
   </url>`;
 	});
 
-	// Combine all URLs (notes and capability fragment URLs excluded - no routes exist)
+	// Combine all URLs
 	const allUrls = [...staticUrls, ...workUrls];
 
 	// Generate XML
 	const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${allUrls.join("")}
+${allUrls.join("\n")}
 </urlset>`;
 
-	return new Response(sitemap, {
-		headers: {
-			"Content-Type": "application/xml",
-			// Cache for 1 hour in production
-			"Cache-Control": "public, max-age=3600",
-		},
-	});
-};
+	// Write to public folder
+	const outputPath = fileURLToPath(
+		new URL("../public/sitemap.xml", import.meta.url),
+	);
+	writeFileSync(outputPath, sitemap);
+	console.log(`✅ Sitemap generated at ${outputPath}`);
+}
+
+generateSitemap().catch((error) => {
+	console.error("Failed to generate sitemap:", error);
+	process.exit(1);
+});

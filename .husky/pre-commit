@@ -1,0 +1,8 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Check for short paragraph labels before lists
+./.husky/check-list-labels.sh
+
+# Run Biome linting
+pnpm exec biome check --staged --write --unsafe
