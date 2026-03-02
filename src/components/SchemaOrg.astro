@@ -1,29 +1,18 @@
 ---
-/**
- * Schema.org Structured Data Component
- * 
- * Generates JSON-LD structured data for better SEO.
- * Supports Article, BreadcrumbList, and Person schemas.
- */
+import type { Author } from "../content/config";
 
 export interface Props {
   type: 'Article' | 'BreadcrumbList' | 'WebSite';
-  // Article props
   title?: string;
   description?: string;
   image?: string;
   datePublished?: Date;
   dateModified?: Date;
-  author?: {
-    name: string;
-    url?: string;
-  };
-  // Breadcrumb props
+  author?: Author;
   breadcrumbs?: Array<{
     name: string;
     url: string;
   }>;
-  // Website props
   siteName?: string;
   siteUrl?: string;
 }
@@ -43,6 +32,15 @@ const {
 
 function generateSchema() {
   if (type === 'Article') {
+    const authorSchema: Record<string, unknown> = {
+      '@type': 'Person',
+      name: author?.name || 'Nick Roth',
+    };
+    
+    if (author?.url) authorSchema.url = author.url;
+    if (author?.image) authorSchema.image = author.image;
+    if (author?.sameAs) authorSchema.sameAs = author.sameAs;
+    
     return {
       '@context': 'https://schema.org',
       '@type': 'Article',
@@ -51,11 +49,7 @@ function generateSchema() {
       image: image,
       datePublished: datePublished?.toISOString(),
       dateModified: dateModified?.toISOString() || datePublished?.toISOString(),
-      author: {
-        '@type': 'Person',
-        name: author.name,
-        url: author.url
-      },
+      author: authorSchema,
       publisher: {
         '@type': 'Person',
         name: 'Nick Roth',

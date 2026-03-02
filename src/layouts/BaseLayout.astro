@@ -2,9 +2,11 @@
 import { ClientRouter } from "astro:transitions";
 import { Font, getImage } from "astro:assets";
 import Navbar from "../components/Navbar.astro";
+import SchemaOrg from "../components/SchemaOrg.astro";
+import { siteAuthor, siteMetadata } from "../data/siteAuthor";
+import type { Author } from "../content/config";
 import "../styles/global.css";
 
-// Preload hero image for homepage LCP optimization
 import headshot from "../assets/images/nick-headshot.png";
 const heroImage = await getImage({
   src: headshot,
@@ -16,27 +18,88 @@ const heroImage = await getImage({
 export interface Props {
 	title?: string;
 	description?: string;
+	image?: string;
 	showNavbar?: boolean;
+	canonicalUrl?: string;
+	noIndex?: boolean;
+	author?: Author;
+	datePublished?: Date;
+	dateModified?: Date;
+	type?: "website" | "article";
+	tags?: string[];
+	schemaType?: "Article" | "BreadcrumbList" | "WebSite";
 }
 
 const {
-	title = "Nick Roth - Product Manager & AI Engineer",
-	description = "Personal site for Nick Roth",
+	title = siteMetadata.title,
+	description = siteMetadata.description,
+	image = siteMetadata.ogImage,
 	showNavbar = true,
+	canonicalUrl = Astro.url.href,
+	noIndex = false,
+	author = siteAuthor,
+	datePublished,
+	dateModified,
+	type = "website",
+	tags = [],
+	schemaType = "WebSite",
 } = Astro.props;
 
 const currentPath = Astro.url.pathname;
 const isHomepage = currentPath === "/" || currentPath === "";
+
+// Build breadcrumbs for non-homepage pages
+const breadcrumbs = !isHomepage
+	? [
+			{ name: "Home", url: siteMetadata.url },
+			{ name: title.split(" - ")[0], url: canonicalUrl },
+		]
+	: undefined;
 ---
 
 <!doctype html>
 <html lang="en" data-theme="neobrutalism-light">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    {/* Preload hero image for LCP on homepage */}
+    
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={author.name} />
+    {tags.length > 0 && <meta name="keywords" content={tags.join(", ")} />}
+    <meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow"} />
+    <meta name="language" content="en" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalUrl} />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <meta property="og:site_name" content={siteMetadata.title} />
+    <meta property="og:locale" content="en_US" />
+    {datePublished && <meta property="article:published_time" content={datePublished.toISOString()} />}
+    {dateModified && <meta property="article:modified_time" content={dateModified.toISOString()} />}
+    {author.name && <meta property="article:author" content={author.name} />}
+    {tags.map((tag) => <meta property="article:tag" content={tag} />)}
+    
+    <!-- Twitter Card -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalUrl} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={image} />
+    <meta property="twitter:site" content={siteMetadata.twitterHandle} />
+    <meta property="twitter:creator" content={siteMetadata.twitterHandle} />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href={siteMetadata.favicon} />
+    
+    <!-- Preload hero image for LCP on homepage -->
     {isHomepage && (
       <link 
         rel="preload" 
@@ -46,13 +109,30 @@ const isHomepage = currentPath === "/" || currentPath === "";
         fetchpriority="high"
       />
     )}
-    <!-- Fonts via Astro experimental fonts API with automatic subsetting -->
+    
+    <!-- Fonts -->
     <Font cssVariable="--font-display" preload />
     <Font cssVariable="--font-mono" />
     <Font cssVariable="--font-glitch" />
-    <title>{title}</title>
+    
+    <!-- Schema.org Structured Data -->
+    {schemaType === "Article" && datePublished && (
+      <SchemaOrg
+        type="Article"
+        title={title}
+        description={description}
+        image={image}
+        datePublished={datePublished}
+        dateModified={dateModified}
+        author={{ name: author.name, url: author.url }}
+      />
+    )}
+    {breadcrumbs && <SchemaOrg type="BreadcrumbList" breadcrumbs={breadcrumbs} />}
+    {isHomepage && <SchemaOrg type="WebSite" siteName={siteMetadata.title} siteUrl={siteMetadata.url} />}
+    
     <ClientRouter />
-    <!-- Theme initialization - runs immediately to prevent flash of wrong theme -->
+    
+    <!-- Theme initialization -->
     <script is:inline>
       (function() {
         const stored = localStorage.getItem('theme');
@@ -62,23 +142,20 @@ const isHomepage = currentPath === "/" || currentPath === "";
       })();
     </script>
     <script src="../scripts/theme.js"></script>
-		<script src="../components/diagram/diagram-expand.ts"></script>
+    <script src="../components/diagram/diagram-expand.ts"></script>
   </head>
+  
   <script>
     import { initScrollAnimations } from "../scripts/animations.js";
     import { initViewTransitionScrolling } from "../scripts/view-transitions.js";
 
-    // Initialize on page load
     initScrollAnimations();
     initViewTransitionScrolling();
 
-    // Reinitialize on Astro page transitions
     document.addEventListener("astro:page-load", () => {
       initScrollAnimations();
     });
 
-    // Enable smooth scrolling ONLY for anchor links (within-page navigation)
-    // This avoids conflicts with view transitions during page-to-page navigation
     document.addEventListener("click", (e) => {
       const target = e.target as HTMLElement;
       const link = target.closest("a");
@@ -87,7 +164,6 @@ const isHomepage = currentPath === "/" || currentPath === "";
       
       const href = link.getAttribute("href");
       
-      // Check if it's an anchor link (starts with #)
       if (href && href.startsWith("#")) {
         e.preventDefault();
         
@@ -95,20 +171,15 @@ const isHomepage = currentPath === "/" || currentPath === "";
         const targetElement = document.getElementById(targetId);
         
         if (targetElement) {
-          // Check user's motion preference
           const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
           
-          // Temporarily enable smooth scroll for this anchor navigation only
           if (!prefersReducedMotion) {
             document.documentElement.style.scrollBehavior = "smooth";
           }
           
           targetElement.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth" });
-          
-          // Update URL hash
           history.pushState(null, "", href);
           
-          // Reset scroll behavior after scrolling completes
           setTimeout(() => {
             document.documentElement.style.scrollBehavior = "auto";
           }, 1000);
@@ -116,6 +187,7 @@ const isHomepage = currentPath === "/" || currentPath === "";
       }
     });
   </script>
+  
   <style>
     @keyframes scale-up {
       from { transform: scale(0.8); opacity: 0; }
@@ -127,12 +199,13 @@ const isHomepage = currentPath === "/" || currentPath === "";
       to { transform: scale(0.8); opacity: 0; }
     }
   </style>
+  
   <body>
     <div class="min-h-screen flex flex-col">
       {showNavbar && <Navbar currentPath={currentPath} />}
       <slot />
       <footer class="footer footer-center p-6 text-base-content/60 mt-auto">
-        <p class="text-sm">© 2024 Nick Roth. All rights reserved.</p>
+			<p class="text-sm">© {new Date().getFullYear()} Nick Roth. All rights reserved.</p>
       </footer>
     </div>
   </body>
