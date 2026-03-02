@@ -53,3 +53,12 @@ docs/archive
 test-results/
 playwright-report/
 playwright/.cache/
+
+# OpenCode / memsearch session logs
+.memsearch/
+
+# Agentastic settings
+.agentastic/
+
+# Husky (using lefthook instead)
+.husky/

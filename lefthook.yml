@@ -9,3 +9,25 @@ pre-commit:
           grep -n '—' {staged_files}
           exit 1
         fi
+
+
+pre-push:
+  commands:
+    lockfile-check:
+      run: |
+        # Check if package.json has been modified but pnpm-lock.yaml hasn't
+        if git diff --name-only HEAD~1 HEAD | grep -q "package.json" && ! git diff --name-only HEAD~1 HEAD | grep -q "pnpm-lock.yaml"; then
+          echo "⚠️  Warning: package.json changed but pnpm-lock.yaml not updated"
+          echo "Run: pnpm install --lockfile-only"
+          exit 1
+        fi
+        exit 0
+    frozen-lockfile-check:
+      run: |
+        # Verify lockfile is up to date with package.json
+        if ! pnpm install --frozen-lockfile --lockfile-only 2>/dev/null; then
+          echo "❌ pnpm-lock.yaml is out of date with package.json"
+          echo "Run: pnpm install --lockfile-only"
+          exit 1
+        fi
+        exit 0
