@@ -205,7 +205,7 @@ const breadcrumbs = !isHomepage
       {showNavbar && <Navbar currentPath={currentPath} />}
       <slot />
       <footer class="footer footer-center p-6 text-base-content/60 mt-auto">
-        <p class="text-sm">© 2024 Nick Roth. All rights reserved.</p>
+			<p class="text-sm">© {new Date().getFullYear()} Nick Roth. All rights reserved.</p>
       </footer>
     </div>
   </body>
